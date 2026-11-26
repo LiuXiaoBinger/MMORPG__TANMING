@@ -33,6 +33,14 @@ internal class EquipTable
     [SugarColumn(DefaultValue = "0")]
     public int StrengthenLevel { get; set; }
 
+    /// <summary>金装已升的十级档数，零对应原有的60级。</summary>
+    [SugarColumn(DefaultValue = "0")]
+    public int GoldLevelSteps { get; set; }
+
+    /// <summary>金装已进的阶数，零对应初始一阶。</summary>
+    [SugarColumn(DefaultValue = "0")]
+    public int GoldTierSteps { get; set; }
+
     /// <summary>该装备第一个孔的宝石物品编号，零表示空孔。</summary>
     [SugarColumn(DefaultValue = "0")]
     public int Gem0 { get; set; }

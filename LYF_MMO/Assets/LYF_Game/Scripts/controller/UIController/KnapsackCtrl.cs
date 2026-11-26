@@ -40,6 +40,8 @@ public sealed class KnapsackCtrl : IDisposable
     private readonly EquipmentDetailWindow _detailWindow;
     /// <summary>展示当前选中装备及五个养成分页的主城子窗口。</summary>
     private readonly EquipmentWorkshopWindow _workshopWindow;
+    /// <summary>显示辉银金装合成与实例成长的作坊。</summary>
+    private readonly GoldWorkshopWindow _goldWorkshop;
     /// <summary>珍宝阁商会与工坊共享铜钱余额、宝石购买命令和配额回执。</summary>
     private readonly TreasurePavilionWindow _pavilionWindow;
     /// <summary>已穿戴装备槽的点击来源。</summary>
@@ -76,6 +78,7 @@ public sealed class KnapsackCtrl : IDisposable
             _mainView = mainView;
             _detailWindow = mainView.EquipmentDetailWindow;
             _workshopWindow = mainView.EquipmentWorkshopWindow;
+            _goldWorkshop = mainView.GoldWorkshopWindow;
             _pavilionWindow = mainView.TreasurePavilionWindow;
             _equipmentWindow = mainView.RoleAttributeWindow;
         }
@@ -147,15 +150,24 @@ public sealed class KnapsackCtrl : IDisposable
             _detailWindow.TakeOffRequested += TakeOffSelectedEquipment;
             _detailWindow.SpecialSkillRequested += SwitchSelectedSpecialSkill;
             _detailWindow.StrengthenRequested += OpenEquipmentWorkshop;
+            _detailWindow.AdvanceRequested += OpenGoldAdvance;
         }
         if (_workshopWindow != null)
         {
             _workshopWindow.SourceSelected += ChangeWorkshopSource;
             _workshopWindow.EquipmentSelected += RenderWorkshopEquipment;
+            _workshopWindow.GoldUpgradeRequested += OpenGoldUpgrade;
             _workshopWindow.StockRequested += RenderWorkshopStock;
             _workshopWindow.SocketRequested += SocketWorkshopGem;
             _workshopWindow.Owned = OwnedGem;
             _workshopWindow.SendTrade = SendGemTrade;
+        }
+        if (_goldWorkshop != null)
+        {
+            _mainView.GoldWorkshopButton.onClick.AddListener(OpenGoldCatalog);
+            _goldWorkshop.Owned = GoldStock;
+            _goldWorkshop.Equipment = GoldEquipment;
+            _goldWorkshop.Submit = SendGemTrade;
         }
         if (_pavilionWindow != null) _pavilionWindow.SendGemTrade = SendGemTrade;
 
@@ -187,15 +199,24 @@ public sealed class KnapsackCtrl : IDisposable
             _detailWindow.TakeOffRequested -= TakeOffSelectedEquipment;
             _detailWindow.SpecialSkillRequested -= SwitchSelectedSpecialSkill;
             _detailWindow.StrengthenRequested -= OpenEquipmentWorkshop;
+            _detailWindow.AdvanceRequested -= OpenGoldAdvance;
         }
         if (_workshopWindow != null)
         {
             _workshopWindow.SourceSelected -= ChangeWorkshopSource;
             _workshopWindow.EquipmentSelected -= RenderWorkshopEquipment;
+            _workshopWindow.GoldUpgradeRequested -= OpenGoldUpgrade;
             _workshopWindow.StockRequested -= RenderWorkshopStock;
             _workshopWindow.SocketRequested -= SocketWorkshopGem;
             _workshopWindow.Owned = null;
             _workshopWindow.SendTrade = null;
+        }
+        if (_goldWorkshop != null)
+        {
+            _mainView.GoldWorkshopButton.onClick.RemoveListener(OpenGoldCatalog);
+            _goldWorkshop.Owned = null;
+            _goldWorkshop.Equipment = null;
+            _goldWorkshop.Submit = null;
         }
         if (_pavilionWindow != null) _pavilionWindow.SendGemTrade = null;
         if (_itemComponent != null) _itemComponent.KnapsackChangedDetailed -= OnWorkshopStockChanged;
@@ -404,6 +425,7 @@ public sealed class KnapsackCtrl : IDisposable
             if (_window != null) _window.CloseManualItem();
             if (_detailWindow != null) _detailWindow.CloseWindow();
             if (_workshopWindow != null) _workshopWindow.CloseWindow();
+            if (_goldWorkshop != null) _goldWorkshop.CloseWindow();
         }
         if (_itemComponent != null)
         {
@@ -418,7 +440,9 @@ public sealed class KnapsackCtrl : IDisposable
         if (role != null)
         {
             role.TryGetComponent(out _itemComponent);
-            if (_itemComponent != null && (_workshopWindow != null || _pavilionWindow != null))
+            // 只有持有工坊或商会窗口的控制器订阅库存变动。
+            bool hasWorkshop = _workshopWindow != null || _goldWorkshop != null || _pavilionWindow != null;
+            if (_itemComponent != null && hasWorkshop)
                 _itemComponent.KnapsackChangedDetailed += OnWorkshopStockChanged;
         }
         if (_role != null && _role.DirtyTracker != null)
@@ -729,6 +753,8 @@ public sealed class KnapsackCtrl : IDisposable
     /// <param name="change">已完成写入的物品变更，整包同步携带的物品编号为零。</param>
     private void OnWorkshopStockChanged(KnapsackChangedEventArgs change)
     {
+        if (_goldWorkshop != null && _goldWorkshop.isActiveAndEnabled)
+            _goldWorkshop.Refresh(change.ItemTypeId == 0 || GoldWorkshopRecipe.IsGold(change.ItemTypeId));
         if (_pavilionWindow != null && _pavilionWindow.isActiveAndEnabled)
         {
             if (change.ItemTypeId == CopperItemId || change.ItemTypeId == 0) _pavilionWindow.RefreshWallet();
@@ -765,6 +791,72 @@ public sealed class KnapsackCtrl : IDisposable
         if (reply.GemMessage.Length > 0) TipsMgr.Instance.ShowSystemTips(reply.GemMessage);
         else if (reply.CmdCode != CmdCode.Succeed) TipsMgr.Instance.ShowSystemTips("宝石操作失败：" + reply.CmdCode);
     }
+
+    /// <summary>从主城菜单进入作坊，空背包也能预览和合成成品。</summary>
+    private void OpenGoldCatalog()
+    {
+        _mainView.SetFunctionMenuVisible(false);
+        _mainView.ShowMainWindow(WindowType.GoldWorkshopWindow);
+        _goldWorkshop.Open(0, false, 0);
+    }
+
+    /// <summary>从装备详情进入当前实例的进阶页。</summary>
+    private void OpenGoldAdvance() { OpenGoldInstance(1, _selectedEquipmentUid); }
+
+    /// <summary>从现有养成窗口的升级页签进入当前金装的升级页。</summary>
+    /// <param name="uid">养成左栏当前选中的实例。</param>
+    private void OpenGoldUpgrade(long uid) { OpenGoldInstance(2, uid); }
+
+    /// <summary>保持原穿戴或背包来源，打开详情中选定的同一件金装。</summary>
+    /// <param name="page">进阶为1，升级为2。</param>
+    /// <param name="uid">详情或养成窗口的装备实例。</param>
+    private void OpenGoldInstance(int page, long uid)
+    {
+        // 物品增量可能替换客户端对象，这里按 UID 取得最新实例。
+        EquipBase equip = _itemComponent?.GetItemByUID(uid) as EquipBase;
+        if (equip == null || !GoldWorkshopRecipe.IsGold(equip.GetItemID()))
+        { TipsMgr.Instance.ShowSystemTips("当前作坊只开放魔剑士辉银金装"); return; }
+        _detailWindow.CloseWindow();
+        _workshopWindow.CloseWindow();
+        _mainView.ShowMainWindow(WindowType.GoldWorkshopWindow);
+        _goldWorkshop.Open(page, equip.GetBagType() != (int)KnapsackType.RoleCurrtEquipPack, uid);
+    }
+
+    /// <summary>材料跨角色物品包统计，虚拟钱包内以相同绑定规则读取工费余额。</summary>
+    /// <param name="id">材料或货币的物品配置编号。</param>
+    private long GoldStock(int id)
+    {
+        if (_itemComponent == null) return 0;
+        if (ItemDesc.IsVirtualItem(id)) return _itemComponent.GetItemNum(id, ItemBind.kItemBindIs);
+        return _itemComponent.GetItemNum(id, ItemBind.kItemBindIs, true);
+    }
+
+    /// <summary>按格位读取所属容器内真实的金装实例。</summary>
+    /// <param name="worn">为真时从穿戴栏读取，否则从装备包读取。</param>
+    private List<EquipBase> GoldEquipment(bool worn)
+    {
+        // 当前来源下的辉银装备，同名的多件各占一行。
+        List<EquipBase> result = new List<EquipBase>();
+        if (_itemComponent == null) return result;
+        // 当前来源的背包类别。
+        KnapsackType source = KnapsackType.RolePackEquip;
+        if (worn) source = KnapsackType.RoleCurrtEquipPack;
+        // 与其他装备窗口采用相同的格位顺序。
+        List<ItemBase> entries = new List<ItemBase>(_itemComponent.GetContainer(source).GetItemMap().Values);
+        if (!worn) entries.AddRange(_itemComponent.GetContainer(KnapsackType.RolePackPlain).GetItemMap().Values);
+        entries.Sort(CompareItem);
+        for (int index = 0; index < entries.Count; index++)
+        {
+            // 原物品实例保留在角色容器中，窗口只读。
+            EquipBase equip = entries[index] as EquipBase;
+            if (equip != null && GoldWorkshopRecipe.IsGold(equip.GetItemID())) result.Add(equip);
+        }
+        return result;
+    }
+
+    /// <summary>把金装结算回执返回到作坊，库存与装备仍走原物品更新。</summary>
+    /// <param name="reply">角色服的实际结算结果。</param>
+    public void ApplyGoldWorkshop(EquipOperationRet reply) { _goldWorkshop.Finish(reply); }
 
     /// <summary>向服务器请求一次镶嵌，材料库存与孔位均沿用服务器物品增量更新。</summary>
     /// <param name="uid">玩家选中的装备实例。</param>
@@ -1075,6 +1167,9 @@ public sealed class KnapsackCtrl : IDisposable
         result.FooterExtraText = result.InfoLayerText;
         // 独立行控件的数据：强化取真实配置，其余保持中性占位；宝石孔数已在前文写入。
         result.EnhanceRowText = "强化 " + equip.StrengthenLevel + "/" + config.MaxStrengthenLevel + "  ·  阶位 —";
+        if (GoldWorkshopRecipe.IsGold(equip.GetItemID()))
+            result.EnhanceRowText = "强化 " + equip.StrengthenLevel + "/" + config.MaxStrengthenLevel +
+                "  ·  " + GoldWorkshopRecipe.Level(equip.GoldLevelSteps) + "级  ·  " + (equip.GoldTierSteps + 1) + "阶";
         // 淬锋与铭缀是两个子系统，淬锋行只写自身内容，不再拼成一大段混写文字。
         result.ForgeRowText = "淬锋：暂无数据";
         // 祭甲与甲片按用户要求本轮不展示，该行数值不再生成，控件保持隐藏。
@@ -1148,7 +1243,7 @@ public sealed class KnapsackCtrl : IDisposable
     /// <summary>把过长的属性名压到四列可读长度，只做等价缩写，不改变含义。</summary>
     /// <param name="desc">配置里的原始属性描述。</param>
     /// <returns>不超过四字的展示名，未命中的名称原样返回。</returns>
-    private static string ShortGeneName(string desc)
+    internal static string ShortGeneName(string desc)
     {
         if (string.IsNullOrEmpty(desc)) return "—";
         // 命中表里只放常见长名，缩写后语义不变，避免四列各 77 宽时被截断。

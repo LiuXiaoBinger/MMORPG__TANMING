@@ -144,6 +144,7 @@ public sealed class CRoleWriteTask
                     ItemUID = item.ItemUid,
                     RoleID = item.RoleId,
                     EquipType = item.EquipInfo.EquipType,
+                    GoldLevelSteps = item.EquipInfo.GoldLevelSteps, GoldTierSteps = item.EquipInfo.GoldTierSteps,
                     StrengthenLevel = item.EquipInfo.StrengthenLevel
                 };
                 equipRow.ReadGemSlots(item.EquipInfo);
@@ -630,6 +631,8 @@ public sealed class CRoleWriteTask
                 {
                     return false;
                 }
+                if (storedEquip.GoldLevelSteps != requested.EquipInfo.GoldLevelSteps ||
+                    storedEquip.GoldTierSteps != requested.EquipInfo.GoldTierSteps) return false;
                 if (!storedEquip.HasSameGemSlots(requested.EquipInfo)) return false;
                 // 特技三个槽位与启用下标存放在独立特技表，重复保存必须与数据库完全一致。
                 // 旧装备可能根本没有特技行（三个槽都是空），缺失行等价于全 0，不能判定为内容冲突。

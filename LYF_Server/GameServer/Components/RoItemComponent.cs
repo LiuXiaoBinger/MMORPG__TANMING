@@ -308,6 +308,8 @@ public class RoItemComponent : RoleComponentBase
             EquipBase equip = EquipBase.CreateEquipForRestore();
             equip.EquipType = itemInfo.EquipInfo.EquipType;
             equip.StrengthenLevel = itemInfo.EquipInfo.StrengthenLevel;
+            equip.GoldLevelSteps = itemInfo.EquipInfo.GoldLevelSteps;
+            equip.GoldTierSteps = itemInfo.EquipInfo.GoldTierSteps;
             equip.SpecialSkillId0 = itemInfo.EquipInfo.SpecialSkillId0;
             equip.SpecialSkillId1 = itemInfo.EquipInfo.SpecialSkillId1;
             equip.SpecialSkillId2 = itemInfo.EquipInfo.SpecialSkillId2;
@@ -1153,6 +1155,7 @@ public class RoItemComponent : RoleComponentBase
             {
                 ItemUid = equip.GetItemUID(), RoleId = equip.GetRoleID(),
                 EquipType = equip.EquipType, StrengthenLevel = equip.StrengthenLevel,
+                GoldLevelSteps = equip.GoldLevelSteps, GoldTierSteps = equip.GoldTierSteps,
                 SpecialSkillId0 = equip.SpecialSkillId0, SpecialSkillId1 = equip.SpecialSkillId1,
                 SpecialSkillId2 = equip.SpecialSkillId2, ActiveSpecialSkillIndex = equip.ActiveSpecialSkillIndex,
                 // 已开孔数必须跟随物品增量下发，客户端据此区分未开孔与已开孔空槽。

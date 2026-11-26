@@ -158,6 +158,8 @@ public sealed class EquipmentDetailWindow : WindowBase
     public event Action TakeOffRequested;
     /// <summary>通知背包控制器以当前装备实例打开强化页。</summary>
     public event Action StrengthenRequested;
+    /// <summary>更多菜单的进阶按钮请求控制器打开当前装备实例。</summary>
+    public event Action AdvanceRequested;
     /// <summary>玩家请求启用特技槽，参数范围0至2。</summary>
     public event Action<int> SpecialSkillRequested;
 
@@ -835,10 +837,11 @@ public sealed class EquipmentDetailWindow : WindowBase
         }
     }
 
-    /// <summary>更多菜单项按准确名称提示暂未开放，不发业务协议。</summary>
+    /// <summary>进阶交给背包控制器定位实例，其余菜单项显示现有提示。</summary>
     /// <param name="index">菜单项下标，范围0至3。</param>
     private void OnMoreMenuClicked(int index)
     {
+        if (index == 1) { AdvanceRequested?.Invoke(); return; }
         TipsMgr.Instance.ShowSystemTips(MoreMenuNames[index] + "：暂未开放");
     }
 

@@ -124,6 +124,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proto\WorldQuest.cs" />
     <Compile Include="Proto\MartialManual.cs" />
+    <Compile Include="GoldWorkshopRecipe.cs" />
     <Compile Include="Proto\RequestEntity.cs" />
     <Compile Include="Proto\SceneLine.cs" />
     <Compile Include="Proto\StallRead.cs" />

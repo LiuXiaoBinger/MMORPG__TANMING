@@ -138,7 +138,7 @@ public static class GemWorkshopTrade
     /// <param name="needed">该等级需要扣除的颗数或铜币。</param>
     /// <param name="debits">收集本单精确扣量的列表。</param>
     /// <param name="sign">跟随已选宝石的绑定属性。</param>
-    private static bool Reserve(List<ItemBase> stacks, int needed, List<KeyValuePair<ItemBase, int>> debits, ref ItemSign sign)
+    internal static bool Reserve(List<ItemBase> stacks, int needed, List<KeyValuePair<ItemBase, int>> debits, ref ItemSign sign)
     {
         for (int index = 0; index < stacks.Count && needed > 0; index++)
         {

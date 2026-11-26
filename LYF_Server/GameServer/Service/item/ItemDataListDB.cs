@@ -165,6 +165,7 @@ public sealed class ItemDataListDB
                     ItemUid = item.GetItemUID(),
                     RoleId = item.GetRoleID(),
                     StrengthenLevel = equip.StrengthenLevel,
+                    GoldLevelSteps = equip.GoldLevelSteps, GoldTierSteps = equip.GoldTierSteps,
                     EquipType = equip.EquipType,
                     SpecialSkillId0 = equip.SpecialSkillId0,
                     SpecialSkillId1 = equip.SpecialSkillId1,

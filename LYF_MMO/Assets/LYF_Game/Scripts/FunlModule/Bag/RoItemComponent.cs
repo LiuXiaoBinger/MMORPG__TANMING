@@ -322,6 +322,8 @@ public class RoItemComponent : RoleComponentBase
             EquipBase equip = EquipBase.CreateEquipForRestore();
             equip.EquipType = itemInfo.EquipInfo.EquipType;
             equip.StrengthenLevel = itemInfo.EquipInfo.StrengthenLevel;
+            equip.GoldLevelSteps = itemInfo.EquipInfo.GoldLevelSteps;
+            equip.GoldTierSteps = itemInfo.EquipInfo.GoldTierSteps;
             equip.SpecialSkillId0 = itemInfo.EquipInfo.SpecialSkillId0;
             equip.SpecialSkillId1 = itemInfo.EquipInfo.SpecialSkillId1;
             equip.SpecialSkillId2 = itemInfo.EquipInfo.SpecialSkillId2;

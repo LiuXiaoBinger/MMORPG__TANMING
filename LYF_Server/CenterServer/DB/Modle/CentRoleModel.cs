@@ -520,6 +520,7 @@ public class CentRoleModel
                     ItemUid = equip.ItemUID,
                     RoleId = equip.RoleID,
                     StrengthenLevel = equip.StrengthenLevel,
+                    GoldLevelSteps = equip.GoldLevelSteps, GoldTierSteps = equip.GoldTierSteps,
                     EquipType = equip.EquipType
                 };
                 equip.WriteGemSlots(itemInfo.EquipInfo);

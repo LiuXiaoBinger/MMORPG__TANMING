@@ -31,6 +31,12 @@ public class EquipBase : ItemBase
     /// </summary>
     public int StrengthenLevel { get; set; }
 
+    /// <summary>金装已升的十级档数，零对应原有的60级。</summary>
+    public int GoldLevelSteps { get; set; }
+
+    /// <summary>金装已进的阶数，零对应初始一阶。</summary>
+    public int GoldTierSteps { get; set; }
+
     /// <summary>本件装备六个宝石孔的物品配置编号，按孔位保存；0 表示空孔。</summary>
     public int[] GemItemIds { get; } = new int[EquipmentGemRules.SocketCount];
 

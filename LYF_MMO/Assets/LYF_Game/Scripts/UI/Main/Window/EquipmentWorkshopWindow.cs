@@ -95,6 +95,8 @@ public sealed class EquipmentWorkshopWindow : WindowBase
     public event Action<bool> SourceSelected;
     /// <summary>通知控制器读取指定装备 UID 的详细属性。</summary>
     public event Action<long> EquipmentSelected;
+    /// <summary>玩家点击金装升级签时，携带当前实例进入作坊。</summary>
+    public event Action<long> GoldUpgradeRequested;
     /// <summary>请求控制器按首个物品 ID 和连续等级数读取角色库存。</summary>
     public event Action<int, int> StockRequested;
     /// <summary>请求控制器发送装备实例、孔下标和消耗宝石的配置编号。</summary>
@@ -120,7 +122,12 @@ public sealed class EquipmentWorkshopWindow : WindowBase
         {
             // 此按钮始终对应同一页。
             Page page = (Page)index;
-            _tabs[index].onClick.AddListener(() => SelectPage(page));
+            _tabs[index].onClick.AddListener(() =>
+            {
+                if (page == Page.Upgrade && _selected != null && GoldWorkshopRecipe.IsGold(_selected.Entry.ItemTypeId))
+                    GoldUpgradeRequested?.Invoke(_selected.Entry.ItemUid);
+                else SelectPage(page);
+            });
         }
     }
 

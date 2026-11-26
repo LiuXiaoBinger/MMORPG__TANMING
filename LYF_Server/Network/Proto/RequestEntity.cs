@@ -67,12 +67,13 @@ public static partial class RequestEntityReflection {
           "ZWFtQnlUZWFtSWRBcmcSDwoHdGVhbV9pZBgBIAEoBCJyChhDYXB0YWluUmVx",
           "dWVzdEVudGVyRkJBcmcSEgoKZHVuZ2Vvbl9pZBgBIAEoBRISCgpjaGFwdGVy",
           "X2lkGAIgASgFEhcKD2R1bmdlb25zX2RlZ3JlZRgDIAEoBRIVCg1kdW5nZW9u",
-          "X2xheWVyGAQgASgFIvQBChFFcXVpcE9wZXJhdGlvblJlcRIQCghpdGVtX3Vp",
+          "X2xheWVyGAQgASgFIp8CChFFcXVpcE9wZXJhdGlvblJlcRIQCghpdGVtX3Vp",
           "ZBgBIAEoAxIiCglvcGVyYXRpb24YAiABKA4yDy5FcXVpcE9wZXJhdGlvbhIb",
           "ChNzcGVjaWFsX3NraWxsX2luZGV4GAMgASgFEhgKEGdlbV9zb2NrZXRfaW5k",
           "ZXgYBCABKAUSEwoLZ2VtX2l0ZW1faWQYBSABKAUSFgoOYmFnX2dlbV9jb3Vu",
           "dHMYBiADKAUSGQoRbWFya2V0X2dlbV9jb3VudHMYByADKAUSGQoMYnV5X3F1",
-          "YW50aXR5GAggASgFSACIAQFCDwoNX2J1eV9xdWFudGl0eWIGcHJvdG8z"));
+          "YW50aXR5GAggASgFSACIAQESFAoMZ29sZF9pdGVtX2lkGAkgASgFEhMKC2dv",
+          "bGRfdGFyZ2V0GAogASgFQg8KDV9idXlfcXVhbnRpdHliBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, global::PbcMailReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -101,7 +102,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::LeaveTeamArg), global::LeaveTeamArg.Parser, new[]{ "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BegInTeamByTeamIdArg), global::BegInTeamByTeamIdArg.Parser, new[]{ "TeamId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::CaptainRequestEnterFBArg), global::CaptainRequestEnterFBArg.Parser, new[]{ "DungeonId", "ChapterId", "DungeonsDegree", "DungeonLayer" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationReq), global::EquipOperationReq.Parser, new[]{ "ItemUid", "Operation", "SpecialSkillIndex", "GemSocketIndex", "GemItemId", "BagGemCounts", "MarketGemCounts", "BuyQuantity" }, new[]{ "BuyQuantity" }, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationReq), global::EquipOperationReq.Parser, new[]{ "ItemUid", "Operation", "SpecialSkillIndex", "GemSocketIndex", "GemItemId", "BagGemCounts", "MarketGemCounts", "BuyQuantity", "GoldItemId", "GoldTarget" }, new[]{ "BuyQuantity" }, null, null, null)
         }));
   }
   #endregion
@@ -7080,6 +7081,8 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     bagGemCounts_ = other.bagGemCounts_.Clone();
     marketGemCounts_ = other.marketGemCounts_.Clone();
     buyQuantity_ = other.buyQuantity_;
+    goldItemId_ = other.goldItemId_;
+    goldTarget_ = other.goldTarget_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -7222,6 +7225,36 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     _hasBits0 &= ~1;
   }
 
+  /// <summary>Field number for the "gold_item_id" field.</summary>
+  public const int GoldItemIdFieldNumber = 9;
+  private int goldItemId_;
+  /// <summary>
+  ///选定金装的配置编号
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GoldItemId {
+    get { return goldItemId_; }
+    set {
+      goldItemId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "gold_target" field.</summary>
+  public const int GoldTargetFieldNumber = 10;
+  private int goldTarget_;
+  /// <summary>
+  ///界面选定的目标装备等级或阶数
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GoldTarget {
+    get { return goldTarget_; }
+    set {
+      goldTarget_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -7245,6 +7278,8 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     if(!bagGemCounts_.Equals(other.bagGemCounts_)) return false;
     if(!marketGemCounts_.Equals(other.marketGemCounts_)) return false;
     if (BuyQuantity != other.BuyQuantity) return false;
+    if (GoldItemId != other.GoldItemId) return false;
+    if (GoldTarget != other.GoldTarget) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -7260,6 +7295,8 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     hash ^= bagGemCounts_.GetHashCode();
     hash ^= marketGemCounts_.GetHashCode();
     if (HasBuyQuantity) hash ^= BuyQuantity.GetHashCode();
+    if (GoldItemId != 0) hash ^= GoldItemId.GetHashCode();
+    if (GoldTarget != 0) hash ^= GoldTarget.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -7304,6 +7341,14 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
       output.WriteRawTag(64);
       output.WriteInt32(BuyQuantity);
     }
+    if (GoldItemId != 0) {
+      output.WriteRawTag(72);
+      output.WriteInt32(GoldItemId);
+    }
+    if (GoldTarget != 0) {
+      output.WriteRawTag(80);
+      output.WriteInt32(GoldTarget);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -7340,6 +7385,14 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
       output.WriteRawTag(64);
       output.WriteInt32(BuyQuantity);
     }
+    if (GoldItemId != 0) {
+      output.WriteRawTag(72);
+      output.WriteInt32(GoldItemId);
+    }
+    if (GoldTarget != 0) {
+      output.WriteRawTag(80);
+      output.WriteInt32(GoldTarget);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -7369,6 +7422,12 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     size += marketGemCounts_.CalculateSize(_repeated_marketGemCounts_codec);
     if (HasBuyQuantity) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(BuyQuantity);
+    }
+    if (GoldItemId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GoldItemId);
+    }
+    if (GoldTarget != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GoldTarget);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -7401,6 +7460,12 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     marketGemCounts_.Add(other.marketGemCounts_);
     if (other.HasBuyQuantity) {
       BuyQuantity = other.BuyQuantity;
+    }
+    if (other.GoldItemId != 0) {
+      GoldItemId = other.GoldItemId;
+    }
+    if (other.GoldTarget != 0) {
+      GoldTarget = other.GoldTarget;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -7455,6 +7520,14 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
           BuyQuantity = input.ReadInt32();
           break;
         }
+        case 72: {
+          GoldItemId = input.ReadInt32();
+          break;
+        }
+        case 80: {
+          GoldTarget = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -7506,6 +7579,14 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
         }
         case 64: {
           BuyQuantity = input.ReadInt32();
+          break;
+        }
+        case 72: {
+          GoldItemId = input.ReadInt32();
+          break;
+        }
+        case 80: {
+          GoldTarget = input.ReadInt32();
           break;
         }
       }

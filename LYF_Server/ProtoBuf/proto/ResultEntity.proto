@@ -424,6 +424,8 @@ message RoleEquipItemInfo
 	int32 active_special_skill_index = 8;//唯一启用的特技槽位下标，范围0到2
 	int32 opened_special_skill_count = 9;//已开启的特技孔数量，取值0到3，按0/1/2顺序开孔
 	repeated int32 gem_item_ids = 10;//按六个孔位保存的宝石物品编号，0 为空孔；旧装备可以不传
+	int32 gold_level_steps = 11;//已升的十级档数，旧金装默认60级
+	int32 gold_tier_steps = 12;//已进的阶数，旧金装默认一阶
 }
 
 // 同一装备的三个词条槽位：每槽保存配置ID与实际数值。
@@ -618,6 +620,9 @@ enum EquipOperation {
 	GemMarket = 6;//读取指定品种三级商会商品的剩余额度
 	ComposeGem = 7;//扣除背包材料和商会材料价款，产出一颗合成目标
 	BuyGem = 8;//按服务器定价直接购买选定品种的一颗一级至三级宝石
+	ForgeGold = 9;//消耗材料合成一件60级金装
+	AdvanceGold = 10;//指定装备实例提升一阶
+	UpgradeGold = 11;//指定装备实例提升十级
 }
 
 // 装备操作结果；成功后的完整物品位置和装备字段沿用 UpdateItemRet 下发。
@@ -628,6 +633,7 @@ message EquipOperationRet {
 	int32 gem_item_id = 4;//对应本次操作的宝石物品编号
 	repeated int32 market_remaining = 5;//该品种一至三级的最新个人剩余限购量
 	string gem_message = 6;//合成或购买结果的界面提示
+	string gold_message = 7;//金装作坊单次结算提示
 }
 
 // 装备和基因效果计算后的最终角色属性，裸属性仍由角色存档保存。

@@ -549,6 +549,11 @@ public class MainCtrl : CtrlBase
     {
         // 直接解析协议，不吞掉协议错误。
         EquipOperationRet result = EquipOperationRet.Parser.ParseFrom(data);
+        if (result.Operation == EquipOperation.ForgeGold || result.Operation == EquipOperation.AdvanceGold || result.Operation == EquipOperation.UpgradeGold)
+        {
+            _knapsackCtrl.ApplyGoldWorkshop(result);
+            return;
+        }
         if (result.Operation == EquipOperation.GemMarket || result.Operation == EquipOperation.ComposeGem || result.Operation == EquipOperation.BuyGem)
         {
             _knapsackCtrl.ApplyGemTrade(result);

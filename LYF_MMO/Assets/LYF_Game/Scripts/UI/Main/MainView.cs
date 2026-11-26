@@ -60,6 +60,15 @@ public class MainView : UIBase
    /// <summary>供背包控制器填充选中装备及其所属容器。</summary>
    public EquipmentWorkshopWindow EquipmentWorkshopWindow => _equipmentWorkshopWindow;
 
+   /// <summary>主城功能菜单的作坊入口。</summary>
+   [SerializeField] private Button _goldWorkshopButton;
+   /// <summary>主城功能层中保存的金装作坊预制体。</summary>
+   [SerializeField] private GoldWorkshopWindow _goldWorkshopWindow;
+   /// <summary>供背包控制器绑定作坊入口。</summary>
+   public Button GoldWorkshopButton => _goldWorkshopButton;
+   /// <summary>供背包控制器提供实时材料、装备与结算回包。</summary>
+   public GoldWorkshopWindow GoldWorkshopWindow => _goldWorkshopWindow;
+
    /// <summary>功能菜单的交易入口，与 NPC 商店独立。</summary>
    [SerializeField] private Button _tradeMarketButton;
    /// <summary>主城功能层中持有的交易窗口。</summary>
@@ -367,6 +376,8 @@ public class MainView : UIBase
       _equipmentDetailWindow.InitWindow();
       windowDic[WindowType.EquipmentWorkshopWindow] = _equipmentWorkshopWindow;
       _equipmentWorkshopWindow.InitWindow();
+      windowDic[WindowType.GoldWorkshopWindow] = _goldWorkshopWindow;
+      _goldWorkshopWindow.InitWindow();
       windowDic[WindowType.DungeonFlowWindow] = _dungeonFlowWindow;
       _dungeonFlowWindow.InitWindow();
       if (ChatWindow != null) windowDic[WindowType.ChatWindow] = ChatWindow;
