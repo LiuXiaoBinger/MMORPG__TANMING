@@ -1033,3 +1033,8 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 
 - Added 250 named residents using 14 existing character prefabs. Main City has 66 new residents and Sky City 184. Their 242 building addresses include 13 Main City and 11 Sky City liaison posts on nearby reachable streets. Three additional residents serve upper pavilion floors and five work at cloth stalls. Column K of `Luaban/MiniTemplate/Datas/#NpcInfo.xlsx` identifies the building and posting; dialogue services are in `LYF_MMO/Assets/LYF_Game/Config/NpcDialogueServices.asset`. Luban exports 282 rows including the prior 32.
 - The developer realm launcher incrementally builds current servers before starting them. The running older GateServer assembly lacked PublicCityPortal. Realm 1 was restarted with permission and its eight processes, listening ports, compiled Sky door 3 and deployed NPC table were checked. File list, route and receipts: `项目修改日志/2026-11-26-双城建筑居民与驿站马车修复.md`.
+
+## [FILES][场景][碰撞][SKY-CITY-SURFACE-PHYSICS-20261126] Map 1 bridge seams and street collision
+
+- Map 1 `天空中之城` now trims coplanar road, bridge and arch faces. The southwest artisans' gate and northeast guild gate share a stone-shell collider with an open arch. Seven house prefabs and the city wall now match their visible exterior. Corrected tree-pit rims and trunks, five market counters and stalls, and both piers' guard ropes and fixed cargo fittings.
+- The latest north palace and garden arcade from `9e97767` are included. Native navigation, both shared navigation files, the area map and the minimap were refreshed. The 26-resource manifest, captures and delivery receipts are in `项目修改日志/2026-11-26-天空中之城闪烁与碰撞修复.md`.
