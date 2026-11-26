@@ -1078,3 +1078,7 @@ Luban passed, 27 isolated server checks and 14 Unity Play Mode checks passed. Th
 
 - At the bridge seam, 160 of 160 usable points alternated between paving materials across 25 camera positions before the fix and zero did afterward. Eight gate-wall pushes stopped, four arch passages stayed open, and all ten pier-rope and ten market-post pushes stopped. Across 23 bridges, all 92 seam crossings, 46 guardrail pushes and 345 ground/navigation/capsule checks passed.
 - All 116 residential destinations and nine public facilities were reachable with shared navigation. Native and shared paths to the north palace door and garden arcade passed. The Windows x64 scene bundle reloaded successfully. Full online sign-in/map travel and target-device frame rate were not tested. Evidence is in `项目修改日志/2026-11-26-天空中之城闪烁与碰撞修复.md`.
+
+## [VERIFY][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Skill atlas loading, crop and small-size rendering
+
+Luban regenerated the binary with changes confined to the 11 icon addresses in F4:F14. In isolated Unity 2023.2.20f1c1 Play Mode, DefaultPackage and the real resource loader passed 29/29 checks. For each skill, the battle-node, detail and hotbar callbacks returned the same Sprite. All 14 page masks resolved to the circular subasset. Captures cover 87, 103 and 48 pixels. Original-character online browsing and a packaged Player remain unverified. Evidence in `_temp/skill-icons-dark-20261126/`. See `项目修改日志/2026-11-26-技能图标暗黑风格统一.md`.

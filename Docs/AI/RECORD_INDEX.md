@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `9cba323f1abf34be864770329e1602095fd2108e42362612246df4edc57d26e6`
+Source normalized SHA256: `1398bf3a800d8a03932839af30983aa83b4eb550825167b06d89c20bb42e90f3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -152,11 +152,12 @@ Source normalized SHA256: `9cba323f1abf34be864770329e1602095fd2108e42362612246df
 | [CODE][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Sky City professions and public-line guard patrols | 1023-1027 |
 | [FILES][场景][主城][MAIN-CITY-EAST-WARDS-20261126] Public map 0 eastward city expansion | 1028-1032 |
 | [CODE][FILES][场景][NPC][传送点][TWIN-CITY-BUILDING-NPCS-COACH-20261126] Residents for both cities and the working carriage launcher | 1033-1037 |
-| [FILES][场景][碰撞][SKY-CITY-SURFACE-PHYSICS-20261126] Map 1 bridge seams and street collision | 1038-1041 |
+| [FILES][场景][碰撞][SKY-CITY-SURFACE-PHYSICS-20261126] Map 1 bridge seams and street collision | 1038-1042 |
+| [CODE][FILES][HANDOFF][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Dark fantasy art for every configured skill | 1043-1045 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `f8f620b184864eb4bd9b4bc18912ce106e7e47d615d7d3588d8d7740b671765d`
+Source normalized SHA256: `430134560d77d0b350ed667c6f42c40c8a6be1f5f25220c9dafeedbfe8f3024b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -301,7 +302,8 @@ Source normalized SHA256: `f8f620b184864eb4bd9b4bc18912ce106e7e47d615d7d3588d8d7
 | [VERIFY][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Two Unity players and three real socket roles | 1062-1066 |
 | [VERIFY][场景][主城][导航][MAIN-CITY-EAST-WARDS-20261126] East wards scale, access and navigation | 1067-1071 |
 | [VERIFY][场景][NPC][传送点][TWIN-CITY-BUILDING-NPCS-COACH-20261126] Two-city residency, dialogue and carriage arrivals | 1072-1076 |
-| [VERIFY][场景][碰撞][导航][SKY-CITY-SURFACE-PHYSICS-20261126] Role movement and moving-camera seam checks | 1077-1080 |
+| [VERIFY][场景][碰撞][导航][SKY-CITY-SURFACE-PHYSICS-20261126] Role movement and moving-camera seam checks | 1077-1081 |
+| [VERIFY][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Skill atlas loading, crop and small-size rendering | 1082-1084 |
 
 ## Docs/AI/DECISIONS.en.md
 

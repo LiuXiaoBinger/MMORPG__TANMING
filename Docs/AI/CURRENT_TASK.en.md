@@ -1039,3 +1039,7 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 
 - Map 1 `天空中之城` now trims coplanar road, bridge and arch faces. The southwest artisans' gate and northeast guild gate share a stone-shell collider with an open arch. Seven house prefabs and the city wall now match their visible exterior. Corrected tree-pit rims and trunks, five market counters and stalls, and both piers' guard ropes and fixed cargo fittings.
 - The latest north palace and garden arcade from `9e97767` are included. Native navigation, both shared navigation files, the area map and the minimap were refreshed. The 26-resource manifest, captures and delivery receipts are in `项目修改日志/2026-11-26-天空中之城闪烁与碰撞修复.md`.
+
+## [CODE][FILES][HANDOFF][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Dark fantasy art for every configured skill
+
+All 11 active skill definitions now reference named slices of `MartialSkillIcons.png`. Each 248×248 sprite has a distinct silhouette and four pixels of edge padding. The skill table and the two prefab defaults point to the new art. All 14 battle, movement, enlarged movement and detail masks use the existing round sprite. The hotbar uses its existing slot geometry. See `项目修改日志/2026-11-26-技能图标暗黑风格统一.md`.
