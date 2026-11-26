@@ -48,6 +48,7 @@ public sealed partial class EquipInfo : Luban.BeanBase
         GeneValue3 = _buf.ReadInt();
         GeneValue4 = _buf.ReadInt();
         GeneValue5 = _buf.ReadInt();
+        Quality = _buf.ReadInt();
     }
 
     public static EquipInfo DeserializeEquipInfo(ByteBuf _buf)
@@ -183,6 +184,10 @@ public sealed partial class EquipInfo : Luban.BeanBase
     /// 属性槽位5数值
     /// </summary>
     public readonly int GeneValue5;
+    /// <summary>
+    /// 装备品质，0 为未标注，1 白、2 绿、3 蓝、4 紫、5 金
+    /// </summary>
+    public readonly int Quality;
    
     public const int __ID__ = -1215706914;
     public override int GetTypeId() => __ID__;
@@ -226,6 +231,7 @@ public sealed partial class EquipInfo : Luban.BeanBase
         + "GeneValue3:" + GeneValue3 + ","
         + "GeneValue4:" + GeneValue4 + ","
         + "GeneValue5:" + GeneValue5 + ","
+        + "Quality:" + Quality + ","
         + "}";
     }
 }

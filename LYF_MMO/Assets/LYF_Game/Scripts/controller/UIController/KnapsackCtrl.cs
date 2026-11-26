@@ -10,6 +10,9 @@ public sealed class KnapsackCtrl : IDisposable
 {
 
     #region 字段
+    /// <summary>装备表品质值对应的详情标签，索引 0 供未标注品质的既有装备使用。</summary>
+    private static readonly string[] EquipmentQualityNames = { "—", "白色", "绿色", "蓝色", "紫色", "金色" };
+
     /// <summary>计入套装的六个穿戴部位，顺序与详情展开区一致。</summary>
     private static readonly EquipType[] SetParts =
     {
@@ -1055,8 +1058,13 @@ public sealed class KnapsackCtrl : IDisposable
         {
             result.WornBadgeText = "装备中";
         }
-        // 右上部位与品质、绑定拆成两个独立 TMP；品质与绑定没有真实字段，统一中性占位。
-        result.HeaderPartText = EquipmentPartName((EquipType)config.EquipType) + " · 品质 —";
+        // 品质按该装备的配置展示，旧表中未标注的装备保留占位。
+        string qualityName = EquipmentQualityNames[0];
+        if (config.Quality > 0 && config.Quality < EquipmentQualityNames.Length)
+        {
+            qualityName = EquipmentQualityNames[config.Quality];
+        }
+        result.HeaderPartText = result.PartName + " · 品质 " + qualityName;
         result.HeaderBindText = "绑定 —";
         // 原元信息行改承担评分与需求，两行都在窄区内。
         result.MetaText = BuildMetaText(config);
@@ -1077,7 +1085,7 @@ public sealed class KnapsackCtrl : IDisposable
         return result;
     }
 
-    /// <summary>生成头部元信息：评分与需求等级两行，职业为中性占位，状态由角标单独承载。</summary>
+    /// <summary>生成装备头部的评分、需求等级与装备表指定的职业名称。</summary>
     /// <param name="config">当前装备的静态配置。</param>
     /// <returns>头部元信息的两行展示文本。</returns>
     private static string BuildMetaText(cfg.EquipInfo config)
@@ -1085,7 +1093,9 @@ public sealed class KnapsackCtrl : IDisposable
         // meta 是逐段拼接的头部两行文本，避免为展示数据新建类型。
         StringBuilder meta = new StringBuilder();
         meta.Append("评分 —\n");
-        meta.Append("需求 ").Append(config.NeedLevel).Append("级 · 职业 —");
+        // 职业名称取自穿戴限制引用的职业配置，缺少匹配项时沿用占位符。
+        cfg.ProfessionInfo profession = LubanMgr.Instance.GetProfessionInfoById(config.Job);
+        meta.Append("需求 ").Append(config.NeedLevel).Append("级 · 职业 ").Append(profession?.Name ?? "—");
         return meta.ToString();
     }
 
