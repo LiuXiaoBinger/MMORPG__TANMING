@@ -1051,3 +1051,8 @@ Positive HP loss interrupts an unprotected basic attack while its damage result 
 ## [CODE][FILES][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Rank by worn items with the same active family
 
 Two distinct equipped items with the same active special-skill family in allowed parts yield one rank-2 effect. Bagged items and unselected slots do not count. Server counting already followed this rule. The Unity detail view now skips old slots on disallowed parts and labels them accordingly. Switching away or unequipping a contributing item lowers the effective rank. Business commit `4c72b7b`. See `项目修改日志/2026-11-26-装备同名激活特技叠级.md`.
+
+## [CODE][FILES][邮箱][MAIL-RO-20261126] RO role inbox and Unity integration
+
+- The main-city menu opens the native EmailPanel. EmailMgr, EmailHandler and EmailItemTemplate mirror the RO client split. Gate and GS validate the player route, MS manages RoleMail, and Center owns role_mail. Game services can send personal/offline or realm mail through MailAction. Templates 20/21 have a 30-day expiry.
+- Inventory updates and claim UIDs share the same role-save transaction. The authorized branch build also restores the existing currency exchange dependencies and keeps the numeric 1/2/3 quest-tab mapping compatible. See 项目分析/RO邮箱系统与本项目实现.md and 项目修改日志/RO邮箱系统移植-2026-11-26.md. Codex performed development without WorkBuddy.

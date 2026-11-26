@@ -332,15 +332,12 @@ public class QuickTaskPanelWidget : MonoBehaviour
     /// <returns>对应的页签枚举。</returns>
     private TaskPageFilter ToPageByIndex(int index)
     {
-        if (index == 0)
+        // 活动分支和旧存档共用 1、2、3 三个页签值，按钮按同一顺序从零编号。
+        if (index == 0 || index == 1)
         {
-            return TaskPageFilter.Adventure;
+            return (TaskPageFilter)(index + 1);
         }
-        if (index == 1)
-        {
-            return TaskPageFilter.Story;
-        }
-        return TaskPageFilter.Other;
+        return (TaskPageFilter)3;
     }
 
     /// <summary>按展开或折叠状态更新箭头朝向，内嵌按钮沿用旧布局的停靠位置。</summary>

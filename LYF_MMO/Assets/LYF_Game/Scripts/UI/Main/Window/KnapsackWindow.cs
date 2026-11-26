@@ -20,6 +20,9 @@ public class KnapsackWindow : WindowBase
     /// <summary>背包物品被点击时通知控制器，参数是服务器物品 UID。</summary>
     public event Action<long> ItemSelected;
 
+    /// <summary>货币栏前三格的兑换加号被点击；参数为页签 0兑铜币 1兑银两 2兑银票。元宝没有加号。</summary>
+    public event Action<int> MoneyExchangeRequested;
+
     // ============================================================
     // 一、Inspector 可配置字段
     // ============================================================
@@ -45,6 +48,12 @@ public class KnapsackWindow : WindowBase
     // 顶部货币显示：铜币、银子、银票、元宝四格，顺序与预制体从左到右一致。
     /// <summary>四格货币数值文本，下标 0~3 依次为铜币、银子、银票、元宝。</summary>
     [SerializeField, Header("货币数值")] private TMP_Text[] _moneyValues;
+
+    /// <summary>货币栏前三格的兑换入口按钮，下标与兑换页签一致；元宝是充值货币不提供兑换。</summary>
+    [SerializeField, Header("货币兑换入口")] private Button[] _moneyExchangeButtons;
+
+    /// <summary>兑换按钮上注册的监听，销毁时按引用逐个移除。</summary>
+    private UnityEngine.Events.UnityAction[] _moneyExchangeHandlers;
 
     // ============================================================
     // 二、背包分类 Tab 按钮
@@ -221,6 +230,7 @@ public class KnapsackWindow : WindowBase
         }
         CategorySelected = null;
         FrameUpdated = null;
+        MoneyExchangeRequested = null;
     }
     #endregion
 
@@ -714,6 +724,7 @@ public class KnapsackWindow : WindowBase
         if (_btnConsume != null) _btnConsume.onClick.AddListener(SelectConsume);
         if (_btnMaterial != null) _btnMaterial.onClick.AddListener(SelectMaterial);
         if (_btnCurrtEquip != null) _btnCurrtEquip.onClick.AddListener(SelectCurrtEquip);
+        BindMoneyButtons();
     }
 
     /// <summary>仅移除本窗口添加的五个分类监听。</summary>
@@ -724,6 +735,60 @@ public class KnapsackWindow : WindowBase
         if (_btnConsume != null) _btnConsume.onClick.RemoveListener(SelectConsume);
         if (_btnMaterial != null) _btnMaterial.onClick.RemoveListener(SelectMaterial);
         if (_btnCurrtEquip != null) _btnCurrtEquip.onClick.RemoveListener(SelectCurrtEquip);
+        UnbindMoneyButtons();
+    }
+
+    /// <summary>为货币栏前三格的加号注册兑换入口；元宝（下标 3）不注册。</summary>
+    private void BindMoneyButtons()
+    {
+        if (_moneyExchangeButtons == null)
+        {
+            return;
+        }
+        UnbindMoneyButtons();
+        _moneyExchangeHandlers = new UnityEngine.Events.UnityAction[_moneyExchangeButtons.Length];
+        for (int i = 0; i < _moneyExchangeButtons.Length; i++)
+        {
+            int page = i;
+            UnityEngine.Events.UnityAction handler = delegate { OnMoneyExchangeClicked(page); };
+            _moneyExchangeHandlers[i] = handler;
+            if (_moneyExchangeButtons[i] != null)
+            {
+                _moneyExchangeButtons[i].onClick.AddListener(handler);
+            }
+        }
+    }
+
+    /// <summary>只移除本窗口注册的兑换入口监听。</summary>
+    private void UnbindMoneyButtons()
+    {
+        if (_moneyExchangeHandlers == null || _moneyExchangeButtons == null)
+        {
+            _moneyExchangeHandlers = null;
+            return;
+        }
+        for (int i = 0; i < _moneyExchangeHandlers.Length && i < _moneyExchangeButtons.Length; i++)
+        {
+            if (_moneyExchangeButtons[i] != null && _moneyExchangeHandlers[i] != null)
+            {
+                _moneyExchangeButtons[i].onClick.RemoveListener(_moneyExchangeHandlers[i]);
+            }
+        }
+        _moneyExchangeHandlers = null;
+    }
+
+    /// <summary>转发货币兑换请求；只有前三格有效。</summary>
+    private void OnMoneyExchangeClicked(int page)
+    {
+        if (page < 0 || page > 2)
+        {
+            return;
+        }
+        Action<int> handler = MoneyExchangeRequested;
+        if (handler != null)
+        {
+            handler.Invoke(page);
+        }
     }
 
     /// <summary>注册滚动位置变化，事件参数不用，实际位置从 Content 读取。</summary>

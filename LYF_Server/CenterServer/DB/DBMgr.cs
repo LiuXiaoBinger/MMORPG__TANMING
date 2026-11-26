@@ -53,6 +53,7 @@ public class DBMgr:Singleton<DBMgr>
             ,typeof(EquipSpecialSkillTable)
             ,typeof(RoleShopPurchaseTable)
             ,typeof(TradeListingTable)
+            ,typeof(RoleMailTable)
             ,typeof(StallReceiptTable)
             ,typeof(RoleCountTable)); //角色通用次数
 

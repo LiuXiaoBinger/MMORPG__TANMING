@@ -14,6 +14,8 @@ public class MainCtrl : CtrlBase
     private readonly DungeonFlowCtrl _dungeonFlowCtrl;
     /// <summary>监听主角死亡并处理主动复活的窗口控制器。</summary>
     private readonly DeathCtrl _deathCtrl;
+    /// <summary>当前主城收件箱的选择、阅读和领取交互。</summary>
+    private readonly EmailHandler _emailHandler;
 
     #region 字段
     /// <summary>主界面视图集合。</summary>
@@ -103,6 +105,12 @@ public class MainCtrl : CtrlBase
         _themeDungeonTeamCtrl = new ThemeDungeonTeamCtrl(_mainView);
         _dungeonFlowCtrl = new DungeonFlowCtrl(_mainView);
         _deathCtrl = new DeathCtrl(_mainView);
+        if (_mainView.emailPanel != null)
+        {
+            _emailHandler = new EmailHandler(_mainView.emailPanel, _mainView.emailHint);
+            _mainView.emailButton.onClick.AddListener(OpenEmail);
+            _emailHandler.BindRole(Global.Instance?.SceneWorld?.LocalRole?.BaseInfo?.RoleId ?? 0);
+        }
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
             Global.Instance.SceneWorld.LocalRoleChanged += OnLocalRoleChanged;
@@ -317,6 +325,11 @@ public class MainCtrl : CtrlBase
             Global.Instance.SceneWorld.LocalRoleChanged -= OnLocalRoleChanged;
         }
         _deathCtrl.Dispose();
+        if (_emailHandler != null)
+        {
+            _mainView.emailButton.onClick.RemoveListener(OpenEmail);
+            _emailHandler.Dispose();
+        }
         if (_currentTalkNpc != null) CloseNpcTalk();
         OnNpcTalkClosed();
     }
@@ -484,6 +497,7 @@ public class MainCtrl : CtrlBase
     /// <param name="role">新的本地角色，null 表示角色已离场。</param>
     private void OnLocalRoleChanged(PlayerEntity role)
     {
+        _emailHandler?.BindRole(role?.BaseInfo?.RoleId ?? 0);
         _mainView.RoleShieldWidget?.Clear();
         _mainView.CombatStatus?.SetShield(0, 0);
         _roleInfoCtrl.BindGeneRole(role);
@@ -555,6 +569,9 @@ public class MainCtrl : CtrlBase
     {
         ShowMainWindow(WindowType.TreasurePavilionWindow);
     }
+
+    /// <summary>从主城信封入口走既有 WindowType 显隐流程。</summary>
+    private void OpenEmail() { ShowMainWindow(WindowType.EmailPanel); }
 
     /// <summary>从主城功能菜单打开或收起交易窗口。</summary>
     private void OnTradeMarketRequested()

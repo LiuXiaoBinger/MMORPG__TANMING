@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+// 四个操作值与 RO 的 MailOpType 一致。
+enum MailOpType {
+  Mail_None = 0;
+  Mail_Read = 1;
+  Mail_Del = 2;
+  Mail_ReadAll = 3;
+  Mail_DelAll = 4;
+}
+// 列表仅下发信封，时间均为 Unix 秒。
+message MailBaseInfo {
+  int64 mail_uid = 1;
+  int32 mail_id = 2; // 模板编号，自定义信为零。
+  int64 create_time = 3;
+  int64 expire_time = 4;
+  bool is_read = 5;
+  bool is_has_item = 6; // 已领取仍保留附件展示。
+  string title = 7;
+  bool important = 8;
+}
+// 单个附件沿用本项目物品配置编号、件数及绑定标记。
+message MailItem {
+  int32 item_id = 1;
+  int32 count = 2;
+  bool is_bind = 3;
+}
+// 正文随单封详情下发；发件内容和附件由服务端决定。
+message MailContent {
+  string content = 1;
+  repeated MailItem mail_items = 4;
+  string send_name = 5;
+}
+message MailInfo {
+  MailBaseInfo base_info = 1;
+  MailContent content_info = 2;
+}
+message GetMailListArg {}
+message GetMailListRes {
+  repeated MailBaseInfo mails = 1;
+  string error = 2;
+  bool has_unread = 3; // 包含展示上限以外仍未读的信。
+}
+message GetOneMailArg { int64 mail_uid = 1; }
+message GetOneMailRes {
+  string error = 1;
+  MailInfo mail_info = 2;
+}
+message MailOpArg {
+  MailOpType op_type = 1;
+  int64 mail_uid = 2;
+}
+message MailOpRes {
+  string error = 1; // 一键领取部分成功时，仍附实际成功的 UID。
+  MailOpType op_type = 2;
+  int64 mail_uid = 3;
+  repeated int64 read_mail_uids = 4;
+}
+message UpdateMailNtf { bool has_unread = 1; }
+// 业务系统传入的模板信，接收角色、有效期和奖励来自可信服务。
+message SMailTemplate {
+  int32 mail_id = 1;
+  string title = 2;
+  MailContent content = 3;
+  int32 expire_days = 4;
+  bool important = 5;
+}
+message GsSendMailArg {
+  int32 role_id = 1; // 正数为指定角色，零为本区已有角色。
+  SMailTemplate mail = 2;
+}
+// 下列字段仅在 GS、MS 与中心服间传递，客户端不能提交角色投递地址。
+message MailCall {
+  int32 role_id = 1;
+  int32 game_link = 2;
+  int32 command = 3;
+  int64 mail_uid = 4;
+  MailOpType op_type = 5;
+  repeated MailInfo mails = 6;
+  MailOpRes result = 7;
+  int32 realm_id = 8;
+  bool has_unread = 9;
+  SMailTemplate send_mail = 10;
+}

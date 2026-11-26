@@ -385,6 +385,7 @@ public static class GameMessageProtocolRegister
             new CityPortalHandler(), CenterMessageRoute.Internal);
         TeamMessageHandler.Register(server, messageManager);
         ChatMessageHandler.Register(server, messageManager);
+        MailMessageHandler.Register(server, messageManager);
         IGameMessageHandler loginGameServerHandler = new LoginGameServerHandler();
         IGameMessageHandler createRoleHandler = new CreateRoleHandler();
         IGameMessageHandler startGameHandler = new StartGameHandler();

@@ -51,6 +51,8 @@ namespace CenterServer
             // 市场托管数据的读取与撤单共用中心服数据库配置。
             StallLoadCtrl stall = new StallLoadCtrl(db.CurrentConnectionConfig);
             server.RegistCommand(StallCode.Load, stall);
+            // 本区 MS 经内部连接向共享角色库操作邮箱。
+            server.RegistCommand(MailCode.MailOperation, new MailStore(db.CurrentConnectionConfig));
             server.RegistCommand(StallCode.StallSellItemCancelCommit, stall);
             server.RegistCommand(StallCode.Prepare, stall);
             server.RegistCommand(StallCode.Resume, stall);

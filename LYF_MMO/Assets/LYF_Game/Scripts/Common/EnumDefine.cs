@@ -35,6 +35,7 @@ public enum WindowType
     EquipmentWorkshopWindow = 1003, // 从装备详情进入的强化、镶嵌、洗炼、继承和升级窗口。
     TradeMarketWindow = 1004, // 主城交易目录、个人摊位与风雷藏拍。
     TreasurePavilionWindow = 1006, // 主城珍宝阁的四个频道。
+    EmailPanel = 1008, // 主城角色收件箱，列出信件并领取附件。
     AreaMapWindow = 1005 // 从小地图进入的区域与世界地图。
 }
 

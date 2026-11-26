@@ -132,6 +132,7 @@ public sealed class KnapsackCtrl : IDisposable
             _window.CategorySelected += OnCategorySelected;
             _window.FrameUpdated += OnWindowFrameUpdated;
             _window.ItemSelected += OpenBagItem;
+            _window.MoneyExchangeRequested += OnMoneyExchangeRequested;
         }
         if (_equipmentWindow != null)
         {
@@ -171,6 +172,7 @@ public sealed class KnapsackCtrl : IDisposable
             _window.CategorySelected -= OnCategorySelected;
             _window.FrameUpdated -= OnWindowFrameUpdated;
             _window.ItemSelected -= OpenBagItem;
+            _window.MoneyExchangeRequested -= OnMoneyExchangeRequested;
         }
         if (_equipmentWindow != null)
         {
@@ -446,6 +448,64 @@ public sealed class KnapsackCtrl : IDisposable
             _itemComponent.GetVirtualItemCount(SilverItemId),
             _itemComponent.GetVirtualItemCount(TicketItemId),
             _itemComponent.GetVirtualItemCount(YuanbaoItemId));
+    }
+
+    /// <summary>读取四种货币余额，供兑换窗口渲染；顺序为铜币、银子、银票、元宝。</summary>
+    public void ReadMoney(out long copper, out long silver, out long ticket, out long yuanbao)
+    {
+        copper = 0L;
+        silver = 0L;
+        ticket = 0L;
+        yuanbao = 0L;
+        if (_itemComponent == null)
+        {
+            return;
+        }
+        copper = _itemComponent.GetVirtualItemCount(CopperItemId);
+        silver = _itemComponent.GetVirtualItemCount(SilverItemId);
+        ticket = _itemComponent.GetVirtualItemCount(TicketItemId);
+        yuanbao = _itemComponent.GetVirtualItemCount(YuanbaoItemId);
+    }
+
+    /// <summary>原子完成一次货币兑换：先扣支付货币，再发产出货币；发放失败时回滚。</summary>
+    /// <returns>扣减与发放都成功返回 true，随后会刷新背包货币栏。</returns>
+    public bool ApplyCurrencyExchange(int fromItemId, long fromCount, int toItemId, long toCount)
+    {
+        if (_itemComponent == null || fromCount <= 0L || toCount <= 0L)
+        {
+            return false;
+        }
+        // 元宝是充值货币，任何兑换都不允许把它作为产出。
+        if (toItemId == YuanbaoItemId || toCount > int.MaxValue)
+        {
+            return false;
+        }
+        if (!_itemComponent.TakeVirtualItem(fromItemId, fromCount))
+        {
+            return false;
+        }
+        if (!_itemComponent.GiveVirtualItem(toItemId, toCount))
+        {
+            _itemComponent.GiveVirtualItem(fromItemId, fromCount);
+            return false;
+        }
+        RefreshMoney();
+        return true;
+    }
+
+    /// <summary>货币栏加号入口：打开兑换窗口并选中对应页签；窗口已打开时只切页不关闭。</summary>
+    private void OnMoneyExchangeRequested(int page)
+    {
+        if (_mainView == null)
+        {
+            return;
+        }
+        CurrencyExchangeWindow window = _mainView.CurrencyExchangeWindow;
+        if (window != null)
+        {
+            // 与角标上的持久监听走同一个幂等入口：窗口已开时只切页，不会再被 toggle 关掉。
+            window.Open(page);
+        }
     }
 
     /// <summary>保留的旧事件增量处理方法，当前未被调用；按增删移事件修改对应格子，不重建列表。</summary>

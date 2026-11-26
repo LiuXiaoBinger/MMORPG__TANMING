@@ -29,7 +29,13 @@ internal static class MasterServerApp
         server.RegistCommand(NetDefine.PtcG2M_ChatAudioTransfer, teams);
         server.RegistCommand(NetDefine.CMD_MasterTeamRequest, teams);
         server.RegistCommand(NetDefine.CMD_MasterTeamOffline, teams);
+        // 区服邮箱和队伍共用此 MS 监听器，各自处理本领域的内部命令。
+        RoleMail mail = new RoleMail(realm);
+        server.RegistCommand(MailCode.RoleRequest, mail);
+        server.RegistCommand(MailCode.Subscribe, mail);
+        server.RegistCommand(MailCode.GsSendMail, mail);
         server.OnSessionDisconnected = teams.RemoveGame;
+        server.OnSessionDisconnected += mail.RemoveGame;
         // 独立分区或隔离验证可单独配置监听端口。
         server.StartServer(host, port);
         // 确认超时由 MS 主循环结束，100 毫秒粒度不承担任何副本或战斗运算。

@@ -110,6 +110,7 @@ message SaveRoleDataReq
 {
   int64 stall_ticket = 8; // 摆摊资产变更和本次角色快照在同一事务内提交。
   RoleItemInfo stall_escrow = 9; // 新寄售时保存的实际材料快照。
+  repeated int64 claimed_mail_uids = 10; // 与本版背包在同一事务提交的附件邮件编号。
 	int32 role_id = 1;//角色 ID
 	int64 version = 2;//角色物品变更版本，用于重试幂等和 ACK 匹配
 	repeated ItemDataList item_data_lists = 3;//本次发生变化的背包完整快照

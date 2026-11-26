@@ -44,33 +44,33 @@ public static partial class RequestEntityReflection {
           "Y2tfdHlwZRgDIAEoBSJdChhTeW5jS25hcHNhY2tHcmlkQ291bnRSZXESDwoH",
           "cm9sZV9pZBgBIAEoBRIZChFvcGVuZWRfZ3JpZF9jb3VudBgCIAEoBRIVCg1r",
           "bmFwc2Fja190eXBlGAMgASgFIj4KDEl0ZW1EYXRhTGlzdBIQCghiYWdfdHlw",
-          "ZRgBIAEoBRIcCgVpdGVtcxgCIAMoCzINLlJvbGVJdGVtSW5mbyKNAgoPU2F2",
+          "ZRgBIAEoBRIcCgVpdGVtcxgCIAMoCzINLlJvbGVJdGVtSW5mbyKoAgoPU2F2",
           "ZVJvbGVEYXRhUmVxEhQKDHN0YWxsX3RpY2tldBgIIAEoAxIjCgxzdGFsbF9l",
-          "c2Nyb3cYCSABKAsyDS5Sb2xlSXRlbUluZm8SDwoHcm9sZV9pZBgBIAEoBRIP",
-          "Cgd2ZXJzaW9uGAIgASgDEiYKD2l0ZW1fZGF0YV9saXN0cxgDIAMoCzINLkl0",
-          "ZW1EYXRhTGlzdBIsChRyb2xlX2NvdW50X2luZm9fbGlzdBgFIAMoCzIOLlJv",
-          "bGVDb3VudEluZm8SGwoTcm9sZV9jb3VudF9zbmFwc2hvdBgGIAEoCBIkCgxz",
-          "a2lsbF9sZXZlbHMYByADKAsyDi5Sb2xlU2tpbGxJbmZvSgQIBBAFIjIKC0J1",
-          "eVNob3BJdGVtEhAKCGdvb2RzX2lkGAEgASgNEhEKCWJ1eV9jb3VudBgCIAEo",
-          "DSJPCg5CdXlTaG9wSXRlbVJlcRIPCgdzaG9wX2lkGAEgASgNEhsKBWl0ZW1z",
-          "GAIgAygLMgwuQnV5U2hvcEl0ZW0SDwoHcm9sZV9pZBgFIAEoDSKLAQoQTW92",
-          "ZU9wZXJhdGlvblJlcRIKCgJkeBgBIAEoAhIKCgJkeRgCIAEoAhIKCgJkehgD",
-          "IAEoAhIMCgRmYWNlGAQgASgCEgwKBHRpbWUYBSABKAISEQoJaXNfbW92aW5n",
-          "GAYgASgIEhAKCGlzX21vdmVkGAcgASgIEhIKCmp1bXBfY291bnQYCCABKAUi",
-          "IgoNQ3JlYXRlVGVhbUFyZxIRCgl0YXJnZXRfaWQYASABKAUiJAoRSW52aXRl",
-          "Sm9pblRlYW1BcmcSDwoHdXNlcl9pZBgBIAEoBCJNChdBY2NlcHRUZWFtSW52",
-          "YXRhdGlvbkFyZxIPCgd0ZWFtX2lkGAEgASgEEhIKCmludml0ZXJfaWQYAiAB",
-          "KAQSDQoFYWdyZWUYAyABKAgiHwoMTGVhdmVUZWFtQXJnEg8KB3JvbGVfaWQY",
-          "ASABKAQiJwoUQmVnSW5UZWFtQnlUZWFtSWRBcmcSDwoHdGVhbV9pZBgBIAEo",
-          "BCJyChhDYXB0YWluUmVxdWVzdEVudGVyRkJBcmcSEgoKZHVuZ2Vvbl9pZBgB",
-          "IAEoBRISCgpjaGFwdGVyX2lkGAIgASgFEhcKD2R1bmdlb25zX2RlZ3JlZRgD",
-          "IAEoBRIVCg1kdW5nZW9uX2xheWVyGAQgASgFIvQBChFFcXVpcE9wZXJhdGlv",
-          "blJlcRIQCghpdGVtX3VpZBgBIAEoAxIiCglvcGVyYXRpb24YAiABKA4yDy5F",
-          "cXVpcE9wZXJhdGlvbhIbChNzcGVjaWFsX3NraWxsX2luZGV4GAMgASgFEhgK",
-          "EGdlbV9zb2NrZXRfaW5kZXgYBCABKAUSEwoLZ2VtX2l0ZW1faWQYBSABKAUS",
-          "FgoOYmFnX2dlbV9jb3VudHMYBiADKAUSGQoRbWFya2V0X2dlbV9jb3VudHMY",
-          "ByADKAUSGQoMYnV5X3F1YW50aXR5GAggASgFSACIAQFCDwoNX2J1eV9xdWFu",
-          "dGl0eWIGcHJvdG8z"));
+          "c2Nyb3cYCSABKAsyDS5Sb2xlSXRlbUluZm8SGQoRY2xhaW1lZF9tYWlsX3Vp",
+          "ZHMYCiADKAMSDwoHcm9sZV9pZBgBIAEoBRIPCgd2ZXJzaW9uGAIgASgDEiYK",
+          "D2l0ZW1fZGF0YV9saXN0cxgDIAMoCzINLkl0ZW1EYXRhTGlzdBIsChRyb2xl",
+          "X2NvdW50X2luZm9fbGlzdBgFIAMoCzIOLlJvbGVDb3VudEluZm8SGwoTcm9s",
+          "ZV9jb3VudF9zbmFwc2hvdBgGIAEoCBIkCgxza2lsbF9sZXZlbHMYByADKAsy",
+          "Di5Sb2xlU2tpbGxJbmZvSgQIBBAFIjIKC0J1eVNob3BJdGVtEhAKCGdvb2Rz",
+          "X2lkGAEgASgNEhEKCWJ1eV9jb3VudBgCIAEoDSJPCg5CdXlTaG9wSXRlbVJl",
+          "cRIPCgdzaG9wX2lkGAEgASgNEhsKBWl0ZW1zGAIgAygLMgwuQnV5U2hvcEl0",
+          "ZW0SDwoHcm9sZV9pZBgFIAEoDSKLAQoQTW92ZU9wZXJhdGlvblJlcRIKCgJk",
+          "eBgBIAEoAhIKCgJkeRgCIAEoAhIKCgJkehgDIAEoAhIMCgRmYWNlGAQgASgC",
+          "EgwKBHRpbWUYBSABKAISEQoJaXNfbW92aW5nGAYgASgIEhAKCGlzX21vdmVk",
+          "GAcgASgIEhIKCmp1bXBfY291bnQYCCABKAUiIgoNQ3JlYXRlVGVhbUFyZxIR",
+          "Cgl0YXJnZXRfaWQYASABKAUiJAoRSW52aXRlSm9pblRlYW1BcmcSDwoHdXNl",
+          "cl9pZBgBIAEoBCJNChdBY2NlcHRUZWFtSW52YXRhdGlvbkFyZxIPCgd0ZWFt",
+          "X2lkGAEgASgEEhIKCmludml0ZXJfaWQYAiABKAQSDQoFYWdyZWUYAyABKAgi",
+          "HwoMTGVhdmVUZWFtQXJnEg8KB3JvbGVfaWQYASABKAQiJwoUQmVnSW5UZWFt",
+          "QnlUZWFtSWRBcmcSDwoHdGVhbV9pZBgBIAEoBCJyChhDYXB0YWluUmVxdWVz",
+          "dEVudGVyRkJBcmcSEgoKZHVuZ2Vvbl9pZBgBIAEoBRISCgpjaGFwdGVyX2lk",
+          "GAIgASgFEhcKD2R1bmdlb25zX2RlZ3JlZRgDIAEoBRIVCg1kdW5nZW9uX2xh",
+          "eWVyGAQgASgFIvQBChFFcXVpcE9wZXJhdGlvblJlcRIQCghpdGVtX3VpZBgB",
+          "IAEoAxIiCglvcGVyYXRpb24YAiABKA4yDy5FcXVpcE9wZXJhdGlvbhIbChNz",
+          "cGVjaWFsX3NraWxsX2luZGV4GAMgASgFEhgKEGdlbV9zb2NrZXRfaW5kZXgY",
+          "BCABKAUSEwoLZ2VtX2l0ZW1faWQYBSABKAUSFgoOYmFnX2dlbV9jb3VudHMY",
+          "BiADKAUSGQoRbWFya2V0X2dlbV9jb3VudHMYByADKAUSGQoMYnV5X3F1YW50",
+          "aXR5GAggASgFSACIAQFCDwoNX2J1eV9xdWFudGl0eWIGcHJvdG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -89,7 +89,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::OpenKnapsackGridReq), global::OpenKnapsackGridReq.Parser, new[]{ "RoleId", "OpenGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SyncKnapsackGridCountReq), global::SyncKnapsackGridCountReq.Parser, new[]{ "RoleId", "OpenedGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ItemDataList), global::ItemDataList.Parser, new[]{ "BagType", "Items" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SaveRoleDataReq), global::SaveRoleDataReq.Parser, new[]{ "StallTicket", "StallEscrow", "RoleId", "Version", "ItemDataLists", "RoleCountInfoList", "RoleCountSnapshot", "SkillLevels" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SaveRoleDataReq), global::SaveRoleDataReq.Parser, new[]{ "StallTicket", "StallEscrow", "ClaimedMailUids", "RoleId", "Version", "ItemDataLists", "RoleCountInfoList", "RoleCountSnapshot", "SkillLevels" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItem), global::BuyShopItem.Parser, new[]{ "GoodsId", "BuyCount" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItemReq), global::BuyShopItemReq.Parser, new[]{ "ShopId", "Items", "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MoveOperationReq), global::MoveOperationReq.Parser, new[]{ "Dx", "Dy", "Dz", "Face", "Time", "IsMoving", "IsMoved", "JumpCount" }, null, null, null, null),
@@ -4045,6 +4045,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   public SaveRoleDataReq(SaveRoleDataReq other) : this() {
     stallTicket_ = other.stallTicket_;
     stallEscrow_ = other.stallEscrow_ != null ? other.stallEscrow_.Clone() : null;
+    claimedMailUids_ = other.claimedMailUids_.Clone();
     roleId_ = other.roleId_;
     version_ = other.version_;
     itemDataLists_ = other.itemDataLists_.Clone();
@@ -4088,6 +4089,20 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
     set {
       stallEscrow_ = value;
     }
+  }
+
+  /// <summary>Field number for the "claimed_mail_uids" field.</summary>
+  public const int ClaimedMailUidsFieldNumber = 10;
+  private static readonly pb::FieldCodec<long> _repeated_claimedMailUids_codec
+      = pb::FieldCodec.ForInt64(82);
+  private readonly pbc::RepeatedField<long> claimedMailUids_ = new pbc::RepeatedField<long>();
+  /// <summary>
+  /// 与本版背包在同一事务提交的附件邮件编号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<long> ClaimedMailUids {
+    get { return claimedMailUids_; }
   }
 
   /// <summary>Field number for the "role_id" field.</summary>
@@ -4194,6 +4209,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
     }
     if (StallTicket != other.StallTicket) return false;
     if (!object.Equals(StallEscrow, other.StallEscrow)) return false;
+    if(!claimedMailUids_.Equals(other.claimedMailUids_)) return false;
     if (RoleId != other.RoleId) return false;
     if (Version != other.Version) return false;
     if(!itemDataLists_.Equals(other.itemDataLists_)) return false;
@@ -4209,6 +4225,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
     int hash = 1;
     if (StallTicket != 0L) hash ^= StallTicket.GetHashCode();
     if (stallEscrow_ != null) hash ^= StallEscrow.GetHashCode();
+    hash ^= claimedMailUids_.GetHashCode();
     if (RoleId != 0) hash ^= RoleId.GetHashCode();
     if (Version != 0L) hash ^= Version.GetHashCode();
     hash ^= itemDataLists_.GetHashCode();
@@ -4256,6 +4273,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
       output.WriteRawTag(74);
       output.WriteMessage(StallEscrow);
     }
+    claimedMailUids_.WriteTo(output, _repeated_claimedMailUids_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -4289,6 +4307,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
       output.WriteRawTag(74);
       output.WriteMessage(StallEscrow);
     }
+    claimedMailUids_.WriteTo(ref output, _repeated_claimedMailUids_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -4305,6 +4324,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
     if (stallEscrow_ != null) {
       size += 1 + pb::CodedOutputStream.ComputeMessageSize(StallEscrow);
     }
+    size += claimedMailUids_.CalculateSize(_repeated_claimedMailUids_codec);
     if (RoleId != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoleId);
     }
@@ -4338,6 +4358,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
       }
       StallEscrow.MergeFrom(other.StallEscrow);
     }
+    claimedMailUids_.Add(other.claimedMailUids_);
     if (other.RoleId != 0) {
       RoleId = other.RoleId;
     }
@@ -4404,6 +4425,11 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
           input.ReadMessage(StallEscrow);
           break;
         }
+        case 82:
+        case 80: {
+          claimedMailUids_.AddEntriesFrom(input, _repeated_claimedMailUids_codec);
+          break;
+        }
       }
     }
   #endif
@@ -4456,6 +4482,11 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
             StallEscrow = new global::RoleItemInfo();
           }
           input.ReadMessage(StallEscrow);
+          break;
+        }
+        case 82:
+        case 80: {
+          claimedMailUids_.AddEntriesFrom(ref input, _repeated_claimedMailUids_codec);
           break;
         }
       }

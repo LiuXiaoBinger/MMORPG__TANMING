@@ -127,6 +127,8 @@
     <Compile Include="Proto\RequestEntity.cs" />
     <Compile Include="Proto\SceneLine.cs" />
     <Compile Include="Proto\StallRead.cs" />
+    <Compile Include="Proto\PbcMail.cs" />
+    <Compile Include="Socket\com\MailCode.cs" />
     <Compile Include="Socket\com\StallCode.cs" />
     <Compile Include="Socket\com\RealmTopology.cs" />
     <Compile Include="Socket\com\SceneLineCode.cs" />

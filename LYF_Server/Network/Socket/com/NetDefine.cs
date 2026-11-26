@@ -165,4 +165,6 @@ public enum ClientType
     GateServer,
     /// <summary>独立交易进程连接共享中心服，使用普通内网 TCP。</summary>
     TradeServer,
+    /// <summary>本区 MS 向中心服操作角色邮箱的内网 TCP 连接。</summary>
+    MasterServer,
 }

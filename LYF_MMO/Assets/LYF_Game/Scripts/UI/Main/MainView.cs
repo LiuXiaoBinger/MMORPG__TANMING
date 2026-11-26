@@ -30,6 +30,11 @@ public class MainView : UIBase
    /// <summary>提供给TeamCtrl的强类型黑幕展示入口。</summary>
    public MoshentaBlackCurtainWindow MoshentaBlackCurtainWindow => _moshentaBlackCurtainWindow;
 
+   /// <summary>货币兑换窗口（兑铜币/兑银两/兑银票），元宝仅作支付来源。</summary>
+   [SerializeField] private CurrencyExchangeWindow _currencyExchangeWindow;
+   /// <summary>供兑换控制器访问的强类型窗口引用。</summary>
+   public CurrencyExchangeWindow CurrencyExchangeWindow => _currencyExchangeWindow;
+
    /// <summary>副本死亡提示与返回出生点复活窗口，引用保存在UIRoot预制体。</summary>
    [SerializeField] private DeathWindow _deathWindow;
    /// <summary>提供给死亡控制器的正式窗口。</summary>
@@ -58,6 +63,12 @@ public class MainView : UIBase
    public Button TradeMarketButton => _tradeMarketButton;
    /// <summary>供主控制器下发当前角色包裹。</summary>
    public TradeMarketWindow TradeMarketWindow => _tradeMarketWindow;
+   /// <summary>功能菜单中的信封按钮。</summary>
+   [SerializeField] internal Button emailButton;
+   /// <summary>主城功能层持有的角色邮箱窗口。</summary>
+   [SerializeField] internal EmailPanel emailPanel;
+   /// <summary>信封按钮上显示本角色有未读邮件的红点。</summary>
+   [SerializeField] internal GameObject emailHint;
 
    /// <summary>功能菜单中的珍宝阁入口。</summary>
    [SerializeField] private Button _treasurePavilionButton;
@@ -313,6 +324,11 @@ public class MainView : UIBase
       }
          _arenaSettingsWindow.Show(false);
       }
+      if (_currencyExchangeWindow != null)
+      {
+         windowDic[WindowType.CurrencyExchangeWindow] = _currencyExchangeWindow;
+         _currencyExchangeWindow.InitWindow();
+      }
       windowDic[WindowType.DeathWindow] = _deathWindow;
       _deathWindow.InitWindow();
       windowDic[WindowType.MoshentaBlackCurtainWindow] = _moshentaBlackCurtainWindow;
@@ -341,6 +357,7 @@ public class MainView : UIBase
       windowDic[WindowType.TalkWindow] = _talkWindow;
       windowDic[WindowType.ShopWindow] = _shopWindow;
       windowDic[WindowType.TradeMarketWindow] = _tradeMarketWindow;
+      windowDic[WindowType.EmailPanel] = emailPanel;
       windowDic[WindowType.TreasurePavilionWindow] = _treasurePavilionWindow;
       windowDic[WindowType.RoleAttriibuteWindow] = _roleAttriibuteWindow;
       windowDic[WindowType.SettingPanel] = _settingPanel;

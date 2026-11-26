@@ -286,7 +286,9 @@ public sealed class CRoleWriteTask
                 // 同版本要通过下方字段比较才当作重复保存；物品创建和到期时间、次数刷新时间不参与本次比较。
                 // 三类快照共用同一版本，任一数据不一致都不能确认旧请求。
                 bool countsMatch = !_request.RoleCountSnapshot || RoleCountSnapshotMatches(db, _request.RoleCountInfoList);
-                if (!SnapshotMatches(db, _request.ItemDataLists) || !countsMatch || !SkillLevelsMatch(db))
+                // 同版重发还要确认该版入包的邮件已结算，避免提前回执。
+                bool assetsMatch = countsMatch && SnapshotMatches(db, _request.ItemDataLists) && SkillLevelsMatch(db);
+                if (!assetsMatch || !MailStore.ClaimsCommitted(db, _request))
                 {
                     // 内容不一致：同版本但数据不同，拒绝并返回权威版本，GameServer 不得清脏。
                     result.Message = "角色物品保存版本内容冲突";
@@ -318,6 +320,8 @@ public sealed class CRoleWriteTask
 
             // 版本分支三：请求版本高于数据库版本，执行正常的删旧写新保存。
             SaveItemDataLists(db, _request.ItemDataLists);
+            // 邮件已领标记与本次入包的物品快照共同提交。
+            MailStore.CommitClaims(db, _request);
             if (_request.RoleCountSnapshot)
             {
                 SaveRoleCountData(db, _request.RoleId, _request.Version, _request.RoleCountInfoList);

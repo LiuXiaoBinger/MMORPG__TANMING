@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `c3de2b24cd106c9c30b94f557e55bf696101ed1ea3a3f9905527bc2105dac043`
+Source normalized SHA256: `abfa6ebc5ed57075c1e8c374351f1fc306cea41329475820fed32ab5094a4680`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -155,11 +155,12 @@ Source normalized SHA256: `c3de2b24cd106c9c30b94f557e55bf696101ed1ea3a3f9905527b
 | [FILES][场景][碰撞][SKY-CITY-SURFACE-PHYSICS-20261126] Map 1 bridge seams and street collision | 1038-1042 |
 | [CODE][FILES][HANDOFF][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Dark fantasy art for every configured skill | 1043-1046 |
 | [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Interrupting an ordinary monster attack before release | 1047-1050 |
-| [CODE][FILES][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Rank by worn items with the same active family | 1051-1053 |
+| [CODE][FILES][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Rank by worn items with the same active family | 1051-1054 |
+| [CODE][FILES][邮箱][MAIL-RO-20261126] RO role inbox and Unity integration | 1055-1058 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `cb7d5b04affe10bc36df46f54993efb75dda0666ffe231d1404704d39a1e2176`
+Source normalized SHA256: `1b9146a2ccc816d44dd603859faaf4ca952188bc77af20da43c6cd85f9f3e83b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -307,7 +308,8 @@ Source normalized SHA256: `cb7d5b04affe10bc36df46f54993efb75dda0666ffe231d140470
 | [VERIFY][场景][碰撞][导航][SKY-CITY-SURFACE-PHYSICS-20261126] Role movement and moving-camera seam checks | 1077-1081 |
 | [VERIFY][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Skill atlas loading, crop and small-size rendering | 1082-1085 |
 | [VERIFY][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Hit frames, interruption and released projectiles | 1086-1089 |
-| [VERIFY][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Same-family activation on two items | 1090-1092 |
+| [VERIFY][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Same-family activation on two items | 1090-1093 |
+| [VERIFY][邮箱][MAIL-RO-20261126] Inbox, item claims and client build | 1094-1097 |
 
 ## Docs/AI/DECISIONS.en.md
 

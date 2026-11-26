@@ -115,6 +115,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ctrl\CenterRoleCtrl.cs" />
+    <Compile Include="Ctrl\MailStore.cs" />
+    <Compile Include="DB\Table\RoleMailTable.cs" />
     <Compile Include="OnlineRealmDirectory.cs" />
     <Compile Include="Ctrl\StallLoadCtrl.cs" />
     <Compile Include="Ctrl\StallSettlement.cs" />

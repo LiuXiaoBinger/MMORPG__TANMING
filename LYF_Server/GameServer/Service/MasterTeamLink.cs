@@ -36,6 +36,10 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
         }
         // 聊天回包共用同一条 GS→MS 连接，因此队伍聊天读取的就是本分区权威名单。
         _client.RegistCommand(NetDefine.RpcC2M_SendChatMsg, this);
+        _client.RegistCommand(MailCode.Delivery, this);
+        _client.RegistCommand(MailCode.GiveMailPrize, this);
+        _client.RegistCommand(MailCode.UpdateMailNtf, this);
+        _client.RegistCommand(MailCode.GsSendMail, this);
         _client.RegistCommand(NetDefine.RpcC2M_UploadChatAudio, this);
         _client.RegistCommand(NetDefine.RpcC2M_DownloadChatAudio, this);
         _client.RegistCommand(NetDefine.PtcM2T_ChatBroadCastM2T, this);
@@ -51,6 +55,7 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
         _client.OnConnSucceed = () =>
         {
             if (RealmNode != null) _client.Send(SceneLineCode.Register, RealmNode.ToByteString());
+            _client.Send(MailCode.Subscribe, Google.Protobuf.ByteString.Empty);
             Interlocked.Exchange(ref _connected, 1);
             if (RealmNode != null) GameGlobal.Instance.EnqueueGameCommand(GameCommandSource.MasterServer, _client,
                 new BasePackage { ProtoCode = SceneLineCode.Register });
