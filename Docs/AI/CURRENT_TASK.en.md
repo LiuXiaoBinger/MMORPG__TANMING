@@ -1016,3 +1016,8 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 - In the stall's 装备升级 → 魔剑士材料, the ten 锤锻 patterns (10501–10510) require level 90 and describe upgrading equipment from 80 to 120. The ten 冶铸 patterns (10601–10610) require level 130 and describe 120 to 160. Each series covers weapon, crown, coat, legwear, shoes, belt, bracers, ring, necklace and jade pendant. The introduction lists 摆摊购买 and 副本商店兑换 as sources.
 - Tapping a market product with no offer opens its introduction in place. A positive stall quote opens seller listings. If the first listing page has already sold out, the client returns to the same catalogue and shows the introduction. Gem art reuses RO item illustrations. The two upgrade scroll designs are newly generated artwork.
 - Scope, assets, tests and Git receipts are in `项目修改日志/2026-11-26-宝石商会直购与交易所下架.md`. No live realm deployment or mobile-device test was performed.
+
+## [CODE][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Sky City professions and public-line guard patrols
+
+- Added 14 residents (five in map 41 晨钟教堂, four in map 60 金穗餐馆, five on the actual map 1 云帆码头). The chapel now has seven people including a bishop and two believers, the restaurant six including the shop-owning proprietor, commission-desk maid and cook. The three guards use human RO models.
+- GameServer owns each observed public instance's movement, turns, conversation stops and resumption. Late joins and line changes subscribe to that instance. Edit `LYF_Server/区服部署/配置/公共地图巡逻.xml` for routes and `Luaban/MiniTemplate/Datas/#NpcInfo.xlsx` for spawns. Full file list and Git receipt in `项目修改日志/2026-11-26-天空城职业NPC与巡逻同步.md`.
