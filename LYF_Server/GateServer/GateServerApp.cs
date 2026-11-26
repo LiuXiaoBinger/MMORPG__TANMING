@@ -116,6 +116,9 @@ namespace GateServer
             client.RegistCommand(NetDefine.RpcC2M_SendChatMsg, gateChatCtrl);
             client.RegistCommand(NetDefine.PtcT2C_ChattingMsgNtf, gateChatCtrl);
             GateTeamCtrl gateTeamCtrl = new GateTeamCtrl();
+            // 复用同一会话的通用转发行为，GM 权限由持有角色的游戏服核对。
+            server.RegistCommand(NetDefine.RpcC2G_GSLocalGMCmd, gateTeamCtrl);
+            client.RegistCommand(NetDefine.RpcC2G_GSLocalGMCmd, gateTeamCtrl);
             // 邮箱请求与回包复用现有会话透传，内部发信和发奖协议只在服务器间注册。
             server.RegistCommand(MailCode.GetMailList, gateTeamCtrl);
             server.RegistCommand(MailCode.GetOneMail, gateTeamCtrl);

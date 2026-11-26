@@ -44,33 +44,34 @@ public static partial class RequestEntityReflection {
           "Y2tfdHlwZRgDIAEoBSJdChhTeW5jS25hcHNhY2tHcmlkQ291bnRSZXESDwoH",
           "cm9sZV9pZBgBIAEoBRIZChFvcGVuZWRfZ3JpZF9jb3VudBgCIAEoBRIVCg1r",
           "bmFwc2Fja190eXBlGAMgASgFIj4KDEl0ZW1EYXRhTGlzdBIQCghiYWdfdHlw",
-          "ZRgBIAEoBRIcCgVpdGVtcxgCIAMoCzINLlJvbGVJdGVtSW5mbyKoAgoPU2F2",
-          "ZVJvbGVEYXRhUmVxEhQKDHN0YWxsX3RpY2tldBgIIAEoAxIjCgxzdGFsbF9l",
-          "c2Nyb3cYCSABKAsyDS5Sb2xlSXRlbUluZm8SGQoRY2xhaW1lZF9tYWlsX3Vp",
-          "ZHMYCiADKAMSDwoHcm9sZV9pZBgBIAEoBRIPCgd2ZXJzaW9uGAIgASgDEiYK",
-          "D2l0ZW1fZGF0YV9saXN0cxgDIAMoCzINLkl0ZW1EYXRhTGlzdBIsChRyb2xl",
-          "X2NvdW50X2luZm9fbGlzdBgFIAMoCzIOLlJvbGVDb3VudEluZm8SGwoTcm9s",
-          "ZV9jb3VudF9zbmFwc2hvdBgGIAEoCBIkCgxza2lsbF9sZXZlbHMYByADKAsy",
-          "Di5Sb2xlU2tpbGxJbmZvSgQIBBAFIjIKC0J1eVNob3BJdGVtEhAKCGdvb2Rz",
-          "X2lkGAEgASgNEhEKCWJ1eV9jb3VudBgCIAEoDSJPCg5CdXlTaG9wSXRlbVJl",
-          "cRIPCgdzaG9wX2lkGAEgASgNEhsKBWl0ZW1zGAIgAygLMgwuQnV5U2hvcEl0",
-          "ZW0SDwoHcm9sZV9pZBgFIAEoDSKLAQoQTW92ZU9wZXJhdGlvblJlcRIKCgJk",
-          "eBgBIAEoAhIKCgJkeRgCIAEoAhIKCgJkehgDIAEoAhIMCgRmYWNlGAQgASgC",
-          "EgwKBHRpbWUYBSABKAISEQoJaXNfbW92aW5nGAYgASgIEhAKCGlzX21vdmVk",
-          "GAcgASgIEhIKCmp1bXBfY291bnQYCCABKAUiIgoNQ3JlYXRlVGVhbUFyZxIR",
-          "Cgl0YXJnZXRfaWQYASABKAUiJAoRSW52aXRlSm9pblRlYW1BcmcSDwoHdXNl",
-          "cl9pZBgBIAEoBCJNChdBY2NlcHRUZWFtSW52YXRhdGlvbkFyZxIPCgd0ZWFt",
-          "X2lkGAEgASgEEhIKCmludml0ZXJfaWQYAiABKAQSDQoFYWdyZWUYAyABKAgi",
-          "HwoMTGVhdmVUZWFtQXJnEg8KB3JvbGVfaWQYASABKAQiJwoUQmVnSW5UZWFt",
-          "QnlUZWFtSWRBcmcSDwoHdGVhbV9pZBgBIAEoBCJyChhDYXB0YWluUmVxdWVz",
-          "dEVudGVyRkJBcmcSEgoKZHVuZ2Vvbl9pZBgBIAEoBRISCgpjaGFwdGVyX2lk",
-          "GAIgASgFEhcKD2R1bmdlb25zX2RlZ3JlZRgDIAEoBRIVCg1kdW5nZW9uX2xh",
-          "eWVyGAQgASgFIvQBChFFcXVpcE9wZXJhdGlvblJlcRIQCghpdGVtX3VpZBgB",
-          "IAEoAxIiCglvcGVyYXRpb24YAiABKA4yDy5FcXVpcE9wZXJhdGlvbhIbChNz",
-          "cGVjaWFsX3NraWxsX2luZGV4GAMgASgFEhgKEGdlbV9zb2NrZXRfaW5kZXgY",
-          "BCABKAUSEwoLZ2VtX2l0ZW1faWQYBSABKAUSFgoOYmFnX2dlbV9jb3VudHMY",
-          "BiADKAUSGQoRbWFya2V0X2dlbV9jb3VudHMYByADKAUSGQoMYnV5X3F1YW50",
-          "aXR5GAggASgFSACIAQFCDwoNX2J1eV9xdWFudGl0eWIGcHJvdG8z"));
+          "ZRgBIAEoBRIcCgVpdGVtcxgCIAMoCzINLlJvbGVJdGVtSW5mbyLSAgoPU2F2",
+          "ZVJvbGVEYXRhUmVxEhQKDGdyb3d0aF9sZXZlbBgLIAEoBRISCgpncm93dGhf",
+          "ZXhwGAwgASgFEhQKDHN0YWxsX3RpY2tldBgIIAEoAxIjCgxzdGFsbF9lc2Ny",
+          "b3cYCSABKAsyDS5Sb2xlSXRlbUluZm8SGQoRY2xhaW1lZF9tYWlsX3VpZHMY",
+          "CiADKAMSDwoHcm9sZV9pZBgBIAEoBRIPCgd2ZXJzaW9uGAIgASgDEiYKD2l0",
+          "ZW1fZGF0YV9saXN0cxgDIAMoCzINLkl0ZW1EYXRhTGlzdBIsChRyb2xlX2Nv",
+          "dW50X2luZm9fbGlzdBgFIAMoCzIOLlJvbGVDb3VudEluZm8SGwoTcm9sZV9j",
+          "b3VudF9zbmFwc2hvdBgGIAEoCBIkCgxza2lsbF9sZXZlbHMYByADKAsyDi5S",
+          "b2xlU2tpbGxJbmZvSgQIBBAFIjIKC0J1eVNob3BJdGVtEhAKCGdvb2RzX2lk",
+          "GAEgASgNEhEKCWJ1eV9jb3VudBgCIAEoDSJPCg5CdXlTaG9wSXRlbVJlcRIP",
+          "CgdzaG9wX2lkGAEgASgNEhsKBWl0ZW1zGAIgAygLMgwuQnV5U2hvcEl0ZW0S",
+          "DwoHcm9sZV9pZBgFIAEoDSKLAQoQTW92ZU9wZXJhdGlvblJlcRIKCgJkeBgB",
+          "IAEoAhIKCgJkeRgCIAEoAhIKCgJkehgDIAEoAhIMCgRmYWNlGAQgASgCEgwK",
+          "BHRpbWUYBSABKAISEQoJaXNfbW92aW5nGAYgASgIEhAKCGlzX21vdmVkGAcg",
+          "ASgIEhIKCmp1bXBfY291bnQYCCABKAUiIgoNQ3JlYXRlVGVhbUFyZxIRCgl0",
+          "YXJnZXRfaWQYASABKAUiJAoRSW52aXRlSm9pblRlYW1BcmcSDwoHdXNlcl9p",
+          "ZBgBIAEoBCJNChdBY2NlcHRUZWFtSW52YXRhdGlvbkFyZxIPCgd0ZWFtX2lk",
+          "GAEgASgEEhIKCmludml0ZXJfaWQYAiABKAQSDQoFYWdyZWUYAyABKAgiHwoM",
+          "TGVhdmVUZWFtQXJnEg8KB3JvbGVfaWQYASABKAQiJwoUQmVnSW5UZWFtQnlU",
+          "ZWFtSWRBcmcSDwoHdGVhbV9pZBgBIAEoBCJyChhDYXB0YWluUmVxdWVzdEVu",
+          "dGVyRkJBcmcSEgoKZHVuZ2Vvbl9pZBgBIAEoBRISCgpjaGFwdGVyX2lkGAIg",
+          "ASgFEhcKD2R1bmdlb25zX2RlZ3JlZRgDIAEoBRIVCg1kdW5nZW9uX2xheWVy",
+          "GAQgASgFIvQBChFFcXVpcE9wZXJhdGlvblJlcRIQCghpdGVtX3VpZBgBIAEo",
+          "AxIiCglvcGVyYXRpb24YAiABKA4yDy5FcXVpcE9wZXJhdGlvbhIbChNzcGVj",
+          "aWFsX3NraWxsX2luZGV4GAMgASgFEhgKEGdlbV9zb2NrZXRfaW5kZXgYBCAB",
+          "KAUSEwoLZ2VtX2l0ZW1faWQYBSABKAUSFgoOYmFnX2dlbV9jb3VudHMYBiAD",
+          "KAUSGQoRbWFya2V0X2dlbV9jb3VudHMYByADKAUSGQoMYnV5X3F1YW50aXR5",
+          "GAggASgFSACIAQFCDwoNX2J1eV9xdWFudGl0eWIGcHJvdG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -89,7 +90,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::OpenKnapsackGridReq), global::OpenKnapsackGridReq.Parser, new[]{ "RoleId", "OpenGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SyncKnapsackGridCountReq), global::SyncKnapsackGridCountReq.Parser, new[]{ "RoleId", "OpenedGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ItemDataList), global::ItemDataList.Parser, new[]{ "BagType", "Items" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SaveRoleDataReq), global::SaveRoleDataReq.Parser, new[]{ "StallTicket", "StallEscrow", "ClaimedMailUids", "RoleId", "Version", "ItemDataLists", "RoleCountInfoList", "RoleCountSnapshot", "SkillLevels" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SaveRoleDataReq), global::SaveRoleDataReq.Parser, new[]{ "GrowthLevel", "GrowthExp", "StallTicket", "StallEscrow", "ClaimedMailUids", "RoleId", "Version", "ItemDataLists", "RoleCountInfoList", "RoleCountSnapshot", "SkillLevels" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItem), global::BuyShopItem.Parser, new[]{ "GoodsId", "BuyCount" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItemReq), global::BuyShopItemReq.Parser, new[]{ "ShopId", "Items", "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MoveOperationReq), global::MoveOperationReq.Parser, new[]{ "Dx", "Dy", "Dz", "Face", "Time", "IsMoving", "IsMoved", "JumpCount" }, null, null, null, null),
@@ -4043,6 +4044,8 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public SaveRoleDataReq(SaveRoleDataReq other) : this() {
+    growthLevel_ = other.growthLevel_;
+    growthExp_ = other.growthExp_;
     stallTicket_ = other.stallTicket_;
     stallEscrow_ = other.stallEscrow_ != null ? other.stallEscrow_.Clone() : null;
     claimedMailUids_ = other.claimedMailUids_.Clone();
@@ -4059,6 +4062,36 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public SaveRoleDataReq Clone() {
     return new SaveRoleDataReq(this);
+  }
+
+  /// <summary>Field number for the "growth_level" field.</summary>
+  public const int GrowthLevelFieldNumber = 11;
+  private int growthLevel_;
+  /// <summary>
+  /// 本版随存档保存的角色等级，零表示本次没有成长变化。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GrowthLevel {
+    get { return growthLevel_; }
+    set {
+      growthLevel_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "growth_exp" field.</summary>
+  public const int GrowthExpFieldNumber = 12;
+  private int growthExp_;
+  /// <summary>
+  /// 对应等级内的剩余经验。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GrowthExp {
+    get { return growthExp_; }
+    set {
+      growthExp_ = value;
+    }
   }
 
   /// <summary>Field number for the "stall_ticket" field.</summary>
@@ -4207,6 +4240,8 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
     if (ReferenceEquals(other, this)) {
       return true;
     }
+    if (GrowthLevel != other.GrowthLevel) return false;
+    if (GrowthExp != other.GrowthExp) return false;
     if (StallTicket != other.StallTicket) return false;
     if (!object.Equals(StallEscrow, other.StallEscrow)) return false;
     if(!claimedMailUids_.Equals(other.claimedMailUids_)) return false;
@@ -4223,6 +4258,8 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
+    if (GrowthLevel != 0) hash ^= GrowthLevel.GetHashCode();
+    if (GrowthExp != 0) hash ^= GrowthExp.GetHashCode();
     if (StallTicket != 0L) hash ^= StallTicket.GetHashCode();
     if (stallEscrow_ != null) hash ^= StallEscrow.GetHashCode();
     hash ^= claimedMailUids_.GetHashCode();
@@ -4274,6 +4311,14 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
       output.WriteMessage(StallEscrow);
     }
     claimedMailUids_.WriteTo(output, _repeated_claimedMailUids_codec);
+    if (GrowthLevel != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(GrowthLevel);
+    }
+    if (GrowthExp != 0) {
+      output.WriteRawTag(96);
+      output.WriteInt32(GrowthExp);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -4308,6 +4353,14 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
       output.WriteMessage(StallEscrow);
     }
     claimedMailUids_.WriteTo(ref output, _repeated_claimedMailUids_codec);
+    if (GrowthLevel != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(GrowthLevel);
+    }
+    if (GrowthExp != 0) {
+      output.WriteRawTag(96);
+      output.WriteInt32(GrowthExp);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -4318,6 +4371,12 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
+    if (GrowthLevel != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GrowthLevel);
+    }
+    if (GrowthExp != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GrowthExp);
+    }
     if (StallTicket != 0L) {
       size += 1 + pb::CodedOutputStream.ComputeInt64Size(StallTicket);
     }
@@ -4348,6 +4407,12 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   public void MergeFrom(SaveRoleDataReq other) {
     if (other == null) {
       return;
+    }
+    if (other.GrowthLevel != 0) {
+      GrowthLevel = other.GrowthLevel;
+    }
+    if (other.GrowthExp != 0) {
+      GrowthExp = other.GrowthExp;
     }
     if (other.StallTicket != 0L) {
       StallTicket = other.StallTicket;
@@ -4430,6 +4495,14 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
           claimedMailUids_.AddEntriesFrom(input, _repeated_claimedMailUids_codec);
           break;
         }
+        case 88: {
+          GrowthLevel = input.ReadInt32();
+          break;
+        }
+        case 96: {
+          GrowthExp = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -4487,6 +4560,14 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
         case 82:
         case 80: {
           claimedMailUids_.AddEntriesFrom(ref input, _repeated_claimedMailUids_codec);
+          break;
+        }
+        case 88: {
+          GrowthLevel = input.ReadInt32();
+          break;
+        }
+        case 96: {
+          GrowthExp = input.ReadInt32();
           break;
         }
       }

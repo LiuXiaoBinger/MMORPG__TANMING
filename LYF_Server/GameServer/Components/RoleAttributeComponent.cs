@@ -2,7 +2,7 @@ using System;
 using Google.Protobuf;
 
 /// <summary>在线角色的实际属性组件；节点直接修改修正与资源，裸属性仍按原协议保存。</summary>
-public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
+public partial class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
 {
     /// <summary>已由节点 OnCall 写入的属性和状态修正，随宿主生命周期释放。</summary>
     private readonly AttributeModifiers modifiers = new AttributeModifiers();
@@ -274,6 +274,7 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         RoleAttributeUpdateNtf notification = new RoleAttributeUpdateNtf
         {
             BaseInfo = attributes,
+            Exp = Owner.mainRoleInfo.Exp,
             ShieldRemaining = Owner.ShieldRemaining,
             ShieldCapacity = Owner.ShieldCapacity
         };

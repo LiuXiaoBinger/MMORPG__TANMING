@@ -384,6 +384,10 @@ public static class GameMessageProtocolRegister
         RegisterHandler(messageManager, GameCommandSource.GateServer, SceneLineCode.Portal,
             new CityPortalHandler(), CenterMessageRoute.Internal);
         TeamMessageHandler.Register(server, messageManager);
+        // GM 沿游戏逻辑线程分发；网关提供复合会话身份。
+        server.RegistCommand(NetDefine.RpcC2G_GSLocalGMCmd, messageManager);
+        RegisterHandler(messageManager, GameCommandSource.GateServer, NetDefine.RpcC2G_GSLocalGMCmd,
+            new RpcC2G_GSLocalGMCmd(), CenterMessageRoute.Internal);
         ChatMessageHandler.Register(server, messageManager);
         MailMessageHandler.Register(server, messageManager);
         IGameMessageHandler loginGameServerHandler = new LoginGameServerHandler();

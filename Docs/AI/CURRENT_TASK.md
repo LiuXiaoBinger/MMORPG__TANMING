@@ -1060,3 +1060,8 @@ Codex 已接入五条委托、游戏服存档、NPC 办理、公共地图选门�
 
 - 主界面 HUD 每 0.2 秒检查一次三维半径 4 米内的可见 NPC。每位可交谈对象都有一行独立显示姓名的 RO 选项。离开某位 NPC 的范围时移除对应行，超过 4 个选项时可滚动。选择某一行会调用 `TouchObject.ClickNpc`，沿用点击该 NPC 模型时的寻路和对话流程。普通居民和巡逻守卫均可参与。固定场景物件中，仅两辆有车夫的马车通过 `NpcDialogueServices.asset` 加入列表。
 - 实现来源、11 个文件的变更清单、截图和 Git 回执见 `项目修改日志/2026-11-26-附近NPC交谈列表.md`。
+
+## [CODE][FILES][HANDOFF][GM][RO-GM-20261126] 从主聊天栏打开 RO 游戏内 GM
+
+- Unity 开发版沿用 `GMPanel`、`GMCtrl`、`GmMgr` 的职责。原命令字符串 `args` 经 Gate 进入 `RpcC2G_GSLocalGMCmd`，由 `CMDManager.RunGMCommond` 对已认证的在线角色执行，回执字符串 `result_msg` 返回面板。本项目协议号为 11600。启动 GameServer 前，将获准的数据库账号 ID 用逗号分隔写入 `LYF_GM_ACCOUNTS`。
+- 已接入 `addbuff`、`delbuff`、`item add`、`item remove`、`additem`、物品 ID 加带符号数量的简写、`addmoney`、`submoney`、`baselevel`、`addexp` 和 `help`。Buff 的来源和施加者均为当前角色。道具、货币经过正式背包，角色等级、经验随现有版本化存档保存。逐文件清单、用例和 Git 回执见 `项目修改日志/2026-11-26-RO游戏内GM移植.md`。

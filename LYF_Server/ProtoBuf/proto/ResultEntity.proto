@@ -632,6 +632,7 @@ message EquipOperationRet {
 
 // 装备和基因效果计算后的最终角色属性，裸属性仍由角色存档保存。
 message RoleAttributeUpdateNtf {
+    optional int32 exp = 7; // 本级经验，旧游戏服未携带时沿用登录资料。
 	RoleBaseInfo base_info = 1;//本次计算得到的最终战斗属性及当前生命法力
     bool genes_full = 2;//true先清空再装载完整列表；false且genes为空表示基因没有变化
     repeated RoleGeneData genes = 3;//本角色根节点的完整列表或真实增删/刷新项

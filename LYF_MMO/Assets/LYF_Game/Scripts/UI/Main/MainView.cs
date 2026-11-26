@@ -13,6 +13,11 @@ public class MainView : UIBase
    /// <summary>主城聊天层，承载预制体中的聊天组件及运行时实例化的聊天模块。</summary>
    [SerializeField] private RectTransform _chatLayer;
 
+   /// <summary>包含聊天栏 GM 按钮与窗口的正式预制体。</summary>
+   [SerializeField] private GameObject _gmPrefab;
+   /// <summary>此主城视图持有的 GM 子窗口，供控制器绑定。</summary>
+   public GMPanel GM { get; private set; }
+
    /// <summary>主城功能层，承载背包、角色和任务等可以在同层内叠放的窗口。</summary>
    [SerializeField] private RectTransform _functionLayer;
 
@@ -366,6 +371,18 @@ public class MainView : UIBase
          }
          windowDic[WindowType.YimengChatWindow] = YimengChat;
       }
+      // RO 的客户端包开关映射到 Unity 编辑器、开发包或显式启用 GM 的构建。
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || LYF_CLIENT_GM
+      if (GM == null && _gmPrefab != null)
+      {
+         // 聊天入口保留在聊天层，窗口归主功能层管理。
+         GameObject gmModule = Instantiate(_gmPrefab, _chatLayer, false);
+         GM = gmModule.GetComponentInChildren<GMPanel>(true);
+         GM.transform.SetParent(_functionLayer, false);
+         GM.SetPanelParentData(_functionLayer);
+      }
+      if (GM != null) windowDic[WindowType.GMPanel] = GM;
+#endif
       windowDic[WindowType.RoleCurrtInfoWindow] = _roleCurrInfoWindow;
       windowDic[WindowType.SkillInfoWindow] = _skillInfoWindow;
       windowDic[WindowType.KnapsackWindow] = _knapsackWindow;

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `486b2334280232c44d0d1afea082cbe03b8c2a849dadc53e90a311e17ba88342`
+Source normalized SHA256: `8dad11da3d8d8a7325c88835d0a24d633a4d0ea6909e984cef0f569bc444ed83`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -158,11 +158,12 @@ Source normalized SHA256: `486b2334280232c44d0d1afea082cbe03b8c2a849dadc53e90a31
 | [CODE][FILES][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Rank by worn items with the same active family | 1051-1054 |
 | [CODE][FILES][邮箱][MAIL-RO-20261126] RO role inbox and Unity integration | 1055-1059 |
 | [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] Playable role quests and dungeon objective navigation | 1060-1063 |
-| [CODE][FILES][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Choose each nearby speaker by name | 1064-1067 |
+| [CODE][FILES][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Choose each nearby speaker by name | 1064-1068 |
+| [CODE][FILES][HANDOFF][GM][RO-GM-20261126] In-game GM commands from the RO chat button | 1069-1072 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `e69e73486aaf5709d4d8c1ac29feb94c8fceaa4e9be03a9ab65a7c638c6ec27e`
+Source normalized SHA256: `4b7a6563b29d220ea204096ad2f9cb35bc22c4d23bf42e05e43d1754f4f7679f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -314,7 +315,8 @@ Source normalized SHA256: `e69e73486aaf5709d4d8c1ac29feb94c8fceaa4e9be03a9ab65a7
 | [VERIFY][邮箱][MAIL-RO-20261126] Inbox, item claims and client build | 1094-1098 |
 | [VERIFY][装备][特技][EQUIP-DIVINE-LIVE-20261126] Divine Power (external) on two weapons in Unity Play | 1099-1102 |
 | [VERIFY][任务][导航][WORLD-QUEST-NAV-20261126] Role quest progression and route verification | 1103-1108 |
-| [VERIFY][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Simultaneous named choices and actual NPC destinations | 1109-1112 |
+| [VERIFY][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Simultaneous named choices and actual NPC destinations | 1109-1113 |
+| [VERIFY][GM][RO-GM-20261126] GM authentication, real commands and persistence | 1114-1117 |
 
 ## Docs/AI/DECISIONS.en.md
 

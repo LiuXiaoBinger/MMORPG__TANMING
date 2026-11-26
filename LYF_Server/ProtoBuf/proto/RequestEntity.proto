@@ -108,6 +108,8 @@ message ItemDataList
 // GameServer 定时提交的角色物品脏数据，同一角色同一时刻只允许一个版本在途。
 message SaveRoleDataReq
 {
+    int32 growth_level = 11; // 本版随存档保存的角色等级，零表示本次没有成长变化。
+    int32 growth_exp = 12; // 对应等级内的剩余经验。
   int64 stall_ticket = 8; // 摆摊资产变更和本次角色快照在同一事务内提交。
   RoleItemInfo stall_escrow = 9; // 新寄售时保存的实际材料快照。
   repeated int64 claimed_mail_uids = 10; // 与本版背包在同一事务提交的附件邮件编号。

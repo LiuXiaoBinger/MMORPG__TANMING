@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 /// </summary>
 public class NetDefine
 {
+    /// <summary>游戏内 GM 命令及同号回执，RO 的 32 位 RPC 编号映射到本地协议空间。</summary>
+    public const ushort RpcC2G_GSLocalGMCmd = 11600;
     public const string IPHost = "127.0.0.1";//本机IP
     public const int CenterServerPort = 10110;//中心服务器端口号
     

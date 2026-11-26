@@ -286,9 +286,12 @@ public sealed class CRoleWriteTask
                 // 同版本要通过下方字段比较才当作重复保存；物品创建和到期时间、次数刷新时间不参与本次比较。
                 // 三类快照共用同一版本，任一数据不一致都不能确认旧请求。
                 bool countsMatch = !_request.RoleCountSnapshot || RoleCountSnapshotMatches(db, _request.RoleCountInfoList);
+                // 同版重发的等级和经验也必须与已落库内容一致。
+                bool growthMatches = _request.GrowthLevel == 0 ||
+                    (role.Level == _request.GrowthLevel && role.Exp == _request.GrowthExp);
                 // 同版重发还要确认该版入包的邮件已结算，避免提前回执。
                 bool assetsMatch = countsMatch && SnapshotMatches(db, _request.ItemDataLists) && SkillLevelsMatch(db);
-                if (!assetsMatch || !MailStore.ClaimsCommitted(db, _request))
+                if (!assetsMatch || !growthMatches || !MailStore.ClaimsCommitted(db, _request))
                 {
                     // 内容不一致：同版本但数据不同，拒绝并返回权威版本，GameServer 不得清脏。
                     result.Message = "角色物品保存版本内容冲突";
@@ -329,6 +332,11 @@ public sealed class CRoleWriteTask
             SaveSkillLevels(db);
 
             // 更新角色表的保存版本为请求版本，作为新的权威版本基线。
+            if (_request.GrowthLevel > 0)
+            {
+                role.Level = _request.GrowthLevel;
+                role.Exp = _request.GrowthExp;
+            }
             role.ItemSaveVersion = _request.Version;
             role.UpdateDate = DateTime.Now;
             if (db.Updateable(role).ExecuteCommand() <= 0)
@@ -388,7 +396,7 @@ public sealed class CRoleWriteTask
         // 有些成长行可以免费升级，此时存档可能只有等级变化。
         bool noSkillLevels = _request.SkillLevels.Count == 0;
         bool noInventoryOrCounts = hasNoItemData && hasNoCountInfo && noCountSnapshot;
-        if (noInventoryOrCounts && noSkillLevels)
+        if (noInventoryOrCounts && noSkillLevels && _request.GrowthLevel <= 0)
         {
             throw new InvalidOperationException("角色保存请求参数无效，缺少物品或次数快照");
         }

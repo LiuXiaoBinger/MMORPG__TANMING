@@ -14,6 +14,8 @@ public class MainCtrl : CtrlBase
     private readonly DungeonFlowCtrl _dungeonFlowCtrl;
     /// <summary>监听主角死亡并处理主动复活的窗口控制器。</summary>
     private readonly DeathCtrl _deathCtrl;
+    /// <summary>开发包主界面持有的 GM 控制器，在销毁时注销回执。</summary>
+    private readonly GMCtrl _gmCtrl;
     /// <summary>当前主城收件箱的选择、阅读和领取交互。</summary>
     private readonly EmailHandler _emailHandler;
 
@@ -113,6 +115,7 @@ public class MainCtrl : CtrlBase
         _themeDungeonTeamCtrl = new ThemeDungeonTeamCtrl(_mainView);
         _dungeonFlowCtrl = new DungeonFlowCtrl(_mainView);
         _deathCtrl = new DeathCtrl(_mainView);
+        if (_mainView.GM != null) _gmCtrl = new GMCtrl(_mainView);
         if (_mainView.emailPanel != null)
         {
             _emailHandler = new EmailHandler(_mainView.emailPanel, _mainView.emailHint);
@@ -339,6 +342,7 @@ public class MainCtrl : CtrlBase
         {
             Global.Instance.SceneWorld.LocalRoleChanged -= OnLocalRoleChanged;
         }
+        _gmCtrl?.Dispose();
         _deathCtrl.Dispose();
         if (_emailHandler != null)
         {
@@ -499,6 +503,8 @@ public class MainCtrl : CtrlBase
         // 当前本地角色是此通知的唯一应用目标。
         PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
         if (localRole == null || !localRole.ApplyAttributeUpdate(result)) return;
+        // 旧属性通知没有经验字段，登录时的本级经验仍然有效。
+        if (result.HasExp) localRole.RoleInfo.Exp = result.Exp;
         _mainView.RoleShieldWidget?.SetShield(localRole, result.ShieldRemaining, result.ShieldCapacity);
         _mainView.CombatStatus?.SetShield(result.ShieldRemaining, result.ShieldCapacity);
         // 兼容已有攻击入口通过角色控制器读取基础属性的流程。

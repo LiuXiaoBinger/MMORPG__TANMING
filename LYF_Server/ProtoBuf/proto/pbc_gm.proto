@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+// RO 游戏内 GM 的命令行，目标角色由游戏服从请求会话确定。
+message GSLocalGMCmdArg {
+  string args = 1; // 命令名和参数组成的原始文本。
+}
+
+// 游戏服执行本次 GM 命令后显示在面板上的反馈。
+message GSLocalGMCmdRes {
+  string result_msg = 1; // 执行结果或拒绝原因。
+}

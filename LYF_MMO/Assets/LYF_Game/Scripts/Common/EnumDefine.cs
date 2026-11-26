@@ -37,6 +37,7 @@ public enum WindowType
     TreasurePavilionWindow = 1006, // 主城珍宝阁的四个频道。
     EmailPanel = 1008, // 主城角色收件箱，列出信件并领取附件。
     NpcTalkPromptWindow = 1007, // 靠近场景说话者时在主 HUD 显示的交谈入口。
+    GMPanel = 1009, // 主聊天栏打开的游戏内 GM 窗口。
     AreaMapWindow = 1005 // 从小地图进入的区域与世界地图。
 }
 
