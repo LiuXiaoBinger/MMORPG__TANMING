@@ -1060,3 +1060,8 @@ Two distinct equipped items with the same active special-skill family in allowed
 ## [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] Playable role quests and dungeon objective navigation
 
 Codex completed five configured quests, GS persistence and NPC options, public portal routing, and active dungeon objective navigation. The role journal and tracker share the route. Business commits `833c23fb` / `14a582ec`. `项目修改日志/2026-11-26-角色委托与跨场景任务寻路.md`。
+
+## [CODE][FILES][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Choose each nearby speaker by name
+
+- The main HUD samples visible NPCs within a 4 m three-dimensional radius every 0.2 s. Each speaker keeps an individually named RO row. Leaving range removes their row, and more than four choices can scroll. The selected row invokes the same TouchObject.ClickNpc navigation and dialogue path as a model click. Ordinary residents and patrolling guards qualify. Only the two staffed carriages among fixed scenery opt in through NpcDialogueServices.asset.
+- Source, the 11-file manifest, screenshots and Git receipts are in `项目修改日志/2026-11-26-附近NPC交谈列表.md`.

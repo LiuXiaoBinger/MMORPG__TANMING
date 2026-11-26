@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `315c6c3833952221656f5474c641d046c339d14e64595bc79d038771179c0536`
+Source normalized SHA256: `486b2334280232c44d0d1afea082cbe03b8c2a849dadc53e90a311e17ba88342`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -157,11 +157,12 @@ Source normalized SHA256: `315c6c3833952221656f5474c641d046c339d14e64595bc79d038
 | [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Interrupting an ordinary monster attack before release | 1047-1050 |
 | [CODE][FILES][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Rank by worn items with the same active family | 1051-1054 |
 | [CODE][FILES][邮箱][MAIL-RO-20261126] RO role inbox and Unity integration | 1055-1059 |
-| [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] Playable role quests and dungeon objective navigation | 1060-1062 |
+| [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] Playable role quests and dungeon objective navigation | 1060-1063 |
+| [CODE][FILES][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Choose each nearby speaker by name | 1064-1067 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `aac958c5dadd6d8fadbcf02d103544f4fd5cfb0afb1b8862ee6fc4813db3280f`
+Source normalized SHA256: `e69e73486aaf5709d4d8c1ac29feb94c8fceaa4e9be03a9ab65a7c638c6ec27e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -312,7 +313,8 @@ Source normalized SHA256: `aac958c5dadd6d8fadbcf02d103544f4fd5cfb0afb1b8862ee6fc
 | [VERIFY][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Same-family activation on two items | 1090-1093 |
 | [VERIFY][邮箱][MAIL-RO-20261126] Inbox, item claims and client build | 1094-1098 |
 | [VERIFY][装备][特技][EQUIP-DIVINE-LIVE-20261126] Divine Power (external) on two weapons in Unity Play | 1099-1102 |
-| [VERIFY][任务][导航][WORLD-QUEST-NAV-20261126] Role quest progression and route verification | 1103-1107 |
+| [VERIFY][任务][导航][WORLD-QUEST-NAV-20261126] Role quest progression and route verification | 1103-1108 |
+| [VERIFY][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Simultaneous named choices and actual NPC destinations | 1109-1112 |
 
 ## Docs/AI/DECISIONS.en.md
 
