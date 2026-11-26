@@ -1047,3 +1047,7 @@ All 11 active skill definitions now reference named slices of `MartialSkillIcons
 ## [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Interrupting an ordinary monster attack before release
 
 Positive HP loss interrupts an unprotected basic attack while its damage result is still pending. GameServer removes that cast’s remaining actions, keeps the existing cooldown and identifies the interrupted skill in the live Idle notice. RO armor families 9501/9020 protect the swing. A released arrow keeps flying. Unity removes the interrupted timeline, retains BeHit and shows a still-valid attack even when damage or a new windup arrives during BeHit. Five implementation files and Git receipts are listed in `项目修改日志/2026-11-26-副本怪物受击与攻击命中时序.md`. Codex completed development without WorkBuddy. No live deployment or full dungeon playthrough.
+
+## [CODE][FILES][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Rank by worn items with the same active family
+
+Two distinct equipped items with the same active special-skill family in allowed parts yield one rank-2 effect. Bagged items and unselected slots do not count. Server counting already followed this rule. The Unity detail view now skips old slots on disallowed parts and labels them accordingly. Switching away or unequipping a contributing item lowers the effective rank. Business commit `4c72b7b`. See `项目修改日志/2026-11-26-装备同名激活特技叠级.md`.

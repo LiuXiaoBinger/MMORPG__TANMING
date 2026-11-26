@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `6ab1415edbe6714f27047116ba93e0c593a0ef0a9a759a3c1d9691c99c038102`
+Source normalized SHA256: `c3de2b24cd106c9c30b94f557e55bf696101ed1ea3a3f9905527bc2105dac043`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -154,11 +154,12 @@ Source normalized SHA256: `6ab1415edbe6714f27047116ba93e0c593a0ef0a9a759a3c1d969
 | [CODE][FILES][场景][NPC][传送点][TWIN-CITY-BUILDING-NPCS-COACH-20261126] Residents for both cities and the working carriage launcher | 1033-1037 |
 | [FILES][场景][碰撞][SKY-CITY-SURFACE-PHYSICS-20261126] Map 1 bridge seams and street collision | 1038-1042 |
 | [CODE][FILES][HANDOFF][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Dark fantasy art for every configured skill | 1043-1046 |
-| [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Interrupting an ordinary monster attack before release | 1047-1049 |
+| [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Interrupting an ordinary monster attack before release | 1047-1050 |
+| [CODE][FILES][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Rank by worn items with the same active family | 1051-1053 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `660bf8c9a0a49d97c314c86474bbd458d10dbec707ca34677bdc0289f2889e05`
+Source normalized SHA256: `cb7d5b04affe10bc36df46f54993efb75dda0666ffe231d1404704d39a1e2176`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -305,7 +306,8 @@ Source normalized SHA256: `660bf8c9a0a49d97c314c86474bbd458d10dbec707ca34677bdc0
 | [VERIFY][场景][NPC][传送点][TWIN-CITY-BUILDING-NPCS-COACH-20261126] Two-city residency, dialogue and carriage arrivals | 1072-1076 |
 | [VERIFY][场景][碰撞][导航][SKY-CITY-SURFACE-PHYSICS-20261126] Role movement and moving-camera seam checks | 1077-1081 |
 | [VERIFY][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Skill atlas loading, crop and small-size rendering | 1082-1085 |
-| [VERIFY][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Hit frames, interruption and released projectiles | 1086-1088 |
+| [VERIFY][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Hit frames, interruption and released projectiles | 1086-1089 |
+| [VERIFY][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Same-family activation on two items | 1090-1092 |
 
 ## Docs/AI/DECISIONS.en.md
 
