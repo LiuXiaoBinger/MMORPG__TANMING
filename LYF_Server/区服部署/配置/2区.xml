@@ -11,4 +11,7 @@
   <scene map="1" line="2" game="4" capacity="500" />
   <scene map="0" line="1" game="3" capacity="500" />
   <scene map="0" line="2" game="4" capacity="500" />
+  <!-- 晨钟教堂与金穗餐馆是天空中之城的公共室内地图，同一区玩家在室内一线相遇。 -->
+  <scene map="41" line="1" game="3" capacity="500" />
+  <scene map="60" line="1" game="4" capacity="500" />
 </realm>

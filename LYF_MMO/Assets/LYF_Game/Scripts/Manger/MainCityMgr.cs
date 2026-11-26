@@ -17,10 +17,10 @@ public class MainCityMgr : MonoBehaviour
    /// <summary>天空中之城和副本中角色可低于本场景出生点的最大距离，单位米。</summary>
    private const float FallResetDistance = 100f;
 
-   /// <summary>当前公共城的传送入口，独立副本为空。</summary>
-   private PublicCityPortal _cityPortal;
-   /// <summary>上帧是否站在入口内，每次走入只发送一次申请。</summary>
-   private bool _insideCityPortal;
+   /// <summary>当前场景的可用入口，包括城门和建筑门口。</summary>
+   private IReadOnlyList<PublicCityPortal> _cityPortals;
+   /// <summary>上一帧主角踏入的门，离开门圈后允许再次进入。</summary>
+   private PublicCityPortal _insideCityPortal;
 
    /// <summary>主城管理器单例。</summary>
    public static MainCityMgr Instance;
@@ -104,12 +104,15 @@ public class MainCityMgr : MonoBehaviour
    /// <summary>在两座公共城市的导航地面摆放项目自带的 RO 传送阵。</summary>
    private void CreateCityPortal()
    {
-      _cityPortal = MinMapHelp.CityPortal(gameObject.scene.name);
-      if (_cityPortal != null)
+      _cityPortals = PublicCityPortal.InScene(gameObject.scene.name);
+      if (_cityPortals.Count == 0) return;
+      // 同一场景内的门共用现有 RO 传送阵资源。
+      GameObject effect = Resources.Load<GameObject>("Dungeons/Moshenta/MoshentaPortal");
+      for (int index = 0; index < _cityPortals.Count; index++)
       {
-         // 复用项目已导入的 RO 常驻传送阵，挂在当前场景下随场景一起卸载。
-         GameObject effect = Resources.Load<GameObject>("Dungeons/Moshenta/MoshentaPortal");
-         Vector3 center = new Vector3(_cityPortal.X, _cityPortal.Y, _cityPortal.Z);
+         // 每个特效落在配置的门心并跟随本场景卸载。
+         PublicCityPortal door = _cityPortals[index];
+         Vector3 center = new Vector3(door.X, door.Y, door.Z);
          GameObject gate = Instantiate(effect, center, Quaternion.identity);
          UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(gate, gameObject.scene);
       }
@@ -118,14 +121,22 @@ public class MainCityMgr : MonoBehaviour
    /// <summary>本地角色实际走进门圈后发起传送，切场由服务器回执驱动。</summary>
    private void CheckCityPortal()
    {
-      if (_cityPortal == null) return;
+      if (_cityPortals == null || _cityPortals.Count == 0) return;
       // 旧场景的常驻模型可能正在迁移，使用本场景已放置的真实角色。
       PlayerEntity role = Global.Instance?.SceneWorld?.LocalRole;
       if (role == null || !role.Model.IsLoaded || role.UID != _localRoleCreateRequestedUid) return;
       Vector3 position = role.Position;
-      bool inside = _cityPortal.Contains(position.x, position.y, position.z, 2.5f);
-      if (inside && !_insideCityPortal) MNetClient.Instance.Send(SceneLineCode.Portal, ByteString.Empty);
-      _insideCityPortal = inside;
+      // 用实际角色位置命中当前地图的入口，每次走入只发一次门号。
+      for (int index = 0; index < _cityPortals.Count; index++)
+      {
+         PublicCityPortal door = _cityPortals[index];
+         if (!door.Contains(position.x, position.y, position.z, 2.5f)) continue;
+         if (_insideCityPortal != door)
+            MNetClient.Instance.Send(SceneLineCode.Portal, new ScenePortalRequest { DoorId = door.DoorId }.ToByteString());
+         _insideCityPortal = door;
+         return;
+      }
+      _insideCityPortal = null;
    }
 
    /// <summary>在天空中之城和副本中检查本地主角的下落高度，越界后复用场景出生定位。</summary>
@@ -134,7 +145,7 @@ public class MainCityMgr : MonoBehaviour
       if (_localRoleSpawnPoint == null) return;
       // 当前已加载的场景类型，浮空主城与副本共用已有的越界高度和出生点。
       SceneType sceneType = SceneMgr.Instance._currentSceneType;
-      if (sceneType != SceneType.Scene_Dungeon && sceneType != SceneType.Scene_SkyCity)
+      if (sceneType != SceneType.Scene_Dungeon && sceneType != SceneType.Scene_SkyCity && sceneType != SceneType.Scene_PublicInterior)
       {
          return;
       }
@@ -769,6 +780,8 @@ public class MainCityMgr : MonoBehaviour
    /// <returns>本地主角出生使用的世界坐标。</returns>
    private Vector3 ResolveMainRoleSpawnPosition()
    {
+      // 当前传送回执优先于地图默认出生点，从教堂和餐馆回城各落在自己的门前。
+      if (SceneMgr.Instance.PublicArrival.HasValue) return SceneMgr.Instance.PublicArrival.Value;
       if (_localRoleSpawnPoint != null)
       {
          return _localRoleSpawnPoint.position;

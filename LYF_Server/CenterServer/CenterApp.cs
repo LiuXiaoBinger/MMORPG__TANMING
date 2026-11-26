@@ -59,6 +59,8 @@ namespace CenterServer
             
             // 角色模块控制器：处理进入世界回包、背包容量同步、商城购买转发、角色物品快照保存。
             CenterRoleCtrl  RoleCtrl = new CenterRoleCtrl(new CentRoleModel(db));
+            // 接收公共地图宿主确认的过门落点，供下一次选角读取。
+            server.RegistCommand(SceneLineCode.SavePublicArrival, RoleCtrl);
             server.RegistCommand(NetDefine.CMD_EnterWroldCode, RoleCtrl);//进入游戏请求
             server.RegistCommand(NetDefine.CMD_SyncKnapsackGridCountCode, RoleCtrl);//同步背包已开格子数量
             server.RegistCommand(NetDefine.CMD_BuyShopItemCode, RoleCtrl);//处理 GameServer 转发的商城购买请求

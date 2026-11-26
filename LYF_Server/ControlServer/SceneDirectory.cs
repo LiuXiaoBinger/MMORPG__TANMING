@@ -308,10 +308,10 @@ internal sealed class SceneDirectory : IContainer
             long score = (cpu / 100) * 30L + (load?.DungeonCount ?? 0) * 40L;
             for (int sceneIndex = 0; sceneIndex < realm.Scenes.Count; sceneIndex++)
             {
-                // 两座公共城每实例计 10，其他公共野外实例计 20；创建中尚未承载的不计。
+                // 已登记的城市及其室内公共地图每实例计 10，其他野外实例计 20。
                 PublicSceneLine scene = realm.Scenes[sceneIndex];
                 if (scene.SceneUid == 0 || scene.GameId != host) continue;
-                if (scene.MapId == PublicCityPortal.Town.MapId || scene.MapId == PublicCityPortal.Sky.MapId) score += 10;
+                if (PublicCityPortal.Find(scene.MapId) != null) score += 10;
                 else score += 20;
             }
             if (high && !bestHigh) continue;

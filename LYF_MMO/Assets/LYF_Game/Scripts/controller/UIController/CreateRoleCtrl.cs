@@ -337,10 +337,11 @@ public class CreateRoleCtrl : CtrlBase
         // 发起切场景时的网络连接编号，用于阻断断线或自动重连前的旧场景回调。
         long requestedConnectionGeneration =
             MNetClient.Instance.CurrentConnectionGeneration;
-        // 公共地图 1 对应天空中之城；地图 0 和历史回城存档沿用主城入口。
-        SceneType destination = SceneType.Scene_MainCity;
-        if (localRole.BaseInfo.MapId == 1) destination = SceneType.Scene_SkyCity;
-        SceneMgr.Instance.LoadSceneMode(destination, () =>
+        // 两座原有城市沿用出生点；在公共室内下线的角色按存档走回同一地图和位置。
+        int mapId = localRole.BaseInfo.MapId;
+        string savedPosition = null;
+        if (mapId > 1 && PublicCityPortal.Find(mapId) != null) savedPosition = localRole.BaseInfo.Pos;
+        SceneMgr.Instance.LoadPublicMap(mapId, savedPosition, () =>
         {
             // 无论回调是否仍有效，都先释放本控制器的场景切换占用状态。
             _isSceneTransitionPending = false;

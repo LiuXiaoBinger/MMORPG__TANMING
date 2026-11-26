@@ -26,29 +26,31 @@ public static partial class SceneLineReflection {
           "aWNTY2VuZUxpbmUSDgoGbWFwX2lkGAEgASgFEg8KB2xpbmVfaWQYAiABKAUS",
           "DwoHZ2FtZV9pZBgDIAEoBRIRCglzY2VuZV91aWQYBCABKAMSEgoKcG9wdWxh",
           "dGlvbhgFIAEoBRIQCghjYXBhY2l0eRgGIAEoBSIjChBTY2VuZUxpbmVSZXF1",
-          "ZXN0Eg8KB2xpbmVfaWQYASABKAUiWAoPU2NlbmVMaW5lUmVzdWx0Eg4KBnJl",
-          "YXNvbhgBIAEoCRIUCgxjdXJyZW50X2xpbmUYAiABKAUSHwoFbGluZXMYAyAD",
-          "KAsyEC5QdWJsaWNTY2VuZUxpbmUiwgIKEVNjZW5lUm9sZVRyYW5zZmVyEhsK",
-          "BHJvbGUYASABKAsyDS5NYWluUm9sZUluZm8SHwoFc2NlbmUYAiABKAsyEC5Q",
-          "dWJsaWNTY2VuZUxpbmUSOAoMc2tpbGxfZW5kX21zGAMgAygLMiIuU2NlbmVS",
-          "b2xlVHJhbnNmZXIuU2tpbGxFbmRNc0VudHJ5EjgKDGdyb3VwX2VuZF9tcxgE",
-          "IAMoCzIiLlNjZW5lUm9sZVRyYW5zZmVyLkdyb3VwRW5kTXNFbnRyeRIVCg1j",
-          "aGFuZ2luZ19saW5lGAUgASgIGjEKD1NraWxsRW5kTXNFbnRyeRILCgNrZXkY",
-          "ASABKAUSDQoFdmFsdWUYAiABKAM6AjgBGjEKD0dyb3VwRW5kTXNFbnRyeRIL",
-          "CgNrZXkYASABKAUSDQoFdmFsdWUYAiABKAM6AjgBIn8KEVNjZW5lUm91dGVS",
-          "ZXF1ZXN0Eg8KB3JvbGVfaWQYASABKAUSDgoGbWFwX2lkGAIgASgFEg8KB2xp",
-          "bmVfaWQYAyABKAUSDwoHZ2FtZV9pZBgEIAEoBRIUCgxyZXF1aXJlX2dhbWUY",
-          "BSABKAgSEQoJc2NlbmVfdWlkGAYgASgDIlYKFVNjZW5lTm9kZVJlZ2lzdHJh",
-          "dGlvbhIQCghyZWFsbV9pZBgBIAEoBRIPCgdnYW1lX2lkGAIgASgFEgwKBGhv",
-          "c3QYAyABKAkSDAoEcG9ydBgEIAEoBSJJCg1TY2VuZUhvc3RMb2FkEg8KB2dh",
-          "bWVfaWQYASABKAUSEAoIY3B1X3JhdGUYAiABKAUSFQoNZHVuZ2Vvbl9jb3Vu",
-          "dBgDIAEoBWIGcHJvdG8z"));
+          "ZXN0Eg8KB2xpbmVfaWQYASABKAUiJQoSU2NlbmVQb3J0YWxSZXF1ZXN0Eg8K",
+          "B2Rvb3JfaWQYASABKAUicgoPU2NlbmVMaW5lUmVzdWx0Eg4KBnJlYXNvbhgB",
+          "IAEoCRIUCgxjdXJyZW50X2xpbmUYAiABKAUSHwoFbGluZXMYAyADKAsyEC5Q",
+          "dWJsaWNTY2VuZUxpbmUSGAoQYXJyaXZhbF9wb3NpdGlvbhgEIAEoCSLCAgoR",
+          "U2NlbmVSb2xlVHJhbnNmZXISGwoEcm9sZRgBIAEoCzINLk1haW5Sb2xlSW5m",
+          "bxIfCgVzY2VuZRgCIAEoCzIQLlB1YmxpY1NjZW5lTGluZRI4Cgxza2lsbF9l",
+          "bmRfbXMYAyADKAsyIi5TY2VuZVJvbGVUcmFuc2Zlci5Ta2lsbEVuZE1zRW50",
+          "cnkSOAoMZ3JvdXBfZW5kX21zGAQgAygLMiIuU2NlbmVSb2xlVHJhbnNmZXIu",
+          "R3JvdXBFbmRNc0VudHJ5EhUKDWNoYW5naW5nX2xpbmUYBSABKAgaMQoPU2tp",
+          "bGxFbmRNc0VudHJ5EgsKA2tleRgBIAEoBRINCgV2YWx1ZRgCIAEoAzoCOAEa",
+          "MQoPR3JvdXBFbmRNc0VudHJ5EgsKA2tleRgBIAEoBRINCgV2YWx1ZRgCIAEo",
+          "AzoCOAEifwoRU2NlbmVSb3V0ZVJlcXVlc3QSDwoHcm9sZV9pZBgBIAEoBRIO",
+          "CgZtYXBfaWQYAiABKAUSDwoHbGluZV9pZBgDIAEoBRIPCgdnYW1lX2lkGAQg",
+          "ASgFEhQKDHJlcXVpcmVfZ2FtZRgFIAEoCBIRCglzY2VuZV91aWQYBiABKAMi",
+          "VgoVU2NlbmVOb2RlUmVnaXN0cmF0aW9uEhAKCHJlYWxtX2lkGAEgASgFEg8K",
+          "B2dhbWVfaWQYAiABKAUSDAoEaG9zdBgDIAEoCRIMCgRwb3J0GAQgASgFIkkK",
+          "DVNjZW5lSG9zdExvYWQSDwoHZ2FtZV9pZBgBIAEoBRIQCghjcHVfcmF0ZRgC",
+          "IAEoBRIVCg1kdW5nZW9uX2NvdW50GAMgASgFYgZwcm90bzM="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::PublicSceneLine), global::PublicSceneLine.Parser, new[]{ "MapId", "LineId", "GameId", "SceneUid", "Population", "Capacity" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneLineRequest), global::SceneLineRequest.Parser, new[]{ "LineId" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SceneLineResult), global::SceneLineResult.Parser, new[]{ "Reason", "CurrentLine", "Lines" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::ScenePortalRequest), global::ScenePortalRequest.Parser, new[]{ "DoorId" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SceneLineResult), global::SceneLineResult.Parser, new[]{ "Reason", "CurrentLine", "Lines", "ArrivalPosition" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneRoleTransfer), global::SceneRoleTransfer.Parser, new[]{ "Role", "Scene", "SkillEndMs", "GroupEndMs", "ChangingLine" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, null, }),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneRouteRequest), global::SceneRouteRequest.Parser, new[]{ "RoleId", "MapId", "LineId", "GameId", "RequireGame", "SceneUid" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneNodeRegistration), global::SceneNodeRegistration.Parser, new[]{ "RealmId", "GameId", "Host", "Port" }, null, null, null, null),
@@ -665,6 +667,207 @@ public sealed partial class SceneLineRequest : pb::IMessage<SceneLineRequest>
 }
 
 /// <summary>
+/// 角色申请踩入当前地图的一道门，旧客户端空包沿用零号入口。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class ScenePortalRequest : pb::IMessage<ScenePortalRequest>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<ScenePortalRequest> _parser = new pb::MessageParser<ScenePortalRequest>(() => new ScenePortalRequest());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<ScenePortalRequest> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[2]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ScenePortalRequest() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ScenePortalRequest(ScenePortalRequest other) : this() {
+    doorId_ = other.doorId_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ScenePortalRequest Clone() {
+    return new ScenePortalRequest(this);
+  }
+
+  /// <summary>Field number for the "door_id" field.</summary>
+  public const int DoorIdFieldNumber = 1;
+  private int doorId_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int DoorId {
+    get { return doorId_; }
+    set {
+      doorId_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as ScenePortalRequest);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(ScenePortalRequest other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (DoorId != other.DoorId) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (DoorId != 0) hash ^= DoorId.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (DoorId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(DoorId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (DoorId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(DoorId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (DoorId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(DoorId);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(ScenePortalRequest other) {
+    if (other == null) {
+      return;
+    }
+    if (other.DoorId != 0) {
+      DoorId = other.DoorId;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          DoorId = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          DoorId = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
 /// 查询、切换与初次入场共用的客户端可读结果。
 /// </summary>
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
@@ -682,7 +885,7 @@ public sealed partial class SceneLineResult : pb::IMessage<SceneLineResult>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[2]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[3]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -705,6 +908,7 @@ public sealed partial class SceneLineResult : pb::IMessage<SceneLineResult>
     reason_ = other.reason_;
     currentLine_ = other.currentLine_;
     lines_ = other.lines_.Clone();
+    arrivalPosition_ = other.arrivalPosition_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -758,6 +962,21 @@ public sealed partial class SceneLineResult : pb::IMessage<SceneLineResult>
     get { return lines_; }
   }
 
+  /// <summary>Field number for the "arrival_position" field.</summary>
+  public const int ArrivalPositionFieldNumber = 4;
+  private string arrivalPosition_ = "";
+  /// <summary>
+  /// 传送成功时的目标门外落点，与 GS 已应用的角色位置一致。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string ArrivalPosition {
+    get { return arrivalPosition_; }
+    set {
+      arrivalPosition_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -776,6 +995,7 @@ public sealed partial class SceneLineResult : pb::IMessage<SceneLineResult>
     if (Reason != other.Reason) return false;
     if (CurrentLine != other.CurrentLine) return false;
     if(!lines_.Equals(other.lines_)) return false;
+    if (ArrivalPosition != other.ArrivalPosition) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -786,6 +1006,7 @@ public sealed partial class SceneLineResult : pb::IMessage<SceneLineResult>
     if (Reason.Length != 0) hash ^= Reason.GetHashCode();
     if (CurrentLine != 0) hash ^= CurrentLine.GetHashCode();
     hash ^= lines_.GetHashCode();
+    if (ArrivalPosition.Length != 0) hash ^= ArrivalPosition.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -813,6 +1034,10 @@ public sealed partial class SceneLineResult : pb::IMessage<SceneLineResult>
       output.WriteInt32(CurrentLine);
     }
     lines_.WriteTo(output, _repeated_lines_codec);
+    if (ArrivalPosition.Length != 0) {
+      output.WriteRawTag(34);
+      output.WriteString(ArrivalPosition);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -832,6 +1057,10 @@ public sealed partial class SceneLineResult : pb::IMessage<SceneLineResult>
       output.WriteInt32(CurrentLine);
     }
     lines_.WriteTo(ref output, _repeated_lines_codec);
+    if (ArrivalPosition.Length != 0) {
+      output.WriteRawTag(34);
+      output.WriteString(ArrivalPosition);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -849,6 +1078,9 @@ public sealed partial class SceneLineResult : pb::IMessage<SceneLineResult>
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(CurrentLine);
     }
     size += lines_.CalculateSize(_repeated_lines_codec);
+    if (ArrivalPosition.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(ArrivalPosition);
+    }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
     }
@@ -868,6 +1100,9 @@ public sealed partial class SceneLineResult : pb::IMessage<SceneLineResult>
       CurrentLine = other.CurrentLine;
     }
     lines_.Add(other.lines_);
+    if (other.ArrivalPosition.Length != 0) {
+      ArrivalPosition = other.ArrivalPosition;
+    }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
 
@@ -897,6 +1132,10 @@ public sealed partial class SceneLineResult : pb::IMessage<SceneLineResult>
         }
         case 26: {
           lines_.AddEntriesFrom(input, _repeated_lines_codec);
+          break;
+        }
+        case 34: {
+          ArrivalPosition = input.ReadString();
           break;
         }
       }
@@ -930,6 +1169,10 @@ public sealed partial class SceneLineResult : pb::IMessage<SceneLineResult>
           lines_.AddEntriesFrom(ref input, _repeated_lines_codec);
           break;
         }
+        case 34: {
+          ArrivalPosition = input.ReadString();
+          break;
+        }
       }
     }
   }
@@ -955,7 +1198,7 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[3]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[4]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1315,7 +1558,7 @@ public sealed partial class SceneRouteRequest : pb::IMessage<SceneRouteRequest>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[4]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[5]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1719,7 +1962,7 @@ public sealed partial class SceneNodeRegistration : pb::IMessage<SceneNodeRegist
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[5]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[6]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2043,7 +2286,7 @@ public sealed partial class SceneHostLoad : pb::IMessage<SceneHostLoad>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[6]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[7]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

@@ -62,6 +62,9 @@ public class CenterRoleCtrl:IContainer
         switch (basePackage.ProtoCode)
         {
             
+            case SceneLineCode.SavePublicArrival:
+                _centRoleModel.SavePublicArrival(RoleBaseInfo.Parser.ParseFrom(basePackage.Data));
+                break;
             case NetDefine.CMD_EnterWroldCode:
                 OnEnterWroldHandle(serverBase, basePackage);
                 break;

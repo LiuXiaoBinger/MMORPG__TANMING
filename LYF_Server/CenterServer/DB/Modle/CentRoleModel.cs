@@ -31,6 +31,19 @@ public class CentRoleModel
     }
     #endregion
 
+    /// <summary>同一次角色主表更新保存已进入的公共地图和门口位置，供重新登录恢复。</summary>
+    /// <param name="location">完成交接的角色编号、地图编号和世界坐标，坐标沿用 X_Y_Z 米制格式。</param>
+    public void SavePublicArrival(RoleBaseInfo location)
+    {
+        // 用角色主键定位玩家，其他存档字段由各自的持久化流程维护。
+        // 网关的过门通知与各 GS 的进场读档会并发，使用同配置的独立数据库连接。
+        using (SqlSugarClient db = new SqlSugarClient(_db.CurrentConnectionConfig))
+        {
+            db.Updateable<RoleTable>().SetColumns(row => new RoleTable { MapId = location.MapId, Pos = location.Pos })
+                .Where(row => row.Id == location.RoleId).ExecuteCommand();
+        }
+    }
+
     #region 背包格数同步与物品登记
     /// <summary>
     /// 将 GameServer 已验证的背包格子总数持久化。

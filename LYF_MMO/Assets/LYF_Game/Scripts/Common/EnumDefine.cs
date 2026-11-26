@@ -28,6 +28,7 @@ public enum WindowType
     EquipmentDetailWindow, // 装备实例属性、特技和穿脱操作窗口。
     MoshentaBlackCurtainWindow, // 魔神塔原20002剧情黑幕，沿主界面窗口生命周期显示。
     DeathWindow, // 副本死亡提示，点击后请求服务端返回出生点复活。
+    CurrencyExchangeWindow, // 货币兑换窗口：兑铜币/兑银两/兑银票，元宝为充值货币不参与产出兑换
     YimengChatWindow = 1000, // 独立江湖聊天窗口；保留现有窗口编号。
     ArenaSettingsWindow = 1001, // 竞技设置窗口，仅展示攻击与保护模式的外观选项，不参与任何战斗规则。
     CombatStatusWindow = 1002, // 点击战斗 HUD 的状态图标打开的状态详情窗口。
@@ -80,9 +81,6 @@ public enum SceneType
     Scene_CreateRole,//创建角色场景
     Scene_MainCity,//主城
     Scene_Dungeon,//副本场景类别；保留原枚举数值，具体地址按服务器 SceneID 读取资源登记。
-    Scene_SkyCity // 公共地图 1，资源位于 SkyCity 子目录。
+    Scene_SkyCity, // 公共地图 1，资源位于 SkyCity 子目录。
+    Scene_PublicInterior // 天空中之城的公共室内地图，实际资源地址来自传送配置。
 }
-
-
-
-

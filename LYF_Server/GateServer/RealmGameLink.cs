@@ -38,8 +38,8 @@ internal sealed class RealmGameLink : NetClient
         internal bool Switching;
         /// <summary>由已确认的副本请求引发的迁移，不占用玩家手动切线的应答。</summary>
         internal bool Gathering;
-        /// <summary>当前场景名额由门发起，失败回执应送往传送入口。</summary>
-        internal bool UsingPortal;
+        /// <summary>本次过门的来源；目标场景报告进入世界后即可恢复位置同步。</summary>
+        internal PublicCityPortal Portal;
         /// <summary>登录、建角和开始游戏的中心服在途请求号。</summary>
         internal int LoginRequest;
         /// <summary>客户端刚收到的权威副本实例，零表示可以切公共场景。</summary>
@@ -214,14 +214,21 @@ internal sealed class RealmGameLink : NetClient
                 return MarketUnavailable(id, query);
             }
             if (player.Current == null) return Error(id);
+            // 目标 GS 已接管、Unity 仍在换图时，旧地图最后一帧不能覆盖新门口。
+            if (player.Portal != null && !player.Switching)
+            {
+                if (packet.ProtoCode == NetDefine.CMD_MoveOperationCode) return false;
+                if (packet.ProtoCode == NetDefine.CMD_EnterWroldCode) player.Portal = null;
+            }
             if (packet.ProtoCode == SceneLineCode.Portal)
             {
-                // 客户端只申请使用脚下的门，目标城市由当前区服位置决定。
-                PublicCityPortal portal = PublicCityPortal.Find(player.Current.MapId);
+                // 门号只标识当前地图中的一道门，目标和落点由配置决定。
+                int doorId = ScenePortalRequest.Parser.ParseFrom(packet.Data).DoorId;
+                PublicCityPortal portal = PublicCityPortal.Find(player.Current.MapId, doorId);
                 if (portal == null || player.Dungeon != 0 || player.Switching)
                     return LineResult(id, SceneLineCode.Portal, "当前无法使用传送门。");
                 player.Switching = Control(id, player, SceneLineCode.Allocate, 0, -1, portal.Destination.MapId);
-                player.UsingPortal = player.Switching;
+                if (player.Switching) player.Portal = portal;
                 return player.Switching;
             }
             if (packet.ProtoCode == SceneLineCode.List || packet.ProtoCode == SceneLineCode.Change)
@@ -280,13 +287,17 @@ internal sealed class RealmGameLink : NetClient
                 }
                 else
                 {
-                    if (player.UsingPortal)
+                    if (player.Portal != null)
                     {
                         // 正式接管后才通知客户端加载目的城市。
-                        SceneLineResult arrived = new SceneLineResult { CurrentLine = player.Current.LineId };
+                        SceneLineResult arrived = new SceneLineResult { CurrentLine = player.Current.LineId,
+                            ArrivalPosition = player.Portal.Destination.ArrivalPosition };
                         arrived.Lines.Add(player.Current);
+                        // 网关已收到目标 GS 的接管确认，沿本区中心服连接按过门顺序保存目的地。
+                        RoleBaseInfo location = new RoleBaseInfo { RoleId = player.Role, MapId = player.Current.MapId,
+                            Pos = arrived.ArrivalPosition };
+                        center.Send(id, SceneLineCode.SavePublicArrival, location.ToByteString());
                         SessionMgr.Instance.GetSession(id)?.Send(SceneLineCode.Portal, arrived.ToByteString());
-                        player.UsingPortal = false;
                     }
                     else if (!player.Gathering) LineResult(id, SceneLineCode.Change, string.Empty, player.Current.LineId);
                     LineResult(id, SceneLineCode.State, string.Empty, player.Current.LineId);
@@ -415,9 +426,9 @@ internal sealed class RealmGameLink : NetClient
         player.Switching = false;
         player.Gathering = false;
         if (player.Login != null) { player.Login = null; Error(id); }
-        else if (player.UsingPortal)
+        else if (player.Portal != null)
         {
-            player.UsingPortal = false;
+            player.Portal = null;
             LineResult(id, SceneLineCode.Portal, reason);
         }
         else LineResult(id, SceneLineCode.Change, reason);

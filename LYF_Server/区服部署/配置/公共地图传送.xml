@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 两端读取 Network 程序集内同一份配置。坐标单位为米。每对门双向通行，arrival 是返回本门时的安全落点。 -->
+<world>
+  <maps>
+    <map id="0" scene="Scene_MainCity" />
+    <map id="1" scene="SkyCity/天空中之城" />
+    <map id="41" scene="SkyCity/Interiors/晨钟教堂" />
+    <map id="60" scene="SkyCity/Interiors/金穗餐馆" />
+  </maps>
+  <passage name="主城和天空中之城">
+    <door map="0" id="0" x="62.15" y="18.71" z="93.67" arrival="62.14934_19.414_80.66898" />
+    <door map="1" id="0" x="6" y="0.13" z="-52.7" arrival="0_0.08_-65.7" />
+  </passage>
+  <passage name="天空中之城和晨钟教堂">
+    <door map="1" id="1" x="-330" y="0.08" z="270" arrival="-330_0.12_264" />
+    <door map="41" id="0" x="71.673" y="12.257" z="39.852" arrival="71.43_12.32_45.72" />
+  </passage>
+  <passage name="天空中之城和金穗餐馆">
+    <door map="1" id="2" x="-42" y="0.13" z="-196" arrival="-42_0.14_-190" />
+    <door map="60" id="0" x="30.102" y="30.189" z="39.985" arrival="34.52_30.33_40.02" />
+  </passage>
+</world>

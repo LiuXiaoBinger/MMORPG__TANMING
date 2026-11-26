@@ -17,8 +17,8 @@ public sealed class CityPortalHandler : IGameMessageHandler
     {
         // 副本地图和非配对目的地都没有对应的城际传送门。
         RoleBaseInfo info = role.mainRoleInfo.BaseInfo;
-        PublicCityPortal portal = PublicCityPortal.Find(info.MapId);
-        if (portal == null || info.InstanceId != 0 || portal.Destination.MapId != destination) return false;
+        PublicCityPortal portal = PublicCityPortal.ToMap(info.MapId, destination);
+        if (portal == null || info.InstanceId != 0) return false;
         // 服务端半径比客户端触发圈宽一米，容纳一次移动同步的时间差。
         Vector3 position = info.Pos.ToVector3();
         return portal.Contains(position.X, position.Y, position.Z, 3.5f);
@@ -29,8 +29,9 @@ public sealed class CityPortalHandler : IGameMessageHandler
     internal static void PlaceArrival(RoleBaseInfo info, int destination)
     {
         if (info.MapId == destination) return;
+        // 同一座城有多道门，回城位置取决于角色刚离开的地图。
+        info.Pos = PublicCityPortal.ToMap(info.MapId, destination).Destination.ArrivalPosition;
         info.MapId = destination;
-        info.Pos = PublicCityPortal.Find(destination).ArrivalPosition;
     }
 
     /// <summary>无独立调度服时直接在本机完成离场、落点和两侧视野更新。</summary>
@@ -43,7 +44,9 @@ public sealed class CityPortalHandler : IGameMessageHandler
         if (role == null || role.PublicScene != null) return;
         // 将结果沿原玩家会话返回。
         SceneLineResult result = new SceneLineResult();
-        PublicCityPortal portal = PublicCityPortal.Find(role.mainRoleInfo.BaseInfo.MapId);
+        // 门号只在该角色当前的权威地图中解释。
+        int doorId = ScenePortalRequest.Parser.ParseFrom(packet.Data).DoorId;
+        PublicCityPortal portal = PublicCityPortal.Find(role.mainRoleInfo.BaseInfo.MapId, doorId);
         if (portal == null || !role.IsRoleDataReady() || role.mainRoleInfo.BaseInfo.CurrHp <= 0)
             result.Reason = "当前无法传送。";
         else if (!CanEnter(role, portal.Destination.MapId))
@@ -53,6 +56,11 @@ public sealed class CityPortalHandler : IGameMessageHandler
             RoleManager.Instance.LeavePublicScene(role);
             PlaceArrival(role.mainRoleInfo.BaseInfo, portal.Destination.MapId);
             result.Lines.Add(new PublicSceneLine { MapId = portal.Destination.MapId });
+            result.ArrivalPosition = role.mainRoleInfo.BaseInfo.Pos;
+            // 单 GS 模式由本机直接向中心服保存已确认的目的地。
+            RoleBaseInfo location = new RoleBaseInfo { RoleId = role.mainRoleInfo.BaseInfo.RoleId,
+                MapId = portal.Destination.MapId, Pos = result.ArrivalPosition };
+            context.Transport._client.Send(packet, SceneLineCode.SavePublicArrival, location.ToByteString());
         }
         role.SendToClient(SceneLineCode.Portal, result.ToByteString());
         if (result.Lines.Count == 0) return;

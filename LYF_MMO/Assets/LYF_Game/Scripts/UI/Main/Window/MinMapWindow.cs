@@ -53,6 +53,8 @@ public class MinMapWindow : WindowBase
    [SerializeField] private TMP_Text _positionText;
    /// <summary>本场景显示在底图上的门；副本中为空。</summary>
    private PublicCityPortal _portal;
+   /// <summary>同一张公共地图上可供标记指引的门，随场景绑定一次。</summary>
+   private IReadOnlyList<PublicCityPortal> _mapDoors;
    /// <summary>城门在当前底图上的归一化坐标，缩放时按画布像素重算。</summary>
    private Vector2 _portalPoint;
    /// <summary>当前窗口拥有的可复用路径标记。</summary>
@@ -140,6 +142,8 @@ public class MinMapWindow : WindowBase
          _imgMinMap.rectTransform.anchoredPosition = -playerPoint;
          if (_portal != null)
          {
+            // 多入口时，复用原来的可点击标记指向最近的门，点选和实际踩门使用同一坐标。
+            if (_mapDoors.Count > 1) SelectNearestPortal(position);
             // 门在视野外时停在对应方向的圆边，点击仍会前往真实门心。
             RectTransform marker = (RectTransform)_portalMark.transform;
             float radius = ((RectTransform)_imgMinMap.transform.parent).rect.height * 0.5f - marker.rect.width * 0.5f;
@@ -164,6 +168,25 @@ public class MinMapWindow : WindowBase
 
    #region 交互响应
    /// <summary>仅点圆形地图时打开区域图，原有切线控件继续独立响应。</summary>
+   /// <summary>在建筑密集的街区显示距离角色最近的传送入口。</summary>
+   /// <param name="position">本地主角当前世界坐标，单位米。</param>
+   private void SelectNearestPortal(Vector3 position)
+   {
+      // 用平方距离找最近的门，避免逐门开平方。
+      float best = float.PositiveInfinity;
+      for (int index = 0; index < _mapDoors.Count; index++)
+      {
+         // 同图所有门的中心均来自服务端与客户端共用的文件。
+         PublicCityPortal door = _mapDoors[index];
+         Vector3 center = new Vector3(door.X, door.Y, door.Z);
+         float distance = (center - position).sqrMagnitude;
+         if (distance >= best) continue;
+         best = distance;
+         _portal = door;
+      }
+      _portalPoint = _mapHelp.WorldToMap(new Vector3(_portal.X, _portal.Y, _portal.Z));
+   }
+
    /// <summary>把当前城门的世界位置交给主界面控制器寻路。</summary>
    private void SelectPortal()
    {
@@ -261,6 +284,7 @@ public class MinMapWindow : WindowBase
          _imgMinMap.sprite = _mapHelp.MapSprite;
          if (_imgMinMap.sprite == null) _imgMinMap.sprite = _defaultMapSprite;
          _mapAspect = _imgMinMap.sprite.rect.width / _imgMinMap.sprite.rect.height;
+         _mapDoors = PublicCityPortal.InScene(_mapHelp.gameObject.scene.name);
          _portal = MinMapHelp.CityPortal(_mapHelp.gameObject.scene.name);
          _portalMark.gameObject.SetActive(_portal != null);
          if (_portal != null)

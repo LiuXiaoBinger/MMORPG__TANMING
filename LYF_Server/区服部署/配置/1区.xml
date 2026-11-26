@@ -11,6 +11,9 @@
   <scene map="1" line="2" game="2" capacity="500" />
   <scene map="0" line="1" game="1" capacity="500" />
   <scene map="0" line="2" game="2" capacity="500" />
+  <!-- 晨钟教堂与金穗餐馆是天空中之城的公共室内地图，同一区玩家在室内一线相遇。 -->
+  <scene map="41" line="1" game="1" capacity="500" />
+  <scene map="60" line="1" game="2" capacity="500" />
   <!-- 两座城独立计算人数。各条已开线路都达到 warning 时再开一线，maxLines 包含两条常驻线。 -->
   <!-- chooseGsType 为 1 时，新线在在线 GS 间轮询；设为 2 时，优先选择低于 60% CPU 且评分最低的 GS。 -->
   <expansion map="1" warning="400" maxLines="8" />

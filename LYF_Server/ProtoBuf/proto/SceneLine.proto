@@ -14,11 +14,15 @@ message PublicSceneLine {
 // 客户端只提供目标线路；地图和角色由受信会话取得。
 message SceneLineRequest { int32 line_id = 1; }
 
+// 角色申请踩入当前地图的一道门，旧客户端空包沿用零号入口。
+message ScenePortalRequest { int32 door_id = 1; }
+
 // 查询、切换与初次入场共用的客户端可读结果。
 message SceneLineResult {
   string reason = 1; // 失败原因，成功时为空。
   int32 current_line = 2; // 玩家当前线路号。
   repeated PublicSceneLine lines = 3; // 当前地图可用的线路。
+  string arrival_position = 4; // 传送成功时的目标门外落点，与 GS 已应用的角色位置一致。
 }
 
 // 跨 GS 交接的临时角色数据；背包、技能和次数沿用中心服已确认的角色版本。

@@ -130,6 +130,9 @@
     <Compile Include="Socket\com\RealmTopology.cs" />
     <Compile Include="Socket\com\SceneLineCode.cs" />
     <Compile Include="Socket\com\PublicCityPortal.cs" />
+    <EmbeddedResource Include="..\区服部署\配置\公共地图传送.xml">
+      <LogicalName>PublicCityPortals.xml</LogicalName>
+    </EmbeddedResource>
     <Compile Include="Proto\MasterTeam.cs" />
     <Compile Include="Proto\PbcDungeon.cs" />
     <Compile Include="Proto\PbcChat.cs" />

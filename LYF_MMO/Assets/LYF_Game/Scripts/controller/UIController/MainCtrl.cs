@@ -826,10 +826,9 @@ public class MainCtrl : CtrlBase
         int mapId = result.Lines[0].MapId;
         PlayerEntity role = Global.Instance.SceneWorld.LocalRole;
         role.BaseInfo.MapId = mapId;
-        // 复用创角进城时的地图编号对应关系。
-        SceneType destination = SceneType.Scene_MainCity;
-        if (mapId == PublicCityPortal.Sky.MapId) destination = SceneType.Scene_SkyCity;
-        SceneMgr.Instance.LoadSceneMode(destination);
+        // 客户端和 GS 使用同一个回执落点，从室内出来时站在刚离开的那栋建筑外。
+        if (result.ArrivalPosition.Length > 0) role.BaseInfo.Pos = result.ArrivalPosition;
+        SceneMgr.Instance.LoadPublicMap(mapId, result.ArrivalPosition);
     }
 
     /// <summary>从小地图提交所选线路；地图和角色归属由区服确定。</summary><param name="line">目标线路编号。</param>

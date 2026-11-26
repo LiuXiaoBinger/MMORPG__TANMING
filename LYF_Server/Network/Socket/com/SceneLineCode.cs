@@ -39,4 +39,6 @@ public static class SceneLineCode
     public const ushort CloseStaticScene = 11317;
     /// <summary>场景宿主在评分模式下上报 CPU 占用和活跃副本数量。</summary>
     public const ushort HostLoad = 11318;
+    /// <summary>内部链路在公共地图交接成功后保存角色地图和门口落点。</summary>
+    public const ushort SavePublicArrival = 11319;
 }

@@ -9,6 +9,9 @@ public class SceneMgr : Singleton<SceneMgr>
     /// <summary>已成功加载的业务场景类型，失败时保留原值。</summary>
     public SceneType _currentSceneType;
 
+    /// <summary>本次公共地图加载使用的权威落点；常规出生和副本进场时为空。</summary>
+    public Vector3? PublicArrival { get; private set; }
+
     /// <summary>UIRoot持有的跨场景加载界面，允许为空。</summary>
     private LoadingView _loadingView;
 
@@ -36,6 +39,28 @@ public class SceneMgr : Singleton<SceneMgr>
         LoadSceneLocation(sceneType, ConstDefine.ScenePath + sceneType, callback);
     }
 
+    /// <summary>按公共地图配置进入城市或建筑室内，传送时使用服务器确认的门口位置。</summary>
+    /// <param name="mapId">区服回执或角色存档中的公共地图编号。</param>
+    /// <param name="arrival">目标门口或室内存档的世界坐标；空值使用场景出生点。</param>
+    /// <param name="callback">目标场景业务节点启用后调用。</param>
+    public void LoadPublicMap(int mapId, string arrival, Action callback = null)
+    {
+        // 文件位置由两端共用的传送配置给出，主城和天空中之城继续使用各自的业务类型。
+        string location = PublicCityPortal.SceneLocation(mapId);
+        SceneType type = SceneType.Scene_PublicInterior;
+        if (location == PublicCityPortal.SceneLocation(0)) type = SceneType.Scene_MainCity;
+        else if (mapId == PublicCityPortal.Sky.MapId) type = SceneType.Scene_SkyCity;
+        // 进场时立即记录，与旧场景中角色上报的最后一帧位置分开。
+        Vector3? position = null;
+        if (!string.IsNullOrEmpty(arrival))
+        {
+            // 网络位置格式沿用角色协议中的 X_Y_Z，单位米。
+            System.Numerics.Vector3 point = arrival.ToVector3();
+            position = new Vector3(point.X, point.Y, point.Z);
+        }
+        LoadSceneLocation(type, ConstDefine.ScenePath + location, callback, position);
+    }
+
     /// <summary>按权威 SceneID 加载已登记的副本资源，缺资源时保留当前场景并报告实际原因。</summary>
     /// <param name="sceneId">服务器已确认进入的场景编号。</param>
     public void LoadDungeonScene(int sceneId)
@@ -55,8 +80,10 @@ public class SceneMgr : Singleton<SceneMgr>
     /// <param name="sceneType">加载成功后保存的业务场景类别。</param>
     /// <param name="sceneLocation">YooAsset 可直接定位的场景资源地址。</param>
     /// <param name="callback">场景成功加载后的业务回调，允许为空。</param>
-    private void LoadSceneLocation(SceneType sceneType, string sceneLocation, Action callback)
+    /// <param name="arrival">本次公共地图进门落点，其他切场使用场景自身出生点。</param>
+    private void LoadSceneLocation(SceneType sceneType, string sceneLocation, Action callback, Vector3? arrival = null)
     {
+        PublicArrival = arrival;
         PrepareLocalRoleForSceneChange(sceneType);
         // 本次加载所用的默认资源包，切换成功后由同一个包卸载零引用资源。
         ResourcePackage package = Global.Instance.YooPackage;
@@ -130,7 +157,9 @@ public class SceneMgr : Singleton<SceneMgr>
     /// <param name="sceneType">主城和副本携带主角；登录与创角沿用原有角色清理流程。</param>
     private static void PrepareLocalRoleForSceneChange(SceneType sceneType)
     {
-        if (sceneType != SceneType.Scene_MainCity && sceneType != SceneType.Scene_SkyCity && sceneType != SceneType.Scene_Dungeon)
+        // 公共室内地图与两座城市都携带同一个本地角色。
+        bool publicCity = sceneType == SceneType.Scene_MainCity || sceneType == SceneType.Scene_SkyCity;
+        if (!publicCity && sceneType != SceneType.Scene_Dungeon && sceneType != SceneType.Scene_PublicInterior)
         {
             return;
         }
