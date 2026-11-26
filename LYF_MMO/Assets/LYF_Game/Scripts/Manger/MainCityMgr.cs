@@ -323,6 +323,8 @@ public class MainCityMgr : MonoBehaviour
    {
       // 自首次创建起常驻的原生模型，切场景不改变对象归属和实例身份。
       GameObject roleObject = localRole.Model.GameObject.NativeObject;
+      // 从其他玩法进入公共地图的已有角色也参与居民接触。
+      MSceneNpcContact.Attach(roleObject);
       // 目标场景出生世界坐标，与首次创建角色使用同一配置。
       Vector3 spawnPosition = ResolveMainRoleSpawnPosition();
       localRole.Position = spawnPosition;
@@ -696,6 +698,8 @@ public class MainCityMgr : MonoBehaviour
             });
 
             // 所有校验和数据初始化完成后才转交模型对象持有，失败路径由本方法销毁实例。
+            // 本人与同线可见玩家共用角色胶囊外缘，供本地物理识别真实接触。
+            MSceneNpcContact.Attach(obj);
             sceneEntity.Model.SetGameObject(obj,
                RoleAnimatorControllerLocation, false);
             if (roleType == RoleType.MainRole)

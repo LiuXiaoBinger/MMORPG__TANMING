@@ -15,7 +15,11 @@ internal sealed class SceneNpcWalker
     private readonly double[] distances;
     /// <summary>该职业巡逻时的步速，单位米每秒。</summary>
     private readonly float speed;
-    /// <summary>正在与这名巡卫对话的同线角色。</summary>
+    /// <summary>按配置步速走完整圈的秒数，不含停留。</summary>
+    private readonly double lapSeconds;
+    /// <summary>每圈返回岗位后的停留秒数，未配置的巡卫连续行走。</summary>
+    private readonly double homeWait;
+    /// <summary>正在与这名居民或巡卫对话的同线角色。</summary>
     private readonly HashSet<OnlineRole> speakers = new HashSet<OnlineRole>();
     /// <summary>上次起步的宿主时间，单位秒。</summary>
     private double started;
@@ -30,6 +34,8 @@ internal sealed class SceneNpcWalker
     {
         NpcId = int.Parse(route.GetAttribute("npc"), CultureInfo.InvariantCulture);
         speed = float.Parse(route.GetAttribute("speed"), CultureInfo.InvariantCulture);
+        if (route.HasAttribute("homeWait"))
+            homeWait = double.Parse(route.GetAttribute("homeWait"), CultureInfo.InvariantCulture);
         started = now;
         // 配置中的折点已由该场景正式导航网求路、贴地。
         XmlNodeList nodes = route.SelectNodes("point");
@@ -49,6 +55,7 @@ internal sealed class SceneNpcWalker
             length += Vector3.Distance(points[i], points[(i + 1) % points.Length]);
             distances[i] = length;
         }
+        lapSeconds = length / speed;
     }
 
     /// <summary>按同一次 GS 采样计算脚底和下一折点，客户端最多走到这段的终点。</summary>
@@ -58,8 +65,13 @@ internal sealed class SceneNpcWalker
         // 停步时只读已累计的时间，继续巡逻后补上这一段运行时长。
         double seconds = walked;
         if (speakers.Count == 0) seconds += now - started;
-        // 对一圈弧长取余时仍保留多次转弯后的行进余量。
-        double distance = seconds * speed % distances[distances.Length - 1];
+        // 一圈先沿路行走，再在首点待机；交谈会暂停这同一只时钟。
+        double phase = seconds % (lapSeconds + homeWait);
+        // 本次是否已回到出生岗位。
+        bool atHome = phase >= lapSeconds;
+        // 当前沿路线的米数，待机时为首点的零米。
+        double distance = 0;
+        if (!atHome) distance = phase * speed;
         // 当前位置所在的折线段下标。
         int segment = 0;
         while (segment + 1 < distances.Length && distance >= distances[segment]) segment++;
@@ -75,9 +87,14 @@ internal sealed class SceneNpcWalker
             TargetX = target.X, TargetY = target.Y, TargetZ = target.Z, Yaw = talkYaw };
         if (speakers.Count == 0)
         {
-            step.Speed = speed;
             step.Yaw = (float)(Math.Atan2(direction.X, direction.Z) * 180.0 / Math.PI);
-            due = Math.Min(due, now + remaining / speed);
+            if (atHome)
+                due = Math.Min(due, now + lapSeconds + homeWait - phase);
+            else
+            {
+                step.Speed = speed;
+                due = Math.Min(due, now + remaining / speed);
+            }
         }
         return step;
     }

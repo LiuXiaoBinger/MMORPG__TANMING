@@ -236,6 +236,13 @@ public class NpcManager : MonoBehaviour
             // 牌匾、菜单和传送台以自身顶面为名牌高度。
             entity.Height = shape.bounds.max.y - spawnPosition.y;
         }
+        // 人物沿用自己的职业待机，碰撞只驱动上身反馈层；固定设施仍使用原表现。
+        if (!entity.IsSceneObject && entity.Model.Ator.UnityAnimator != null)
+        {
+            // 模型绑定会重置缓存层；在绑定完成后将人物碰撞体放回 NPC 层。
+            entity.Model.GameObject.Layer = LayerMask.NameToLayer("NPC");
+            npcObject.AddComponent<MSceneNpcMotion>().Bind(entity.Model.Ator.UnityAnimator, info.ID);
+        }
         // 资源异步到达时，用最近一次宿主采样对齐实际位置。
         if (_patrolState == null) return;
         for (int i = 0; i < _patrolState.Steps.Count; i++)
