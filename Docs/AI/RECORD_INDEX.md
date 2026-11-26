@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `d2930e3480551158d4eb8251fb980ce427c3dec48ebdde794969a2256a348e72`
+Source normalized SHA256: `bb80dd68c82d7df55bde5d1d331c1acb88511b8995311d28d9d15e849528ac2d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -149,11 +149,12 @@ Source normalized SHA256: `d2930e3480551158d4eb8251fb980ce427c3dec48ebdde794969a
 | [CODE][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] RO entry routing for the two public cities | 1003-1007 |
 | [CODE][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] Sky City chapel and restaurant interiors | 1008-1012 |
 | [CODE][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Chamber gems, player listings and Magic Swordsman upgrade patterns | 1013-1020 |
-| [CODE][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Sky City professions and public-line guard patrols | 1021-1024 |
+| [CODE][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Sky City professions and public-line guard patrols | 1021-1025 |
+| [FILES][场景][主城][MAIN-CITY-EAST-WARDS-20261126] Public map 0 eastward city expansion | 1026-1029 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `a7dd753ac9f21af9a9b6551bd997b39f9e825965b810b92139615e7af41710a2`
+Source normalized SHA256: `b2e27ab5d48c3b0a8c1622ddca4232df837119871c3463027f7653b9f0092ad7`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -295,7 +296,8 @@ Source normalized SHA256: `a7dd753ac9f21af9a9b6551bd997b39f9e825965b810b92139615
 | [VERIFY][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] One-realm expansion and live portal travel | 1042-1046 |
 | [VERIFY][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] One-realm interior travel, character scale and baked lighting | 1047-1051 |
 | [VERIFY][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Gem settlement and stock-aware item introductions | 1052-1059 |
-| [VERIFY][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Two Unity players and three real socket roles | 1060-1063 |
+| [VERIFY][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Two Unity players and three real socket roles | 1060-1064 |
+| [VERIFY][场景][主城][导航][MAIN-CITY-EAST-WARDS-20261126] East wards scale, access and navigation | 1065-1068 |
 
 ## Docs/AI/DECISIONS.en.md
 

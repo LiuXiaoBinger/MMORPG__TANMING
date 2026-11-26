@@ -1022,3 +1022,8 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 
 - Added 14 residents (five in map 41 晨钟教堂, four in map 60 金穗餐馆, five on the actual map 1 云帆码头). The chapel now has seven people including a bishop and two believers, the restaurant six including the shop-owning proprietor, commission-desk maid and cook. The three guards use human RO models.
 - GameServer owns each observed public instance's movement, turns, conversation stops and resumption. Late joins and line changes subscribe to that instance. Edit `LYF_Server/区服部署/配置/公共地图巡逻.xml` for routes and `Luaban/MiniTemplate/Datas/#NpcInfo.xlsx` for spawns. Full file list and Git receipt in `项目修改日志/2026-11-26-天空城职业NPC与巡逻同步.md`.
+
+## [FILES][场景][主城][MAIN-CITY-EAST-WARDS-20261126] Public map 0 eastward city expansion
+
+- Map 0 keeps its original entry at the city gate. Follow the eastern post street and arched stone bridge to the well market. The craft quarter branches south and two walking ramps connect the market to the twin-tower guild garden. The four district platforms add 9,010.92 m² of paved plan area before connecting roads. Nineteen buildings (17 premises and two towers) reuse the original MainCity art library at character scale.
+- The map instance lives under SceneBusinessRoot in `LYF_MMO/Assets/LYF_Game/Scenes/Scene_MainCity.unity`. Edit the district prefab and its companion mesh/material asset in `LYF_MMO/Assets/LYF_Game/Scenes/MainCity_Res/东城街区/`. Native and shared navigation and both map images were refreshed. The 11-resource manifest, comparison images and delivery receipts are in `项目修改日志/2026-11-26-主城东区扩建.md`.
