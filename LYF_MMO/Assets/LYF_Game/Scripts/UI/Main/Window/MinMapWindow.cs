@@ -15,8 +15,10 @@ public class MinMapWindow : WindowBase
 {
 
    #region 字段
-   /// <summary>小地图下方的分线下拉框，由区服返回可用线路后显示。</summary>
+   /// <summary>小地图左上侧的分线下拉框，由区服返回可用线路后显示。</summary>
    [SerializeField] private TMP_Dropdown _lineSelector;
+   /// <summary>线路入口的折叠箭头，列表打开时朝上，收起时朝下。</summary>
+   [SerializeField] private RectTransform _lineArrow;
    /// <summary>下拉索引对应的真实线路编号，有空号时仍能请求正确目标。</summary>
    private readonly List<int> _lineIds = new List<int>();
    /// <summary>上次服务端确认的线路索引，等待切线回包期间入口仍显示实际所在的线。</summary>
@@ -99,6 +101,13 @@ public class MinMapWindow : WindowBase
       if (Time.unscaledTime >= _refreshAt)
       {
          _refreshAt = Time.unscaledTime + 0.15f;
+         if (_lineArrow != null && _lineSelector != null)
+         {
+            // RO 箭头原图朝下，菜单展开时在界面平面旋转半圈。
+            float arrowAngle = 0f;
+            if (_lineSelector.IsExpanded) arrowAngle = 180f;
+            _lineArrow.localRotation = Quaternion.Euler(0f, 0f, arrowAngle);
+         }
          // 模型进入或离开视野时，从现有场景世界刷新标记。
          SceneWorldSystem world = null;
          if (Global.Instance != null) world = Global.Instance.SceneWorld;
@@ -182,16 +191,16 @@ public class MinMapWindow : WindowBase
          PublicSceneLine line = result.Lines[index];
          _lineIds.Add(line.LineId);
          // 入口和高亮行都以服务端当前线为准，其他线路用低亮度圆点区分。
-         Color32 statusColor = new Color32(137, 166, 204, 255);
+         Color32 statusColor = new Color32(125, 146, 165, 255);
          if (line.LineId == result.CurrentLine)
          {
             currentIndex = index;
-            statusColor = new Color32(38, 180, 116, 255);
+            statusColor = new Color32(42, 167, 117, 255);
          }
          // 满员线路使用 RO 线路列表的红字；真实可切状态仍由服务器判定。
-         string lineLabel = line.LineId + " 线";
+         string lineLabel = line.LineId + "线";
          if (line.Capacity > 0 && line.Population >= line.Capacity)
-            lineLabel = "<color=#FF4F4F>" + lineLabel + "</color>";
+            lineLabel = "<color=#A83D40>" + lineLabel + "</color>";
          labels.Add(new TMP_Dropdown.OptionData(lineLabel, _lineSelector.itemImage.sprite, statusColor));
       }
       _lineSelector.AddOptions(labels);
