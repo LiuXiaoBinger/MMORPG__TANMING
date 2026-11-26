@@ -1076,3 +1076,9 @@ Codex completed five configured quests, GS persistence and NPC options, public p
 
 - The bag opens GiftPanel through MainView. Select items by stack UID and count and send them to a saved same-realm contact. Enter the exact character name to add an offline or online friend. Incoming contacts can be added back. The server permits outgoing gifts to contacts the sender added.
 - GiftTable contains item 7301 and fragments 7311–7342. Bound and time-limited stacks are excluded. The Center transaction saves the sender's bag and the recipient's mail together. RO template 4001 uses the sender's name, a three-day lifetime and bound attachments claimed through the existing inbox. Full file list and Git receipt: \`项目修改日志/RO好友赠礼邮件-2026-11-26.md\`.
+
+## [CODE][FILES][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Resident idle, contact reactions and local walking routes
+
+- All 15 humanoid appearances use staggered occupational idle and a short upper-body contact layer. Eight previously unbound humanoid prefabs now reference standalone RO avatars. Each visible player's capsule detects new contact with an NPC's body surface.
+- Nine residents without service entries walk short GameServer-authoritative routes around their posts in Main City (3), Sky City (4), Morning Bell Chapel (1) and Golden Wheat Restaurant (1). Return-to-post waits are 3–5 seconds. The three existing guard routes continue without a home wait.
+- Full file list, verification and limits in `项目修改日志/2026-11-27-居民待机碰撞与街坊走动.md`.

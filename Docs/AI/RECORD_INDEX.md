@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `93077247b114ffaa61ec572569d2594b04a92c9f21381cf69329793c70e36d61`
+Source normalized SHA256: `29aef30c63bf33b81077afc0f82b7a2c7377267591caad714a52136e68a7e9ec`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -160,11 +160,12 @@ Source normalized SHA256: `93077247b114ffaa61ec572569d2594b04a92c9f21381cf693297
 | [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] Playable role quests and dungeon objective navigation | 1061-1064 |
 | [CODE][FILES][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Choose each nearby speaker by name | 1065-1069 |
 | [CODE][FILES][HANDOFF][GM][RO-GM-20261126] In-game GM commands from the RO chat button | 1070-1074 |
-| [CODE][FILES][邮箱][MAIL-GIFT-20261126] RO friend gift mail from the bag | 1075-1078 |
+| [CODE][FILES][邮箱][MAIL-GIFT-20261126] RO friend gift mail from the bag | 1075-1079 |
+| [CODE][FILES][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Resident idle, contact reactions and local walking routes | 1080-1084 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `0477c584578dcde3c864b7714cdb95c9b506a3e45c6babc3f1bca64658309da0`
+Source normalized SHA256: `266863da042bb4a99a088bb58538991aec0fff1b74fd51170c7cfd2954af7002`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -318,7 +319,8 @@ Source normalized SHA256: `0477c584578dcde3c864b7714cdb95c9b506a3e45c6babc3f1bca
 | [VERIFY][任务][导航][WORLD-QUEST-NAV-20261126] Role quest progression and route verification | 1104-1109 |
 | [VERIFY][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Simultaneous named choices and actual NPC destinations | 1110-1114 |
 | [VERIFY][GM][RO-GM-20261126] GM authentication, real commands and persistence | 1115-1119 |
-| [VERIFY][邮箱][MAIL-GIFT-20261126] Two-character gift delivery and claim | 1120-1123 |
+| [VERIFY][邮箱][MAIL-GIFT-20261126] Two-character gift delivery and claim | 1120-1124 |
+| [VERIFY][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Actual bones, physical contact and line-authoritative residents | 1125-1128 |
 
 ## Docs/AI/DECISIONS.en.md
 
