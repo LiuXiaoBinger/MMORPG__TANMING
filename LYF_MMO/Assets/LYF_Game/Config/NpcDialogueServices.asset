@@ -48,19 +48,9 @@ MonoBehaviour:
       Function: 1
   - NpcId: 4103
     Title: 南门巡卫
-    PatrolPath:
-    - {x: -6, y: 0.008, z: -76}
-    - {x: -6, y: 0.008, z: -89}
-    - {x: 3, y: 0.008, z: -89}
-    - {x: 3, y: 0.008, z: -76}
     Services: []
   - NpcId: 4104
     Title: 南街巡卫
-    PatrolPath:
-    - {x: -43, y: 0.027, z: -177}
-    - {x: -62, y: 0.008, z: -177}
-    - {x: -62, y: 0.008, z: -185}
-    - {x: -43, y: 0.066, z: -185}
     Services: []
   - NpcId: 4105
     Title: 云帆驿站车夫
@@ -95,14 +85,14 @@ MonoBehaviour:
       Function: 2
       DoorId: 1
   - NpcId: 4121
-    Title: 金穗掌柜
+    Title: 金穗餐馆老板
     Services:
     - Label: 购买旅途补给
       Function: 0
       ShopId: 1
       GoodsIds: 01000000020000000300000004000000
   - NpcId: 4122
-    Title: 餐馆侍应
+    Title: 金穗女仆
     Services:
     - Label: 查看委托
       Function: 1
@@ -115,3 +105,45 @@ MonoBehaviour:
     - Label: 乘车前往天空中之城
       Function: 2
       DoorId: 1
+  - NpcId: 4115
+    Title: 晨钟主教
+    Services: []
+  - NpcId: 4116
+    Title: 守灯修女
+    Services: []
+  - NpcId: 4117
+    Title: 晨祷信徒
+    Services: []
+  - NpcId: 4118
+    Title: 见习辅祭
+    Services: []
+  - NpcId: 4119
+    Title: 还愿的信徒
+    Services: []
+  - NpcId: 4124
+    Title: 金穗主厨
+    Services: []
+  - NpcId: 4125
+    Title: 候船食客
+    Services: []
+  - NpcId: 4126
+    Title: 厨房学徒
+    Services: []
+  - NpcId: 4127
+    Title: 餐馆常客
+    Services: []
+  - NpcId: 4141
+    Title: 琥珀号船长
+    Services: []
+  - NpcId: 4142
+    Title: 白帆号水手
+    Services: []
+  - NpcId: 4143
+    Title: 码头装卸工
+    Services: []
+  - NpcId: 4144
+    Title: 港务登簿员
+    Services: []
+  - NpcId: 4145
+    Title: 空港巡卫
+    Services: []

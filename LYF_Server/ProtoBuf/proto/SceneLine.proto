@@ -64,3 +64,31 @@ message SceneDeparture {
   PublicSceneLine target = 1; // 调度分配的目的场景。
   ScenePortalRequest portal = 2; // 门、马车或传送台，单纯切线时不填写。
 }
+
+// 玩家进入公共地图时以 npc_id=0 请求巡卫现状；交谈只改变本实例的一名卫兵。
+message SceneNpcPatrolRequest {
+  int32 npc_id = 1; // 出生配置编号，零表示读取整条线。
+  bool talking = 2; // 开始谈话为真，关闭谈话为假。
+  int64 scene_uid = 3; // 客户端看到这名卫兵时所属的公共实例。
+}
+
+// 一段已由 GS 确定的步行轨迹，坐标为 Unity 世界米。
+message SceneNpcPatrolStep {
+  int32 npc_id = 1; // 稳定的 NPC 配置编号。
+  float x = 2; // 采样时的横坐标。
+  float y = 3; // 采样时的脚底高度。
+  float z = 4; // 采样时的纵坐标。
+  float target_x = 5; // 本段终点的横坐标。
+  float target_y = 6; // 本段终点的地面高度。
+  float target_z = 7; // 本段终点的纵坐标。
+  float speed = 8; // 米每秒，对话停步时为零。
+  float yaw = 9; // 绕竖轴的朝向角，以度计。
+}
+
+// 场景宿主向同线已进入世界的角色公布同一次采样，供迟到角色与模型补位。
+message SceneNpcPatrolState {
+  int32 map_id = 1; // 所属公共地图。
+  int64 scene_uid = 2; // 本次采样所属的地图实例。
+  repeated SceneNpcPatrolStep steps = 3; // 有巡逻配置的人形 NPC。
+  int64 sampled_ms = 4; // GS 采到上述位置时的单调毫秒，供客户端消除较慢回包造成的位置落后。
+}

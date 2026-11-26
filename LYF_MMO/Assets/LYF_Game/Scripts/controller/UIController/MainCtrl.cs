@@ -640,12 +640,12 @@ public class MainCtrl : CtrlBase
             TipsMgr.Instance.ShowSystemTips("距离过远，请靠近");
             return;
         }
-        // 固定设施维持场景朝向，巡卫先停步再与玩家面对面。
+        // 固定设施维持朝向；巡卫停步和转身由 GS 统一通知。
         if (!npc.IsSceneObject)
         {
             if (npc.Model.GameObject.Transform.TryGetComponent(out MSceneNpcPatrol patrol))
                 patrol.SetTalking(true);
-            npc.Model.GameObject.Transform.LookAtTarget(player.Model.GameObject.Transform);
+            else npc.Model.GameObject.Transform.LookAtTarget(player.Model.GameObject.Transform);
         }
         ShowMainWindow(WindowType.TalkWindow, npc);
     }
@@ -904,7 +904,12 @@ public class MainCtrl : CtrlBase
     private void OnSceneLineState(ByteString data)
     {
         if (SceneLineResult.Parser.ParseFrom(data).CurrentLine == 0) _mainView.MinMapWindow?.ShowLines(null);
-        else RequestSceneLines();
+        else
+        {
+            RequestSceneLines();
+            // 同图切线不会重建 Unity 场景，向新宿主重新订阅本线巡逻。
+            MNetClient.Instance.Send(SceneLineCode.NpcPatrol, ByteString.Empty);
+        }
     }
 
     /// <summary>将本地图真实目录交给已注册的小地图窗口。</summary><param name="data">控制服返回的线路目录。</param>

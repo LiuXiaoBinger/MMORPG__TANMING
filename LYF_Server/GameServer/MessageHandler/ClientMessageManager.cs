@@ -376,6 +376,10 @@ public static class GameMessageProtocolRegister
         }
 
         ClientMessageManager messageManager = ClientMessageManager.Instance;
+        // 统一由本角色的地图宿主发布巡逻，使单服与分线服使用同一路径。
+        server.RegistCommand(SceneLineCode.NpcPatrol, messageManager);
+        RegisterHandler(messageManager, GameCommandSource.GateServer, SceneLineCode.NpcPatrol,
+            new SceneNpcPatrolHandler(), CenterMessageRoute.Internal);
         server.RegistCommand(SceneLineCode.Portal, messageManager);
         RegisterHandler(messageManager, GameCommandSource.GateServer, SceneLineCode.Portal,
             new CityPortalHandler(), CenterMessageRoute.Internal);

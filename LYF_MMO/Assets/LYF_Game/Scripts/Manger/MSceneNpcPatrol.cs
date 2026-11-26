@@ -1,86 +1,64 @@
-using System.Collections.Generic;
+using Google.Protobuf;
 using UnityEngine;
 
-/// <summary>让普通巡卫沿本图导航网循环走过配置路标，对话时停下，结束后接着走。</summary>
+/// <summary>显示所属 GS 已确认的巡逻路段，位置、点击碰撞和名牌始终跟随同一实体。</summary>
 public sealed class MSceneNpcPatrol : MonoBehaviour
 {
-    /// <summary>普通巡卫的步行速度，单位为米每秒。</summary>
-    private const float WalkSpeed = 1.45f;
-    /// <summary>导航求得的闭合折线路径，首尾为同一点，单位米。</summary>
-    private readonly List<Vector3> _path = new List<Vector3>();
-    /// <summary>与模型、点击导航和名牌共用位置的巡卫实体。</summary>
+    /// <summary>当前模型绑定的场景 NPC，使用配置编号与服务端对应。</summary>
     private NpcEntity _npc;
-    /// <summary>播放 RO 待机和行走动作的模型动画器。</summary>
+    /// <summary>当前路段的 RO 人形模型动画器。</summary>
     private Animator _animator;
-    /// <summary>当前行进目标在路线中的索引，零号位置是出发点。</summary>
-    private int _next;
-    /// <summary>本机玩家正在与该巡卫交谈。</summary>
-    private bool _talking;
+    /// <summary>最后一份服务端路段及说话朝向。</summary>
+    private SceneNpcPatrolStep _step;
+    /// <summary>真实收到该份采样的本机单调秒数，异步载入模型不重置时间。</summary>
+    private double _received;
+    /// <summary>该模型属于哪一份公共场景，用于对话停步。</summary>
+    private long _sceneUid;
 
-    /// <summary>把一圈路标展开为该地图导航网的可行路线，只在模型出生时求路。</summary>
-    /// <param name="npc">本场景内已载入模型的巡逻实体。</param>
-    /// <param name="waypoints">按行走顺序填写的世界路标，末点自动接回首点。</param>
-    public void Begin(NpcEntity npc, Vector3[] waypoints)
+    /// <summary>在初次进场、转向或停步时，以宿主发布的位置和目标更新本机表现。</summary>
+    /// <param name="npc">由本场景出生表创建的实体。</param><param name="uid">签发轨迹的实例。</param>
+    /// <param name="step">GS 的当前位置、目标和步速。</param><param name="received">主线程收到采样的实时时刻。</param>
+    public void Apply(NpcEntity npc, long uid, SceneNpcPatrolStep step, double received)
     {
+        // 初次及动静转换时才切动作，普通校准不打断步行动画。
+        bool changeMotion = _step == null || (_step.Speed > 0f) != (step.Speed > 0f);
         _npc = npc;
-        _animator = GetComponentInChildren<Animator>();
-        // 各段共享临时路点；最终路线只保留相邻段共有的交点一次。
-        List<Vector3> leg = new List<Vector3>();
-        _path.Add(waypoints[0]);
-        for (int i = 0; i < waypoints.Length; i++)
+        _sceneUid = uid;
+        _step = step;
+        _received = received;
+        if (_animator == null) _animator = GetComponentInChildren<Animator>();
+        if (changeMotion)
         {
-            // 末段回到配置的第一个路标，沿导航面行走。
-            Vector3 end = waypoints[(i + 1) % waypoints.Length];
-            if (!MNavigationMgr.singleton.TryGetPath(waypoints[i], end, leg))
-            {
-                Debug.LogWarning("巡逻点无法连通：" + npc.Name + " " + waypoints[i] + " → " + end, this);
-                enabled = false;
-                return;
-            }
-            for (int j = 0; j < leg.Count; j++)
-            {
-                if ((leg[j] - _path[_path.Count - 1]).sqrMagnitude > 0.0001f)
-                    _path.Add(leg[j]);
-            }
+            if (step.Speed > 0f) _animator.CrossFadeInFixedTime("Walk", 0.12f);
+            else _animator.CrossFadeInFixedTime("Idle", 0.12f);
         }
-        _next = 1;
-        if (_path.Count > 1) _animator.Play("Walk");
+        transform.rotation = Quaternion.Euler(0f, step.Yaw, 0f);
+        Update();
     }
 
-    /// <summary>对白期间暂停本机表现，关闭后从原路点继续。</summary>
-    /// <param name="talking">打开对白为真，退出对白为假。</param>
+    /// <summary>请求 GS 为同线所有玩家停步或继续巡逻。</summary><param name="talking">打开交谈为真，结束为假。</param>
     public void SetTalking(bool talking)
     {
-        if (_talking == talking) return;
-        _talking = talking;
-        if (talking) _animator.CrossFadeInFixedTime("Idle", 0.12f);
-        else _animator.CrossFadeInFixedTime("Walk", 0.12f);
+        if (_npc == null) return;
+        MNetClient.Instance.Send(SceneLineCode.NpcPatrol,
+            new SceneNpcPatrolRequest { NpcId = _npc.NpcID, SceneUid = _sceneUid, Talking = talking }.ToByteString());
     }
 
-    /// <summary>以真实帧间隔消耗本帧步长，跨过折点时继续使用剩余距离。</summary>
+    /// <summary>仅在已下发的路段内插值，下一路口、暂停和朝向都由宿主决定。</summary>
     private void Update()
     {
-        if (_talking || _path.Count < 2) return;
-        // 余下的本帧距离，单位米。
-        float remaining = WalkSpeed * Time.deltaTime;
-        while (remaining > 0f)
-        {
-            // 从当前脚底到下一导航折点的三维向量。
-            Vector3 delta = _path[_next] - _npc.Position;
-            // 当前路段尚余长度，单位米。
-            float distance = delta.magnitude;
-            // 转身只围绕竖轴，让双脚保持在道路上。
-            Vector3 forward = new Vector3(delta.x, 0f, delta.z);
-            if (forward.sqrMagnitude > 0.00001f) transform.rotation = Quaternion.LookRotation(forward);
-            if (remaining < distance)
-            {
-                _npc.Position += delta * (remaining / distance);
-                return;
-            }
-            _npc.Position = _path[_next];
-            remaining -= distance;
-            _next++;
-            if (_next == _path.Count) _next = 1;
-        }
+        if (_npc == null) return;
+        // 从采样至本帧已走的米数，暂停时步速为零。
+        float distance = (float)(MNetClient.MonotonicSeconds - _received) * _step.Speed;
+        Vector3 from = new Vector3(_step.X, _step.Y, _step.Z);
+        Vector3 to = new Vector3(_step.TargetX, _step.TargetY, _step.TargetZ);
+        _npc.Position = Vector3.MoveTowards(from, to, distance);
+    }
+
+    /// <summary>模型离场后停止跟随上一份实体，等待下一次权威采样。</summary>
+    private void OnDisable()
+    {
+        _npc = null;
+        _step = null;
     }
 }

@@ -15,6 +15,12 @@ public class MNetClient : Singleton<MNetClient>
     /// <summary>Unity 主线程同步上下文。</summary>
     private SynchronizationContext _synchronizationContext;
 
+    /// <summary>网络收包与巡逻表现共用的单调时间，单位秒，与系统日期无关。</summary>
+    public static double MonotonicSeconds => (double)Stopwatch.GetTimestamp() / Stopwatch.Frequency;
+
+    /// <summary>当前正在主线程分派的封包何时抵达网络线程，单位为本机单调秒数。</summary>
+    public double PacketReceivedSeconds { get; private set; }
+
     /// <summary>当前网络客户端。</summary>
     private static NetClient _client;
 
@@ -173,12 +179,8 @@ public class MNetClient : Singleton<MNetClient>
             }
         }
 
-        // TCP 探测回包的单调时钟刻度，在投递前采集，避免把主线程排队计入 RTT。
-        long? gatewayLatencyReceivedAtTicks = null;
-        if (!fromRealtime && protoCode == NetDefine.RpcC2T_SyncTime)
-        {
-            gatewayLatencyReceivedAtTicks = Stopwatch.GetTimestamp();
-        }
+        // 在网络线程取到达时间，避免场景载入的主线程等待被误算成新的巡逻起步时间。
+        long receivedTicks = Stopwatch.GetTimestamp();
 
         PostToMainThread(() =>
         {
@@ -208,11 +210,12 @@ public class MNetClient : Singleton<MNetClient>
                 HandleKcpBindResponse(data);
                 return;
             }
-            if (gatewayLatencyReceivedAtTicks.HasValue)
+            if (!fromRealtime && protoCode == NetDefine.RpcC2T_SyncTime)
             {
-                HandleGatewayLatencyResponse(sourceGeneration, data, gatewayLatencyReceivedAtTicks.Value);
+                HandleGatewayLatencyResponse(sourceGeneration, data, receivedTicks);
                 return;
             }
+            PacketReceivedSeconds = (double)receivedTicks / Stopwatch.Frequency;
             SocketDispatcher.Instance.DispatchEvent(protoCode, data, sourceGeneration);
         });
     }

@@ -1,3 +1,4 @@
+using Google.Protobuf;
 using System.Collections.Generic;
 using MMoRpgCommon;
 using MMoRpgCommon.SceneEntity;
@@ -10,6 +11,13 @@ public class NpcManager : MonoBehaviour
 {
 
     #region 字段
+    /// <summary>本场景最新的巡卫采样，用于异步模型载入后的补位。</summary>
+    private SceneNpcPatrolState _patrolState;
+    /// <summary>最新采样的本机接收秒数，模型完成载入时沿用。</summary>
+    private double _patrolReceived;
+    /// <summary>本线路样本中最短的收包时差，用于将 GS 的秒数转换为本机单调时间。</summary>
+    private double _patrolClockOffset;
+
     [SerializeField, Header("NPC 实例父节点，可为空")] private Transform _npcRoot;
 
     /// <summary>此出生管理器所属公共地图，零为原主城。</summary>
@@ -42,6 +50,7 @@ public class NpcManager : MonoBehaviour
         {
             return;
         }
+        SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.NpcPatrol, OnPatrolState);
         _destroyed = true;
         _initialized = false;
         _lifecycleVersion++;
@@ -76,6 +85,8 @@ public class NpcManager : MonoBehaviour
         }
 
         _initialized = true;
+        SocketDispatcher.Instance.AddEventHandler(SceneLineCode.NpcPatrol, OnPatrolState);
+        MNetClient.Instance.Send(SceneLineCode.NpcPatrol, ByteString.Empty);
         _lifecycleVersion++;
         Dictionary<int, NpcParseInfo> npcInfos = LubanMgr.Instance.GetNpcInfos();
         if (npcInfos == null || npcInfos.Count == 0)
@@ -96,6 +107,38 @@ public class NpcManager : MonoBehaviour
     #endregion
         }
     }
+
+
+    /// <summary>接收本地图宿主的数据，立即驱动已加载的人形模型。</summary><param name="data">当前公共实例的统一巡逻采样。</param>
+    private void OnPatrolState(ByteString data)
+    {
+        // 本地图可能正在卸载，异步收到的其他地图采样不应用到旧场景。
+        SceneNpcPatrolState state = SceneNpcPatrolState.Parser.ParseFrom(data);
+        if (state.MapId != _mapId) return;
+        // 两端单调时钟不要求同源。从本线路已收到的样本中剔除较慢包额外的传输和排队时间。
+        double hostSeconds = state.SampledMs / 1000d;
+        double offset = MNetClient.Instance.PacketReceivedSeconds - hostSeconds;
+        if (_patrolState == null || _patrolState.SceneUid != state.SceneUid || offset < _patrolClockOffset) _patrolClockOffset = offset;
+        _patrolReceived = hostSeconds + _patrolClockOffset;
+        _patrolState = state;
+        for (int i = 0; i < state.Steps.Count; i++)
+        {
+            // 只为真实已载入的巡卫添加表现组件。
+            SceneNpcPatrolStep step = state.Steps[i];
+            NpcEntity npc;
+            if (_npcEntities.TryGetValue(step.NpcId, out npc) && npc.Model.IsLoaded) ApplyPatrol(npc, step);
+        }
+    }
+
+    /// <summary>让模型与名牌使用服务器脚底坐标。</summary><param name="npc">已经取得模型的巡卫。</param><param name="step">该巡卫的权威路段。</param>
+    private void ApplyPatrol(NpcEntity npc, SceneNpcPatrolStep step)
+    {
+        // 使用正式模型根节点，保留既有点击与名牌位置来源。
+        GameObject model = npc.Model.GameObject.Transform.gameObject;
+        if (!model.TryGetComponent(out MSceneNpcPatrol patrol)) patrol = model.AddComponent<MSceneNpcPatrol>();
+        patrol.Apply(npc, _patrolState.SceneUid, step, _patrolReceived);
+    }
+
 
     private void CreateNpc(NpcParseInfo info)
     {
@@ -193,11 +236,10 @@ public class NpcManager : MonoBehaviour
             // 牌匾、菜单和传送台以自身顶面为名牌高度。
             entity.Height = shape.bounds.max.y - spawnPosition.y;
         }
-        // 巡逻路径只配置在巡卫身上，普通商人和交互物保持原地。
-        if (_dialogueCatalog == null) return;
-        Vector3[] patrol = _dialogueCatalog.GetPatrolPath(info.ID);
-        if (patrol != null && patrol.Length > 1)
-            npcObject.AddComponent<MSceneNpcPatrol>().Begin(entity, patrol);
+        // 资源异步到达时，用最近一次宿主采样对齐实际位置。
+        if (_patrolState == null) return;
+        for (int i = 0; i < _patrolState.Steps.Count; i++)
+            if (_patrolState.Steps[i].NpcId == info.ID) ApplyPatrol(entity, _patrolState.Steps[i]);
     }
 
     private void RemoveNpcEntity(int npcId, NpcEntity expectedEntity)

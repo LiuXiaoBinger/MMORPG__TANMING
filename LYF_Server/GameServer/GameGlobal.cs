@@ -147,6 +147,8 @@ public class GameGlobal:Singleton<GameGlobal>
         UpdateManager("RoGamesManager", RoGamesManager.Instance.Update, deltaMilliseconds);
         UpdateManager("RoleManager", RoleManager.Instance.Update, deltaMilliseconds);
         SceneLineHandler.FlushDepartures();
+        // 角色离场处理后，再向仍在本图的观察者广播巡卫位置。
+        SceneNpcPatrolHandler.Update();
         UpdateManager("DecoupleManager", DecoupleManager.Instance.Update, deltaMilliseconds);
         //UpdateManager("HttpTaskManager", HttpTaskManager.Instance.Update, deltaMilliseconds);
         UpdateManager("MonsterWaveManager", MonsterWaveManager.Instance.Update, deltaMilliseconds);

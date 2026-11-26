@@ -402,6 +402,8 @@ public class OnlineRole : IGeneOwner
             state_machine.ForceToDefaultState(true);
         }
         State = OnlineRoleState.Offline;
+        // 下线立即释放谈话，即使玩家没有机会关闭对白窗。
+        SceneNpcPatrolHandler.Leave(this);
         SceneLineHandler.TrackLogout(this);
         // 掉线进入离线保存阶段时立即清理队伍关系，避免队伍残留僵尸成员。
         // 此时会话已不可用，队伍清理内部不向本人发包，只通知仍在线的队友。

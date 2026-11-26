@@ -816,6 +816,7 @@ public class RoleManager
     /// <param name="role">正在切换分线的在线角色。</param>
     internal void LeavePublicScene(OnlineRole role)
     {
+        SceneNpcPatrolHandler.Leave(role);
         BroadcastRoleLeave(role);
         // 旧场景内需要从本人视野移除的角色。
         List<OnlineRole> others = SceneObservers(role);

@@ -163,6 +163,13 @@
         <Compile Include="MessageHandler\Login\CreateRoleHandler.cs" />
         <Compile Include="MessageHandler\Login\StartGameHandler.cs" />
         <Compile Include="MessageHandler\SceneLineHandler.cs" />
+        <Compile Include="MessageHandler\SceneNpcWalker.cs" />
+        <Compile Include="MessageHandler\SceneNpcPatrolRoom.cs" />
+        <Compile Include="MessageHandler\SceneNpcPatrolHandler.cs" />
+        <Content Include="..\区服部署\配置\公共地图巡逻.xml">
+          <Link>Config\公共地图巡逻.xml</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     <Compile Include="MessageHandler\CityPortalHandler.cs" />
     <Compile Include="Service\StallRoleLink.cs" />
         <Compile Include="Service\StallAssets.cs" />

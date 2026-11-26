@@ -11,6 +11,7 @@ namespace GameServer
         public static void Main(string[] args)
         {
             LubanMgr.Instance.Init();
+            SceneNpcPatrolHandler.LoadRoutes(args);
             // 每个逻辑服实例必须使用不同编号，避免跨进程生成重复物品 UID。
             // 默认端口与原单节点部署一致；集群使用配置里的物理节点地址。
             int instance = GetServerInstanceId();

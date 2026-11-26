@@ -1,4 +1,4 @@
-using System.Threading;
+﻿using System.Threading;
 
 using Google.Protobuf;
 
@@ -141,6 +141,9 @@ namespace GateServer
             server.RegistCommand(StallCode.Deal,stall);
             // 城际传送在区服模式走调度，单游戏服沿原业务链路请求并回包。
             server.RegistCommand(SceneLineCode.Portal, gateMoveCtrl);
+            // 巡卫的读写请求与 GS 推送使用同一游戏会话。
+            server.RegistCommand(SceneLineCode.NpcPatrol, gateMoveCtrl);
+            client.RegistCommand(SceneLineCode.NpcPatrol, gateMoveCtrl);
             if (router == null) client.RegistCommand(SceneLineCode.Portal, gateMoveCtrl);
             if (router != null)
             {

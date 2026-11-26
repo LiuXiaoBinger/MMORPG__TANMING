@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// GateServer 面向 Unity 的回包校验与转发入口。
 /// 按协议读取业务结果；普通失败转为 CMD_ErrCode，购买、扩容、技能等仍保留客户端需要的专用字段。
 /// </summary>
@@ -142,6 +142,9 @@ public static class GateClientResponseForwarder
             case NetDefine.CMD_RoleReviveResultCode:
                 // 直接校验复活结果类型，再按原会话和原始载荷转给客户端。
                 RoleReviveRet.Parser.ParseFrom(package.Data);
+                return true;
+            case SceneLineCode.NpcPatrol:
+                SceneNpcPatrolState.Parser.ParseFrom(package.Data);
                 return true;
             case SceneLineCode.Portal:
                 // 单服沿公共网关回送目标城市，拒绝原因由传送入口展示。

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-/// <summary>按 NPC 编号保存称谓、巡逻路标与对话功能，功能顺序就是按钮顺序。</summary>
+/// <summary>按 NPC 编号保存称谓与对话功能，功能顺序就是按钮顺序。</summary>
 public sealed class NpcDialogueCatalog : ScriptableObject
 {
     /// <summary>一项商店、委托或交通服务。</summary>
@@ -35,8 +35,6 @@ public sealed class NpcDialogueCatalog : ScriptableObject
         public int NpcId;
         /// <summary>头顶显示的职业或身份，填写原文，例如“杂货商人”。</summary>
         public string Title;
-        /// <summary>巡卫依次访问的世界路标，首尾相连，单位米；留空表示固定站位。</summary>
-        public Vector3[] PatrolPath;
         /// <summary>该 NPC 在对话中提供的全部功能。</summary>
         public Service[] Services;
     }
@@ -64,16 +62,6 @@ public sealed class NpcDialogueCatalog : ScriptableObject
         Entry entry = FindEntry(npcId);
         if (entry == null || string.IsNullOrEmpty(entry.Title)) return string.Empty;
         return "<" + entry.Title + ">";
-    }
-
-    /// <summary>从同一个 NPC 的配置中读取闭环路标。</summary>
-    /// <param name="npcId">当前地图已创建的 NPC 编号。</param>
-    public Vector3[] GetPatrolPath(int npcId)
-    {
-        // 未配置巡逻的人物与物件没有路线。
-        Entry entry = FindEntry(npcId);
-        if (entry == null) return null;
-        return entry.PatrolPath;
     }
 
     /// <summary>取指定 NPC 的服务；未单独配置的旧商人继续使用其默认商店。</summary>

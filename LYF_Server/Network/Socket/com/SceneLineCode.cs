@@ -41,4 +41,6 @@ public static class SceneLineCode
     public const ushort HostLoad = 11318;
     /// <summary>内部链路在公共地图交接成功后保存角色地图和门口落点。</summary>
     public const ushort SavePublicArrival = 11319;
+    /// <summary>GS 返回同线巡逻位置，客户端通过同一协议读取或发起交谈。</summary>
+    public const ushort NpcPatrol = 11320;
 }
