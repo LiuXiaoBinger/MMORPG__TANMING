@@ -20,5 +20,9 @@ public enum RoleCountAction
     /// <summary>各出战方案的槽位书籍编号。</summary>
     ManualSlot = 8,
     /// <summary>商会中某个品种、某个等级宝石已购买的颗数，业务键为物品配置编号。</summary>
-    GemMarketPurchase = 9
+    GemMarketPurchase = 9,
+    /// <summary>按任务编号保存角色的接取、可交付及完成状态。</summary>
+    QuestState = 10,
+    /// <summary>按任务编号保存真实对话或击杀的累计次数。</summary>
+    QuestProgress = 11
 }

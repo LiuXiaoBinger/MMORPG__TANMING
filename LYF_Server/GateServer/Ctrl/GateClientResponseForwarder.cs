@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// GateServer 面向 Unity 的回包校验与转发入口。
 /// 按协议读取业务结果；普通失败转为 CMD_ErrCode，购买、扩容、技能等仍保留客户端需要的专用字段。
 /// </summary>
@@ -121,6 +121,10 @@ public static class GateClientResponseForwarder
                 return true;
             case NetDefine.CMD_SkillCastStartCode:
                 SkillCastStartNtf.Parser.ParseFrom(package.Data);
+                return true;
+            case NetDefine.CMD_WorldQuest:
+                // 操作被拒绝时也把原因和当前列表带回原角色。
+                WorldQuestReply.Parser.ParseFrom(package.Data);
                 return true;
             case NetDefine.CMD_MartialManual:
                 // 培养失败也需要透传余额和当前等级。

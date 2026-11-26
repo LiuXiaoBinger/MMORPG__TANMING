@@ -5,7 +5,7 @@ using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
 /// <summary>正式副本的出生运行器：按场景登记读取 XML，加入统一实体世界，并随副本卸载回收。</summary>
-public class MSceneDungeon : MonoBehaviour
+public partial class MSceneDungeon : MonoBehaviour
 {
     /// <summary>当前项目剑气普攻的稳定 ID，对应服务端 ROArtSkill 的三段表现。</summary>
     public const int BasicAttackId = 10010;

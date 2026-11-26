@@ -179,6 +179,8 @@
         <Compile Include="MessageHandler\Skill\SkillUpgradeHandler.cs" />
         <Compile Include="MessageHandler\Skill\MartialManualHandler.cs" />
         <Compile Include="Components\MartialManualSystem.cs" />
+        <Compile Include="Components\WorldQuestSystem.cs" />
+        <Compile Include="MessageHandler\Role\WorldQuestHandler.cs" />
         <Compile Include="MessageHandler\Role\SaveRoleDataHandler.cs" />
         <Compile Include="MessageHandler\Knapsack\RoleKnapsackInfoHandler.cs" />
         <Compile Include="MessageHandler\Knapsack\EquipOperationHandler.cs" />

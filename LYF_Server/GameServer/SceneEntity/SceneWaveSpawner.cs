@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -448,7 +448,12 @@ public sealed partial class SceneWaveSpawner
             if (monster.CurrentHp == 0)
             {
                 monsterDied = true;
-                if (hitActor == null) CountDeath(point.Creature.id);
+                if (hitActor == null)
+                {
+                    // 无 AI 实体由命中结算直接扣血，死亡与拥有 AI 的怪物一样计入击杀者委托。
+                    CountDeath(point.Creature.id);
+                    WorldQuestSystem.OnTargetChanged(caster, WorldQuestSystem.Kill, point.Creature.id);
+                }
             }
             if (hitActor == null) notice.Monsters.Add(GetHpData(index, hpBeforeHit - monster.CurrentHp));
     }

@@ -98,6 +98,15 @@ public sealed class PublicCityPortal
         return Array.Empty<PublicCityPortal>();
     }
 
+    /// <summary>按地图编号取得通路两端的对应关系，供跨图任务选择下一站。</summary>
+    /// <param name="mapId">公共地图配置编号，包括零号主城。</param>
+    public static IReadOnlyList<PublicCityPortal> InMap(int mapId)
+    {
+        // 本地图配置中的所有入口；未知地图没有公共通路。
+        if (Doors.TryGetValue(mapId, out List<PublicCityPortal> entries)) return entries;
+        return Array.Empty<PublicCityPortal>();
+    }
+
     /// <summary>根据网关绑定的地图和客户端选中的本地门号定位入口。</summary>
     /// <param name="mapId">角色当前的权威地图编号。</param>
     /// <param name="doorId">当前地图内的入口号，旧协议默认使用零号门。</param>

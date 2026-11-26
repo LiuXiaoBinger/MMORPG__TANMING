@@ -52,6 +52,8 @@ public class NetDefine
     public const ushort CMD_SkillUpgradeCode = 11175;
     /// <summary>武学秘笈目录、出战和培养的请求与回执。</summary>
     public const ushort CMD_MartialManual = 11176;
+    /// <summary>角色委托操作及权威进度快照，共用一条可靠通道。</summary>
+    public const ushort CMD_WorldQuest = 11177;
     /// <summary>Unity 按 RO UpdateMove 上报位置和朝向的请求协议号。</summary>
     public const ushort CMD_MoveOperationCode = 11180;
     /// <summary>服务器向现有附近角色转发移动状态的通知协议号。</summary>

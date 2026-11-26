@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+// 角色只提交本次选择的委托和说话者，目标计数与奖励均由游戏服计算。
+enum WorldQuestAction {
+  QUEST_READ = 0;    // 获取当前角色可见委托。
+  QUEST_ACCEPT = 1;  // 在发布人处接取。
+  QUEST_TALK = 2;    // 在目标人物对话中确认事项。
+  QUEST_DELIVER = 3; // 在交付人处提交并领奖。
+  QUEST_ABANDON = 4; // 放弃已接的支线。
+}
+enum WorldQuestState {
+  QUEST_AVAILABLE = 0; // 满足前置，可以前往接取。
+  QUEST_ACTIVE = 1;    // 已接取，正在完成目标。
+  QUEST_READY = 2;     // 已达标，可向交付人提交。
+  QUEST_DONE = 3;      // 角色存档中的永久完成状态。
+}
+message WorldQuestRequest {
+  WorldQuestAction action = 1; // 当前按钮对应的操作。
+  int32 quest_id = 2;          // Luban 任务编号。
+  int32 npc_id = 3;            // 当前对话者，服务端核对地图和距离。
+}
+message WorldQuestEntry {
+  int32 quest_id = 1;        // 任务配置键。
+  WorldQuestState state = 2; // 角色现阶段。
+  int32 current = 3;         // 游戏服已确认的目标数量。
+  int32 npc_id = 4;          // 本阶段的接取、对话、补给或交付人；战斗目标为零。
+}
+message WorldQuestReply {
+  int32 role_id = 1;                    // 本次快照所属角色。
+  repeated WorldQuestEntry entries = 2; // 按配置顺序排列的可见委托。
+  string message = 3;                   // 操作反馈；普通刷新留空。
+}

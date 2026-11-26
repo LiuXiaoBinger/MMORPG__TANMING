@@ -363,6 +363,7 @@ public class MainCityMgr : MonoBehaviour
          spawnPosition.x, spawnPosition.y, spawnPosition.z);
       MNetClient.Instance.Send(NetDefine.CMD_EnterWroldCode, request.ToByteString());
       _enterWorldSent = true;
+      TaskCtrl.SendQuest(WorldQuestAction.QuestRead, 0, 0);
    }
 
    /// <summary>按职业配置选择本地主角模型资源路径。</summary>

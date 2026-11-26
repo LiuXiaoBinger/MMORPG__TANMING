@@ -343,6 +343,7 @@ public sealed class TeamCtrl : CtrlBase
             player.MoveComp.StopHorizontalMovement();
             player.Position = new UnityEngine.Vector3(position.X, position.Y, position.Z);
         }
+        if (player == world.LocalRole) UIRoot.Instance.MainCtrl.Tasks.OnDungeonQuestTransfer(notice);
         if (!notice.Success && !string.IsNullOrEmpty(notice.Reason))
             TipsMgr.Instance.ShowSystemTips(notice.Reason);
     }

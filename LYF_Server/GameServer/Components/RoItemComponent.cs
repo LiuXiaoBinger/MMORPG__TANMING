@@ -426,7 +426,7 @@ public class RoItemComponent : RoleComponentBase
             itemDataListDb.OnDelItem(Owner.GetSaveVersion());
         }
         //通知任务模块
-        NtfTaskModleItemChange( item, 0);
+        WorldQuestSystem.OnTargetChanged(Owner, WorldQuestSystem.Collect, item.GetItemID());
         
         if (!_need_update_item.ContainsKey(item.GetItemUID()))
         {
@@ -1115,6 +1115,15 @@ public class RoItemComponent : RoleComponentBase
         {
             ret.ItemDate.UpdateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             Owner.SendToClient(NetDefine.CMD_SC_UpdateItemInfoCode, ret.ToByteString());
+            // 同一背包事务可能改动多个堆叠，逐个物品类型刷新相关的收集任务。
+            HashSet<int> notified = new HashSet<int>();
+            // 已写入当前增量的堆叠下标。
+            for (int index = 0; index < ret.ItemDate.ItemList.Count; index++)
+            {
+                // 来源为服务器物品实例的真实配置编号。
+                int itemId = ret.ItemDate.ItemList[index].ItemTypeId;
+                if (notified.Add(itemId)) WorldQuestSystem.OnTargetChanged(Owner, WorldQuestSystem.Collect, itemId);
+            }
         }
         _need_update_item.Clear();
     }
@@ -1165,16 +1174,6 @@ public class RoItemComponent : RoleComponentBase
         return value.ToUniversalTime().Ticks;
     }
 
-    /// <summary>
-    /// 任务模块通知占位；当前方法为空，不派发任务事件。
-    /// </summary>
-    /// <param name="item"></param>
-    /// <param name="i"></param>
-    /// 当前实现不抛出 NotImplementedException。
-    private void NtfTaskModleItemChange(ItemBase item, int i)
-    {
-        
-    }
 
     /// <summary>按增量修改物品数量，数量归零时转为删除实例。</summary>
     /// <param name="itemUid">物品实例 UID。</param>

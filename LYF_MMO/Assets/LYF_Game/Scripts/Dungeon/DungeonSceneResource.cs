@@ -27,6 +27,10 @@ public sealed class DungeonSceneResource
     public string collectionResource;
     /// <summary>当前场景采集交互按钮的文案，和采集物表现一同登记。</summary>
     public string collectionTitle;
+    /// <summary>没有 GuidePos 的原脚本事件所对应的场景区域和活动波次。</summary>
+    public DungeonQuestGuide[] questGuides;
+    /// <summary>完成后指向的原场景出口按钮，负值表示没有胜利出口。</summary>
+    public int questExit = -1;
 
     /// <summary>读取指定场景的明确登记，未迁入时返回空，不回退到其他副本。</summary>
     /// <param name="sceneId">DungeonsTable.SceneID 或服务器入场通知的场景编号。</param>

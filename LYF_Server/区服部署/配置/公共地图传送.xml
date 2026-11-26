@@ -22,7 +22,7 @@
   <!-- 同一对地图的不同入口使用各自的落点。服务入口只在玩家选中相应功能后启程。 -->
   <passage name="云帆驿站马车">
     <door map="1" id="3" trigger="service" x="12" y="0.136" z="-70" arrival="9_0.14_-71" />
-    <door map="0" id="1" trigger="service" x="71" y="18.793" z="83" arrival="68.5_18.80_83" />
+    <door map="0" id="1" trigger="service" x="71" y="18.793" z="83" arrival="64.8_18.80_83" />
   </passage>
   <passage name="晨星传送台">
     <door map="1" id="4" trigger="service" x="-12" y="0.008" z="-70" arrival="-9.5_0.02_-69" />

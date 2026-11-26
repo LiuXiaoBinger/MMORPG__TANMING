@@ -141,7 +141,7 @@ public class TaskWindow : WindowBase
         _toggleRegistered = true;
     }
 
-    /// <summary>可接筛选开关回调：首期没有可接任务数据源，只按当前页签重新刷新，不伪造筛选结果。</summary>
+    /// <summary>可接开关改变后重新筛选尚未接取的委托，保留进行中和可交付条目。</summary>
     /// <param name="isOn">开关是否选中。</param>
     private void OnAcceptableToggleChanged(bool isOn)
     {
@@ -269,6 +269,7 @@ public class TaskWindow : WindowBase
         // 循环索引：按筛选顺序把任务写入本页任务序列。
         for (int i = 0; i < tasks.Count; i++)
         {
+            if (tasks[i].State == TaskViewState.Available && _acceptableToggle != null && !_acceptableToggle.isOn) continue;
             _pageTasks.Add(tasks[i]);
         }
         RebuildTaskList();
@@ -391,6 +392,7 @@ public class TaskWindow : WindowBase
         {
             TaskSelected.Invoke(data);
         }
+        NavigateRequested?.Invoke(data);
     }
 
     /// <summary>按当前选中任务刷新列表高亮：子条目按任务 ID 比对，父条目按是否有选中任务置态。</summary>
@@ -428,8 +430,8 @@ public class TaskWindow : WindowBase
     {
         if (_startButtonRoot != null)
         {
-            // 副本阶段只追踪服务器目标，不展示尚未接入的普通任务导航按钮。
-            bool canNavigate = current != null && !current.IsDungeonObjective;
+            // 普通委托和当前副本阶段均可从详情页再次发起寻路。
+            bool canNavigate = current != null;
             _startButtonRoot.SetActive(canNavigate);
         }
         if (_cancelButtonRoot != null)
@@ -454,7 +456,7 @@ public class TaskWindow : WindowBase
         }
         // 追踪中的任务数据，为空或不在本页签时不作为当前展示任务。
         TaskViewData tracked = TaskMgr.Instance.GetTrackedTask();
-        if (tracked != null && tracked.Page == TaskMgr.Instance.GetCurrentPage())
+        if (tracked != null && _pageTasks.Contains(tracked))
         {
 
     #region 详情展示

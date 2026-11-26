@@ -190,7 +190,7 @@ public sealed class TouchObject
     /// <summary>点击现有NPC时沿目标导航走进原对话距离，不改写战斗选择目标。</summary>
     /// <param name="entity">当前点击的 NPC 实体，提供模型上的实际世界位置。</param>
     /// <returns>已提交本次NPC导航事件时为true。</returns>
-    private bool ClickNpc(NpcEntity entity)
+    internal bool ClickNpc(NpcEntity entity)
     {
         // 只在同步派发期间借用事件；导航组件保存目标原引用，不保存池化载荷。
         MNavigationEventArgs args = MNavigationEventArgs.Create(entity.Position);

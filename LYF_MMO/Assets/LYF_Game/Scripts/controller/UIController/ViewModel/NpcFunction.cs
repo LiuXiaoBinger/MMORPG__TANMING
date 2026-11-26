@@ -8,5 +8,7 @@ public enum NpcFunction
     /// <summary>向游戏服申请本地图的指定交通入口。</summary>
     Transfer = 2,
     /// <summary>从委托对白进入角色已有的任务簿。</summary>
-    TaskJournal = 3
+    TaskJournal = 3,
+    /// <summary>办理同一按钮绑定的角色委托。</summary>
+    QuestAction = 4
 }

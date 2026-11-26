@@ -110,6 +110,7 @@ public sealed class RoleKnapsackInfoHandler : IGameMessageHandler
             role.AttrComp.ChangeMp(role.AttrComp.MaxMp);
         }
         role.AttrComp.NotifyAttributeUpdate();
+        WorldQuestSystem.Publish(role);
         MasterTeamLink.Instance.PublishLocation(role);
     }
 }

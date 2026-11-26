@@ -44,6 +44,8 @@ public class MainCtrl : CtrlBase
 
     /// <summary>任务子控制器，组合任务窗口与快捷任务面板。</summary>
     private readonly TaskCtrl _taskCtrl;
+    /// <summary>供当前副本传送回执在应用真实落点后续走本次追踪。</summary>
+    internal TaskCtrl Tasks => _taskCtrl;
 
     /// <summary>主题副本队伍控制器，根据服务器通知刷新队伍，并在入场通知后切换场景。</summary>
     private readonly ThemeDungeonTeamCtrl _themeDungeonTeamCtrl;
@@ -661,6 +663,12 @@ public class MainCtrl : CtrlBase
         }
         // 关窗会释放当前说话者，先保留货架需要的实体。
         NpcEntity merchant = _currentTalkNpc;
+        if (service.Function == NpcFunction.QuestAction)
+        {
+            _taskCtrl.ConfirmNpcQuest(merchant, service.QuestId);
+            CloseNpcTalk();
+            return;
+        }
         if (service.Function == NpcFunction.Task)
         {
             ShowNpcCommissions(merchant);
@@ -706,7 +714,7 @@ public class MainCtrl : CtrlBase
         NpcDialogueCatalog.Service journal = new NpcDialogueCatalog.Service
             { Label = "打开任务簿", Function = NpcFunction.TaskJournal };
         _mainView.TalkWindow.ReFreshUI(new NpcTalkViewData(npc.NpcID, npc.Name,
-            string.Join("_", lines), services: new[] { journal }));
+            string.Join("_", lines), services: _taskCtrl.GetQuestServices(npc.NpcID, new[] { journal })));
     }
 
     /// <summary>仅原NPC20186帮助选项发送BossEnterCombat，黑幕结束不调用此入口。</summary>
@@ -762,7 +770,8 @@ public class MainCtrl : CtrlBase
         }
         // 已单独配置的 NPC 使用自己的服务顺序，旧商人保留默认货架。
         NpcDialogueCatalog.Service[] services = _mainView.TalkWindow.Catalog.GetServices(npcEntity.NpcID, npcEntity.ShopId);
-        return new NpcTalkViewData(npcEntity.NpcID, npcEntity.Name, npcEntity.Talk, services: services);
+        return new NpcTalkViewData(npcEntity.NpcID, npcEntity.Name, npcEntity.Talk,
+            services: _taskCtrl.GetQuestServices(npcEntity.NpcID, services));
     }
 
     /// <summary>接收服务器次数增量并写入当前角色次数组件。</summary>
@@ -875,6 +884,7 @@ public class MainCtrl : CtrlBase
         SceneLineResult result = SceneLineResult.Parser.ParseFrom(data);
         if (result.Reason.Length > 0)
         {
+            _taskCtrl.CancelQuestRoute();
             TipsMgr.Instance.ShowSystemTips(result.Reason);
             return;
         }
@@ -885,7 +895,7 @@ public class MainCtrl : CtrlBase
         role.BaseInfo.MapId = mapId;
         // 客户端和 GS 使用同一个回执落点，从室内出来时站在刚离开的那栋建筑外。
         if (result.ArrivalPosition.Length > 0) role.BaseInfo.Pos = result.ArrivalPosition;
-        SceneMgr.Instance.LoadPublicMap(mapId, result.ArrivalPosition);
+        SceneMgr.Instance.LoadPublicMap(mapId, result.ArrivalPosition, _taskCtrl.OnQuestMapLoaded);
     }
 
     /// <summary>从小地图提交所选线路；地图和角色归属由区服确定。</summary><param name="line">目标线路编号。</param>

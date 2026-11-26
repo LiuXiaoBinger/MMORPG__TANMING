@@ -1,11 +1,10 @@
 using System;
 
 /// <summary>
-/// 任务控制器，对应 RO 的 TaskCtrl。
-/// 负责组合任务主窗口与快捷任务面板、转发界面点击到任务数据，
-/// 并把尚未实现的接取、交付、放弃、导航能力收敛为具名接口边界。
+/// 连接任务主窗口、快捷任务面板和 TaskMgr：同步选中任务与页签，处理窗口开关。
+/// 普通委托由游戏服驱动；副本目标取自当前实例，点击条目后沿现有导航网前进。
 /// </summary>
-public class TaskCtrl : CtrlBase
+public partial class TaskCtrl : CtrlBase
 {
 
     #region 字段
@@ -69,10 +68,7 @@ public class TaskCtrl : CtrlBase
         {
             TaskMgr.Instance.TaskDataChanged += OnTaskDataChanged;
         }
-#if UNITY_EDITOR
-        // 编辑器联调：任务服务端未接入前注入示例任务，便于验证页签切换、列表滚动与详情联动。
-        TaskDevSampleData.InjectIfEmpty();
-#endif
+        SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_WorldQuest, OnWorldQuestReply);
         _actionsRegistered = true;
     }
 
@@ -109,6 +105,9 @@ public class TaskCtrl : CtrlBase
 
     #region 交互响应
     #endregion
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_WorldQuest, OnWorldQuestReply);
+        CancelQuestRoute();
+        TaskMgr.Instance.SetTasks(null);
         _actionsRegistered = false;
     }
 
@@ -178,40 +177,23 @@ public class TaskCtrl : CtrlBase
         OpenTaskWindow();
     }
 
-    /// <summary>
-    /// 接取任务请求边界：需要服务端任务接取协议与角色任务组件后实现。
-    /// 当前没有正式任务服务，方法保留为具名接口，不本地伪造接取结果。
-    /// </summary>
-    /// <param name="data">待接取的任务展示数据。</param>
-    public void RequestAccept(TaskViewData data)
-    {
-    }
+    /// <summary>在任务簿点击接取时前往该委托的发布人。</summary>
+    /// <param name="data">当前任务簿选中的委托。</param>
+    public void RequestAccept(TaskViewData data) { RequestNavigate(data); }
 
-    /// <summary>
-    /// 交付任务请求边界：需要服务端交付校验与奖励事务后实现。
-    /// 未完成前不修改任务状态、不发放奖励、不提示成功。
-    /// </summary>
-    /// <param name="data">待交付的任务展示数据。</param>
-    public void RequestDeliver(TaskViewData data)
-    {
-    }
+    /// <summary>在任务簿点击交付时前往交付人，由 NPC 对话确认领取。</summary>
+    /// <param name="data">可交付的角色委托。</param>
+    public void RequestDeliver(TaskViewData data) { RequestNavigate(data); }
 
-    /// <summary>
-    /// 放弃任务请求边界：需要服务端放弃协议后实现，当前不本地删除任务数据。
-    /// </summary>
-    /// <param name="data">待放弃的任务展示数据。</param>
+    /// <summary>请求游戏服清除此支线的接取状态和累计数量。</summary>
+    /// <param name="data">点击放弃按钮的委托。</param>
     public void RequestGiveUp(TaskViewData data)
     {
+        if (data == null || !data.CanGiveUp) return;
+        if (_routeQuestId == data.TaskId) CancelQuestRoute();
+        SendQuest(WorldQuestAction.QuestAbandon, data.TaskId, 0);
     }
     #endregion
-    /// <summary>
-    /// 任务导航请求边界：需沿现有导航模块前往目标，且到达不自动完成任务。
-    /// 当前未接入任务导航回调，方法保留为具名接口。
-    /// </summary>
-    /// <param name="data">需要导航到的任务展示数据。</param>
-    public void RequestNavigate(TaskViewData data)
-    {
-    }
 
     /// <summary>切换任务主窗口显隐，关闭时只隐藏窗口不清理任务数据。</summary>
     public void OpenTaskWindow()

@@ -9,5 +9,7 @@ public enum TaskViewState
     /// <summary>目标已达成、等待交付，界面只提示可交付，不自动完成。</summary>
     Finishable = 1,
     /// <summary>服务端已确认完成，显示完成样式。</summary>
-    Finished = 2
+    Finished = 2,
+    /// <summary>已经开放但角色尚未接取，在任务簿可用“可接”开关筛选。</summary>
+    Available = 3
 }

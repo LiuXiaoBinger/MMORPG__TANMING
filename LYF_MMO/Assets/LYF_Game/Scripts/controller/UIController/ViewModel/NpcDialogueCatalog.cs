@@ -14,6 +14,8 @@ public sealed class NpcDialogueCatalog : ScriptableObject
         public NpcFunction Function;
         /// <summary>传送功能选择本地图的门号，与公共地图传送配置对应。</summary>
         public int DoorId;
+        /// <summary>由角色当前任务列表填入的委托编号，只存在于本次对话。</summary>
+        [System.NonSerialized] public int QuestId;
         /// <summary>用于读表和提交购买的 ShopTable.Id。</summary>
         public int ShopId;
         /// <summary>允许陈列的 ShopItemInfo.GoodsId；留空时展示整间商店。</summary>

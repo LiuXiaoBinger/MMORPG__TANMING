@@ -324,7 +324,11 @@ public sealed partial class SceneWaveSpawner
         int previous = actor.CurrentHp; actor.Monster.CurrentHp = Math.Max(0, Math.Min(actor.MaxHp, previous + delta));
         actor.OnHit(caster, Math.Max(0, previous - actor.CurrentHp));
         Notice.Monsters.Add(HpData(actor, Math.Max(0, previous - actor.CurrentHp)));
-        if (previous > 0 && actor.CurrentHp == 0) CountDeath(actor.EntityId);
+        if (previous > 0 && actor.CurrentHp == 0)
+        {
+            CountDeath(actor.EntityId);
+            WorldQuestSystem.OnTargetChanged(caster, WorldQuestSystem.Kill, actor.EntityId);
+        }
     }
     /// <summary>原共享HP启用时按总生命与各自上限归一，禁用时清除组关系。</summary><param name="waves">原波号序列。</param><param name="enabled">原节点开关。</param>
     internal void ShareHp(string waves, bool enabled)
