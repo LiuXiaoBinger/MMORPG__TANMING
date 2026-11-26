@@ -69,6 +69,7 @@ public class MainCtrl : CtrlBase
         if (_mainView.MinMapWindow != null)
         {
             _mainView.MinMapWindow.LineSelected += SelectSceneLine;
+            _mainView.MinMapWindow.LinesRequested += RequestSceneLines;
             _mainView.MinMapWindow.PortalSelected += NavigateCityPortal;
             _mainView.MinMapWindow.RegionRequested += OpenAreaMap;
         }
@@ -196,6 +197,7 @@ public class MainCtrl : CtrlBase
         if (_mainView != null && _mainView.MinMapWindow != null)
         {
             _mainView.MinMapWindow.LineSelected -= SelectSceneLine;
+            _mainView.MinMapWindow.LinesRequested -= RequestSceneLines;
             _mainView.MinMapWindow.PortalSelected -= NavigateCityPortal;
             _mainView.MinMapWindow.RegionRequested -= OpenAreaMap;
         }
@@ -836,11 +838,17 @@ public class MainCtrl : CtrlBase
         MNetClient.Instance.Send(SceneLineCode.Change, new SceneLineRequest { LineId = line }.ToByteString());
     }
 
+    /// <summary>打开线路菜单或进入公共地图时查询当前可用线路及人数。</summary>
+    private void RequestSceneLines()
+    {
+        MNetClient.Instance.Send(SceneLineCode.List, ByteString.Empty);
+    }
+
     /// <summary>进入公共地图后请求线路人数，副本内直接收起选择器。</summary><param name="data">网关确认的场景状态。</param>
     private void OnSceneLineState(ByteString data)
     {
         if (SceneLineResult.Parser.ParseFrom(data).CurrentLine == 0) _mainView.MinMapWindow?.ShowLines(null);
-        else MNetClient.Instance.Send(SceneLineCode.List, ByteString.Empty);
+        else RequestSceneLines();
     }
 
     /// <summary>将本地图真实目录交给已注册的小地图窗口。</summary><param name="data">控制服返回的线路目录。</param>

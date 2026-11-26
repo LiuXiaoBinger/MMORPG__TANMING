@@ -7,8 +7,8 @@ message PublicSceneLine {
   int32 line_id = 2; // 同地图内从一开始的展示编号。
   int32 game_id = 3; // 实际承载场景的 GS 实例编号。
   int64 scene_uid = 4; // 区服内的运行时场景编号。
-  int32 population = 5; // 已分配到这条线的角色数。
-  int32 capacity = 6; // 同时接纳的玩家上限。
+  int32 population = 5; // 已由 GS 确认进入该线的角色数。
+  int32 capacity = 6; // 手动选线及优先进入原宿主时的容量阈值。
 }
 
 // 客户端只提供目标线路；地图和角色由受信会话取得。
@@ -46,4 +46,11 @@ message SceneNodeRegistration {
   int32 game_id = 2; // 部署时配置的 GS 实例。
   string host = 3; // 网关主动连接的内网地址。
   int32 port = 4; // GS 的 TCP 监听端口。
+}
+
+// GS 向本区控制服上报进程的真实负载，仅用于 chooseGsType=2 的新场景分配。
+message SceneHostLoad {
+  int32 game_id = 1; // 发送报告的物理 GS 编号。
+  int32 cpu_rate = 2; // 单核占用 100% 记为 10000，多核并行时可超过此值。
+  int32 dungeon_count = 3; // 本机当前存活的副本实例数。
 }

@@ -7,4 +7,6 @@ public enum GameCommandSource
     CenterServer = 2,
     /// <summary>来自独立队伍服的内网控制消息。</summary>
     MasterServer = 3,
+    /// <summary>公共场景的创建及回收命令，来自本区控制服专用连接。</summary>
+    ControlServer = 4,
 }

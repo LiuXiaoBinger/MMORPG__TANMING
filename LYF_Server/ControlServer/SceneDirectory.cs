@@ -7,13 +7,21 @@ internal sealed class SceneDirectory : IContainer
     /// <summary>本调度进程负责的逻辑区服。</summary>
     private readonly RealmTopology realm;
     /// <summary>物理 GS 编号到当前受信连接的对应关系。</summary>
-    private readonly Dictionary<int, int> hosts = new Dictionary<int, int>();
+    private readonly SortedList<int, Session> hosts = new SortedList<int, Session>();
+    /// <summary>评分模式下各注册宿主最近一次上报的 CPU 和副本数。</summary>
+    private readonly Dictionary<int, SceneHostLoad> loads = new Dictionary<int, SceneHostLoad>();
+    /// <summary>上次承载普通扩展线的 GS，下一次从其后的在线物理编号继续轮询。</summary>
+    private int lastPollingGs = -1;
     /// <summary>角色进入游戏或切线时在同一区服只占一份权威归属。</summary>
     private readonly Dictionary<int, Admission> roles = new Dictionary<int, Admission>();
     /// <summary>运行期实例编号在每次创建场景时递增。</summary>
     private long nextUid;
     /// <summary>由负载触发的临时场景 UID，仅这些场景在空闲时回收。</summary>
     private readonly HashSet<long> elastic = new HashSet<long>();
+    /// <summary>尚待 GS 创建回执的实例，以已发出的 UID 对应常驻配置或新线条目。</summary>
+    private readonly Dictionary<long, PublicSceneLine> creating = new Dictionary<long, PublicSceneLine>();
+    /// <summary>各实例已分配但尚未完成进图的人数，参与选线占位，成功接管后才计入在线人数。</summary>
+    private readonly Dictionary<long, int> reservations = new Dictionary<long, int>();
 
     /// <summary>同一角色由哪个网关玩家会话持有，以及其已进入和待转入的实例。</summary>
     private sealed class Admission
@@ -29,7 +37,11 @@ internal sealed class SceneDirectory : IContainer
     }
 
     /// <summary>加载当前区服的可部署场景。</summary><param name="config">本进程所属区服。</param>
-    internal SceneDirectory(RealmTopology config) { realm = config; }
+    internal SceneDirectory(RealmTopology config)
+    {
+        realm = config;
+        realm.Scenes.Sort((left, right) => left.LineId.CompareTo(right.LineId));
+    }
 
     /// <summary>目录在构造时就绪。</summary>
     public void OnInit() { }
@@ -43,7 +55,9 @@ internal sealed class SceneDirectory : IContainer
     public void OnServerCommand(BaseLink link, BasePackage packet)
     {
         // 运行中的内网连接号用来识别登记和后续断开。
-        int connection = ((Session)link).SessionID;
+        Session session = (Session)link;
+        // 连接号用于与网关持有的角色归属比较。
+        int connection = session.SessionID;
         lock (hosts)
         {
             if (packet.ProtoCode == SceneLineCode.Register)
@@ -52,10 +66,37 @@ internal sealed class SceneDirectory : IContainer
                 SceneNodeRegistration node = SceneNodeRegistration.Parser.ParseFrom(packet.Data);
                 if (node.RealmId != realm.RealmId || !realm.Games.ContainsKey(node.GameId)) return;
                 if (hosts.ContainsKey(node.GameId)) return;
-                hosts.Add(node.GameId, connection);
-                // 同一 GS 可承载多张地图以及同一地图的多条线。
+                hosts.Add(node.GameId, session);
+                // 宿主实际建立各条常驻线后才能接收该线的玩家。
                 for (int index = 0; index < realm.Scenes.Count; index++)
-                    if (realm.Scenes[index].GameId == node.GameId) realm.Scenes[index].SceneUid = ++nextUid;
+                    if (realm.Scenes[index].GameId == node.GameId) CreateStaticScene(realm.Scenes[index]);
+                return;
+            }
+            if (packet.ProtoCode == SceneLineCode.CreateStaticScene)
+            {
+                // 回执必须来自本次请求所选的宿主。
+                PublicSceneLine reply = PublicSceneLine.Parser.ParseFrom(packet.Data);
+                PublicSceneLine scene;
+                if (!creating.TryGetValue(reply.SceneUid, out scene)) return;
+                if (hosts[scene.GameId] != session) return;
+                creating.Remove(reply.SceneUid);
+                scene.SceneUid = reply.SceneUid;
+                if (!realm.Scenes.Contains(scene))
+                {
+                    elastic.Add(scene.SceneUid);
+                    realm.Scenes.Add(scene);
+                    realm.Scenes.Sort((left, right) => left.LineId.CompareTo(right.LineId));
+                    Recycle();
+                }
+                return;
+            }
+            if (packet.ProtoCode == SceneLineCode.HostLoad)
+            {
+                // 只接受登记该物理编号的连接发布的实测值。
+                SceneHostLoad report = SceneHostLoad.Parser.ParseFrom(packet.Data);
+                Session registered;
+                if (hosts.TryGetValue(report.GameId, out registered) && registered == session)
+                    loads[report.GameId] = report;
                 return;
             }
             // 原始角色号由网关在选角和中心服读取后绑定。
@@ -63,9 +104,9 @@ internal sealed class SceneDirectory : IContainer
             if (packet.ProtoCode == SceneLineCode.Saved)
             {
                 // 校验原宿主链路和实例，迟到的回执不能释放已迁往另一个 GS 的角色。
-                int registered;
+                Session registered;
                 Admission saved;
-                if (!hosts.TryGetValue(request.GameId, out registered) || registered != connection) return;
+                if (!hosts.TryGetValue(request.GameId, out registered) || registered != session) return;
                 if (!roles.TryGetValue(request.RoleId, out saved)) return;
                 bool current = saved.Current != null && saved.Current.SceneUid == request.SceneUid;
                 bool pending = saved.Pending != null && saved.Pending.SceneUid == request.SceneUid;
@@ -102,31 +143,32 @@ internal sealed class SceneDirectory : IContainer
         if (code == SceneLineCode.Commit || code == SceneLineCode.Cancel)
         {
             if (role == null || role.Pending == null) return null;
+            ChangeReservation(role.Pending, -1);
             if (code == SceneLineCode.Commit)
             {
                 if (role.Current != null) role.Current.Population--;
                 role.Current = role.Pending;
+                role.Current.Population++;
+                Expand(role.Current);
             }
-            else role.Pending.Population--;
-            Recycle();
             role.Pending = null;
             if (role.Current == null) roles.Remove(request.RoleId);
+            Recycle();
             return null;
         }
         if (role != null && role.Current != null) result.CurrentLine = role.Current.LineId;
-        // 自动进线优先配置顺序，已满或未登记的宿主不会收到分配。
-        PublicSceneLine target = null;
-        for (int index = 0; index < realm.Scenes.Count; index++)
+        if (code == SceneLineCode.List)
         {
-            // 该目录项是一个已配置的独立场景。
-            PublicSceneLine scene = realm.Scenes[index];
-            if (scene.MapId != request.MapId || scene.SceneUid == 0) continue;
-            if (request.RequireGame && scene.GameId != request.GameId) continue;
-            if (code == SceneLineCode.List) result.Lines.Add(scene.Clone());
-            if (request.LineId != 0 && scene.LineId != request.LineId) continue;
-            if (scene.Population < scene.Capacity && target == null) target = scene;
+            for (int index = 0; index < realm.Scenes.Count; index++)
+            {
+                // 创建中的线路和掉线节点不出现在玩家菜单中。
+                PublicSceneLine scene = realm.Scenes[index];
+                if (scene.MapId == request.MapId && scene.SceneUid != 0) result.Lines.Add(scene.Clone());
+            }
+            return result;
         }
-        if (code == SceneLineCode.List) return result;
+        // 初次选角没有当前 GS，跨图则使用已经确认的原宿主作为软偏好。
+        PublicSceneLine target = SelectPrioritySceneLine(request, role?.Current);
         if (target == null) result.Reason = "目标线路未开放或人数已满。";
         else if (role != null && role.Current == target) result.Reason = "已经在这条线路。";
         else if (role != null && role.Pending != null) result.Reason = "正在切换场景。";
@@ -137,49 +179,148 @@ internal sealed class SceneDirectory : IContainer
             roles.Add(request.RoleId, role);
         }
         role.Pending = target;
-        target.Population++;
+        ChangeReservation(target, 1);
         result.Lines.Add(target.Clone());
-        Expand(target.MapId);
         return result;
     }
 
-    /// <summary>所有已开放线均达警戒时，将新实例放到当前承载人数最少的可用节点。</summary>
-    /// <param name="map">刚分配到角色的地图。</param>
-    private void Expand(int map)
+    /// <summary>指定线和集结宿主须有空位。跨图优先原宿主，其次按线号找警戒以下的线，再选人数最少的线。</summary>
+    /// <param name="request">网关传入的目标地图及手动选线或集结条件。</param>
+    /// <param name="current">控制服已确认的原场景，首次登录为空。</param>
+    private PublicSceneLine SelectPrioritySceneLine(SceneRouteRequest request, PublicSceneLine current)
     {
-        // 未配置扩展阈值的地图只运行指定常驻线路。
+        // 配有扩线规则的公共地图使用 RO 的警戒值；旧固定线路仍以各自容量接纳。
         RealmTopology.MapPolicy policy;
-        if (!realm.MapPolicies.TryGetValue(map, out policy)) return;
-        // 只统计本次已通过登记的在线宿主。
-        Dictionary<int, int> loads = new Dictionary<int, int>();
-        List<int> nodes = new List<int>(hosts.Keys);
-        nodes.Sort();
-        for (int index = 0; index < nodes.Count; index++) loads.Add(nodes[index], 0);
-        // 玩家可见线号允许复用已经回收的空号，场景 UID 每次重建均递增。
-        HashSet<int> numbers = new HashSet<int>();
-        int capacity = 0;
+        realm.MapPolicies.TryGetValue(request.MapId, out policy);
+        // RO 的登录调用传入人数 0，已在线的一人通过传送点转入时计 1。
+        int incoming = 0;
+        if (current != null) incoming = 1;
+        // 保留第一个低于警戒的候选，继续向后检查是否存在原宿主。
+        PublicSceneLine belowWarning = null;
+        // 全线都到警戒时用占用最少的实例，同人数保留先遇到的较小线号。
+        PublicSceneLine least = null;
+        int leastOccupied = int.MaxValue;
         for (int index = 0; index < realm.Scenes.Count; index++)
         {
-            // 汇总整台 GS 的角色占用，同时核查本地图是否还有宽松线路。
+            // 目录按线号排序，预留人数参与本次选择，避免同时进图挤到同一空位。
             PublicSceneLine scene = realm.Scenes[index];
-            if (scene.SceneUid != 0) loads[scene.GameId] += scene.Population;
-            if (scene.MapId != map) continue;
-            numbers.Add(scene.LineId);
-            if (scene.SceneUid == 0) continue;
-            if (scene.Population < policy.Warning) return;
-            capacity = scene.Capacity;
+            if (scene.MapId != request.MapId || scene.SceneUid == 0) continue;
+            if (request.RequireGame && scene.GameId != request.GameId) continue;
+            if (request.LineId != 0 && scene.LineId != request.LineId) continue;
+            // 当前占用包含等待 GS 接管的角色。
+            int pending;
+            reservations.TryGetValue(scene.SceneUid, out pending);
+            int occupied = scene.Population + pending;
+            if (request.LineId != 0 || request.RequireGame)
+            {
+                if (occupied < scene.Capacity) return scene;
+                continue;
+            }
+            if (current != null && scene.GameId == current.GameId && occupied < scene.Capacity) return scene;
+            if (policy == null && occupied >= scene.Capacity) continue;
+            if (belowWarning == null && (policy == null || occupied < policy.Warning - incoming))
+                belowWarning = scene;
+            if (occupied < leastOccupied)
+            {
+                least = scene;
+                leastOccupied = occupied;
+            }
         }
-        if (numbers.Count >= policy.MaxLines || capacity == 0) return;
-        // 同负载时使用较小的物理编号保证选择可复现。
-        int host = nodes[0];
-        for (int index = 1; index < nodes.Count; index++)
-            if (loads[nodes[index]] < loads[host]) host = nodes[index];
+        return belowWarning ?? least;
+    }
+
+    /// <summary>更新正在交接的占位，最后一个预留结束后移除计数。</summary>
+    /// <param name="scene">待接管的目标实例。</param><param name="change">预留为 1，提交或取消为 -1。</param>
+    private void ChangeReservation(PublicSceneLine scene, int change)
+    {
+        // 本实例已签发且尚未完成的入场数。
+        int count;
+        reservations.TryGetValue(scene.SceneUid, out count);
+        count += change;
+        if (count == 0) reservations.Remove(scene.SceneUid);
+        else reservations[scene.SceneUid] = count;
+    }
+
+    /// <summary>一次真实入场后，检查同图所有已开线路。每张地图同时只向一个宿主申请一条新线。</summary>
+    /// <param name="arrived">刚由 GS 接管玩家的线路。</param>
+    private void Expand(PublicSceneLine arrived)
+    {
+        // 未配置扩线的地图、未达警戒的入场均不需要扫描目录。
+        RealmTopology.MapPolicy policy;
+        if (!realm.MapPolicies.TryGetValue(arrived.MapId, out policy)) return;
+        if (arrived.Population < policy.Warning) return;
+        // 常驻线也要等创建回执，刚启动的 GS 正在开图时不重复扩线。
+        List<PublicSceneLine> inFlight = new List<PublicSceneLine>(creating.Values);
+        if (inFlight.Exists(scene => scene.MapId == arrived.MapId)) return;
+        // 为离线宿主的常驻线保留原编号；弹性线优先使用已回收的空号。
+        HashSet<int> numbers = new HashSet<int>();
+        for (int index = 0; index < realm.Scenes.Count; index++)
+        {
+            // 只统计同一张地图，其他地图的人数不参与触发。
+            PublicSceneLine scene = realm.Scenes[index];
+            if (scene.MapId != arrived.MapId) continue;
+            if (scene.SceneUid != 0 && scene.Population < policy.Warning) return;
+            numbers.Add(scene.LineId);
+        }
+        if (numbers.Count >= policy.MaxLines) return;
+        // 本地图最小可用的玩家可见线号。
         int line = 1;
         while (numbers.Contains(line)) line++;
-        PublicSceneLine opened = new PublicSceneLine { MapId = map, LineId = line, GameId = host,
-            Capacity = capacity, SceneUid = ++nextUid };
-        realm.Scenes.Add(opened);
-        elastic.Add(opened.SceneUid);
+        CreateStaticScene(new PublicSceneLine { MapId = arrived.MapId, LineId = line,
+            Capacity = arrived.Capacity, GameId = GetGsLine() });
+    }
+
+    /// <summary>发送实例创建命令，目录项只在指定 GS 回送同一 UID 后发布。</summary>
+    /// <param name="scene">固定线路模板或尚未加入目录的弹性线路。</param>
+    private void CreateStaticScene(PublicSceneLine scene)
+    {
+        // 发给 GS 的副本携带新 UID，待回执的常驻配置仍保持未开放。
+        PublicSceneLine command = scene.Clone();
+        command.SceneUid = ++nextUid;
+        if (hosts[scene.GameId].Send(SceneLineCode.CreateStaticScene, command.ToByteString()))
+            creating.Add(command.SceneUid, scene);
+    }
+
+    /// <summary>在本区已注册的普通 GS 中轮询，或按 RO 负载评分选择新场景宿主。</summary>
+    private int GetGsLine()
+    {
+        if (realm.ChooseGsType == 1)
+        {
+            // 物理编号升序轮转，两个城市共用同一个游标。
+            int next = 0;
+            while (next < hosts.Count && hosts.Keys[next] <= lastPollingGs) next++;
+            if (next == hosts.Count) next = 0;
+            lastPollingGs = hosts.Keys[next];
+            return lastPollingGs;
+        }
+        // 优先 CPU 低于 60% 的节点；全部达到警戒时在高负载节点中取最低分。
+        int bestHost = -1;
+        bool bestHigh = true;
+        long bestScore = long.MaxValue;
+        for (int index = 0; index < hosts.Count; index++)
+        {
+            // 只评价仍登记的 GS，刚登记时 CPU 与副本数按 RO 初值零计算。
+            int host = hosts.Keys[index];
+            SceneHostLoad load;
+            loads.TryGetValue(host, out load);
+            int cpu = load?.CpuRate ?? 0;
+            bool high = cpu >= 6000;
+            long score = (cpu / 100) * 30L + (load?.DungeonCount ?? 0) * 40L;
+            for (int sceneIndex = 0; sceneIndex < realm.Scenes.Count; sceneIndex++)
+            {
+                // 两座公共城每实例计 10，其他公共野外实例计 20；创建中尚未承载的不计。
+                PublicSceneLine scene = realm.Scenes[sceneIndex];
+                if (scene.SceneUid == 0 || scene.GameId != host) continue;
+                if (scene.MapId == PublicCityPortal.Town.MapId || scene.MapId == PublicCityPortal.Sky.MapId) score += 10;
+                else score += 20;
+            }
+            if (high && !bestHigh) continue;
+            if (high == bestHigh && score >= bestScore) continue;
+            bestHost = host;
+            bestHigh = high;
+            bestScore = score;
+        }
+        return bestHost;
     }
 
     /// <summary>回收无人的弹性场景，若其他线仍拥挤则保留空线供下一名玩家进入。</summary>
@@ -191,6 +332,7 @@ internal sealed class SceneDirectory : IContainer
             // 固定线路永远保留，只有未占用的临时线路可释放。
             PublicSceneLine scene = realm.Scenes[index];
             if (scene.Population != 0 || !elastic.Contains(scene.SceneUid)) continue;
+            if (reservations.ContainsKey(scene.SceneUid)) continue;
             // 仍需一条空线缓冲时保留当前实例。
             int warning = realm.MapPolicies[scene.MapId].Warning;
             bool otherAvailable = realm.Scenes.Exists(other =>
@@ -199,6 +341,10 @@ internal sealed class SceneDirectory : IContainer
                 return other.MapId == scene.MapId && other.Population < warning;
             });
             if (!otherAvailable) continue;
+            // 宿主仍在线时释放对应的 GS 实例及其空的视野名单。
+            Session host;
+            if (hosts.TryGetValue(scene.GameId, out host))
+                host.Send(SceneLineCode.CloseStaticScene, scene.ToByteString());
             elastic.Remove(scene.SceneUid);
             realm.Scenes.RemoveAt(index);
         }
@@ -209,7 +355,7 @@ internal sealed class SceneDirectory : IContainer
     private void Release(int id, Admission role)
     {
         if (role.Current != null) role.Current.Population--;
-        if (role.Pending != null) role.Pending.Population--;
+        if (role.Pending != null) ChangeReservation(role.Pending, -1);
         roles.Remove(id);
         Recycle();
     }
@@ -225,7 +371,15 @@ internal sealed class SceneDirectory : IContainer
             // 遍历快照以支持移除已断开的节点。
             List<int> ids = new List<int>(hosts.Keys);
             for (int index = 0; index < ids.Count; index++)
-                if (hosts[ids[index]] == connection) { lost = ids[index]; hosts.Remove(lost); break; }
+                if (hosts[ids[index]].SessionID == connection) { lost = ids[index]; hosts.Remove(lost); break; }
+            if (lost >= 0)
+            {
+                loads.Remove(lost);
+                // 撤销断开宿主尚未回复的创建，其他在线宿主下次入场时可继续扩线。
+                List<long> requests = new List<long>(creating.Keys);
+                for (int index = 0; index < requests.Count; index++)
+                    if (creating[requests[index]].GameId == lost) creating.Remove(requests[index]);
+            }
             // 网关断开时释放整个会话集；GS 断开时使该节点的场景不可再分配。
             List<int> players = new List<int>(roles.Keys);
             for (int index = 0; index < players.Count; index++)

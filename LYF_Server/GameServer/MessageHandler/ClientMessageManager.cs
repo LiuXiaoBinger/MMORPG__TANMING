@@ -36,6 +36,15 @@ public sealed class ClientMessageManager : IContainer
     {
     }
 
+    /// <summary>注册与分派接受相同的服务来源，具体命令仍由来源和协议号共同标识。</summary>
+    /// <param name="source">由接收连接标记的服务类型。</param>
+    private static bool IsKnownSource(GameCommandSource source)
+    {
+        if (source == GameCommandSource.ControlServer) return true;
+        return source == GameCommandSource.GateServer || source == GameCommandSource.CenterServer ||
+            source == GameCommandSource.MasterServer;
+    }
+
     /// <summary>
     /// 注册一条来源和协议号唯一的消息处理器。
     /// 重复注册会被拒绝，避免启动配置覆盖已有业务处理逻辑。
@@ -48,9 +57,7 @@ public sealed class ClientMessageManager : IContainer
             return false;
         }
 
-        if (key.Source != GameCommandSource.GateServer &&
-            key.Source != GameCommandSource.CenterServer &&
-            key.Source != GameCommandSource.MasterServer)
+        if (!IsKnownSource(key.Source))
         {
             LogMsg.Info("消息处理器注册失败：未知来源 " + key.Source, LogMsgType.Error);
             return false;
@@ -157,9 +164,7 @@ public sealed class ClientMessageManager : IContainer
             return;
         }
 
-        if (command.Source != GameCommandSource.GateServer &&
-            command.Source != GameCommandSource.CenterServer &&
-            command.Source != GameCommandSource.MasterServer)
+        if (!IsKnownSource(command.Source))
         {
             LogMsg.Info("拒绝未知消息来源，序号=" + command.Sequence + "，来源=" +
                 command.Source, LogMsgType.Error);

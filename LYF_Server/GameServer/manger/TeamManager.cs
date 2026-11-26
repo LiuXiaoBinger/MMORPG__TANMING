@@ -11,6 +11,8 @@ public sealed class TeamManager
 
     /// <summary>仅保存已实际创建的副本，键为队伍服在本分区分配的实例号。</summary>
     private readonly Dictionary<ulong, Dungeon> _instances = new Dictionary<ulong, Dungeon>();
+    /// <summary>GS 逻辑线程采样负载时读取的活跃副本数，每个副本实例只计一次。</summary>
+    internal int ActiveDungeonCount { get { return _instances.Count; } }
     /// <summary>已向本机玩家投递非空队伍 UI 的角色，用于下线或队伍服断线时清除该次展示。</summary>
     private readonly HashSet<ulong> _visibleTeamRoles = new HashSet<ulong>();
     /// <summary>参加逻辑帧更新的在场副本，最后一人离场时移除。</summary>

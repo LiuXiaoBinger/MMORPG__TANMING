@@ -16,7 +16,7 @@ public class MinMapWindow : WindowBase
 
    #region 字段
    /// <summary>小地图左上侧的分线下拉框，由区服返回可用线路后显示。</summary>
-   [SerializeField] private TMP_Dropdown _lineSelector;
+   [SerializeField] private SceneLineDropdown _lineSelector;
    /// <summary>线路入口的折叠箭头，列表打开时朝上，收起时朝下。</summary>
    [SerializeField] private RectTransform _lineArrow;
    /// <summary>下拉索引对应的真实线路编号，有空号时仍能请求正确目标。</summary>
@@ -27,6 +27,12 @@ public class MinMapWindow : WindowBase
    private Sprite _defaultMapSprite;
    /// <summary>玩家选择新线路时通知主界面控制器发送请求。</summary>
    public event System.Action<int> LineSelected;
+   /// <summary>把线路入口的展开请求交给主控，以当前玩家的真实地图查询目录。</summary>
+   public event System.Action LinesRequested
+   {
+      add { if (_lineSelector != null) _lineSelector.LinesRequested += value; }
+      remove { if (_lineSelector != null) _lineSelector.LinesRequested -= value; }
+   }
    /// <summary>小地图底图，通过尺寸和偏移显示角色附近区域。</summary>
    [SerializeField,Header("小地图背景图片")]private Image _imgMinMap;
 
@@ -208,6 +214,7 @@ public class MinMapWindow : WindowBase
       _lineSelector.SetValueWithoutNotify(currentIndex);
       _lineSelector.RefreshShownValue();
       _lineSelector.gameObject.SetActive(true);
+      _lineSelector.ShowRequestedLines();
    }
 
    /// <summary>把控件选中行转换为地图线路编号。</summary><param name="index">下拉框的零基行号。</param>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 逻辑区号对应角色存档的 ServerId。publicHost 是客户端可连接的地址，host 是本区的内网监听地址。 -->
-<realm id="1" name="1区 五域大陆" publicHost="127.0.0.1" host="127.0.0.1" shared="../公共服务.xml" spawnMap="1"
+<realm id="1" name="1区 五域大陆" publicHost="127.0.0.1" host="127.0.0.1" shared="../公共服务.xml" spawnMap="1" chooseGsType="1"
        gatePort="10140" udpPort="10141" masterPort="10150" controlPort="10160" tradeHost="127.0.0.1" tradePort="10170" runState="3" isNew="1">
   <!-- tradeHost / tradePort 为本区所有地图线路共用的交易服地址；tradePort 设为 0 即停用。 -->
   <!-- 共用一个数据库的各区，物理 GS 的 id 也要不同；该编号参与物品 UID 生成。 -->
@@ -11,4 +11,8 @@
   <scene map="1" line="2" game="2" capacity="500" />
   <scene map="0" line="1" game="1" capacity="500" />
   <scene map="0" line="2" game="2" capacity="500" />
+  <!-- 两座城独立计算人数。各条已开线路都达到 warning 时再开一线，maxLines 包含两条常驻线。 -->
+  <!-- chooseGsType 为 1 时，新线在在线 GS 间轮询；设为 2 时，优先选择低于 60% CPU 且评分最低的 GS。 -->
+  <expansion map="1" warning="400" maxLines="8" />
+  <expansion map="0" warning="400" maxLines="8" />
 </realm>

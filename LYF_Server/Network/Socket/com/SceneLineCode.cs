@@ -33,4 +33,10 @@ public static class SceneLineCode
     public const ushort RealmOffline = 11314;
     /// <summary>走入公共城市传送门，服务端回送已进入的场景或拒绝原因。</summary>
     public const ushort Portal = 11315;
+    /// <summary>控制服要求 GS 建立公共场景；GS 用同一协议号回送建好的实例。</summary>
+    public const ushort CreateStaticScene = 11316;
+    /// <summary>控制服通知宿主回收已无玩家的弹性公共场景。</summary>
+    public const ushort CloseStaticScene = 11317;
+    /// <summary>场景宿主在评分模式下上报 CPU 占用和活跃副本数量。</summary>
+    public const ushort HostLoad = 11318;
 }

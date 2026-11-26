@@ -38,9 +38,11 @@ public sealed class RealmTopology
     public readonly int TradePort;
     /// <summary>区服场景调度的 TCP 端口。</summary>
     public readonly int ControlPort;
+    /// <summary>普通公共场景选宿主的策略，1 为轮询，2 为 RO 的 CPU 与场景数评分。</summary>
+    public readonly int ChooseGsType = 1;
     /// <summary>以物理节点编号索引 GS，编号同时用于物品 UID 的实例位。</summary>
     public readonly Dictionary<int, SceneNodeRegistration> Games = new Dictionary<int, SceneNodeRegistration>();
-    /// <summary>各张地图的可部署分线，保持配置顺序以选择默认线路。</summary>
+    /// <summary>配置的常驻公共线路；控制服还会登记运行中扩出的实例。</summary>
     public readonly List<PublicSceneLine> Scenes = new List<PublicSceneLine>();
 
     /// <summary>配置了弹性扩线的地图人数阈值和总线数上限。</summary>
@@ -65,6 +67,7 @@ public sealed class RealmTopology
         // 根节点的共用端口对该区的所有 GS 生效。
         XmlElement root = document.DocumentElement;
         RealmId = Number(root, "id", 1, int.MaxValue);
+        if (root.HasAttribute("chooseGsType")) ChooseGsType = Number(root, "chooseGsType", 1, 2);
         Host = root.GetAttribute("host");
         SpawnMap = 1;
         if (root.HasAttribute("spawnMap")) SpawnMap = Number(root, "spawnMap", 0, int.MaxValue);

@@ -40,7 +40,9 @@ public static partial class SceneLineReflection {
           "bmVfaWQYAyABKAUSDwoHZ2FtZV9pZBgEIAEoBRIUCgxyZXF1aXJlX2dhbWUY",
           "BSABKAgSEQoJc2NlbmVfdWlkGAYgASgDIlYKFVNjZW5lTm9kZVJlZ2lzdHJh",
           "dGlvbhIQCghyZWFsbV9pZBgBIAEoBRIPCgdnYW1lX2lkGAIgASgFEgwKBGhv",
-          "c3QYAyABKAkSDAoEcG9ydBgEIAEoBWIGcHJvdG8z"));
+          "c3QYAyABKAkSDAoEcG9ydBgEIAEoBSJJCg1TY2VuZUhvc3RMb2FkEg8KB2dh",
+          "bWVfaWQYASABKAUSEAoIY3B1X3JhdGUYAiABKAUSFQoNZHVuZ2Vvbl9jb3Vu",
+          "dBgDIAEoBWIGcHJvdG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -49,7 +51,8 @@ public static partial class SceneLineReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneLineResult), global::SceneLineResult.Parser, new[]{ "Reason", "CurrentLine", "Lines" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneRoleTransfer), global::SceneRoleTransfer.Parser, new[]{ "Role", "Scene", "SkillEndMs", "GroupEndMs", "ChangingLine" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, null, }),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneRouteRequest), global::SceneRouteRequest.Parser, new[]{ "RoleId", "MapId", "LineId", "GameId", "RequireGame", "SceneUid" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SceneNodeRegistration), global::SceneNodeRegistration.Parser, new[]{ "RealmId", "GameId", "Host", "Port" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::SceneNodeRegistration), global::SceneNodeRegistration.Parser, new[]{ "RealmId", "GameId", "Host", "Port" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SceneHostLoad), global::SceneHostLoad.Parser, new[]{ "GameId", "CpuRate", "DungeonCount" }, null, null, null, null)
         }));
   }
   #endregion
@@ -173,7 +176,7 @@ public sealed partial class PublicSceneLine : pb::IMessage<PublicSceneLine>
   public const int PopulationFieldNumber = 5;
   private int population_;
   /// <summary>
-  /// 已分配到这条线的角色数。
+  /// 已由 GS 确认进入该线的角色数。
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -188,7 +191,7 @@ public sealed partial class PublicSceneLine : pb::IMessage<PublicSceneLine>
   public const int CapacityFieldNumber = 6;
   private int capacity_;
   /// <summary>
-  /// 同时接纳的玩家上限。
+  /// 手动选线及优先进入原宿主时的容量阈值。
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2013,6 +2016,290 @@ public sealed partial class SceneNodeRegistration : pb::IMessage<SceneNodeRegist
         }
         case 32: {
           Port = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// GS 向本区控制服上报进程的真实负载，仅用于 chooseGsType=2 的新场景分配。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class SceneHostLoad : pb::IMessage<SceneHostLoad>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<SceneHostLoad> _parser = new pb::MessageParser<SceneHostLoad>(() => new SceneHostLoad());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<SceneHostLoad> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[6]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneHostLoad() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneHostLoad(SceneHostLoad other) : this() {
+    gameId_ = other.gameId_;
+    cpuRate_ = other.cpuRate_;
+    dungeonCount_ = other.dungeonCount_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneHostLoad Clone() {
+    return new SceneHostLoad(this);
+  }
+
+  /// <summary>Field number for the "game_id" field.</summary>
+  public const int GameIdFieldNumber = 1;
+  private int gameId_;
+  /// <summary>
+  /// 发送报告的物理 GS 编号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GameId {
+    get { return gameId_; }
+    set {
+      gameId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "cpu_rate" field.</summary>
+  public const int CpuRateFieldNumber = 2;
+  private int cpuRate_;
+  /// <summary>
+  /// 单核占用 100% 记为 10000，多核并行时可超过此值。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CpuRate {
+    get { return cpuRate_; }
+    set {
+      cpuRate_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "dungeon_count" field.</summary>
+  public const int DungeonCountFieldNumber = 3;
+  private int dungeonCount_;
+  /// <summary>
+  /// 本机当前存活的副本实例数。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int DungeonCount {
+    get { return dungeonCount_; }
+    set {
+      dungeonCount_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as SceneHostLoad);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(SceneHostLoad other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (GameId != other.GameId) return false;
+    if (CpuRate != other.CpuRate) return false;
+    if (DungeonCount != other.DungeonCount) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (GameId != 0) hash ^= GameId.GetHashCode();
+    if (CpuRate != 0) hash ^= CpuRate.GetHashCode();
+    if (DungeonCount != 0) hash ^= DungeonCount.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (GameId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(GameId);
+    }
+    if (CpuRate != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(CpuRate);
+    }
+    if (DungeonCount != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(DungeonCount);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (GameId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(GameId);
+    }
+    if (CpuRate != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(CpuRate);
+    }
+    if (DungeonCount != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(DungeonCount);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (GameId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GameId);
+    }
+    if (CpuRate != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(CpuRate);
+    }
+    if (DungeonCount != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(DungeonCount);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(SceneHostLoad other) {
+    if (other == null) {
+      return;
+    }
+    if (other.GameId != 0) {
+      GameId = other.GameId;
+    }
+    if (other.CpuRate != 0) {
+      CpuRate = other.CpuRate;
+    }
+    if (other.DungeonCount != 0) {
+      DungeonCount = other.DungeonCount;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          GameId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          CpuRate = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          DungeonCount = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          GameId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          CpuRate = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          DungeonCount = input.ReadInt32();
           break;
         }
       }

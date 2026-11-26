@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Google.Protobuf;
 
-/// <summary>在现有 GS 逻辑线程执行公共场景接管与离场；框架要求实现 IGameMessageHandler。</summary>
-public sealed class SceneLineHandler : IGameMessageHandler
+/// <summary>在 GS 逻辑线程执行公共实例创建与玩家交接。网络接收和逻辑分派分别要求 IContainer、IGameMessageHandler。</summary>
+public sealed class SceneLineHandler : IGameMessageHandler, IContainer
 {
     /// <summary>本机 GS 的运行时分线处理器。</summary>
     private static SceneLineHandler active;
@@ -18,6 +19,14 @@ public sealed class SceneLineHandler : IGameMessageHandler
     private readonly NetClient control;
     /// <summary>当前区启用市场时向其报告入场和离场角色。</summary>
     private readonly StallRoleLink trade;
+    /// <summary>评分模式才持有本 GS 的进程句柄，采样累计处理器时间。</summary>
+    private readonly Process process;
+    /// <summary>两次 CPU 采样间的单调计时器；轮询模式不启动。</summary>
+    private readonly Stopwatch sampleClock;
+    /// <summary>上一采样点已使用的处理器毫秒数，各核累加。</summary>
+    private double previousCpuMs;
+    /// <summary>内网连接线程更新，逻辑帧只向已登记的控制服上报负载。</summary>
+    private volatile bool registered;
 
     /// <summary>为本机物理 GS 建立调度登记连接。</summary>
     /// <param name="realm">所属逻辑区服。</param><param name="gameId">本机的物理编号。</param>
@@ -26,7 +35,20 @@ public sealed class SceneLineHandler : IGameMessageHandler
         node = realm.Games[gameId];
         if (realm.TradePort > 0) trade = new StallRoleLink(realm, gameId);
         control = new NetClient(realm.Host, realm.ControlPort, ClientType.GameServer);
-        control.OnConnSucceed = () => control.Send(SceneLineCode.Register, node.ToByteString());
+        if (realm.ChooseGsType == 2)
+        {
+            process = Process.GetCurrentProcess();
+            previousCpuMs = process.TotalProcessorTime.TotalMilliseconds;
+            sampleClock = Stopwatch.StartNew();
+        }
+        control.OnConnSucceed = () =>
+        {
+            // 新控制连接会为本机重发常驻场景，在同一逻辑队列内先清空上次登记的实例。
+            GameGlobal.Instance.EnqueueGameCommand(GameCommandSource.ControlServer, control,
+                new BasePackage { ProtoCode = SceneLineCode.Register });
+            registered = control.Send(SceneLineCode.Register, node.ToByteString());
+        };
+        control.OnConnFailed = () => registered = false;
     }
 
     /// <summary>为启用区服部署的 GS 注册内部切线协议。</summary>
@@ -43,12 +65,38 @@ public sealed class SceneLineHandler : IGameMessageHandler
             ClientMessageManager.Instance.Register(new GameMessageHandlerKey(GameCommandSource.GateServer, codes[index]),
                 active, CenterMessageRoute.Internal);
         }
+        // 只在 GS 主动建立的控制链路上接收场景命令，网关侧没有这两个入口。
+        ushort[] sceneCodes = { SceneLineCode.Register, SceneLineCode.CreateStaticScene, SceneLineCode.CloseStaticScene };
+        for (int index = 0; index < sceneCodes.Length; index++)
+        {
+            // Register 在本机建立连接时入队。
+            ushort code = sceneCodes[index];
+            ClientMessageManager.Instance.Register(new GameMessageHandlerKey(GameCommandSource.ControlServer, code),
+                active, CenterMessageRoute.Internal);
+            if (code != SceneLineCode.Register) active.control.RegistCommand(code, active);
+        }
         active.control.StartConnect();
     }
 
-    /// <summary>只有可信网关可提交场景内网命令。</summary><param name="source">真实链路来源。</param><param name="code">协议号。</param>
+    /// <summary>网络容器的初始化入口，绑定操作由 Start 完成。</summary>
+    public void OnInit() { }
+
+    /// <summary>本容器只用于主动连接，玩家请求由网关的既有入口转交。</summary>
+    /// <param name="link">监听端连接。</param><param name="packet">监听端收到的封包。</param>
+    public void OnServerCommand(BaseLink link, BasePackage packet) { }
+
+    /// <summary>把控制服的实例命令交给现有逻辑线程，与玩家进出场串行处理。</summary>
+    /// <param name="link">到本区控制服的连接。</param><param name="packet">实例命令。</param>
+    public void OnClientCommand(BaseLink link, BasePackage packet)
+    {
+        GameGlobal.Instance.EnqueueGameCommand(GameCommandSource.ControlServer, link, packet);
+    }
+
+    /// <summary>按连接来源分别接收建图与玩家交接命令。</summary><param name="source">真实链路来源。</param><param name="code">协议号。</param>
     public bool CanHandle(GameCommandSource source, ushort code)
     {
+        if (source == GameCommandSource.ControlServer)
+            return code == SceneLineCode.Register || code == SceneLineCode.CreateStaticScene || code == SceneLineCode.CloseStaticScene;
         if (source != GameCommandSource.GateServer) return false;
         return code == SceneLineCode.Depart || code == SceneLineCode.Arrive || code == SceneLineCode.Disconnect;
     }
@@ -58,6 +106,19 @@ public sealed class SceneLineHandler : IGameMessageHandler
     {
         // 可信网关连接号由接收端 Session 写入。
         BasePackage packet = context.Package;
+        if (context.Source == GameCommandSource.ControlServer)
+        {
+            if (packet.ProtoCode == SceneLineCode.Register) { scenes.Clear(); return; }
+            // 实例在逻辑线程上创建或回收，确认时其独立视野名单已经可用。
+            PublicSceneLine scene = PublicSceneLine.Parser.ParseFrom(packet.Data);
+            if (packet.ProtoCode == SceneLineCode.CloseStaticScene) scenes.Remove(scene.SceneUid);
+            else
+            {
+                if (!scenes.ContainsKey(scene.SceneUid)) scenes.Add(scene.SceneUid, new List<OnlineRole>());
+                control.Send(SceneLineCode.CreateStaticScene, packet.Data);
+            }
+            return;
+        }
         if (packet.ProtoCode == SceneLineCode.Arrive)
         {
             // 角色身份来自中心服查档或原 GS 交接，只通过内部网关链路传递。
@@ -113,6 +174,7 @@ public sealed class SceneLineHandler : IGameMessageHandler
     internal static void FlushDepartures()
     {
         if (active == null) return;
+        active.ReportHostLoad();
         active.trade?.Update();
         for (int index = active.loggingOut.Count - 1; index >= 0; index--)
         {
@@ -155,22 +217,28 @@ public sealed class SceneLineHandler : IGameMessageHandler
         RoleManager.Instance.ResendNearbyRoles(role);
     }
 
-    /// <summary>登记一份公共场景的在线角色；同一宿主可同时持有多个同地图实例。</summary>
+    /// <summary>评分模式每五秒在逻辑线程报告进程 CPU 与活跃副本数。</summary>
+    private void ReportHostLoad()
+    {
+        if (sampleClock == null || !registered || sampleClock.ElapsedMilliseconds < 5000) return;
+        // 以实际经过的墙钟时间为分母；使用一个完整核心记为 10000，沿用 RO 的单核口径。
+        double cpuMs = process.TotalProcessorTime.TotalMilliseconds;
+        int cpuRate = (int)((cpuMs - previousCpuMs) * 10000 / sampleClock.Elapsed.TotalMilliseconds);
+        previousCpuMs = cpuMs;
+        sampleClock.Restart();
+        control.Send(SceneLineCode.HostLoad, new SceneHostLoad { GameId = node.GameId, CpuRate = cpuRate,
+            DungeonCount = TeamManager.Instance.ActiveDungeonCount }.ToByteString());
+    }
+
+    /// <summary>把角色加入调度服已经确认开放的 GS 实例。</summary>
     /// <param name="role">刚进入该场景的真实角色。</param>
     private void JoinScene(OnlineRole role)
     {
-        // 第一名角色到达时建立该运行期实例的角色集合。
-        List<OnlineRole> members;
-        if (!scenes.TryGetValue(role.PublicScene.SceneUid, out members))
-        {
-            members = new List<OnlineRole>();
-            scenes.Add(role.PublicScene.SceneUid, members);
-        }
-        members.Add(role);
+        scenes[role.PublicScene.SceneUid].Add(role);
         trade?.SetRole(role, true);
     }
 
-    /// <summary>从原公共场景摘除该角色，最后一人离场时释放实例成员集合。</summary><param name="role">离场角色。</param>
+    /// <summary>从原公共场景摘除角色，空线保持可进入，直到控制服通知回收。</summary><param name="role">离场角色。</param>
     private static void LeaveScene(OnlineRole role)
     {
         // 下线和离场可先后到达，集合只保存仍归属于此场景的角色。
@@ -178,7 +246,6 @@ public sealed class SceneLineHandler : IGameMessageHandler
         if (!active.scenes.TryGetValue(role.PublicScene.SceneUid, out members)) return;
         members.Remove(role);
         active.trade?.SetRole(role, false);
-        if (members.Count == 0) active.scenes.Remove(role.PublicScene.SceneUid);
     }
 
     /// <summary>复制本公共实例的角色引用供 AOI 遍历，独立副本沿用原有名单过滤。</summary>
