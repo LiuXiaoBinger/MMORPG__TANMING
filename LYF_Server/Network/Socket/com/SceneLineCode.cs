@@ -43,4 +43,6 @@ public static class SceneLineCode
     public const ushort SavePublicArrival = 11319;
     /// <summary>GS 返回同线巡逻位置，客户端通过同一协议读取或发起交谈。</summary>
     public const ushort NpcPatrol = 11320;
+    /// <summary>玩家实际接触公共居民时上报一次，GS 只转发给其他同线可见角色。</summary>
+    public const ushort NpcContact = 11321;
 }

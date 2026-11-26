@@ -53,7 +53,8 @@ public static partial class SceneLineReflection {
           "IAEoAhINCgVzcGVlZBgIIAEoAhILCgN5YXcYCSABKAIicAoTU2NlbmVOcGNQ",
           "YXRyb2xTdGF0ZRIOCgZtYXBfaWQYASABKAUSEQoJc2NlbmVfdWlkGAIgASgD",
           "EiIKBXN0ZXBzGAMgAygLMhMuU2NlbmVOcGNQYXRyb2xTdGVwEhIKCnNhbXBs",
-          "ZWRfbXMYBCABKANiBnByb3RvMw=="));
+          "ZWRfbXMYBCABKAMiRAoPU2NlbmVOcGNDb250YWN0Eg4KBm5wY19pZBgBIAEo",
+          "BRIOCgZtYXBfaWQYAiABKAUSEQoJc2NlbmVfdWlkGAMgASgDYgZwcm90bzM="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -68,7 +69,8 @@ public static partial class SceneLineReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneDeparture), global::SceneDeparture.Parser, new[]{ "Target", "Portal" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneNpcPatrolRequest), global::SceneNpcPatrolRequest.Parser, new[]{ "NpcId", "Talking", "SceneUid" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneNpcPatrolStep), global::SceneNpcPatrolStep.Parser, new[]{ "NpcId", "X", "Y", "Z", "TargetX", "TargetY", "TargetZ", "Speed", "Yaw" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SceneNpcPatrolState), global::SceneNpcPatrolState.Parser, new[]{ "MapId", "SceneUid", "Steps", "SampledMs" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::SceneNpcPatrolState), global::SceneNpcPatrolState.Parser, new[]{ "MapId", "SceneUid", "Steps", "SampledMs" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SceneNpcContact), global::SceneNpcContact.Parser, new[]{ "NpcId", "MapId", "SceneUid" }, null, null, null, null)
         }));
   }
   #endregion
@@ -3940,6 +3942,290 @@ public sealed partial class SceneNpcPatrolState : pb::IMessage<SceneNpcPatrolSta
         }
         case 32: {
           SampledMs = input.ReadInt64();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 本机角色碰到公共 NPC 后即刻上报出生编号，场景宿主补齐实例并转发给附近旁观者。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class SceneNpcContact : pb::IMessage<SceneNpcContact>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<SceneNpcContact> _parser = new pb::MessageParser<SceneNpcContact>(() => new SceneNpcContact());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<SceneNpcContact> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[12]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneNpcContact() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneNpcContact(SceneNpcContact other) : this() {
+    npcId_ = other.npcId_;
+    mapId_ = other.mapId_;
+    sceneUid_ = other.sceneUid_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneNpcContact Clone() {
+    return new SceneNpcContact(this);
+  }
+
+  /// <summary>Field number for the "npc_id" field.</summary>
+  public const int NpcIdFieldNumber = 1;
+  private int npcId_;
+  /// <summary>
+  /// 当前地图中的 NPC 出生配置编号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int NpcId {
+    get { return npcId_; }
+    set {
+      npcId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "map_id" field.</summary>
+  public const int MapIdFieldNumber = 2;
+  private int mapId_;
+  /// <summary>
+  /// 由 GS 填写的公共地图编号，零也是合法主城。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int MapId {
+    get { return mapId_; }
+    set {
+      mapId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "scene_uid" field.</summary>
+  public const int SceneUidFieldNumber = 3;
+  private long sceneUid_;
+  /// <summary>
+  /// 由 GS 填写的线路实例，供客户端在换线时区分。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long SceneUid {
+    get { return sceneUid_; }
+    set {
+      sceneUid_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as SceneNpcContact);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(SceneNpcContact other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (NpcId != other.NpcId) return false;
+    if (MapId != other.MapId) return false;
+    if (SceneUid != other.SceneUid) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (NpcId != 0) hash ^= NpcId.GetHashCode();
+    if (MapId != 0) hash ^= MapId.GetHashCode();
+    if (SceneUid != 0L) hash ^= SceneUid.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (NpcId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(NpcId);
+    }
+    if (MapId != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(MapId);
+    }
+    if (SceneUid != 0L) {
+      output.WriteRawTag(24);
+      output.WriteInt64(SceneUid);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (NpcId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(NpcId);
+    }
+    if (MapId != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(MapId);
+    }
+    if (SceneUid != 0L) {
+      output.WriteRawTag(24);
+      output.WriteInt64(SceneUid);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (NpcId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(NpcId);
+    }
+    if (MapId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(MapId);
+    }
+    if (SceneUid != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(SceneUid);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(SceneNpcContact other) {
+    if (other == null) {
+      return;
+    }
+    if (other.NpcId != 0) {
+      NpcId = other.NpcId;
+    }
+    if (other.MapId != 0) {
+      MapId = other.MapId;
+    }
+    if (other.SceneUid != 0L) {
+      SceneUid = other.SceneUid;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          NpcId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          MapId = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          SceneUid = input.ReadInt64();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          NpcId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          MapId = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          SceneUid = input.ReadInt64();
           break;
         }
       }

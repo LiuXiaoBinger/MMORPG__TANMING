@@ -51,6 +51,7 @@ public class NpcManager : MonoBehaviour
             return;
         }
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.NpcPatrol, OnPatrolState);
+        SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.NpcContact, OnNpcContact);
         _destroyed = true;
         _initialized = false;
         _lifecycleVersion++;
@@ -86,6 +87,7 @@ public class NpcManager : MonoBehaviour
 
         _initialized = true;
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.NpcPatrol, OnPatrolState);
+        SocketDispatcher.Instance.AddEventHandler(SceneLineCode.NpcContact, OnNpcContact);
         MNetClient.Instance.Send(SceneLineCode.NpcPatrol, ByteString.Empty);
         _lifecycleVersion++;
         Dictionary<int, NpcParseInfo> npcInfos = LubanMgr.Instance.GetNpcInfos();
@@ -247,6 +249,19 @@ public class NpcManager : MonoBehaviour
         if (_patrolState == null) return;
         for (int i = 0; i < _patrolState.Steps.Count; i++)
             if (_patrolState.Steps[i].NpcId == info.ID) ApplyPatrol(entity, _patrolState.Steps[i]);
+    }
+
+    /// <summary>播放宿主发给旁观者的一次居民受击，不再触发本机碰撞上报。</summary>
+    /// <param name="data">包括出生编号、地图和实际线路实例的受击通知。</param>
+    private void OnNpcContact(ByteString data)
+    {
+        // 宿主在角色所在的公共场景内填写地图与线路。
+        SceneNpcContact notice = SceneNpcContact.Parser.ParseFrom(data);
+        if (notice.MapId != _mapId) return;
+        if (_patrolState != null && _patrolState.SceneUid != notice.SceneUid) return;
+        // 刚离开视野或正在加载的人物不补播过去的一次接触。
+        if (!_npcEntities.TryGetValue(notice.NpcId, out NpcEntity npc) || !npc.Model.IsLoaded) return;
+        if (npc.Model.GameObject.NativeObject.TryGetComponent(out MSceneNpcMotion motion)) motion.PlayContact();
     }
 
     private void RemoveNpcEntity(int npcId, NpcEntity expectedEntity)

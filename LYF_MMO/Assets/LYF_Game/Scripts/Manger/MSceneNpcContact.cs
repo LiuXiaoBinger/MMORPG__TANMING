@@ -1,10 +1,11 @@
 using UnityEngine;
+using Google.Protobuf;
 
 /// <summary>跟随公共地图角色的触发胶囊，仅在接触居民的那一刻通知其播放受击。</summary>
 public sealed class MSceneNpcContact : MonoBehaviour
 {
     /// <summary>为新角色或跨图沿用的角色建立一个贴身探测器。</summary>
-    /// <param name="role">本机玩家或同线可见玩家的实际模型根节点。</param>
+    /// <param name="role">本机操作角色的实际模型根节点。</param>
     internal static void Attach(GameObject role)
     {
         if (role.GetComponentInChildren<MSceneNpcContact>() != null) return;
@@ -33,6 +34,9 @@ public sealed class MSceneNpcContact : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // 只有出生为人物的模型根节点持有动作组件，路牌和马车等仍沿用物件交互。
-        if (other.isTrigger && other.TryGetComponent(out MSceneNpcMotion motion)) motion.PlayContact();
+        if (!other.isTrigger || !other.TryGetComponent(out MSceneNpcMotion motion)) return;
+        motion.PlayContact();
+        // 真实进入时即发一次独立事件，短碰不必等下一份角色位置采样。
+        MNetClient.Instance.Send(SceneLineCode.NpcContact, new SceneNpcContact { NpcId = motion.NpcId }.ToByteString());
     }
 }

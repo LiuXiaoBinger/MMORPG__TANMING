@@ -162,6 +162,9 @@ public static class GateClientResponseForwarder
                 // 直接校验复活结果类型，再按原会话和原始载荷转给客户端。
                 RoleReviveRet.Parser.ParseFrom(package.Data);
                 return true;
+            case SceneLineCode.NpcContact:
+                SceneNpcContact.Parser.ParseFrom(package.Data);
+                return true;
             case SceneLineCode.NpcPatrol:
                 SceneNpcPatrolState.Parser.ParseFrom(package.Data);
                 return true;

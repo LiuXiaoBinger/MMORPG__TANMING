@@ -698,12 +698,12 @@ public class MainCityMgr : MonoBehaviour
             });
 
             // 所有校验和数据初始化完成后才转交模型对象持有，失败路径由本方法销毁实例。
-            // 本人与同线可见玩家共用角色胶囊外缘，供本地物理识别真实接触。
-            MSceneNpcContact.Attach(obj);
             sceneEntity.Model.SetGameObject(obj,
                RoleAnimatorControllerLocation, false);
             if (roleType == RoleType.MainRole)
             {
+               // 只由本机玩家探测并上报碰撞，可见玩家的受击事件由其场景宿主转发。
+               MSceneNpcContact.Attach(obj);
                // 主角的生命周期归全局角色实体所有，场景卸载不再销毁模型、动画器和控制器。
                DontDestroyOnLoad(obj);
                BindMainRoleCompatibilityController(obj, sceneEntity, baseInfo);

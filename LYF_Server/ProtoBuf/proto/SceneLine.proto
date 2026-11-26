@@ -92,3 +92,10 @@ message SceneNpcPatrolState {
   repeated SceneNpcPatrolStep steps = 3; // 有巡逻配置的人形 NPC。
   int64 sampled_ms = 4; // GS 采到上述位置时的单调毫秒，供客户端消除较慢回包造成的位置落后。
 }
+
+// 本机角色碰到公共 NPC 后即刻上报出生编号，场景宿主补齐实例并转发给附近旁观者。
+message SceneNpcContact {
+  int32 npc_id = 1; // 当前地图中的 NPC 出生配置编号。
+  int32 map_id = 2; // 由 GS 填写的公共地图编号，零也是合法主城。
+  int64 scene_uid = 3; // 由 GS 填写的线路实例，供客户端在换线时区分。
+}

@@ -3,6 +3,9 @@ using UnityEngine;
 /// <summary>公共场景人物的职业待机与上身受击表现，根节点位置由出生和巡逻系统持有。</summary>
 public sealed class MSceneNpcMotion : MonoBehaviour
 {
+    /// <summary>本图人物的出生编号，用于其他客户端找到同一个 NPC。</summary>
+    internal int NpcId { get; private set; }
+
     /// <summary>基础层默认循环，名称来自各职业已有的动画控制器。</summary>
     private static readonly int Idle = Animator.StringToHash("Base Layer.Idle");
     /// <summary>独立上身层的一次性受击状态，播完后由控制器过渡回空闲层。</summary>
@@ -17,6 +20,7 @@ public sealed class MSceneNpcMotion : MonoBehaviour
     /// <param name="npcId">出生表编号，决定零到一之间的循环起点。</param>
     internal void Bind(Animator animator, int npcId)
     {
+        NpcId = npcId;
         _animator = animator;
         _contactLayer = animator.GetLayerIndex("Contact");
         // 黄金分割的小数部分把相邻出生编号分散到循环的不同位置。

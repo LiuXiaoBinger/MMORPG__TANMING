@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Xml;
 using Google.Protobuf;
 
@@ -8,6 +9,22 @@ internal sealed class SceneNpcPatrolRoom
 {
     /// <summary>宿主分配的公共实例编号；独立 GS 的本地公共地图使用负数。</summary>
     internal readonly long Uid;
+    /// <summary>按本线同一只巡逻时钟取人物脚底坐标，固定居民直接取出生位置。</summary>
+    /// <param name="npc">已核对地图的 NPC 出生行。</param><param name="now">GS 当前的单调秒数。</param>
+    internal Vector3 GetNpcPosition(NpcParseInfo npc, double now)
+    {
+        for (int index = 0; index < walkers.Length; index++)
+        {
+            if (walkers[index].NpcId != npc.ID) continue;
+            // 单次读取不更改本线路下一次统一发布巡逻的位置或时间。
+            double next = double.MaxValue;
+            // 同线玩家收到的同一套巡逻采样。
+            SceneNpcPatrolStep step = walkers[index].Sample(now, ref next);
+            return new Vector3(step.X, step.Y, step.Z);
+        }
+        return npc.Position;
+    }
+
     /// <summary>出生表中用于匹配客户端场景的地图编号。</summary>
     private readonly int map;
     /// <summary>本实例中各自独立暂停、行走的巡卫。</summary>

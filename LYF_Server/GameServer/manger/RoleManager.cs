@@ -535,6 +535,14 @@ public class RoleManager
     private void BroadcastSkillNotice(OnlineRole caster, ushort protocolCode, ByteString payload)
     {
         caster.SendToClient(protocolCode, payload);
+        SendToNearbyOthers(caster, protocolCode, payload);
+    }
+
+    /// <summary>复用本场景视野，向发起者之外的同线附近玩家各发送一次表现通知。</summary>
+    /// <param name="caster">确实在本 GS 进场的角色。</param><param name="protocolCode">表现通知协议号。</param>
+    /// <param name="payload">由宿主构造并已序列化的单次事件。</param>
+    internal void SendToNearbyOthers(OnlineRole caster, ushort protocolCode, ByteString payload)
+    {
         if (caster.mainRoleInfo == null || caster.mainRoleInfo.BaseInfo == null)
         {
             return;

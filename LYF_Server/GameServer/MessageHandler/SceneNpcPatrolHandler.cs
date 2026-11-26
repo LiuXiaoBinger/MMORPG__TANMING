@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Numerics;
+using Google.Protobuf;
 using System.Globalization;
 using System.IO;
 using System.Xml;
@@ -33,7 +35,7 @@ public sealed class SceneNpcPatrolHandler : IGameMessageHandler
     /// <summary>只处理网关转来的公共 NPC 请求。</summary><param name="source">接收链路。</param><param name="code">协议号。</param>
     public bool CanHandle(GameCommandSource source, ushort code)
     {
-        return source == GameCommandSource.GateServer && code == SceneLineCode.NpcPatrol;
+        return source == GameCommandSource.GateServer && (code == SceneLineCode.NpcPatrol || code == SceneLineCode.NpcContact);
     }
 
     /// <summary>根据角色实际所在线路订阅巡卫；客户端不能指定用另一条线的 NPC。</summary>
@@ -46,13 +48,31 @@ public sealed class SceneNpcPatrolHandler : IGameMessageHandler
         if (role == null || !role.IsRoleDataReady()) return;
         RoleBaseInfo info = role.mainRoleInfo.BaseInfo;
         if (info.InstanceId != 0) return;
-        SceneNpcPatrolRequest request = SceneNpcPatrolRequest.Parser.ParseFrom(packet.Data);
         // 独立启动时按逻辑区和地图区分，集群采用调度服签发的真实场景号。
         long uid = -1L - ((long)role.mainRoleInfo.ServerId << 32) - info.MapId;
         if (role.PublicScene != null) uid = role.PublicScene.SceneUid;
         double now = clock.Elapsed.TotalSeconds;
         SceneNpcPatrolRoom room = null;
         for (int i = 0; i < rooms.Count; i++) if (rooms[i].Uid == uid) { room = rooms[i]; break; }
+        if (packet.ProtoCode == SceneLineCode.NpcContact)
+        {
+            // 发送者由原会话确定，客户端不能指定旁观者或广播线路。
+            SceneNpcContact contact = SceneNpcContact.Parser.ParseFrom(packet.Data);
+            // 出生行用于区分当前地图上的人物与车、传送台等物件。
+            NpcParseInfo npc = LubanMgr.Instance.GetNpcInfoById(contact.NpcId);
+            if (npc == null || npc.MapID != info.MapId || npc.Type == 3) return;
+            // 固定人物使用出生点，走动居民使用这条线当前的实际位置。
+            Vector3 position = npc.Position;
+            if (room != null) position = room.GetNpcPosition(npc, now);
+            // 沿用本项目 NPC 交互的 11 米验距，允许最近一次角色位置上报与接触帧不同步。
+            if (Vector3.DistanceSquared(info.Pos.ToVector3(), position) > 121f) return;
+            contact.MapId = info.MapId;
+            contact.SceneUid = uid;
+            RoleManager.Instance.SendToNearbyOthers(role, SceneLineCode.NpcContact, contact.ToByteString());
+            return;
+        }
+        // 巡逻的原订阅及对话仍使用其独立的请求载荷。
+        SceneNpcPatrolRequest request = SceneNpcPatrolRequest.Parser.ParseFrom(packet.Data);
         if (request.NpcId != 0)
         {
             if (room != null && request.SceneUid == uid && room.Members.Contains(role)) room.Talk(role, request, now);

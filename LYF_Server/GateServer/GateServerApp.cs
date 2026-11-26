@@ -175,6 +175,9 @@ namespace GateServer
             // 巡卫的读写请求与 GS 推送使用同一游戏会话。
             server.RegistCommand(SceneLineCode.NpcPatrol, gateMoveCtrl);
             client.RegistCommand(SceneLineCode.NpcPatrol, gateMoveCtrl);
+            // 受击为独立的瞬时事件，沿本角色现有 GS 会话双向转发。
+            server.RegistCommand(SceneLineCode.NpcContact, gateMoveCtrl);
+            client.RegistCommand(SceneLineCode.NpcContact, gateMoveCtrl);
             if (router == null) client.RegistCommand(SceneLineCode.Portal, gateMoveCtrl);
             if (router != null)
             {
