@@ -102,7 +102,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8242592681155620575}
   - component: {fileID: 2318107340479298726}
-  - component: {fileID: 5359814743125072281}
+  - component: {fileID: 819548624164515252}
   m_Layer: 7
   m_Name: City_Home_F1
   m_TagString: Untagged
@@ -155,8 +155,8 @@ LODGroup:
     renderers:
     - renderer: {fileID: 8841603826001955770}
   m_Enabled: 1
---- !u!65 &5359814743125072281
-BoxCollider:
+--- !u!64 &819548624164515252
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -173,9 +173,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 21.577408, y: 20.082983, z: 15.647113}
-  m_Center: {x: 0.00000047683716, y: 10.0414915, z: 0}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: a9d735710bc56ef48840a5a30d3648b1, type: 2}
 --- !u!1 &2041375359228553275
 GameObject:
   m_ObjectHideFlags: 0

@@ -186,8 +186,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7366846672327255593}
   - component: {fileID: 1396781182287828877}
-  - component: {fileID: 3742334077174054329}
-  - component: {fileID: 8486783635779856074}
+  - component: {fileID: 2381592684566959301}
   m_Layer: 7
   m_Name: Elven_Castle_Entrance_1A2
   m_TagString: Untagged
@@ -235,8 +234,8 @@ LODGroup:
     renderers:
     - renderer: {fileID: 2481802156500435726}
   m_Enabled: 1
---- !u!65 &3742334077174054329
-BoxCollider:
+--- !u!64 &2381592684566959301
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -253,27 +252,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 6.921594, y: 36.701557, z: 12.312001}
-  m_Center: {x: -10.653236, y: 18.350779, z: 0}
---- !u!65 &8486783635779856074
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4253729969735041437}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 6.921594, y: 36.701557, z: 12.312001}
-  m_Center: {x: 10.653236, y: 18.350779, z: 0}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 080e3e8d962fba84da73db15a495806e, type: 2}
