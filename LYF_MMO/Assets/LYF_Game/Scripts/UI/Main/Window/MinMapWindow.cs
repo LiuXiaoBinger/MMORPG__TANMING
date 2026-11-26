@@ -183,6 +183,8 @@ public class MinMapWindow : WindowBase
       {
          // 同图所有门的中心均来自服务端与客户端共用的文件。
          PublicCityPortal door = _mapDoors[index];
+         // 小地图的门标用于踩圈寻路；车夫和台座由玩家点选服务启程。
+         if (door.UseService) continue;
          Vector3 center = new Vector3(door.X, door.Y, door.Z);
          float distance = (center - position).sqrMagnitude;
          if (distance >= best) continue;

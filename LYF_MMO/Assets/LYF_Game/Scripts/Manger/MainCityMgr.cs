@@ -84,12 +84,6 @@ public class MainCityMgr : MonoBehaviour
       TrySubscribeLocalRoleLoad();
       TryCreateCurrentLocalRole();
       CreateCityPortal();
-      // 正式进城前 Global 已完成配置和实体世界初始化，复用同物体上的 NPC 管理器。
-      // 场景上有 NpcManager 才创建 NPC；魔神塔没有配置城市 NPC 管理器。
-      if (TryGetComponent<NpcManager>(out NpcManager npcManager))
-      {
-         npcManager.Initialize();
-      }
    }
 
    /// <summary>补齐角色订阅和表现，并将跌出天空中之城或副本下界的主角送回出生点。</summary>
@@ -112,6 +106,7 @@ public class MainCityMgr : MonoBehaviour
       {
          // 每个特效落在配置的门心并跟随本场景卸载。
          PublicCityPortal door = _cityPortals[index];
+         if (door.UseService) continue;
          Vector3 center = new Vector3(door.X, door.Y, door.Z);
          GameObject gate = Instantiate(effect, center, Quaternion.identity);
          UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(gate, gameObject.scene);
@@ -130,6 +125,7 @@ public class MainCityMgr : MonoBehaviour
       for (int index = 0; index < _cityPortals.Count; index++)
       {
          PublicCityPortal door = _cityPortals[index];
+         if (door.UseService) continue;
          if (!door.Contains(position.x, position.y, position.z, 2.5f)) continue;
          if (_insideCityPortal != door)
             MNetClient.Instance.Send(SceneLineCode.Portal, new ScenePortalRequest { DoorId = door.DoorId }.ToByteString());

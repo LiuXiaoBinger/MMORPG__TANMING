@@ -1,0 +1,210 @@
+fileFormatVersion: 2
+guid: 0bd67b8d73585012a848fe6498bb0a47
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Bone001
+    100002: Bone002
+    100004: Bone003
+    100006: Bone004
+    100008: Bone005
+    100010: Bone007
+    100012: Bone008
+    100014: Bone011
+    100016: Bone013
+    100018: Bone014
+    100020: Bone016
+    100022: Bone018
+    100024: Bone019
+    100026: Bone020
+    100028: Bone022
+    100030: Bone023
+    100032: Bone025
+    100034: Bone026
+    100036: Bone027
+    100038: Bone028
+    100040: Bone029
+    100042: Bone030
+    100044: Bone031
+    100046: Bone033
+    100048: Bone034
+    100050: Bone035
+    100052: Bone036
+    100054: Bone039
+    100056: Bone040
+    100058: Bone041
+    100060: Bone044
+    100062: Bone047
+    100064: Bone048
+    100066: Bone049
+    100068: Bone050
+    100070: Bone051
+    100072: Bone053
+    100074: Bone055
+    100076: Bone056
+    100078: Bone057
+    100080: Bone061
+    100082: Bone062
+    100084: che
+    100086: Dummy001
+    100088: Dummy002
+    100090: Dummy003
+    100092: Dummy004
+    100094: Dummy005
+    100096: Mount_MaChe
+    100098: //RootNode
+    100100: root
+    100102: Seat
+    100104: Seat_001
+    400000: Bone001
+    400002: Bone002
+    400004: Bone003
+    400006: Bone004
+    400008: Bone005
+    400010: Bone007
+    400012: Bone008
+    400014: Bone011
+    400016: Bone013
+    400018: Bone014
+    400020: Bone016
+    400022: Bone018
+    400024: Bone019
+    400026: Bone020
+    400028: Bone022
+    400030: Bone023
+    400032: Bone025
+    400034: Bone026
+    400036: Bone027
+    400038: Bone028
+    400040: Bone029
+    400042: Bone030
+    400044: Bone031
+    400046: Bone033
+    400048: Bone034
+    400050: Bone035
+    400052: Bone036
+    400054: Bone039
+    400056: Bone040
+    400058: Bone041
+    400060: Bone044
+    400062: Bone047
+    400064: Bone048
+    400066: Bone049
+    400068: Bone050
+    400070: Bone051
+    400072: Bone053
+    400074: Bone055
+    400076: Bone056
+    400078: Bone057
+    400080: Bone061
+    400082: Bone062
+    400084: che
+    400086: Dummy001
+    400088: Dummy002
+    400090: Dummy003
+    400092: Dummy004
+    400094: Dummy005
+    400096: Mount_MaChe
+    400098: //RootNode
+    400100: root
+    400102: Seat
+    400104: Seat_001
+    2100000: Mount_MaChe
+    4300000: Mount_MaChe
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: Mount_MaChe
+    2186277476908879412: ImportLogs
+  externalObjects: {}
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName:
+    rigImportErrors:
+    rigImportWarnings:
+    animationImportErrors:
+    animationImportWarnings:
+    animationRetargetingWarnings:
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths:
+    - root/che/Dummy001
+    - root/che/Dummy002
+    - root/che/Dummy003
+    - root/che/Dummy004
+    - root/che/Dummy005
+    - root/che/Seat
+    - root/che/Seat_001
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName:
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData:
+  assetBundleName:
+  assetBundleVariant:

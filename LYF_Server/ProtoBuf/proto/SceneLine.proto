@@ -58,3 +58,9 @@ message SceneHostLoad {
   int32 cpu_rate = 2; // 单核占用 100% 记为 10000，多核并行时可超过此值。
   int32 dungeon_count = 3; // 本机当前存活的副本实例数。
 }
+
+// 网关要求原 GS 离场。单独携带所选门号，使并行通路使用自己的距离与落点。
+message SceneDeparture {
+  PublicSceneLine target = 1; // 调度分配的目的场景。
+  ScenePortalRequest portal = 2; // 门、马车或传送台，单纯切线时不填写。
+}

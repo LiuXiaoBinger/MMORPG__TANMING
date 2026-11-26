@@ -396,8 +396,14 @@ internal sealed class RealmGameLink : NetClient
             if (!target.Send(id, SceneLineCode.Arrive, new SceneRoleTransfer { Role = player.Login.MainRoleInfo,
                 Scene = player.Target }.ToByteString())) Cancel(id, player, "目标游戏服不可用。");
         }
-        else if (!games[player.Current.GameId].Send(id, SceneLineCode.Depart, player.Target.ToByteString()))
-            Cancel(id, player, "原游戏服不可用。");
+        else
+        {
+            // 同一目的地图可以从多处进入，原 GS 按本次门号验证位置并写入对应落点。
+            SceneDeparture departure = new SceneDeparture { Target = player.Target };
+            if (player.Portal != null) departure.Portal = new ScenePortalRequest { DoorId = player.Portal.DoorId };
+            if (!games[player.Current.GameId].Send(id, SceneLineCode.Depart, departure.ToByteString()))
+                Cancel(id, player, "原游戏服不可用。");
+        }
     }
 
     /// <summary>通知调度服处理已核对角色身份的路由操作。</summary>

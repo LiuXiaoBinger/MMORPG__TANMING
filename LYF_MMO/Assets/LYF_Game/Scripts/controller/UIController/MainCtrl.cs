@@ -1,4 +1,5 @@
-﻿using Google.Protobuf;
+﻿using System.Collections.Generic;
+using Google.Protobuf;
 using MMoRpgCommon;
 using MMoRpgCommon.SceneEntity;
 using UnityEngine;
@@ -166,7 +167,7 @@ public class MainCtrl : CtrlBase
         }
         if (_mainView.TalkWindow != null)
         {
-            _mainView.TalkWindow.ShopRequested += OnShopRequested;
+            _mainView.TalkWindow.ShopRequested += OnNpcServiceRequested;
             _mainView.TalkWindow.MoshentaBattleRequested += OnMoshentaBattleRequested;
             _mainView.TalkWindow.TalkLeaveRequested += CloseNpcTalk;
             _mainView.TalkWindow.Closed += OnNpcTalkClosed;
@@ -271,7 +272,7 @@ public class MainCtrl : CtrlBase
         }
         if (_mainView != null && _mainView.TalkWindow != null)
         {
-            _mainView.TalkWindow.ShopRequested -= OnShopRequested;
+            _mainView.TalkWindow.ShopRequested -= OnNpcServiceRequested;
             _mainView.TalkWindow.MoshentaBattleRequested -= OnMoshentaBattleRequested;
             _mainView.TalkWindow.TalkLeaveRequested -= CloseNpcTalk;
             _mainView.TalkWindow.Closed -= OnNpcTalkClosed;
@@ -345,7 +346,7 @@ public class MainCtrl : CtrlBase
             NpcTalkViewData dialogue = CreateNpcTalkViewData(speaker);
             if (_mainView.TalkWindow.gameObject.activeSelf) _mainView.TalkWindow.ReFreshUI(dialogue);
             else base.ShowMainWindow(windowType, dialogue);
-            CameraMgr.Instance?.BeginNpcTalk(speaker, CloseNpcTalk);
+            if (!speaker.IsSceneObject) CameraMgr.Instance?.BeginNpcTalk(speaker, CloseNpcTalk);
             return;
         }
         if (windowType == WindowType.TreasurePavilionWindow)
@@ -639,23 +640,73 @@ public class MainCtrl : CtrlBase
             TipsMgr.Instance.ShowSystemTips("距离过远，请靠近");
             return;
         }
-        npc.Model.GameObject.Transform.LookAtTarget(player.Model.GameObject.Transform);
+        // 固定设施维持场景朝向，巡卫先停步再与玩家面对面。
+        if (!npc.IsSceneObject)
+        {
+            if (npc.Model.GameObject.Transform.TryGetComponent(out MSceneNpcPatrol patrol))
+                patrol.SetTalking(true);
+            npc.Model.GameObject.Transform.LookAtTarget(player.Model.GameObject.Transform);
+        }
         ShowMainWindow(WindowType.TalkWindow, npc);
     }
 
-    /// <summary>处理 NPC 对话窗口发出的商城请求。</summary>
-    /// <param name="service">所选按钮对应的商店和商品清单。</param>
-    private void OnShopRequested(NpcDialogueCatalog.Service service)
+    /// <summary>按对话选中的功能进入商店、委托窗口或场景传送。</summary>
+    /// <param name="service">按钮配置的功能、货架或本图门号。</param>
+    private void OnNpcServiceRequested(NpcDialogueCatalog.Service service)
     {
         if (_currentTalkNpc == null)
         {
             TipsMgr.Instance.ShowSystemTips("当前没有可交互的 NPC");
             return;
         }
-        // 关窗会释放当前说话者，先保留本次开店的真实 NPC。
+        // 关窗会释放当前说话者，先保留货架需要的实体。
         NpcEntity merchant = _currentTalkNpc;
+        if (service.Function == NpcFunction.Task)
+        {
+            ShowNpcCommissions(merchant);
+            return;
+        }
         CloseNpcTalk();
-        _shopCtrl.OpenNpcShop(merchant, service);
+        switch (service.Function)
+        {
+            case NpcFunction.PropertyShop:
+                _shopCtrl.OpenNpcShop(merchant, service);
+                break;
+            case NpcFunction.TaskJournal:
+                _taskCtrl.RequestOpenTaskWindow();
+                break;
+            case NpcFunction.Transfer:
+                MNetClient.Instance.Send(SceneLineCode.Portal,
+                    new ScenePortalRequest { DoorId = service.DoorId }.ToByteString());
+                break;
+        }
+    }
+
+    /// <summary>以接取和交付 NPC 编号查询委托，只展示策划表中与说话者有关的条目。</summary>
+    /// <param name="npc">当前对话的真实人物，使用稳定的出生表编号。</param>
+    private void ShowNpcCommissions(NpcEntity npc)
+    {
+        // 任务模板用于介绍，实际接取、完成和奖励仍由任务系统决定。
+        Dictionary<int, cfg.QuestInfo> quests = LubanMgr.Instance.GetQuestInfos();
+        // 以任务编号顺序翻页，委托入口在尚未配置剧情时也可使用。
+        List<int> ids = new List<int>(quests.Keys);
+        ids.Sort();
+        List<string> lines = new List<string>();
+        for (int i = 0; i < ids.Count; i++)
+        {
+            // 一项委托可由本 NPC 发布，也可在本 NPC 处交付。
+            cfg.QuestInfo quest = quests[ids[i]];
+            if (quest.AcceptNpcId == npc.NpcID)
+                lines.Add("发布委托 · " + quest.Name + "\n" + quest.Description);
+            else if (quest.SubmitNpcId == npc.NpcID)
+                lines.Add("交付委托 · " + quest.Name + "\n" + quest.Description);
+        }
+        if (lines.Count == 0) lines.Add("我这里暂时没有委托。");
+        // 查看本人的委托后仍可进入已有任务簿查看角色的任务进度。
+        NpcDialogueCatalog.Service journal = new NpcDialogueCatalog.Service
+            { Label = "打开任务簿", Function = NpcFunction.TaskJournal };
+        _mainView.TalkWindow.ReFreshUI(new NpcTalkViewData(npc.NpcID, npc.Name,
+            string.Join("_", lines), services: new[] { journal }));
     }
 
     /// <summary>仅原NPC20186帮助选项发送BossEnterCombat，黑幕结束不调用此入口。</summary>
@@ -677,6 +728,12 @@ public class MainCtrl : CtrlBase
     private void OnNpcTalkClosed()
     {
         CameraMgr.Instance?.EndNpcTalk();
+        // 正常关闭、Esc 或外部切场都会从这个窗口回调释放巡卫。
+        if (_currentTalkNpc != null && _currentTalkNpc.Model.IsLoaded)
+        {
+            if (_currentTalkNpc.Model.GameObject.Transform.TryGetComponent(out MSceneNpcPatrol patrol))
+                patrol.SetTalking(false);
+        }
         _currentTalkNpc = null;
     }
 

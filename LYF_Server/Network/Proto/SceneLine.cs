@@ -43,7 +43,9 @@ public static partial class SceneLineReflection {
           "VgoVU2NlbmVOb2RlUmVnaXN0cmF0aW9uEhAKCHJlYWxtX2lkGAEgASgFEg8K",
           "B2dhbWVfaWQYAiABKAUSDAoEaG9zdBgDIAEoCRIMCgRwb3J0GAQgASgFIkkK",
           "DVNjZW5lSG9zdExvYWQSDwoHZ2FtZV9pZBgBIAEoBRIQCghjcHVfcmF0ZRgC",
-          "IAEoBRIVCg1kdW5nZW9uX2NvdW50GAMgASgFYgZwcm90bzM="));
+          "IAEoBRIVCg1kdW5nZW9uX2NvdW50GAMgASgFIlcKDlNjZW5lRGVwYXJ0dXJl",
+          "EiAKBnRhcmdldBgBIAEoCzIQLlB1YmxpY1NjZW5lTGluZRIjCgZwb3J0YWwY",
+          "AiABKAsyEy5TY2VuZVBvcnRhbFJlcXVlc3RiBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -54,7 +56,8 @@ public static partial class SceneLineReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneRoleTransfer), global::SceneRoleTransfer.Parser, new[]{ "Role", "Scene", "SkillEndMs", "GroupEndMs", "ChangingLine" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, null, }),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneRouteRequest), global::SceneRouteRequest.Parser, new[]{ "RoleId", "MapId", "LineId", "GameId", "RequireGame", "SceneUid" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneNodeRegistration), global::SceneNodeRegistration.Parser, new[]{ "RealmId", "GameId", "Host", "Port" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SceneHostLoad), global::SceneHostLoad.Parser, new[]{ "GameId", "CpuRate", "DungeonCount" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::SceneHostLoad), global::SceneHostLoad.Parser, new[]{ "GameId", "CpuRate", "DungeonCount" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SceneDeparture), global::SceneDeparture.Parser, new[]{ "Target", "Portal" }, null, null, null, null)
         }));
   }
   #endregion
@@ -2543,6 +2546,268 @@ public sealed partial class SceneHostLoad : pb::IMessage<SceneHostLoad>
         }
         case 24: {
           DungeonCount = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 网关要求原 GS 离场。单独携带所选门号，使并行通路使用自己的距离与落点。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class SceneDeparture : pb::IMessage<SceneDeparture>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<SceneDeparture> _parser = new pb::MessageParser<SceneDeparture>(() => new SceneDeparture());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<SceneDeparture> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[8]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneDeparture() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneDeparture(SceneDeparture other) : this() {
+    target_ = other.target_ != null ? other.target_.Clone() : null;
+    portal_ = other.portal_ != null ? other.portal_.Clone() : null;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneDeparture Clone() {
+    return new SceneDeparture(this);
+  }
+
+  /// <summary>Field number for the "target" field.</summary>
+  public const int TargetFieldNumber = 1;
+  private global::PublicSceneLine target_;
+  /// <summary>
+  /// 调度分配的目的场景。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::PublicSceneLine Target {
+    get { return target_; }
+    set {
+      target_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "portal" field.</summary>
+  public const int PortalFieldNumber = 2;
+  private global::ScenePortalRequest portal_;
+  /// <summary>
+  /// 门、马车或传送台，单纯切线时不填写。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::ScenePortalRequest Portal {
+    get { return portal_; }
+    set {
+      portal_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as SceneDeparture);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(SceneDeparture other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (!object.Equals(Target, other.Target)) return false;
+    if (!object.Equals(Portal, other.Portal)) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (target_ != null) hash ^= Target.GetHashCode();
+    if (portal_ != null) hash ^= Portal.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (target_ != null) {
+      output.WriteRawTag(10);
+      output.WriteMessage(Target);
+    }
+    if (portal_ != null) {
+      output.WriteRawTag(18);
+      output.WriteMessage(Portal);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (target_ != null) {
+      output.WriteRawTag(10);
+      output.WriteMessage(Target);
+    }
+    if (portal_ != null) {
+      output.WriteRawTag(18);
+      output.WriteMessage(Portal);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (target_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(Target);
+    }
+    if (portal_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(Portal);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(SceneDeparture other) {
+    if (other == null) {
+      return;
+    }
+    if (other.target_ != null) {
+      if (target_ == null) {
+        Target = new global::PublicSceneLine();
+      }
+      Target.MergeFrom(other.Target);
+    }
+    if (other.portal_ != null) {
+      if (portal_ == null) {
+        Portal = new global::ScenePortalRequest();
+      }
+      Portal.MergeFrom(other.Portal);
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          if (target_ == null) {
+            Target = new global::PublicSceneLine();
+          }
+          input.ReadMessage(Target);
+          break;
+        }
+        case 18: {
+          if (portal_ == null) {
+            Portal = new global::ScenePortalRequest();
+          }
+          input.ReadMessage(Portal);
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 10: {
+          if (target_ == null) {
+            Target = new global::PublicSceneLine();
+          }
+          input.ReadMessage(Target);
+          break;
+        }
+        case 18: {
+          if (portal_ == null) {
+            Portal = new global::ScenePortalRequest();
+          }
+          input.ReadMessage(Portal);
           break;
         }
       }

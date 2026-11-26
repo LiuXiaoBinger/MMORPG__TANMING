@@ -28,6 +28,9 @@ public sealed class NpcEntity : MEntity
     /// <summary>NPC 类型（功能分类：对话、商店、任务等）</summary>
     public int NpcType { get; set; }
 
+    /// <summary>固定场景设施（出生表类型 3）保留摆放朝向和玩家原镜头。</summary>
+    public bool IsSceneObject => NpcType == 3;
+
     /// <summary>NPC 显示名称</summary>
     public string Name { get; set; }
 

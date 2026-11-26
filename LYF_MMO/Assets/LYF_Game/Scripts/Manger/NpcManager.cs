@@ -12,6 +12,9 @@ public class NpcManager : MonoBehaviour
     #region 字段
     [SerializeField, Header("NPC 实例父节点，可为空")] private Transform _npcRoot;
 
+    /// <summary>此出生管理器所属公共地图，零为原主城。</summary>
+    [SerializeField] private int _mapId;
+
     /// <summary>与对话窗口共用的配置，按出生编号读取该人物的头顶称谓。</summary>
     [SerializeField] private NpcDialogueCatalog _dialogueCatalog;
 
@@ -29,7 +32,7 @@ public class NpcManager : MonoBehaviour
 
     private void Awake()
     {
-        // NPC 仍由现有场景入口显式调用 Initialize，避免改变场景加载时序。
+        // 场景加载完成时显式调用 Initialize。
     }
 
     /// <summary>管理器销毁时按实体 ID 从统一世界移除 NPC，并使未完成异步请求失效。</summary>
@@ -59,6 +62,7 @@ public class NpcManager : MonoBehaviour
         }
     }
 
+    /// <summary>按当前公共地图编号创建人物与交互设施。</summary>
     public void Initialize()
     {
         if (_initialized || _destroyed)
@@ -84,7 +88,9 @@ public class NpcManager : MonoBehaviour
         List<NpcParseInfo> npcInfoSnapshot = new List<NpcParseInfo>(npcInfos.Values);
         for (int index = 0; index < npcInfoSnapshot.Count; index++)
         {
-            CreateNpc(npcInfoSnapshot[index]);
+            // 本行的出生地图与场景组件使用同一个公共地图编号。
+            NpcParseInfo spawn = npcInfoSnapshot[index];
+            if (spawn.MapID == _mapId) CreateNpc(spawn);
 
     #region NPC 生成与移除
     #endregion
@@ -182,6 +188,16 @@ public class NpcManager : MonoBehaviour
         {
             entity.Height = (capsule.center.y + capsule.height * 0.5f) * npcObject.transform.lossyScale.y;
         }
+        else if (npcObject.TryGetComponent(out BoxCollider shape))
+        {
+            // 牌匾、菜单和传送台以自身顶面为名牌高度。
+            entity.Height = shape.bounds.max.y - spawnPosition.y;
+        }
+        // 巡逻路径只配置在巡卫身上，普通商人和交互物保持原地。
+        if (_dialogueCatalog == null) return;
+        Vector3[] patrol = _dialogueCatalog.GetPatrolPath(info.ID);
+        if (patrol != null && patrol.Length > 1)
+            npcObject.AddComponent<MSceneNpcPatrol>().Begin(entity, patrol);
     }
 
     private void RemoveNpcEntity(int npcId, NpcEntity expectedEntity)

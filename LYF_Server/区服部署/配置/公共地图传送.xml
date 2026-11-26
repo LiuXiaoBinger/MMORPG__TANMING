@@ -19,4 +19,13 @@
     <door map="1" id="2" x="-42" y="0.13" z="-196" arrival="-42_0.14_-190" />
     <door map="60" id="0" x="30.102" y="30.189" z="39.985" arrival="34.52_30.33_40.02" />
   </passage>
+  <!-- 同一对地图的不同入口使用各自的落点。服务入口只在玩家选中相应功能后启程。 -->
+  <passage name="云帆驿站马车">
+    <door map="1" id="3" trigger="service" x="12" y="0.136" z="-70" arrival="9_0.14_-71" />
+    <door map="0" id="1" trigger="service" x="71" y="18.793" z="83" arrival="68.5_18.80_83" />
+  </passage>
+  <passage name="晨星传送台">
+    <door map="1" id="4" trigger="service" x="-12" y="0.008" z="-70" arrival="-9.5_0.02_-69" />
+    <door map="41" id="1" trigger="service" x="69.4" y="12.143" z="50" arrival="71_12.15_50.5" />
+  </passage>
 </world>

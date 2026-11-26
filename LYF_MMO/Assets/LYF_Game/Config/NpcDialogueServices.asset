@@ -34,3 +34,84 @@ MonoBehaviour:
   - NpcId: 4003
     Title: 游历学者
     Services: []
+  - NpcId: 4101
+    Title: 泉边杂货商
+    Services:
+    - Label: 采购旅行补给
+      Function: 0
+      ShopId: 1
+      GoodsIds: 01000000020000000300000004000000
+  - NpcId: 4102
+    Title: 巡礼向导
+    Services:
+    - Label: 查看巡礼委托
+      Function: 1
+  - NpcId: 4103
+    Title: 南门巡卫
+    PatrolPath:
+    - {x: -6, y: 0.008, z: -76}
+    - {x: -6, y: 0.008, z: -89}
+    - {x: 3, y: 0.008, z: -89}
+    - {x: 3, y: 0.008, z: -76}
+    Services: []
+  - NpcId: 4104
+    Title: 南街巡卫
+    PatrolPath:
+    - {x: -43, y: 0.027, z: -177}
+    - {x: -62, y: 0.008, z: -177}
+    - {x: -62, y: 0.008, z: -185}
+    - {x: -43, y: 0.066, z: -185}
+    Services: []
+  - NpcId: 4105
+    Title: 云帆驿站车夫
+    Services:
+    - Label: 乘车前往主城
+      Function: 2
+      DoorId: 3
+  - NpcId: 4106
+    Title: 路引
+    Services: []
+  - NpcId: 4107
+    Title: 触碰符文
+    Services:
+    - Label: 传送至晨钟教堂
+      Function: 2
+      DoorId: 4
+  - NpcId: 4111
+    Title: 晨钟司祭
+    Services:
+    - Label: 翻阅教堂委托
+      Function: 1
+  - NpcId: 4112
+    Title: 唱诗班抄录员
+    Services: []
+  - NpcId: 4113
+    Title: 翻阅
+    Services: []
+  - NpcId: 4114
+    Title: 触碰符文
+    Services:
+    - Label: 返回云帆驿站
+      Function: 2
+      DoorId: 1
+  - NpcId: 4121
+    Title: 金穗掌柜
+    Services:
+    - Label: 购买旅途补给
+      Function: 0
+      ShopId: 1
+      GoodsIds: 01000000020000000300000004000000
+  - NpcId: 4122
+    Title: 餐馆侍应
+    Services:
+    - Label: 查看委托
+      Function: 1
+  - NpcId: 4123
+    Title: 查看菜单
+    Services: []
+  - NpcId: 4131
+    Title: 主城驿站车夫
+    Services:
+    - Label: 乘车前往天空中之城
+      Function: 2
+      DoorId: 1

@@ -8,7 +8,7 @@ public sealed class SceneLineHandler : IGameMessageHandler, IContainer
     /// <summary>本机 GS 的运行时分线处理器。</summary>
     private static SceneLineHandler active;
     /// <summary>正在等待中心服确认脏模块的源角色。</summary>
-    private readonly Dictionary<OnlineRole, PublicSceneLine> leaving = new Dictionary<OnlineRole, PublicSceneLine>();
+    private readonly Dictionary<OnlineRole, SceneDeparture> leaving = new Dictionary<OnlineRole, SceneDeparture>();
     /// <summary>已断线但仍需等待中心服确认后才能放开再次登录的角色。</summary>
     private readonly List<OnlineRole> loggingOut = new List<OnlineRole>();
     /// <summary>一份公共地图实例只包含实际进入该线的角色，视野遍历限制在本实例内。</summary>
@@ -148,8 +148,17 @@ public sealed class SceneLineHandler : IGameMessageHandler, IContainer
             return;
         }
         // 同地图沿用切线流程，跨城时必须站在通往目标地图的实际传送门。
-        PublicSceneLine target = PublicSceneLine.Parser.ParseFrom(packet.Data);
-        if (target.MapId != role.mainRoleInfo.BaseInfo.MapId && !CityPortalHandler.CanEnter(role, target.MapId))
+        SceneDeparture departure = SceneDeparture.Parser.ParseFrom(packet.Data);
+        // 线路由调度服分配；门号单独来自本次玩家在网关发起的交通操作。
+        PublicSceneLine target = departure.Target;
+        PublicCityPortal portal = null;
+        if (departure.Portal != null)
+        {
+            portal = PublicCityPortal.Find(role.mainRoleInfo.BaseInfo.MapId, departure.Portal.DoorId);
+            if (!CityPortalHandler.CanEnter(role, portal) || portal.Destination.MapId != target.MapId)
+            { role.SendToClient(SceneLineCode.Depart, ByteString.Empty); return; }
+        }
+        else if (target.MapId != role.mainRoleInfo.BaseInfo.MapId)
         { role.SendToClient(SceneLineCode.Depart, ByteString.Empty); return; }
         if (role.mainRoleInfo.BaseInfo.InstanceId != 0 || !role.IsRoleDataReady())
         { role.SendToClient(SceneLineCode.Depart, ByteString.Empty); return; }
@@ -160,13 +169,13 @@ public sealed class SceneLineHandler : IGameMessageHandler, IContainer
         {
             RoleManager.Instance.LeavePublicScene(role);
             LeaveScene(role);
-            CityPortalHandler.PlaceArrival(role.mainRoleInfo.BaseInfo, target.MapId);
+            CityPortalHandler.PlaceArrival(role.mainRoleInfo.BaseInfo, portal);
             role.PublicScene = target;
             JoinScene(role);
             FinishArrival(role);
             return;
         }
-        leaving[role] = target;
+        leaving[role] = departure;
         role.FlushForSceneChange();
     }
 
@@ -196,8 +205,11 @@ public sealed class SceneLineHandler : IGameMessageHandler, IContainer
             if (!role.CanDispose()) { role.FlushForSceneChange(); continue; }
             // 此时背包、技能与次数版本均已获得现有中心服写入确认。
             SceneRoleTransfer transfer = new SceneRoleTransfer { Role = role.mainRoleInfo.Clone(),
-                Scene = active.leaving[role], ChangingLine = true };
-            CityPortalHandler.PlaceArrival(transfer.Role.BaseInfo, transfer.Scene.MapId);
+                Scene = active.leaving[role].Target, ChangingLine = true };
+            // 跨宿主也使用离场时核准的门；普通换线保留原坐标。
+            ScenePortalRequest source = active.leaving[role].Portal;
+            if (source != null) CityPortalHandler.PlaceArrival(transfer.Role.BaseInfo,
+                PublicCityPortal.Find(transfer.Role.BaseInfo.MapId, source.DoorId));
             role.GetComponent<RoleSkillComponent>().ExportSceneCooldowns(transfer);
             RoleManager.Instance.LeavePublicScene(role);
             LeaveScene(role);

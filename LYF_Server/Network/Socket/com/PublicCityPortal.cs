@@ -27,6 +27,8 @@ public sealed class PublicCityPortal
     public readonly float Y;
     /// <summary>门心的世界纵坐标，单位米。</summary>
     public readonly float Z;
+    /// <summary>真表示通过 NPC 或台座按钮启程，假表示角色走进门圈时启程。</summary>
+    public readonly bool UseService;
     /// <summary>从对面进入本图时的落脚点，单位米，沿用角色位置协议格式。</summary>
     public readonly string ArrivalPosition;
     /// <summary>同一条通路另一端的门，包含目标地图与落点。</summary>
@@ -73,6 +75,7 @@ public sealed class PublicCityPortal
         X = float.Parse(entry.GetAttribute("x"), CultureInfo.InvariantCulture);
         Y = float.Parse(entry.GetAttribute("y"), CultureInfo.InvariantCulture);
         Z = float.Parse(entry.GetAttribute("z"), CultureInfo.InvariantCulture);
+        UseService = entry.GetAttribute("trigger") == "service";
         ArrivalPosition = entry.GetAttribute("arrival");
         Doors[MapId].Add(this);
     }
@@ -107,12 +110,12 @@ public sealed class PublicCityPortal
         return null;
     }
 
-    /// <summary>查找当前地图直达指定地图的通路，供 GS 按实际坐标复核。</summary>
+    /// <summary>按配置顺序查找首条通往目标地图的通路，具体交通操作按本图门号查找。</summary>
     /// <param name="mapId">离场角色的地图编号。</param>
     /// <param name="destination">调度服已分配的目标地图编号。</param>
     public static PublicCityPortal ToMap(int mapId, int destination)
     {
-        // 双城、教堂和餐馆各有一条通往对端地图的路。
+        // 按配置顺序返回第一条匹配线路，保留既有查询语义。
         if (!Doors.TryGetValue(mapId, out List<PublicCityPortal> entries)) return null;
         for (int i = 0; i < entries.Count; i++)
             if (entries[i].Destination.MapId == destination) return entries[i];

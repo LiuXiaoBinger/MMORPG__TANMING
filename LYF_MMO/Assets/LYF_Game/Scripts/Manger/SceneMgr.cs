@@ -146,6 +146,12 @@ public class SceneMgr : Singleton<SceneMgr>
                     roots[index].SetActive(true);
                 }
             }
+            // 模型命中缓存时会同步生成。待本图导航和业务根都就绪，再为巡卫计算路点。
+            MainCityMgr city = MainCityMgr.Instance;
+            if (city != null && city.gameObject.scene == handle.SceneObject)
+            {
+                if (city.TryGetComponent(out NpcManager npcs)) npcs.Initialize();
+            }
             if (callback != null)
             {
                 callback.Invoke();

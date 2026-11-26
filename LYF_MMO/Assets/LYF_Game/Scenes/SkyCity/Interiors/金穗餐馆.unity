@@ -2581,6 +2581,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1389233178}
   - component: {fileID: 1389233177}
+  - component: {fileID: 871045060}
   m_Layer: 0
   m_Name: SceneBusinessRoot
   m_TagString: Untagged
@@ -2601,6 +2602,21 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier:
   _localRoleSpawnPoint: {fileID: 263371328}
+--- !u!114 &871045060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389233176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67fd3680e5c5e4a4e8fed0e4fc6ae3fa, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _npcRoot: {fileID: 0}
+  _mapId: 60
+  _dialogueCatalog: {fileID: 11400000, guid: a0eec41eaa7445948d73ae627e465c10, type: 2}
 --- !u!4 &1389233178
 Transform:
   m_ObjectHideFlags: 0
