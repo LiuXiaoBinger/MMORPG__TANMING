@@ -1023,3 +1023,8 @@ GameServer 在常规情况下按 `min + (max - min) * u` 计算攻击力，其�
 
 - 地图 0 保留原城门入口。沿东门驿街过拱形石桥可到环井商市，商市南侧支路通往彩棚工匠坊，东西两条步行坡道连接商市和双塔议事花庭。四处街区平台新增铺地的平面面积共 9,010.92 m²，连接道路另计。19 座建筑按角色比例布置，均复用了原主城美术资源，包括 17 栋房屋和 2 座塔。
 - 新街区实例位于 `LYF_MMO/Assets/LYF_Game/Scenes/Scene_MainCity.unity` 的 `SceneBusinessRoot` 下。街区预制体及配套的网格、材质资源位于 `LYF_MMO/Assets/LYF_Game/Scenes/MainCity_Res/东城街区/`。已更新 Unity 原生导航、游戏共享导航和两张地图图像。11 项资源的清单、前后对比图及交付回执见 `项目修改日志/2026-11-26-主城东区扩建.md`。
+
+## [CODE][FILES][场景][NPC][传送点][TWIN-CITY-BUILDING-NPCS-COACH-20261126] 双城建筑居民与驿站马车启动修复
+
+- 新增 250 名有姓名的居民，使用 14 种现有角色预制体。主城新增 66 人，天空中之城新增 184 人。居民对应 242 处建筑，其中主城 13 处、天空中之城 11 处由附近可到达的街口岗位代表。另有 3 人驻亭楼上层，5 人驻布摊。`Luaban/MiniTemplate/Datas/#NpcInfo.xlsx` 的 K 列标明所属建筑与实际岗位，对话服务配置在 `LYF_MMO/Assets/LYF_Game/Config/NpcDialogueServices.asset`。Luban 共导出 282 行，含原有 32 行。
+- 开发用区服启动脚本在启动前增量编译当前服务端。此前运行的旧版 GateServer 程序集缺少 PublicCityPortal。经授权重启本机 1 区后，已核对 8 个进程及其监听端口、编译后的天空中之城 3 号门和已部署的 NPC 表。文件清单、往返路线与核验回执见 `项目修改日志/2026-11-26-双城建筑居民与驿站马车修复.md`。

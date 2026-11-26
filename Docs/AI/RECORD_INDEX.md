@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `dbf6cd4a6cde26e1f679be21501f740d261987b736b9412f0626ad107489b383`
+Source normalized SHA256: `3e4c8ce1ad2afc0f596fc7e9633fead4605e7beca9c02dd1634b6b49e4faca44`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -150,11 +150,12 @@ Source normalized SHA256: `dbf6cd4a6cde26e1f679be21501f740d261987b736b9412f0626a
 | [CODE][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] Sky City chapel and restaurant interiors | 1009-1013 |
 | [CODE][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Chamber gems, player listings and Magic Swordsman upgrade patterns | 1014-1021 |
 | [CODE][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Sky City professions and public-line guard patrols | 1022-1026 |
-| [FILES][场景][主城][MAIN-CITY-EAST-WARDS-20261126] Public map 0 eastward city expansion | 1027-1030 |
+| [FILES][场景][主城][MAIN-CITY-EAST-WARDS-20261126] Public map 0 eastward city expansion | 1027-1031 |
+| [CODE][FILES][场景][NPC][传送点][TWIN-CITY-BUILDING-NPCS-COACH-20261126] Residents for both cities and the working carriage launcher | 1032-1035 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `128d87f7a2fa12deb5d588b6fbbc86254f28722aaa8acba7f0f19d3756e67979`
+Source normalized SHA256: `a31e37bd1a1328412c18eeaa67598a718826e08c3ec21fb2312d32ec6f535d71`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -297,7 +298,8 @@ Source normalized SHA256: `128d87f7a2fa12deb5d588b6fbbc86254f28722aaa8acba7f0f19
 | [VERIFY][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] One-realm interior travel, character scale and baked lighting | 1048-1052 |
 | [VERIFY][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Gem settlement and stock-aware item introductions | 1053-1060 |
 | [VERIFY][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Two Unity players and three real socket roles | 1061-1065 |
-| [VERIFY][场景][主城][导航][MAIN-CITY-EAST-WARDS-20261126] East wards scale, access and navigation | 1066-1069 |
+| [VERIFY][场景][主城][导航][MAIN-CITY-EAST-WARDS-20261126] East wards scale, access and navigation | 1066-1070 |
+| [VERIFY][场景][NPC][传送点][TWIN-CITY-BUILDING-NPCS-COACH-20261126] Two-city residency, dialogue and carriage arrivals | 1071-1074 |
 
 ## Docs/AI/DECISIONS.en.md
 
