@@ -18,6 +18,8 @@ public class MainCtrl : CtrlBase
     private readonly GMCtrl _gmCtrl;
     /// <summary>当前主城收件箱的选择、阅读和领取交互。</summary>
     private readonly EmailHandler _emailHandler;
+    /// <summary>背包好友赠礼的选择和寄出交互。</summary>
+    private readonly GiftCtrl _giftCtrl;
 
     #region 字段
     /// <summary>主界面视图集合。</summary>
@@ -110,6 +112,7 @@ public class MainCtrl : CtrlBase
         _skillCtrl = new SkillCtrl(_mainView);
         _roleInfoCtrl = new RoleInfoCtrl(_mainView);
         _knapsackCtrl = new KnapsackCtrl(_mainView);
+        if (_mainView.giftPanel != null) _giftCtrl = new GiftCtrl(_mainView);
         _currencyExchangeCtrl = new CurrencyExchangeCtrl(_mainView, _knapsackCtrl);
         _taskCtrl = new TaskCtrl(_mainView);
         _themeDungeonTeamCtrl = new ThemeDungeonTeamCtrl(_mainView);
@@ -344,6 +347,7 @@ public class MainCtrl : CtrlBase
         }
         _gmCtrl?.Dispose();
         _deathCtrl.Dispose();
+        _giftCtrl?.Dispose();
         if (_emailHandler != null)
         {
             _mainView.emailButton.onClick.RemoveListener(OpenEmail);

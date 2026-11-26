@@ -22,38 +22,42 @@ public static partial class PbcMailReflection {
   static PbcMailReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "Cg5wYmNfbWFpbC5wcm90byKjAQoMTWFpbEJhc2VJbmZvEhAKCG1haWxfdWlk",
-          "GAEgASgDEg8KB21haWxfaWQYAiABKAUSEwoLY3JlYXRlX3RpbWUYAyABKAMS",
-          "EwoLZXhwaXJlX3RpbWUYBCABKAMSDwoHaXNfcmVhZBgFIAEoCBITCgtpc19o",
-          "YXNfaXRlbRgGIAEoCBINCgV0aXRsZRgHIAEoCRIRCglpbXBvcnRhbnQYCCAB",
-          "KAgiOwoITWFpbEl0ZW0SDwoHaXRlbV9pZBgBIAEoBRINCgVjb3VudBgCIAEo",
-          "BRIPCgdpc19iaW5kGAMgASgIIlAKC01haWxDb250ZW50Eg8KB2NvbnRlbnQY",
-          "ASABKAkSHQoKbWFpbF9pdGVtcxgEIAMoCzIJLk1haWxJdGVtEhEKCXNlbmRf",
-          "bmFtZRgFIAEoCSJQCghNYWlsSW5mbxIgCgliYXNlX2luZm8YASABKAsyDS5N",
-          "YWlsQmFzZUluZm8SIgoMY29udGVudF9pbmZvGAIgASgLMgwuTWFpbENvbnRl",
-          "bnQiEAoOR2V0TWFpbExpc3RBcmciUQoOR2V0TWFpbExpc3RSZXMSHAoFbWFp",
-          "bHMYASADKAsyDS5NYWlsQmFzZUluZm8SDQoFZXJyb3IYAiABKAkSEgoKaGFz",
-          "X3VucmVhZBgDIAEoCCIhCg1HZXRPbmVNYWlsQXJnEhAKCG1haWxfdWlkGAEg",
-          "ASgDIjwKDUdldE9uZU1haWxSZXMSDQoFZXJyb3IYASABKAkSHAoJbWFpbF9p",
-          "bmZvGAIgASgLMgkuTWFpbEluZm8iOwoJTWFpbE9wQXJnEhwKB29wX3R5cGUY",
-          "ASABKA4yCy5NYWlsT3BUeXBlEhAKCG1haWxfdWlkGAIgASgDImIKCU1haWxP",
-          "cFJlcxINCgVlcnJvchgBIAEoCRIcCgdvcF90eXBlGAIgASgOMgsuTWFpbE9w",
-          "VHlwZRIQCghtYWlsX3VpZBgDIAEoAxIWCg5yZWFkX21haWxfdWlkcxgEIAMo",
-          "AyIjCg1VcGRhdGVNYWlsTnRmEhIKCmhhc191bnJlYWQYASABKAgidgoNU01h",
-          "aWxUZW1wbGF0ZRIPCgdtYWlsX2lkGAEgASgFEg0KBXRpdGxlGAIgASgJEh0K",
-          "B2NvbnRlbnQYAyABKAsyDC5NYWlsQ29udGVudBITCgtleHBpcmVfZGF5cxgE",
-          "IAEoBRIRCglpbXBvcnRhbnQYBSABKAgiPgoNR3NTZW5kTWFpbEFyZxIPCgdy",
-          "b2xlX2lkGAEgASgFEhwKBG1haWwYAiABKAsyDi5TTWFpbFRlbXBsYXRlIu4B",
-          "CghNYWlsQ2FsbBIPCgdyb2xlX2lkGAEgASgFEhEKCWdhbWVfbGluaxgCIAEo",
-          "BRIPCgdjb21tYW5kGAMgASgFEhAKCG1haWxfdWlkGAQgASgDEhwKB29wX3R5",
-          "cGUYBSABKA4yCy5NYWlsT3BUeXBlEhgKBW1haWxzGAYgAygLMgkuTWFpbElu",
-          "Zm8SGgoGcmVzdWx0GAcgASgLMgouTWFpbE9wUmVzEhAKCHJlYWxtX2lkGAgg",
-          "ASgFEhIKCmhhc191bnJlYWQYCSABKAgSIQoJc2VuZF9tYWlsGAogASgLMg4u",
-          "U01haWxUZW1wbGF0ZSpbCgpNYWlsT3BUeXBlEg0KCU1haWxfTm9uZRAAEg0K",
-          "CU1haWxfUmVhZBABEgwKCE1haWxfRGVsEAISEAoMTWFpbF9SZWFkQWxsEAMS",
-          "DwoLTWFpbF9EZWxBbGwQBGIGcHJvdG8z"));
+          "Cg5wYmNfbWFpbC5wcm90bxoOcGJjX2dpZnQucHJvdG8iowEKDE1haWxCYXNl",
+          "SW5mbxIQCghtYWlsX3VpZBgBIAEoAxIPCgdtYWlsX2lkGAIgASgFEhMKC2Ny",
+          "ZWF0ZV90aW1lGAMgASgDEhMKC2V4cGlyZV90aW1lGAQgASgDEg8KB2lzX3Jl",
+          "YWQYBSABKAgSEwoLaXNfaGFzX2l0ZW0YBiABKAgSDQoFdGl0bGUYByABKAkS",
+          "EQoJaW1wb3J0YW50GAggASgIIjsKCE1haWxJdGVtEg8KB2l0ZW1faWQYASAB",
+          "KAUSDQoFY291bnQYAiABKAUSDwoHaXNfYmluZBgDIAEoCCJQCgtNYWlsQ29u",
+          "dGVudBIPCgdjb250ZW50GAEgASgJEh0KCm1haWxfaXRlbXMYBCADKAsyCS5N",
+          "YWlsSXRlbRIRCglzZW5kX25hbWUYBSABKAkiUAoITWFpbEluZm8SIAoJYmFz",
+          "ZV9pbmZvGAEgASgLMg0uTWFpbEJhc2VJbmZvEiIKDGNvbnRlbnRfaW5mbxgC",
+          "IAEoCzIMLk1haWxDb250ZW50IhAKDkdldE1haWxMaXN0QXJnIlEKDkdldE1h",
+          "aWxMaXN0UmVzEhwKBW1haWxzGAEgAygLMg0uTWFpbEJhc2VJbmZvEg0KBWVy",
+          "cm9yGAIgASgJEhIKCmhhc191bnJlYWQYAyABKAgiIQoNR2V0T25lTWFpbEFy",
+          "ZxIQCghtYWlsX3VpZBgBIAEoAyI8Cg1HZXRPbmVNYWlsUmVzEg0KBWVycm9y",
+          "GAEgASgJEhwKCW1haWxfaW5mbxgCIAEoCzIJLk1haWxJbmZvIjsKCU1haWxP",
+          "cEFyZxIcCgdvcF90eXBlGAEgASgOMgsuTWFpbE9wVHlwZRIQCghtYWlsX3Vp",
+          "ZBgCIAEoAyJiCglNYWlsT3BSZXMSDQoFZXJyb3IYASABKAkSHAoHb3BfdHlw",
+          "ZRgCIAEoDjILLk1haWxPcFR5cGUSEAoIbWFpbF91aWQYAyABKAMSFgoOcmVh",
+          "ZF9tYWlsX3VpZHMYBCADKAMiIwoNVXBkYXRlTWFpbE50ZhISCgpoYXNfdW5y",
+          "ZWFkGAEgASgIInYKDVNNYWlsVGVtcGxhdGUSDwoHbWFpbF9pZBgBIAEoBRIN",
+          "CgV0aXRsZRgCIAEoCRIdCgdjb250ZW50GAMgASgLMgwuTWFpbENvbnRlbnQS",
+          "EwoLZXhwaXJlX2RheXMYBCABKAUSEQoJaW1wb3J0YW50GAUgASgIIj4KDUdz",
+          "U2VuZE1haWxBcmcSDwoHcm9sZV9pZBgBIAEoBRIcCgRtYWlsGAIgASgLMg4u",
+          "U01haWxUZW1wbGF0ZSLCAgoITWFpbENhbGwSDwoHcm9sZV9pZBgBIAEoBRIR",
+          "CglnYW1lX2xpbmsYAiABKAUSDwoHY29tbWFuZBgDIAEoBRIQCghtYWlsX3Vp",
+          "ZBgEIAEoAxIcCgdvcF90eXBlGAUgASgOMgsuTWFpbE9wVHlwZRIYCgVtYWls",
+          "cxgGIAMoCzIJLk1haWxJbmZvEhoKBnJlc3VsdBgHIAEoCzIKLk1haWxPcFJl",
+          "cxIQCghyZWFsbV9pZBgIIAEoBRISCgpoYXNfdW5yZWFkGAkgASgIEiEKCXNl",
+          "bmRfbWFpbBgKIAEoCzIOLlNNYWlsVGVtcGxhdGUSEwoLZnJpZW5kX25hbWUY",
+          "CyABKAkSIAoHZnJpZW5kcxgMIAMoCzIPLkdpZnRGcmllbmRJbmZvEhsKBGdp",
+          "ZnQYDSABKAsyDS5HaXZlR2lmdHNBcmciQQoMR2lmdE1haWxQb3N0EhMKC3Jl",
+          "Y2VpdmVyX2lkGAEgASgFEhwKBG1haWwYAiABKAsyDi5TTWFpbFRlbXBsYXRl",
+          "KlsKCk1haWxPcFR5cGUSDQoJTWFpbF9Ob25lEAASDQoJTWFpbF9SZWFkEAES",
+          "DAoITWFpbF9EZWwQAhIQCgxNYWlsX1JlYWRBbGwQAxIPCgtNYWlsX0RlbEFs",
+          "bBAEYgZwcm90bzM="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-        new pbr::FileDescriptor[] { },
+        new pbr::FileDescriptor[] { global::PbcGiftReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::MailOpType), }, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::MailBaseInfo), global::MailBaseInfo.Parser, new[]{ "MailUid", "MailId", "CreateTime", "ExpireTime", "IsRead", "IsHasItem", "Title", "Important" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MailItem), global::MailItem.Parser, new[]{ "ItemId", "Count", "IsBind" }, null, null, null, null),
@@ -68,7 +72,8 @@ public static partial class PbcMailReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::UpdateMailNtf), global::UpdateMailNtf.Parser, new[]{ "HasUnread" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SMailTemplate), global::SMailTemplate.Parser, new[]{ "MailId", "Title", "Content", "ExpireDays", "Important" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::GsSendMailArg), global::GsSendMailArg.Parser, new[]{ "RoleId", "Mail" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::MailCall), global::MailCall.Parser, new[]{ "RoleId", "GameLink", "Command", "MailUid", "OpType", "Mails", "Result", "RealmId", "HasUnread", "SendMail" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::MailCall), global::MailCall.Parser, new[]{ "RoleId", "GameLink", "Command", "MailUid", "OpType", "Mails", "Result", "RealmId", "HasUnread", "SendMail", "FriendName", "Friends", "Gift" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::GiftMailPost), global::GiftMailPost.Parser, new[]{ "ReceiverId", "Mail" }, null, null, null, null)
         }));
   }
   #endregion
@@ -3603,6 +3608,9 @@ public sealed partial class MailCall : pb::IMessage<MailCall>
     realmId_ = other.realmId_;
     hasUnread_ = other.hasUnread_;
     sendMail_ = other.sendMail_ != null ? other.sendMail_.Clone() : null;
+    friendName_ = other.friendName_;
+    friends_ = other.friends_.Clone();
+    gift_ = other.gift_ != null ? other.gift_.Clone() : null;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -3731,6 +3739,50 @@ public sealed partial class MailCall : pb::IMessage<MailCall>
     }
   }
 
+  /// <summary>Field number for the "friend_name" field.</summary>
+  public const int FriendNameFieldNumber = 11;
+  private string friendName_ = "";
+  /// <summary>
+  /// 查询好友时使用昵称，赠送审批通过后为权威发件人署名。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string FriendName {
+    get { return friendName_; }
+    set {
+      friendName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "friends" field.</summary>
+  public const int FriendsFieldNumber = 12;
+  private static readonly pb::FieldCodec<global::GiftFriendInfo> _repeated_friends_codec
+      = pb::FieldCodec.ForMessage(98, global::GiftFriendInfo.Parser);
+  private readonly pbc::RepeatedField<global::GiftFriendInfo> friends_ = new pbc::RepeatedField<global::GiftFriendInfo>();
+  /// <summary>
+  /// 发起角色的赠礼联系人列表。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::GiftFriendInfo> Friends {
+    get { return friends_; }
+  }
+
+  /// <summary>Field number for the "gift" field.</summary>
+  public const int GiftFieldNumber = 13;
+  private global::GiveGiftsArg gift_;
+  /// <summary>
+  /// 实际选择的收件人和物品 UID。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::GiveGiftsArg Gift {
+    get { return gift_; }
+    set {
+      gift_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -3756,6 +3808,9 @@ public sealed partial class MailCall : pb::IMessage<MailCall>
     if (RealmId != other.RealmId) return false;
     if (HasUnread != other.HasUnread) return false;
     if (!object.Equals(SendMail, other.SendMail)) return false;
+    if (FriendName != other.FriendName) return false;
+    if(!friends_.Equals(other.friends_)) return false;
+    if (!object.Equals(Gift, other.Gift)) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -3773,6 +3828,9 @@ public sealed partial class MailCall : pb::IMessage<MailCall>
     if (RealmId != 0) hash ^= RealmId.GetHashCode();
     if (HasUnread != false) hash ^= HasUnread.GetHashCode();
     if (sendMail_ != null) hash ^= SendMail.GetHashCode();
+    if (FriendName.Length != 0) hash ^= FriendName.GetHashCode();
+    hash ^= friends_.GetHashCode();
+    if (gift_ != null) hash ^= Gift.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -3828,6 +3886,15 @@ public sealed partial class MailCall : pb::IMessage<MailCall>
       output.WriteRawTag(82);
       output.WriteMessage(SendMail);
     }
+    if (FriendName.Length != 0) {
+      output.WriteRawTag(90);
+      output.WriteString(FriendName);
+    }
+    friends_.WriteTo(output, _repeated_friends_codec);
+    if (gift_ != null) {
+      output.WriteRawTag(106);
+      output.WriteMessage(Gift);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -3875,6 +3942,15 @@ public sealed partial class MailCall : pb::IMessage<MailCall>
       output.WriteRawTag(82);
       output.WriteMessage(SendMail);
     }
+    if (FriendName.Length != 0) {
+      output.WriteRawTag(90);
+      output.WriteString(FriendName);
+    }
+    friends_.WriteTo(ref output, _repeated_friends_codec);
+    if (gift_ != null) {
+      output.WriteRawTag(106);
+      output.WriteMessage(Gift);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -3912,6 +3988,13 @@ public sealed partial class MailCall : pb::IMessage<MailCall>
     }
     if (sendMail_ != null) {
       size += 1 + pb::CodedOutputStream.ComputeMessageSize(SendMail);
+    }
+    if (FriendName.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(FriendName);
+    }
+    size += friends_.CalculateSize(_repeated_friends_codec);
+    if (gift_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(Gift);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -3958,6 +4041,16 @@ public sealed partial class MailCall : pb::IMessage<MailCall>
         SendMail = new global::SMailTemplate();
       }
       SendMail.MergeFrom(other.SendMail);
+    }
+    if (other.FriendName.Length != 0) {
+      FriendName = other.FriendName;
+    }
+    friends_.Add(other.friends_);
+    if (other.gift_ != null) {
+      if (gift_ == null) {
+        Gift = new global::GiveGiftsArg();
+      }
+      Gift.MergeFrom(other.Gift);
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -4024,6 +4117,21 @@ public sealed partial class MailCall : pb::IMessage<MailCall>
           input.ReadMessage(SendMail);
           break;
         }
+        case 90: {
+          FriendName = input.ReadString();
+          break;
+        }
+        case 98: {
+          friends_.AddEntriesFrom(input, _repeated_friends_codec);
+          break;
+        }
+        case 106: {
+          if (gift_ == null) {
+            Gift = new global::GiveGiftsArg();
+          }
+          input.ReadMessage(Gift);
+          break;
+        }
       }
     }
   #endif
@@ -4087,6 +4195,274 @@ public sealed partial class MailCall : pb::IMessage<MailCall>
             SendMail = new global::SMailTemplate();
           }
           input.ReadMessage(SendMail);
+          break;
+        }
+        case 90: {
+          FriendName = input.ReadString();
+          break;
+        }
+        case 98: {
+          friends_.AddEntriesFrom(ref input, _repeated_friends_codec);
+          break;
+        }
+        case 106: {
+          if (gift_ == null) {
+            Gift = new global::GiveGiftsArg();
+          }
+          input.ReadMessage(Gift);
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 随发件角色本版背包共同提交的邮件。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class GiftMailPost : pb::IMessage<GiftMailPost>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<GiftMailPost> _parser = new pb::MessageParser<GiftMailPost>(() => new GiftMailPost());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<GiftMailPost> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::PbcMailReflection.Descriptor.MessageTypes[14]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public GiftMailPost() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public GiftMailPost(GiftMailPost other) : this() {
+    receiverId_ = other.receiverId_;
+    mail_ = other.mail_ != null ? other.mail_.Clone() : null;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public GiftMailPost Clone() {
+    return new GiftMailPost(this);
+  }
+
+  /// <summary>Field number for the "receiver_id" field.</summary>
+  public const int ReceiverIdFieldNumber = 1;
+  private int receiverId_;
+  /// <summary>
+  /// 已确认的同区收件角色。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int ReceiverId {
+    get { return receiverId_; }
+    set {
+      receiverId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "mail" field.</summary>
+  public const int MailFieldNumber = 2;
+  private global::SMailTemplate mail_;
+  /// <summary>
+  /// 带绑定附件及发件人署名的模板快照。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::SMailTemplate Mail {
+    get { return mail_; }
+    set {
+      mail_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as GiftMailPost);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(GiftMailPost other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (ReceiverId != other.ReceiverId) return false;
+    if (!object.Equals(Mail, other.Mail)) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (ReceiverId != 0) hash ^= ReceiverId.GetHashCode();
+    if (mail_ != null) hash ^= Mail.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (ReceiverId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(ReceiverId);
+    }
+    if (mail_ != null) {
+      output.WriteRawTag(18);
+      output.WriteMessage(Mail);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (ReceiverId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(ReceiverId);
+    }
+    if (mail_ != null) {
+      output.WriteRawTag(18);
+      output.WriteMessage(Mail);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (ReceiverId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(ReceiverId);
+    }
+    if (mail_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(Mail);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(GiftMailPost other) {
+    if (other == null) {
+      return;
+    }
+    if (other.ReceiverId != 0) {
+      ReceiverId = other.ReceiverId;
+    }
+    if (other.mail_ != null) {
+      if (mail_ == null) {
+        Mail = new global::SMailTemplate();
+      }
+      Mail.MergeFrom(other.Mail);
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          ReceiverId = input.ReadInt32();
+          break;
+        }
+        case 18: {
+          if (mail_ == null) {
+            Mail = new global::SMailTemplate();
+          }
+          input.ReadMessage(Mail);
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          ReceiverId = input.ReadInt32();
+          break;
+        }
+        case 18: {
+          if (mail_ == null) {
+            Mail = new global::SMailTemplate();
+          }
+          input.ReadMessage(Mail);
           break;
         }
       }

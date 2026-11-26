@@ -38,6 +38,7 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
         _client.RegistCommand(NetDefine.RpcC2M_SendChatMsg, this);
         _client.RegistCommand(MailCode.Delivery, this);
         _client.RegistCommand(MailCode.GiveMailPrize, this);
+        _client.RegistCommand(MailCode.GiveGiftItemChange, this);
         _client.RegistCommand(MailCode.UpdateMailNtf, this);
         _client.RegistCommand(MailCode.GsSendMail, this);
         _client.RegistCommand(NetDefine.RpcC2M_UploadChatAudio, this);

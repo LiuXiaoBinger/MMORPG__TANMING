@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `e6a2ec8bd262bf7762a86ab9d2945057f365422904f58a9787f834f11d2925ee`
+Source normalized SHA256: `93077247b114ffaa61ec572569d2594b04a92c9f21381cf69329793c70e36d61`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -159,11 +159,12 @@ Source normalized SHA256: `e6a2ec8bd262bf7762a86ab9d2945057f365422904f58a9787f83
 | [CODE][FILES][邮箱][MAIL-RO-20261126] RO role inbox and Unity integration | 1055-1060 |
 | [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] Playable role quests and dungeon objective navigation | 1061-1064 |
 | [CODE][FILES][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Choose each nearby speaker by name | 1065-1069 |
-| [CODE][FILES][HANDOFF][GM][RO-GM-20261126] In-game GM commands from the RO chat button | 1070-1073 |
+| [CODE][FILES][HANDOFF][GM][RO-GM-20261126] In-game GM commands from the RO chat button | 1070-1074 |
+| [CODE][FILES][邮箱][MAIL-GIFT-20261126] RO friend gift mail from the bag | 1075-1078 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `70f6da9be385cc720f00b8e7e1c0a1b63893780e816bc199db3fd787121f4125`
+Source normalized SHA256: `0477c584578dcde3c864b7714cdb95c9b506a3e45c6babc3f1bca64658309da0`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -316,7 +317,8 @@ Source normalized SHA256: `70f6da9be385cc720f00b8e7e1c0a1b63893780e816bc199db3fd
 | [VERIFY][装备][特技][EQUIP-DIVINE-LIVE-20261126] Divine Power (external) on two weapons in Unity Play | 1100-1103 |
 | [VERIFY][任务][导航][WORLD-QUEST-NAV-20261126] Role quest progression and route verification | 1104-1109 |
 | [VERIFY][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Simultaneous named choices and actual NPC destinations | 1110-1114 |
-| [VERIFY][GM][RO-GM-20261126] GM authentication, real commands and persistence | 1115-1118 |
+| [VERIFY][GM][RO-GM-20261126] GM authentication, real commands and persistence | 1115-1119 |
+| [VERIFY][邮箱][MAIL-GIFT-20261126] Two-character gift delivery and claim | 1120-1123 |
 
 ## Docs/AI/DECISIONS.en.md
 

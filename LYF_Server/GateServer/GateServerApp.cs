@@ -123,9 +123,13 @@ namespace GateServer
             server.RegistCommand(MailCode.GetMailList, gateTeamCtrl);
             server.RegistCommand(MailCode.GetOneMail, gateTeamCtrl);
             server.RegistCommand(MailCode.MailOp, gateTeamCtrl);
+            server.RegistCommand(MailCode.GetGiftLimitInfo, gateTeamCtrl);
+            server.RegistCommand(MailCode.GiveGifts, gateTeamCtrl);
             client.RegistCommand(MailCode.GetMailList, gateTeamCtrl);
             client.RegistCommand(MailCode.GetOneMail, gateTeamCtrl);
             client.RegistCommand(MailCode.MailOp, gateTeamCtrl);
+            client.RegistCommand(MailCode.GetGiftLimitInfo, gateTeamCtrl);
+            client.RegistCommand(MailCode.GiveGifts, gateTeamCtrl);
             client.RegistCommand(MailCode.UpdateMailNtf, gateTeamCtrl);
             server.RegistCommand(NetDefine.CMD_CreateTeamCode, gateTeamCtrl);
             server.RegistCommand(NetDefine.CMD_InviteJoinTeamCode, gateTeamCtrl);

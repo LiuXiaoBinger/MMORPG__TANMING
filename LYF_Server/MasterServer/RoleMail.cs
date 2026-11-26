@@ -40,6 +40,11 @@ internal sealed class RoleMail : IContainer
         // 来自监听端的会话编号仅由 MS 本机分配。
         int game = ((Session)link).SessionID;
         if (packet.ProtoCode == MailCode.Subscribe) { games[game] = link; return; }
+        if (packet.ProtoCode == MailCode.GiftArrived)
+        {
+            NotifyInbox(MailCall.Parser.ParseFrom(packet.Data).RoleId);
+            return;
+        }
         // 内网操作只携带原 RPC 的必要参数。
         MailCall call;
         if (packet.ProtoCode == MailCode.GsSendMail)
@@ -70,17 +75,21 @@ internal sealed class RoleMail : IContainer
         // 可信存储返回的业务结果，不接受客户端自带附件。
         MailCall call = MailCall.Parser.ParseFrom(packet.Data);
         if (call.Command == MailCode.GsSendMail && call.Result.Error.Length == 0)
-        {
-            // 通知仅提示收件箱已变化，客户端打开后照常拉摘要。
-            var notice = new MailCall { RoleId = call.RoleId, RealmId = call.RealmId, HasUnread = true };
-            // 只枚举仍订阅本区的 GS，不要求收件人当前在线。
-            var targets = games.Values;
-            var links = new System.Collections.Generic.List<BaseLink>(targets);
-            for (int i = 0; i < links.Count; i++) links[i].Send(MailCode.UpdateMailNtf, notice.ToByteString());
-        }
+            NotifyInbox(call.RoleId);
+        if (call.Command == MailCode.GiveGifts && call.Result.Error.Length == 0)
+            call.SendMail = templates.ResolveGift(call.FriendName);
         // 发起调用的 GS 可能在数据库回执前重启。
         Session game = SessionMgr.Instance.GetSession(call.GameLink);
         if (game != null) Reply(game, packet, call);
+    }
+
+    /// <summary>已入库的系统信及赠礼复用本区各游戏服原有的新信提示。</summary><param name="receiver">收件角色号，全区信为零。</param>
+    private void NotifyInbox(int receiver)
+    {
+        // 每个在线宿主只通知自己持有的收件角色。
+        var notice = new MailCall { RoleId = receiver, RealmId = realmId, HasUnread = true };
+        var links = new System.Collections.Generic.List<BaseLink>(games.Values);
+        for (int index = 0; index < links.Count; index++) links[index].Send(MailCode.UpdateMailNtf, notice.ToByteString());
     }
 
     /// <summary>生成 RO 的三个业务回执，保留角色号供 GS 核对当前会话。</summary>
@@ -96,6 +105,16 @@ internal sealed class RoleMail : IContainer
         IMessage response;
         switch (call.Command)
         {
+            case MailCode.GetGiftLimitInfo:
+                // 返回实际联系人列表或本次添加失败的原因。
+                var contacts = new GetGiftFriendsRes { Error = call.Result.Error };
+                contacts.Friends.Add(call.Friends);
+                response = contacts;
+                break;
+            case MailCode.GiveGifts:
+                if (call.Result.Error.Length == 0) { game.Send(packet, MailCode.GiveGiftItemChange, call.ToByteString()); return; }
+                response = new GiveGiftsRes { Error = call.Result.Error };
+                break;
             case MailCode.GetMailList:
                 // 仅复制中心返回的信封摘要。
                 var list = new GetMailListRes { Error = call.Result.Error, HasUnread = call.HasUnread };

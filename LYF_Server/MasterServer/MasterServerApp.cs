@@ -33,6 +33,7 @@ internal static class MasterServerApp
         RoleMail mail = new RoleMail(realm);
         server.RegistCommand(MailCode.RoleRequest, mail);
         server.RegistCommand(MailCode.Subscribe, mail);
+        server.RegistCommand(MailCode.GiftArrived, mail);
         server.RegistCommand(MailCode.GsSendMail, mail);
         server.OnSessionDisconnected = teams.RemoveGame;
         server.OnSessionDisconnected += mail.RemoveGame;

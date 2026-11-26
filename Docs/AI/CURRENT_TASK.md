@@ -1066,3 +1066,8 @@ Codex 已接入五条委托、游戏服存档、NPC 办理、公共地图选门�
 
 - Unity 开发版沿用 `GMPanel`、`GMCtrl`、`GmMgr` 的职责。原命令字符串 `args` 经 Gate 进入 `RpcC2G_GSLocalGMCmd`，由 `CMDManager.RunGMCommond` 对已认证的在线角色执行，回执字符串 `result_msg` 返回面板。本项目协议号为 11600。启动 GameServer 前，将获准的数据库账号 ID 用逗号分隔写入 `LYF_GM_ACCOUNTS`。
 - 已接入 `addbuff`、`delbuff`、`item add`、`item remove`、`additem`、物品 ID 加带符号数量的简写、`addmoney`、`submoney`、`baselevel`、`addexp` 和 `help`。Buff 的来源和施加者均为当前角色。道具、货币经过正式背包，角色等级、经验随现有版本化存档保存。逐文件清单、用例和 Git 回执见 `项目修改日志/2026-11-26-RO游戏内GM移植.md`。
+
+## [CODE][FILES][邮箱][MAIL-GIFT-20261126] 从背包向 RO 好友发送赠礼邮件
+
+- 背包通过 `MainView` 打开 `GiftPanel`。玩家按物品堆叠 UID 和数量选取赠礼，发送给已保存的同服联系人。输入完整、准确的角色名即可添加在线或离线好友，收到对方的添加后也可回加。服务端只允许向赠送者已添加的联系人赠礼。
+- `GiftTable` 包含物品 7301 和碎片 7311–7342。已绑定或有时限的物品堆叠不能赠送。Center 在同一事务内保存赠送者的背包和收件人的邮件。RO 邮件模板 4001 显示赠送者姓名，有效期为三天，收件人通过现有邮箱领取绑定附件。完整文件清单和 Git 回执见 `项目修改日志/RO好友赠礼邮件-2026-11-26.md`。

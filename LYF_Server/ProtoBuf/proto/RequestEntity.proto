@@ -1,6 +1,7 @@
 syntax = "proto3"; //指定proto使用proto3语法，不指定默认是使用proto2
 
 import "ResultEntity.proto";
+import "pbc_mail.proto";
 
 // 各服务之间传递的外层消息包；业务消息放在 data 中，两层会话编号保留返回路径。
 message BasePackage{
@@ -112,6 +113,7 @@ message SaveRoleDataReq
     int32 growth_exp = 12; // 对应等级内的剩余经验。
   int64 stall_ticket = 8; // 摆摊资产变更和本次角色快照在同一事务内提交。
   RoleItemInfo stall_escrow = 9; // 新寄售时保存的实际材料快照。
+  repeated GiftMailPost gift_posts = 13; // 与本版物品扣除在同一事务投递的赠礼。
   repeated int64 claimed_mail_uids = 10; // 与本版背包在同一事务提交的附件邮件编号。
 	int32 role_id = 1;//角色 ID
 	int64 version = 2;//角色物品变更版本，用于重试幂等和 ACK 匹配

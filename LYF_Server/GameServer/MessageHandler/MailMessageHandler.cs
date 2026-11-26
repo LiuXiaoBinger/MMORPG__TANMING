@@ -11,14 +11,14 @@ public sealed class MailMessageHandler : IGameMessageHandler
         // 所有邮箱消息共享同一个无状态接入器。
         var handler = new MailMessageHandler();
         // 玩家允许发起的三个业务操作。
-        ushort[] requests = { MailCode.GetMailList, MailCode.GetOneMail, MailCode.MailOp };
+        ushort[] requests = { MailCode.GetMailList, MailCode.GetOneMail, MailCode.MailOp, MailCode.GetGiftLimitInfo, MailCode.GiveGifts };
         for (int i = 0; i < requests.Length; i++)
         {
             server.RegistCommand(requests[i], messages);
             messages.Register(new GameMessageHandlerKey(GameCommandSource.GateServer, requests[i]), handler, CenterMessageRoute.Internal);
         }
         // 只有来自 MS 的回包才可携带奖励。
-        ushort[] replies = { MailCode.Delivery, MailCode.GiveMailPrize, MailCode.UpdateMailNtf, MailCode.GsSendMail };
+        ushort[] replies = { MailCode.Delivery, MailCode.GiveMailPrize, MailCode.UpdateMailNtf, MailCode.GsSendMail, MailCode.GiveGiftItemChange };
         for (int i = 0; i < replies.Length; i++)
             messages.Register(new GameMessageHandlerKey(GameCommandSource.MasterServer, replies[i]), handler, CenterMessageRoute.Internal);
     }
@@ -27,8 +27,13 @@ public sealed class MailMessageHandler : IGameMessageHandler
     /// <param name="source">实际接收连接类型。</param><param name="code">已注册的协议编号。</param>
     public bool CanHandle(GameCommandSource source, ushort code)
     {
-        if (source == GameCommandSource.GateServer) return code >= MailCode.GetMailList && code <= MailCode.MailOp;
+        if (source == GameCommandSource.GateServer)
+        {
+            if (code == MailCode.GetGiftLimitInfo || code == MailCode.GiveGifts) return true;
+            return code >= MailCode.GetMailList && code <= MailCode.MailOp;
+        }
         if (source != GameCommandSource.MasterServer) return false;
+        if (code == MailCode.GiveGiftItemChange) return true;
         return code == MailCode.UpdateMailNtf || (code >= MailCode.GiveMailPrize && code <= MailCode.Delivery);
     }
 
@@ -54,6 +59,10 @@ public sealed class MailMessageHandler : IGameMessageHandler
                 call.MailUid = op.MailUid;
                 call.OpType = op.OpType;
             }
+            else if (packet.ProtoCode == MailCode.GetGiftLimitInfo)
+                call.FriendName = GiftFriendArg.Parser.ParseFrom(packet.Data).Name;
+            else if (packet.ProtoCode == MailCode.GiveGifts)
+                call.Gift = GiveGiftsArg.Parser.ParseFrom(packet.Data);
             else GetMailListArg.Parser.ParseFrom(packet.Data);
             SendRequest(role, call);
             return;
@@ -94,6 +103,13 @@ public sealed class MailMessageHandler : IGameMessageHandler
         // 奖励只发给原申请会话中的同一已装载角色。
         OnlineRole receiver = RoleManager.Instance.GetOnlineRoleBySession(packet.GateSessionId, packet.UnitySessionId);
         if (receiver == null || (int)receiver.GetID() != notice.RoleId) return;
+        if (packet.ProtoCode == MailCode.GiveGiftItemChange)
+        {
+            if (receiver.State == OnlineRoleState.Online && receiver.IsRoleDataReady())
+                receiver.GetComponent<GiveGiftItemChange>().Give(notice);
+            else receiver.SendToClient(MailCode.GiveGifts, new GiveGiftsRes { Error = "角色背包尚未就绪" }.ToByteString());
+            return;
+        }
         if (receiver.State == OnlineRoleState.Online && receiver.IsRoleDataReady())
             receiver.GetComponent<GiveMailPrize>().Give(notice);
         else
@@ -121,6 +137,10 @@ public sealed class MailMessageHandler : IGameMessageHandler
             role.SendToClient(call.Command, new GetMailListRes { Error = error }.ToByteString());
         else if (call.Command == MailCode.GetOneMail)
             role.SendToClient(call.Command, new GetOneMailRes { Error = error }.ToByteString());
+        else if (call.Command == MailCode.GetGiftLimitInfo)
+            role.SendToClient(call.Command, new GetGiftFriendsRes { Error = error }.ToByteString());
+        else if (call.Command == MailCode.GiveGifts)
+            role.SendToClient(call.Command, new GiveGiftsRes { Error = error }.ToByteString());
         else if (call.Command == MailCode.MailOp)
             role.SendToClient(call.Command, new MailOpRes { Error = error, OpType = call.OpType, MailUid = call.MailUid }.ToByteString());
     }

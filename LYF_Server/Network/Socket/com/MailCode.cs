@@ -21,6 +21,14 @@ public static class MailCode
     public const ushort Delivery = 11508;
     /// <summary>GS 连接本区 MS 时订阅新信通知。</summary>
     public const ushort Subscribe = 11509;
+    /// <summary>查询赠礼好友，附带昵称时添加同区角色。</summary>
+    public const ushort GetGiftLimitInfo = 11510;
+    /// <summary>从自己真实背包中选物品赠给好友。</summary>
+    public const ushort GiveGifts = 11511;
+    /// <summary>MS 授权当前游戏服按真实物品实例扣包。</summary>
+    public const ushort GiveGiftItemChange = 11512;
+    /// <summary>扣包及新信入库后通知本区在线收件人。</summary>
+    public const ushort GiftArrived = 11513;
     /// <summary>RO 每次展示和一键领取的邮件上限。</summary>
     public const int MaxClientMailCount = 100;
     /// <summary>未领附件允许超过展示容量，达到 RO 的五百封硬上限后淘汰最早一封。</summary>

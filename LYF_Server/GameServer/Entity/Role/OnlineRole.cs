@@ -294,6 +294,7 @@ public class OnlineRole : IGeneOwner
         _components.SetComponent(new RoleCountComponent(this));
         _components.SetComponent(new RoItemComponent(this));
         _components.SetComponent(new GiveMailPrize(this));
+        _components.SetComponent(new GiveGiftItemChange(this));
         // 装备属性与特技跟随真实在线角色推进，不依赖尚未绑定的玩家场景实体。
         AttrComp = new RoleAttributeComponent(this);
         _components.SetComponent(AttrComp);
@@ -578,8 +579,8 @@ public class OnlineRole : IGeneOwner
     internal bool StallSaveBusy => _roleNetSender.HasInFlightRequest();
     /// <summary>角色真实物品变动已在本逻辑帧完成，立即交由中心服原子提交。</summary><param name="ticket">中心凭证号。</param><param name="escrow">新寄售的材料实例。</param>
     internal void SaveStallAssets(long ticket,RoleItemInfo escrow) { _roleNetSender.SendStall(ticket,escrow); }
-    /// <summary>领取附件后立即沿角色原存档链提交，有在途版本时由其成功回执续存。</summary>
-    internal void SaveMailPrizes() { _roleNetSender.SendRoleDataToDB(); }
+    /// <summary>收取附件或赠礼扣包后立即沿角色原存档链提交，有在途版本时由其成功回执续存。</summary>
+    internal void SaveMailAssets() { _roleNetSender.SendRoleDataToDB(); }
 
     /// <summary>请求立即保存脏模块，切线要等既有中心服保存回执后才交出角色。</summary>
     internal void FlushForSceneChange() { _roleNetSender.SendRoleDataToDB(); }

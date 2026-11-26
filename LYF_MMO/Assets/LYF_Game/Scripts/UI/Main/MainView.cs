@@ -72,6 +72,8 @@ public class MainView : UIBase
    [SerializeField] internal Button emailButton;
    /// <summary>主城功能层持有的角色邮箱窗口。</summary>
    [SerializeField] internal EmailPanel emailPanel;
+   /// <summary>从背包入口打开、与收件箱同层的赠礼窗口。</summary>
+   [SerializeField] internal GiftPanel giftPanel;
    /// <summary>信封按钮上显示本角色有未读邮件的红点。</summary>
    [SerializeField] internal GameObject emailHint;
 
@@ -395,6 +397,7 @@ public class MainView : UIBase
       windowDic[WindowType.ShopWindow] = _shopWindow;
       windowDic[WindowType.TradeMarketWindow] = _tradeMarketWindow;
       windowDic[WindowType.EmailPanel] = emailPanel;
+      if (giftPanel != null) windowDic[WindowType.GiftPanel] = giftPanel;
       windowDic[WindowType.TreasurePavilionWindow] = _treasurePavilionWindow;
       windowDic[WindowType.RoleAttriibuteWindow] = _roleAttriibuteWindow;
       windowDic[WindowType.SettingPanel] = _settingPanel;

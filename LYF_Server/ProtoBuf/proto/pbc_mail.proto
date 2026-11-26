@@ -1,4 +1,5 @@
 syntax = "proto3";
+import "pbc_gift.proto";
 
 // 四个操作值与 RO 的 MailOpType 一致。
 enum MailOpType {
@@ -81,4 +82,12 @@ message MailCall {
   int32 realm_id = 8;
   bool has_unread = 9;
   SMailTemplate send_mail = 10;
+  string friend_name = 11; // 查询好友时使用昵称，赠送审批通过后为权威发件人署名。
+  repeated GiftFriendInfo friends = 12; // 发起角色的赠礼联系人列表。
+  GiveGiftsArg gift = 13; // 实际选择的收件人和物品 UID。
+}
+// 随发件角色本版背包共同提交的邮件。
+message GiftMailPost {
+  int32 receiver_id = 1; // 已确认的同区收件角色。
+  SMailTemplate mail = 2; // 带绑定附件及发件人署名的模板快照。
 }

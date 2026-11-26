@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+// 收礼人的服务端角色编号、角色名，以及双方是否已将对方添加为好友。
+message GiftFriendInfo {
+  int32 role_id = 1;
+  string name = 2;
+  bool added = 3;
+  bool added_me = 4;
+}
+// 查询赠礼联系人时不带名字；添加或回加好友时填同区角色昵称。
+message GiftFriendArg { string name = 1; }
+// 赠礼选择页展示的联系人，也用于返回添加结果。
+message GetGiftFriendsRes { repeated GiftFriendInfo friends = 1; string error = 2; }
+// 只提交背包内选中的实际实例 UID 及件数，附件由游戏服重新生成。
+message GiftUidItem { int64 item_uid = 1; int32 item_count = 2; }
+// 对应 RO GiveGiftsArg，一次可以选多堆物品送给一个好友。
+message GiveGiftsArg { int32 role_uid = 1; repeated GiftUidItem uid_items = 2; }
+// 背包扣除与投递同一事务完成后回执。
+message GiveGiftsRes { string error = 1; }

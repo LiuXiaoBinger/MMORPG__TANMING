@@ -52,7 +52,7 @@ public sealed class GiveMailPrize : RoleComponentBase
         if (added)
         {
             pendingReplies.Add(reply);
-            Owner.SaveMailPrizes();
+            Owner.SaveMailAssets();
         }
         else Owner.SendToClient(MailCode.MailOp, reply.ToByteString());
     }

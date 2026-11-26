@@ -37,6 +37,8 @@ internal sealed class MailStore : IContainer
         // 服务端统一判定有效期，客户端时钟不参与奖励结算。
         long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         call.Result = new MailOpRes { MailUid = call.MailUid, OpType = call.OpType };
+        if (call.Command == MailCode.GetGiftLimitInfo) { GiftStore.GetFriends(db, call); return; }
+        if (call.Command == MailCode.GiveGifts) { GiftStore.PrepareGift(db, call); return; }
         if (call.Command == MailCode.GsSendMail)
         {
             SendMail(db, call, now);
@@ -155,10 +157,7 @@ internal sealed class MailStore : IContainer
         // 批量插入由同一事务提交，避免全服信只投递一部分。
         var rows = new List<RoleMailTable>(ids.Count);
         for (int i = 0; i < ids.Count; i++)
-            rows.Add(new RoleMailTable { MailUid = UIDHelper.CreateUID(UIDType.UID_Mail), RoleId = ids[i],
-                MailId = template.MailId, Title = template.Title, Important = template.Important,
-                Content = content, HasItem = template.Content.MailItems.Count > 0, CreateTime = now,
-                ExpireTime = now + 86400L * template.ExpireDays });
+            rows.Add(CreateMail(ids[i], template, content, now));
         if (rows.Count > 0)
         {
             // 多批写入由一个事务覆盖，失败原因沿原发信回执返回。
@@ -168,6 +167,31 @@ internal sealed class MailStore : IContainer
                 db.Insertable(rows).ExecuteCommand();
             });
             if (!result.IsSuccess) call.Result.Error = "邮件投递入库失败：" + result.ErrorMessage;
+        }
+    }
+
+    /// <summary>用统一的收件记录同时支持系统邮件和玩家赠礼。</summary>
+    /// <param name="receiver">收件角色主键。</param><param name="template">完成署名和附件填充的邮件。</param>
+    /// <param name="content">序列化的正文及附件。</param><param name="now">投递时间，UTC 秒。</param>
+    private static RoleMailTable CreateMail(int receiver, SMailTemplate template, byte[] content, long now)
+    {
+        return new RoleMailTable { MailUid = UIDHelper.CreateUID(UIDType.UID_Mail), RoleId = receiver,
+            MailId = template.MailId, Title = template.Title, Important = template.Important, Content = content,
+            HasItem = template.Content.MailItems.Count > 0, CreateTime = now, ExpireTime = now + 86400L * template.ExpireDays };
+    }
+
+    /// <summary>在发送角色背包原有的存档事务中投递礼物，回滚时收件记录与扣包一起撤销。</summary>
+    /// <param name="db">当前角色保存事务。</param><param name="request">与扣包同版本的赠礼清单。</param>
+    internal static void CommitGifts(SqlSugarClient db, SaveRoleDataReq request)
+    {
+        // 整版赠礼使用同一投递时间。
+        long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        for (int index = 0; index < request.GiftPosts.Count; index++)
+        {
+            // 由发件人所在游戏服核对过实例和来源的实际礼物。
+            GiftMailPost post = request.GiftPosts[index];
+            MakeRoom(db, post.ReceiverId, now);
+            db.Insertable(CreateMail(post.ReceiverId, post.Mail, post.Mail.Content.ToByteArray(), now)).ExecuteCommand();
         }
     }
 

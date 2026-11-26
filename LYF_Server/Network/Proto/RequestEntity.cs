@@ -22,58 +22,59 @@ public static partial class RequestEntityReflection {
   static RequestEntityReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "ChNSZXF1ZXN0RW50aXR5LnByb3RvGhJSZXN1bHRFbnRpdHkucHJvdG8iYgoL",
-          "QmFzZVBhY2thZ2USEgoKcHJvdG9fY29kZRgBIAEoBRIYChB1bml0eV9zZXNz",
-          "aW9uX2lkGAIgASgFEhcKD2dhdGVfc2Vzc2lvbl9pZBgDIAEoBRIMCgRkYXRh",
-          "GAogASgMIiAKD1JlZ2lzdFZhcmlmeVJlcRINCgVlbWFpbBgCIAEoCSJPCglS",
-          "ZWdpc3RSZXESEQoJdXNlcl9uYW1lGAEgASgJEg0KBWVtYWlsGAIgASgJEg4K",
-          "BnZhcmlmeRgDIAEoCRIQCghwYXNzd29yZBgEIAEoCSIvCghMb2dpblJlcRIR",
-          "Cgl1c2VyX25hbWUYASABKAkSEAoIcGFzc3dvcmQYAiABKAkiJQoQR2V0U2Vy",
-          "dmVyTGlzdFJlcRIRCglzZXJ2ZXJfaWQYASABKAUiQAoSTG9naW5HYW1lU2Vy",
-          "dmVyUmVxEhIKCmFjY291bnRfaWQYASABKAUSFgoOZ2FtZV9zZXJ2ZXJfaWQY",
-          "AiABKAUiXQoNQ3JlYXRlUm9sZVJlcRISCgphY2NvdW50X2lkGAEgASgFEhYK",
-          "DmdhbWVfc2VydmVyX2lkGAIgASgFEhAKCG5pY2tuYW1lGAMgASgJEg4KBmpv",
-          "Yl9pZBgEIAEoBSIfCgxTdGFydEdhbWVSZXESDwoHcm9sZV9pZBgBIAEoBSIt",
-          "Cg1FbnRlcldyb2xkUmVxEg8KB3JvbGVfaWQYASABKAUSCwoDcG9zGAIgASgJ",
-          "IlsKDFNraWxsQ2FzdFJlcRISCgpza2lsbF91dWlkGAEgASgEEhAKCHNraWxs",
-          "X2lkGAIgASgFEiUKCmNhc3RfcG9pbnQYAyABKAsyES5EdW5nZW9uQ2FzdFBv",
-          "aW50IjoKD1NraWxsVXBncmFkZVJlcRIQCghza2lsbF9pZBgBIAEoBRIVCg1j",
-          "dXJyZW50X2xldmVsGAIgASgFIigKEER1bmdlb25DYXN0UG9pbnQSCQoBeBgB",
-          "IAEoAhIJCgF6GAIgASgCIlYKE09wZW5LbmFwc2Fja0dyaWRSZXESDwoHcm9s",
-          "ZV9pZBgBIAEoBRIXCg9vcGVuX2dyaWRfY291bnQYAiABKAUSFQoNa25hcHNh",
-          "Y2tfdHlwZRgDIAEoBSJdChhTeW5jS25hcHNhY2tHcmlkQ291bnRSZXESDwoH",
-          "cm9sZV9pZBgBIAEoBRIZChFvcGVuZWRfZ3JpZF9jb3VudBgCIAEoBRIVCg1r",
-          "bmFwc2Fja190eXBlGAMgASgFIj4KDEl0ZW1EYXRhTGlzdBIQCghiYWdfdHlw",
-          "ZRgBIAEoBRIcCgVpdGVtcxgCIAMoCzINLlJvbGVJdGVtSW5mbyLSAgoPU2F2",
-          "ZVJvbGVEYXRhUmVxEhQKDGdyb3d0aF9sZXZlbBgLIAEoBRISCgpncm93dGhf",
-          "ZXhwGAwgASgFEhQKDHN0YWxsX3RpY2tldBgIIAEoAxIjCgxzdGFsbF9lc2Ny",
-          "b3cYCSABKAsyDS5Sb2xlSXRlbUluZm8SGQoRY2xhaW1lZF9tYWlsX3VpZHMY",
-          "CiADKAMSDwoHcm9sZV9pZBgBIAEoBRIPCgd2ZXJzaW9uGAIgASgDEiYKD2l0",
-          "ZW1fZGF0YV9saXN0cxgDIAMoCzINLkl0ZW1EYXRhTGlzdBIsChRyb2xlX2Nv",
-          "dW50X2luZm9fbGlzdBgFIAMoCzIOLlJvbGVDb3VudEluZm8SGwoTcm9sZV9j",
-          "b3VudF9zbmFwc2hvdBgGIAEoCBIkCgxza2lsbF9sZXZlbHMYByADKAsyDi5S",
-          "b2xlU2tpbGxJbmZvSgQIBBAFIjIKC0J1eVNob3BJdGVtEhAKCGdvb2RzX2lk",
-          "GAEgASgNEhEKCWJ1eV9jb3VudBgCIAEoDSJPCg5CdXlTaG9wSXRlbVJlcRIP",
-          "CgdzaG9wX2lkGAEgASgNEhsKBWl0ZW1zGAIgAygLMgwuQnV5U2hvcEl0ZW0S",
-          "DwoHcm9sZV9pZBgFIAEoDSKLAQoQTW92ZU9wZXJhdGlvblJlcRIKCgJkeBgB",
-          "IAEoAhIKCgJkeRgCIAEoAhIKCgJkehgDIAEoAhIMCgRmYWNlGAQgASgCEgwK",
-          "BHRpbWUYBSABKAISEQoJaXNfbW92aW5nGAYgASgIEhAKCGlzX21vdmVkGAcg",
-          "ASgIEhIKCmp1bXBfY291bnQYCCABKAUiIgoNQ3JlYXRlVGVhbUFyZxIRCgl0",
-          "YXJnZXRfaWQYASABKAUiJAoRSW52aXRlSm9pblRlYW1BcmcSDwoHdXNlcl9p",
-          "ZBgBIAEoBCJNChdBY2NlcHRUZWFtSW52YXRhdGlvbkFyZxIPCgd0ZWFtX2lk",
-          "GAEgASgEEhIKCmludml0ZXJfaWQYAiABKAQSDQoFYWdyZWUYAyABKAgiHwoM",
-          "TGVhdmVUZWFtQXJnEg8KB3JvbGVfaWQYASABKAQiJwoUQmVnSW5UZWFtQnlU",
-          "ZWFtSWRBcmcSDwoHdGVhbV9pZBgBIAEoBCJyChhDYXB0YWluUmVxdWVzdEVu",
-          "dGVyRkJBcmcSEgoKZHVuZ2Vvbl9pZBgBIAEoBRISCgpjaGFwdGVyX2lkGAIg",
-          "ASgFEhcKD2R1bmdlb25zX2RlZ3JlZRgDIAEoBRIVCg1kdW5nZW9uX2xheWVy",
-          "GAQgASgFIvQBChFFcXVpcE9wZXJhdGlvblJlcRIQCghpdGVtX3VpZBgBIAEo",
-          "AxIiCglvcGVyYXRpb24YAiABKA4yDy5FcXVpcE9wZXJhdGlvbhIbChNzcGVj",
-          "aWFsX3NraWxsX2luZGV4GAMgASgFEhgKEGdlbV9zb2NrZXRfaW5kZXgYBCAB",
-          "KAUSEwoLZ2VtX2l0ZW1faWQYBSABKAUSFgoOYmFnX2dlbV9jb3VudHMYBiAD",
-          "KAUSGQoRbWFya2V0X2dlbV9jb3VudHMYByADKAUSGQoMYnV5X3F1YW50aXR5",
-          "GAggASgFSACIAQFCDwoNX2J1eV9xdWFudGl0eWIGcHJvdG8z"));
+          "ChNSZXF1ZXN0RW50aXR5LnByb3RvGhJSZXN1bHRFbnRpdHkucHJvdG8aDnBi",
+          "Y19tYWlsLnByb3RvImIKC0Jhc2VQYWNrYWdlEhIKCnByb3RvX2NvZGUYASAB",
+          "KAUSGAoQdW5pdHlfc2Vzc2lvbl9pZBgCIAEoBRIXCg9nYXRlX3Nlc3Npb25f",
+          "aWQYAyABKAUSDAoEZGF0YRgKIAEoDCIgCg9SZWdpc3RWYXJpZnlSZXESDQoF",
+          "ZW1haWwYAiABKAkiTwoJUmVnaXN0UmVxEhEKCXVzZXJfbmFtZRgBIAEoCRIN",
+          "CgVlbWFpbBgCIAEoCRIOCgZ2YXJpZnkYAyABKAkSEAoIcGFzc3dvcmQYBCAB",
+          "KAkiLwoITG9naW5SZXESEQoJdXNlcl9uYW1lGAEgASgJEhAKCHBhc3N3b3Jk",
+          "GAIgASgJIiUKEEdldFNlcnZlckxpc3RSZXESEQoJc2VydmVyX2lkGAEgASgF",
+          "IkAKEkxvZ2luR2FtZVNlcnZlclJlcRISCgphY2NvdW50X2lkGAEgASgFEhYK",
+          "DmdhbWVfc2VydmVyX2lkGAIgASgFIl0KDUNyZWF0ZVJvbGVSZXESEgoKYWNj",
+          "b3VudF9pZBgBIAEoBRIWCg5nYW1lX3NlcnZlcl9pZBgCIAEoBRIQCghuaWNr",
+          "bmFtZRgDIAEoCRIOCgZqb2JfaWQYBCABKAUiHwoMU3RhcnRHYW1lUmVxEg8K",
+          "B3JvbGVfaWQYASABKAUiLQoNRW50ZXJXcm9sZFJlcRIPCgdyb2xlX2lkGAEg",
+          "ASgFEgsKA3BvcxgCIAEoCSJbCgxTa2lsbENhc3RSZXESEgoKc2tpbGxfdXVp",
+          "ZBgBIAEoBBIQCghza2lsbF9pZBgCIAEoBRIlCgpjYXN0X3BvaW50GAMgASgL",
+          "MhEuRHVuZ2VvbkNhc3RQb2ludCI6Cg9Ta2lsbFVwZ3JhZGVSZXESEAoIc2tp",
+          "bGxfaWQYASABKAUSFQoNY3VycmVudF9sZXZlbBgCIAEoBSIoChBEdW5nZW9u",
+          "Q2FzdFBvaW50EgkKAXgYASABKAISCQoBehgCIAEoAiJWChNPcGVuS25hcHNh",
+          "Y2tHcmlkUmVxEg8KB3JvbGVfaWQYASABKAUSFwoPb3Blbl9ncmlkX2NvdW50",
+          "GAIgASgFEhUKDWtuYXBzYWNrX3R5cGUYAyABKAUiXQoYU3luY0tuYXBzYWNr",
+          "R3JpZENvdW50UmVxEg8KB3JvbGVfaWQYASABKAUSGQoRb3BlbmVkX2dyaWRf",
+          "Y291bnQYAiABKAUSFQoNa25hcHNhY2tfdHlwZRgDIAEoBSI+CgxJdGVtRGF0",
+          "YUxpc3QSEAoIYmFnX3R5cGUYASABKAUSHAoFaXRlbXMYAiADKAsyDS5Sb2xl",
+          "SXRlbUluZm8i9QIKD1NhdmVSb2xlRGF0YVJlcRIUCgxncm93dGhfbGV2ZWwY",
+          "CyABKAUSEgoKZ3Jvd3RoX2V4cBgMIAEoBRIUCgxzdGFsbF90aWNrZXQYCCAB",
+          "KAMSIwoMc3RhbGxfZXNjcm93GAkgASgLMg0uUm9sZUl0ZW1JbmZvEiEKCmdp",
+          "ZnRfcG9zdHMYDSADKAsyDS5HaWZ0TWFpbFBvc3QSGQoRY2xhaW1lZF9tYWls",
+          "X3VpZHMYCiADKAMSDwoHcm9sZV9pZBgBIAEoBRIPCgd2ZXJzaW9uGAIgASgD",
+          "EiYKD2l0ZW1fZGF0YV9saXN0cxgDIAMoCzINLkl0ZW1EYXRhTGlzdBIsChRy",
+          "b2xlX2NvdW50X2luZm9fbGlzdBgFIAMoCzIOLlJvbGVDb3VudEluZm8SGwoT",
+          "cm9sZV9jb3VudF9zbmFwc2hvdBgGIAEoCBIkCgxza2lsbF9sZXZlbHMYByAD",
+          "KAsyDi5Sb2xlU2tpbGxJbmZvSgQIBBAFIjIKC0J1eVNob3BJdGVtEhAKCGdv",
+          "b2RzX2lkGAEgASgNEhEKCWJ1eV9jb3VudBgCIAEoDSJPCg5CdXlTaG9wSXRl",
+          "bVJlcRIPCgdzaG9wX2lkGAEgASgNEhsKBWl0ZW1zGAIgAygLMgwuQnV5U2hv",
+          "cEl0ZW0SDwoHcm9sZV9pZBgFIAEoDSKLAQoQTW92ZU9wZXJhdGlvblJlcRIK",
+          "CgJkeBgBIAEoAhIKCgJkeRgCIAEoAhIKCgJkehgDIAEoAhIMCgRmYWNlGAQg",
+          "ASgCEgwKBHRpbWUYBSABKAISEQoJaXNfbW92aW5nGAYgASgIEhAKCGlzX21v",
+          "dmVkGAcgASgIEhIKCmp1bXBfY291bnQYCCABKAUiIgoNQ3JlYXRlVGVhbUFy",
+          "ZxIRCgl0YXJnZXRfaWQYASABKAUiJAoRSW52aXRlSm9pblRlYW1BcmcSDwoH",
+          "dXNlcl9pZBgBIAEoBCJNChdBY2NlcHRUZWFtSW52YXRhdGlvbkFyZxIPCgd0",
+          "ZWFtX2lkGAEgASgEEhIKCmludml0ZXJfaWQYAiABKAQSDQoFYWdyZWUYAyAB",
+          "KAgiHwoMTGVhdmVUZWFtQXJnEg8KB3JvbGVfaWQYASABKAQiJwoUQmVnSW5U",
+          "ZWFtQnlUZWFtSWRBcmcSDwoHdGVhbV9pZBgBIAEoBCJyChhDYXB0YWluUmVx",
+          "dWVzdEVudGVyRkJBcmcSEgoKZHVuZ2Vvbl9pZBgBIAEoBRISCgpjaGFwdGVy",
+          "X2lkGAIgASgFEhcKD2R1bmdlb25zX2RlZ3JlZRgDIAEoBRIVCg1kdW5nZW9u",
+          "X2xheWVyGAQgASgFIvQBChFFcXVpcE9wZXJhdGlvblJlcRIQCghpdGVtX3Vp",
+          "ZBgBIAEoAxIiCglvcGVyYXRpb24YAiABKA4yDy5FcXVpcE9wZXJhdGlvbhIb",
+          "ChNzcGVjaWFsX3NraWxsX2luZGV4GAMgASgFEhgKEGdlbV9zb2NrZXRfaW5k",
+          "ZXgYBCABKAUSEwoLZ2VtX2l0ZW1faWQYBSABKAUSFgoOYmFnX2dlbV9jb3Vu",
+          "dHMYBiADKAUSGQoRbWFya2V0X2dlbV9jb3VudHMYByADKAUSGQoMYnV5X3F1",
+          "YW50aXR5GAggASgFSACIAQFCDwoNX2J1eV9xdWFudGl0eWIGcHJvdG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-        new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
+        new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, global::PbcMailReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::BasePackage), global::BasePackage.Parser, new[]{ "ProtoCode", "UnitySessionId", "GateSessionId", "Data" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RegistVarifyReq), global::RegistVarifyReq.Parser, new[]{ "Email" }, null, null, null, null),
@@ -90,7 +91,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::OpenKnapsackGridReq), global::OpenKnapsackGridReq.Parser, new[]{ "RoleId", "OpenGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SyncKnapsackGridCountReq), global::SyncKnapsackGridCountReq.Parser, new[]{ "RoleId", "OpenedGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ItemDataList), global::ItemDataList.Parser, new[]{ "BagType", "Items" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SaveRoleDataReq), global::SaveRoleDataReq.Parser, new[]{ "GrowthLevel", "GrowthExp", "StallTicket", "StallEscrow", "ClaimedMailUids", "RoleId", "Version", "ItemDataLists", "RoleCountInfoList", "RoleCountSnapshot", "SkillLevels" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SaveRoleDataReq), global::SaveRoleDataReq.Parser, new[]{ "GrowthLevel", "GrowthExp", "StallTicket", "StallEscrow", "GiftPosts", "ClaimedMailUids", "RoleId", "Version", "ItemDataLists", "RoleCountInfoList", "RoleCountSnapshot", "SkillLevels" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItem), global::BuyShopItem.Parser, new[]{ "GoodsId", "BuyCount" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItemReq), global::BuyShopItemReq.Parser, new[]{ "ShopId", "Items", "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MoveOperationReq), global::MoveOperationReq.Parser, new[]{ "Dx", "Dy", "Dz", "Face", "Time", "IsMoving", "IsMoved", "JumpCount" }, null, null, null, null),
@@ -4048,6 +4049,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
     growthExp_ = other.growthExp_;
     stallTicket_ = other.stallTicket_;
     stallEscrow_ = other.stallEscrow_ != null ? other.stallEscrow_.Clone() : null;
+    giftPosts_ = other.giftPosts_.Clone();
     claimedMailUids_ = other.claimedMailUids_.Clone();
     roleId_ = other.roleId_;
     version_ = other.version_;
@@ -4122,6 +4124,20 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
     set {
       stallEscrow_ = value;
     }
+  }
+
+  /// <summary>Field number for the "gift_posts" field.</summary>
+  public const int GiftPostsFieldNumber = 13;
+  private static readonly pb::FieldCodec<global::GiftMailPost> _repeated_giftPosts_codec
+      = pb::FieldCodec.ForMessage(106, global::GiftMailPost.Parser);
+  private readonly pbc::RepeatedField<global::GiftMailPost> giftPosts_ = new pbc::RepeatedField<global::GiftMailPost>();
+  /// <summary>
+  /// 与本版物品扣除在同一事务投递的赠礼。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::GiftMailPost> GiftPosts {
+    get { return giftPosts_; }
   }
 
   /// <summary>Field number for the "claimed_mail_uids" field.</summary>
@@ -4244,6 +4260,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
     if (GrowthExp != other.GrowthExp) return false;
     if (StallTicket != other.StallTicket) return false;
     if (!object.Equals(StallEscrow, other.StallEscrow)) return false;
+    if(!giftPosts_.Equals(other.giftPosts_)) return false;
     if(!claimedMailUids_.Equals(other.claimedMailUids_)) return false;
     if (RoleId != other.RoleId) return false;
     if (Version != other.Version) return false;
@@ -4262,6 +4279,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
     if (GrowthExp != 0) hash ^= GrowthExp.GetHashCode();
     if (StallTicket != 0L) hash ^= StallTicket.GetHashCode();
     if (stallEscrow_ != null) hash ^= StallEscrow.GetHashCode();
+    hash ^= giftPosts_.GetHashCode();
     hash ^= claimedMailUids_.GetHashCode();
     if (RoleId != 0) hash ^= RoleId.GetHashCode();
     if (Version != 0L) hash ^= Version.GetHashCode();
@@ -4319,6 +4337,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
       output.WriteRawTag(96);
       output.WriteInt32(GrowthExp);
     }
+    giftPosts_.WriteTo(output, _repeated_giftPosts_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -4361,6 +4380,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
       output.WriteRawTag(96);
       output.WriteInt32(GrowthExp);
     }
+    giftPosts_.WriteTo(ref output, _repeated_giftPosts_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -4383,6 +4403,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
     if (stallEscrow_ != null) {
       size += 1 + pb::CodedOutputStream.ComputeMessageSize(StallEscrow);
     }
+    size += giftPosts_.CalculateSize(_repeated_giftPosts_codec);
     size += claimedMailUids_.CalculateSize(_repeated_claimedMailUids_codec);
     if (RoleId != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoleId);
@@ -4423,6 +4444,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
       }
       StallEscrow.MergeFrom(other.StallEscrow);
     }
+    giftPosts_.Add(other.giftPosts_);
     claimedMailUids_.Add(other.claimedMailUids_);
     if (other.RoleId != 0) {
       RoleId = other.RoleId;
@@ -4503,6 +4525,10 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
           GrowthExp = input.ReadInt32();
           break;
         }
+        case 106: {
+          giftPosts_.AddEntriesFrom(input, _repeated_giftPosts_codec);
+          break;
+        }
       }
     }
   #endif
@@ -4568,6 +4594,10 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
         }
         case 96: {
           GrowthExp = input.ReadInt32();
+          break;
+        }
+        case 106: {
+          giftPosts_.AddEntriesFrom(ref input, _repeated_giftPosts_codec);
           break;
         }
       }

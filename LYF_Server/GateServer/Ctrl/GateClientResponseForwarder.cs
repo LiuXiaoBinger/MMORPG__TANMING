@@ -172,6 +172,12 @@ public static class GateClientResponseForwarder
             case NetDefine.RpcC2M_SendChatMsg:
                 resultCode = SendChatMsgRes.Parser.ParseFrom(package.Data).Result;
                 return true;
+            case MailCode.GetGiftLimitInfo:
+                GetGiftFriendsRes.Parser.ParseFrom(package.Data);
+                return true;
+            case MailCode.GiveGifts:
+                GiveGiftsRes.Parser.ParseFrom(package.Data);
+                return true;
             case MailCode.GetMailList:
                 GetMailListRes.Parser.ParseFrom(package.Data);
                 return true;

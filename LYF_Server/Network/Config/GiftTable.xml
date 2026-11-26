@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GiftTable>
+  <!-- 本区可赠的非绑定实体道具：秘笈修习丹及各本秘笈碎片。 -->
+  <Gift ItemId="7301" />
+  <Gift ItemId="7311" />
+  <Gift ItemId="7312" />
+  <Gift ItemId="7313" />
+  <Gift ItemId="7314" />
+  <Gift ItemId="7315" />
+  <Gift ItemId="7316" />
+  <Gift ItemId="7317" />
+  <Gift ItemId="7318" />
+  <Gift ItemId="7319" />
+  <Gift ItemId="7320" />
+  <Gift ItemId="7321" />
+  <Gift ItemId="7322" />
+  <Gift ItemId="7323" />
+  <Gift ItemId="7324" />
+  <Gift ItemId="7325" />
+  <Gift ItemId="7326" />
+  <Gift ItemId="7327" />
+  <Gift ItemId="7328" />
+  <Gift ItemId="7329" />
+  <Gift ItemId="7330" />
+  <Gift ItemId="7331" />
+  <Gift ItemId="7332" />
+  <Gift ItemId="7333" />
+  <Gift ItemId="7334" />
+  <Gift ItemId="7335" />
+  <Gift ItemId="7336" />
+  <Gift ItemId="7337" />
+  <Gift ItemId="7338" />
+  <Gift ItemId="7339" />
+  <Gift ItemId="7340" />
+  <Gift ItemId="7341" />
+  <Gift ItemId="7342" />
+</GiftTable>

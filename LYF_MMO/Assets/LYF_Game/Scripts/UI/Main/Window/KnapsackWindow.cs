@@ -62,6 +62,8 @@ public class KnapsackWindow : WindowBase
     [Header("背包分类按钮")]
     /// <summary>普通背包分类按钮，只负责发出分类切换。</summary>
     [SerializeField] private Button _btnAll;
+    /// <summary>背包标题栏中的赠送入口。</summary>
+    [SerializeField] internal Button giftButton;
 
     /// <summary>装备分类按钮，只负责发出分类切换。</summary>
     [SerializeField] private Button _btnEquip;

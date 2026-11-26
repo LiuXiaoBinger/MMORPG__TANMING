@@ -45,6 +45,7 @@
         <Compile Include="Components\RoleCountComponent.cs" />
         <Compile Include="Components\RoleShopRecord.cs" />
         <Compile Include="Service\mail\GiveMailPrize.cs" />
+    <Compile Include="Service\mail\GiveGiftItemChange.cs" />
         <Compile Include="Service\mail\MailAction.cs" />
         <Compile Include="MessageHandler\MailMessageHandler.cs" />
         <Compile Include="Components\RoleSkillComponent.cs" />

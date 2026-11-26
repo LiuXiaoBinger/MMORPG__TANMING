@@ -32,6 +32,17 @@ internal sealed class MailTable
         }
     }
 
+    /// <summary>将赠礼模板的标题、正文和署名填入同一角色名。</summary><param name="sender">中心角色库中的发件人昵称。</param>
+    internal SMailTemplate ResolveGift(string sender)
+    {
+        // 每封礼物独占一个附件列表。
+        SMailTemplate mail = Resolve(new SMailTemplate { MailId = 4001 });
+        mail.Title = mail.Title.Replace("{0}", sender);
+        mail.Content.Content = mail.Content.Content.Replace("{0}", sender);
+        mail.Content.SendName = mail.Content.SendName.Replace("{0}", sender);
+        return mail;
+    }
+
     /// <summary>按编号生成本封信的快照，自定义信直接使用业务提交的内容。</summary>
     /// <param name="request">GS 提交的模板编号或自定义正文及实际附件。</param>
     internal SMailTemplate Resolve(SMailTemplate request)

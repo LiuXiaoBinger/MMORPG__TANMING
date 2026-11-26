@@ -3,4 +3,5 @@
   <!-- 对应 RO MailTable 的系统模板。有效期单位为天，实际物品由发信业务传入。 -->
   <Mail Id="20" Title="物品掉落" SendName="系统" ExpireTime="30">背包已经满了，获得的道具暂时存放在邮箱里，请尽快领取！</Mail>
   <Mail Id="21" Title="物品掉落" SendName="系统" ExpireTime="30">背包负重已达上限，获得的道具暂时存放在邮箱里，请尽快领取！</Mail>
+  <Mail Id="4001" Title="{0}的礼物" SendName="{0}" ExpireTime="3">玩家{0}向你赠送了礼物，请查收附件。</Mail>
 </MailTable>

@@ -652,18 +652,23 @@ public class RoItemComponent : RoleComponentBase
         return null;
     }
 
-    //通过UID得到指定道具
-    private ItemBase GetItemByUID(long itemUid)
+    /// <summary>按实例编号查询本角色背包，供物品变更和赠礼扣除核实同一堆叠。</summary>
+    /// <param name="itemUid">角色物品的唯一实例编号。</param>
+    internal ItemBase GetItemByUID(long itemUid)
     {
+        // 枚举本角色当前挂载的各类背包，容器内仍使用原物品引用。
         List<RoItemContainer> containerSnapshot = new List<RoItemContainer>(_itemContainers.Values);
+        // 依次在每个类别中查找同一实例编号。
         for (int index = 0; index < containerSnapshot.Count; index++)
         {
+            // 当前需要核实的背包类别。
             RoItemContainer container = containerSnapshot[index];
             if (container == null)
             {
                 continue;
             }
 
+            // 返回真实的背包堆叠对象供角色线程处理。
             var item = container.GetItemByUid(itemUid);
             if (item != null)
             {

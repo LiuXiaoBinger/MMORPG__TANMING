@@ -325,6 +325,7 @@ public sealed class CRoleWriteTask
             SaveItemDataLists(db, _request.ItemDataLists);
             // 邮件已领标记与本次入包的物品快照共同提交。
             MailStore.CommitClaims(db, _request);
+            MailStore.CommitGifts(db, _request);
             if (_request.RoleCountSnapshot)
             {
                 SaveRoleCountData(db, _request.RoleId, _request.Version, _request.RoleCountInfoList);

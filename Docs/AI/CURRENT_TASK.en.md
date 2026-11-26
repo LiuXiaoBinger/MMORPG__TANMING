@@ -1071,3 +1071,8 @@ Codex completed five configured quests, GS persistence and NPC options, public p
 
 - The Unity development GM window follows GMPanel, GMCtrl and GmMgr. The original string fields args and result_msg pass through Gate to RpcC2G_GSLocalGMCmd and CMDManager.RunGMCommond on the authenticated online role. The local protocol number is 11600. Set LYF_GM_ACCOUNTS to comma-separated database account IDs before starting GameServer.
 - Implemented addbuff/delbuff, item add/remove, additem, signed numeric item shorthand, addmoney/submoney, baselevel, addexp and help. Buffs use the current role as source and firer. Item and currency changes use the inventory. Character level and experience use the existing versioned save. A list of changed files, examples and Git receipts are in `项目修改日志/2026-11-26-RO游戏内GM移植.md`.
+
+## [CODE][FILES][邮箱][MAIL-GIFT-20261126] RO friend gift mail from the bag
+
+- The bag opens GiftPanel through MainView. Select items by stack UID and count and send them to a saved same-realm contact. Enter the exact character name to add an offline or online friend. Incoming contacts can be added back. The server permits outgoing gifts to contacts the sender added.
+- GiftTable contains item 7301 and fragments 7311–7342. Bound and time-limited stacks are excluded. The Center transaction saves the sender's bag and the recipient's mail together. RO template 4001 uses the sender's name, a three-day lifetime and bound attachments claimed through the existing inbox. Full file list and Git receipt: \`项目修改日志/RO好友赠礼邮件-2026-11-26.md\`.
