@@ -978,6 +978,7 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 - Live coordinates, heading and nearby actor markers use the scene projection. Drag, wheel zoom and landmark search work in the regional view. Clicking the local map uses the player's existing navigation and stop flow. A remote region opens for browsing. Main sources and screenshots are listed in `项目修改日志/2026-11-25-RO小地图与世界地图.md`.
 - The world title, city strips and search, close and map-mode controls use the existing RO parchment, brass motifs and the project's FlyFlowerSong font in `AreaMapWindow.prefab`. The controls sit inside the illustrated border. The search directory shares the ink-and-paper palette.
 - The Sky City castle is centered on the supplied northeastern coastal crop, at pixel (1354.32, 232.84) in the 2048×1024 artwork. The shared marker anchor (0.66129, 0.701324) carries the castle, label, location crystal and click target.
+- The round HUD uses independent 1024-pixel terrain images, an RO compass arrow and chevrons from the actual walking path. Its channel button is back at the upper left, outside the map. The list opens below the button with an RO checkmark on the current line. Selecting a new line uses the existing server flow. On both maps, clicking the red portal marker starts walking to the gate. Entering the ground-level gate transfers between Main City (X 62.15, Z 93.67) and Sky City (X 0, Z -52.7). Arrival is outside the return trigger.
 
 ## [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal
 

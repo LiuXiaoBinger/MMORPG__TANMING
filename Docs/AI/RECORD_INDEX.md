@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `e96b5696e5be2bd3e9d9b164527eff9aa5cb1ab41a1128b5227e304c79bac9ad`
+Source normalized SHA256: `85e9f3f135a440207d49f728fe01d0011f334691b241052e78da6002a764f432`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -141,15 +141,15 @@ Source normalized SHA256: `e96b5696e5be2bd3e9d9b164527eff9aa5cb1ab41a1128b5227e3
 | [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 958-961 |
 | [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 962-968 |
 | [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 969-974 |
-| [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 975-981 |
-| [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 982-986 |
-| [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes | 987-991 |
-| [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves | 992-997 |
-| [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload | 998-1000 |
+| [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 975-982 |
+| [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 983-987 |
+| [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes | 988-992 |
+| [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves | 993-998 |
+| [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload | 999-1001 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `5580755fd747c080d389855a8a87e61e3e5419e4b97a3d3660d82dedefcf9570`
+Source normalized SHA256: `c269566d1c6cb899dc31333ccf4ee14e4587e250b33c729a0e37a99553a8a9d8`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -282,12 +282,12 @@ Source normalized SHA256: `5580755fd747c080d389855a8a87e61e3e5419e4b97a3d3660d82
 | [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 989-993 |
 | [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 994-1001 |
 | [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 1002-1007 |
-| [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1008-1014 |
-| [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1015-1019 |
-| [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1020-1024 |
-| [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf | 1025-1029 |
-| [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload | 1030-1033 |
-| [VERIFY][交易][STALL-REALM1-LIVE-20261126] One authenticated, partially filled stall order on running realm 1 | 1034-1039 |
+| [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1008-1015 |
+| [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1016-1020 |
+| [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1021-1025 |
+| [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf | 1026-1030 |
+| [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload | 1031-1034 |
+| [VERIFY][交易][STALL-REALM1-LIVE-20261126] One authenticated, partially filled stall order on running realm 1 | 1035-1040 |
 
 ## Docs/AI/DECISIONS.en.md
 
