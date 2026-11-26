@@ -139,6 +139,9 @@ namespace GateServer
             server.RegistCommand(StallCode.Browse, stall);
             server.RegistCommand(StallCode.StallSellItemCancel, stall);
             server.RegistCommand(StallCode.Deal,stall);
+            // 城际传送在区服模式走调度，单游戏服沿原业务链路请求并回包。
+            server.RegistCommand(SceneLineCode.Portal, gateMoveCtrl);
+            if (router == null) client.RegistCommand(SceneLineCode.Portal, gateMoveCtrl);
             if (router != null)
             {
                 server.RegistCommand(SceneLineCode.List, gateMoveCtrl);

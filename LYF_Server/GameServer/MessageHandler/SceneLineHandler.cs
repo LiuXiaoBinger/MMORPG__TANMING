@@ -86,10 +86,11 @@ public sealed class SceneLineHandler : IGameMessageHandler
             RoleManager.Instance.RemoveOnlineRole((int)role.GetID());
             return;
         }
-        // 玩家发起的切线仅允许在同一张公共地图内进行。
+        // 同地图沿用切线流程，跨城时必须站在通往目标地图的实际传送门。
         PublicSceneLine target = PublicSceneLine.Parser.ParseFrom(packet.Data);
-        if (role.mainRoleInfo.BaseInfo.InstanceId != 0 || target.MapId != role.mainRoleInfo.BaseInfo.MapId ||
-            !role.IsRoleDataReady())
+        if (target.MapId != role.mainRoleInfo.BaseInfo.MapId && !CityPortalHandler.CanEnter(role, target.MapId))
+        { role.SendToClient(SceneLineCode.Depart, ByteString.Empty); return; }
+        if (role.mainRoleInfo.BaseInfo.InstanceId != 0 || !role.IsRoleDataReady())
         { role.SendToClient(SceneLineCode.Depart, ByteString.Empty); return; }
         if (role.GetComponent<StateMachineComponent>().GetCurrentState() != StateDefine.kStateDefault ||
             role.ShieldRemaining > 0 || role.mainRoleInfo.BaseInfo.CurrHp <= 0)
@@ -98,6 +99,7 @@ public sealed class SceneLineHandler : IGameMessageHandler
         {
             RoleManager.Instance.LeavePublicScene(role);
             LeaveScene(role);
+            CityPortalHandler.PlaceArrival(role.mainRoleInfo.BaseInfo, target.MapId);
             role.PublicScene = target;
             JoinScene(role);
             FinishArrival(role);
@@ -133,6 +135,7 @@ public sealed class SceneLineHandler : IGameMessageHandler
             // 此时背包、技能与次数版本均已获得现有中心服写入确认。
             SceneRoleTransfer transfer = new SceneRoleTransfer { Role = role.mainRoleInfo.Clone(),
                 Scene = active.leaving[role], ChangingLine = true };
+            CityPortalHandler.PlaceArrival(transfer.Role.BaseInfo, transfer.Scene.MapId);
             role.GetComponent<RoleSkillComponent>().ExportSceneCooldowns(transfer);
             RoleManager.Instance.LeavePublicScene(role);
             LeaveScene(role);

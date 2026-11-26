@@ -38,6 +38,8 @@ internal sealed class RealmGameLink : NetClient
         internal bool Switching;
         /// <summary>由已确认的副本请求引发的迁移，不占用玩家手动切线的应答。</summary>
         internal bool Gathering;
+        /// <summary>当前场景名额由门发起，失败回执应送往传送入口。</summary>
+        internal bool UsingPortal;
         /// <summary>登录、建角和开始游戏的中心服在途请求号。</summary>
         internal int LoginRequest;
         /// <summary>客户端刚收到的权威副本实例，零表示可以切公共场景。</summary>
@@ -212,6 +214,16 @@ internal sealed class RealmGameLink : NetClient
                 return MarketUnavailable(id, query);
             }
             if (player.Current == null) return Error(id);
+            if (packet.ProtoCode == SceneLineCode.Portal)
+            {
+                // 客户端只申请使用脚下的门，目标城市由当前区服位置决定。
+                PublicCityPortal portal = PublicCityPortal.Find(player.Current.MapId);
+                if (portal == null || player.Dungeon != 0 || player.Switching)
+                    return LineResult(id, SceneLineCode.Portal, "当前无法使用传送门。");
+                player.Switching = Control(id, player, SceneLineCode.Allocate, 0, -1, portal.Destination.MapId);
+                player.UsingPortal = player.Switching;
+                return player.Switching;
+            }
             if (packet.ProtoCode == SceneLineCode.List || packet.ProtoCode == SceneLineCode.Change)
             {
                 // 副本入场、出场通知已由真实宿主提供实例号。
@@ -268,7 +280,15 @@ internal sealed class RealmGameLink : NetClient
                 }
                 else
                 {
-                    if (!player.Gathering) LineResult(id, SceneLineCode.Change, string.Empty, player.Current.LineId);
+                    if (player.UsingPortal)
+                    {
+                        // 正式接管后才通知客户端加载目的城市。
+                        SceneLineResult arrived = new SceneLineResult { CurrentLine = player.Current.LineId };
+                        arrived.Lines.Add(player.Current);
+                        SessionMgr.Instance.GetSession(id)?.Send(SceneLineCode.Portal, arrived.ToByteString());
+                        player.UsingPortal = false;
+                    }
+                    else if (!player.Gathering) LineResult(id, SceneLineCode.Change, string.Empty, player.Current.LineId);
                     LineResult(id, SceneLineCode.State, string.Empty, player.Current.LineId);
                 }
                 player.Gathering = false;
@@ -373,12 +393,14 @@ internal sealed class RealmGameLink : NetClient
     /// <param name="id">玩家会话。</param><param name="player">已选角色。</param>
     /// <param name="code">调度命令。</param><param name="line">申请的线路，零表示自动。</param>
     /// <param name="host">组队集结要求的目标 GS，负数表示自动分配。</param>
-    private bool Control(int id, Player player, int code, int line, int host = -1)
+    /// <param name="destinationMap">城际预留的目标地图，负数时沿用当前地图。</param>
+    private bool Control(int id, Player player, int code, int line, int host = -1, int destinationMap = -1)
     {
         // 初次选用存档中的地图，以后依据当前宿主确认的场景。
         int map = 0;
         if (player.Login != null) map = player.Login.MainRoleInfo.BaseInfo.MapId;
         else if (player.Current != null) map = player.Current.MapId;
+        if (destinationMap >= 0) map = destinationMap;
         if (control.Ready && control.Send(id, code, new SceneRouteRequest { RoleId = player.Role,
             MapId = map, LineId = line, RequireGame = host >= 0, GameId = host }.ToByteString())) return true;
         return Error(id);
@@ -393,6 +415,11 @@ internal sealed class RealmGameLink : NetClient
         player.Switching = false;
         player.Gathering = false;
         if (player.Login != null) { player.Login = null; Error(id); }
+        else if (player.UsingPortal)
+        {
+            player.UsingPortal = false;
+            LineResult(id, SceneLineCode.Portal, reason);
+        }
         else LineResult(id, SceneLineCode.Change, reason);
     }
 

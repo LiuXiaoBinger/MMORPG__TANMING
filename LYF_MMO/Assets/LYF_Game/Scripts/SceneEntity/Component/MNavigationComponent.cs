@@ -63,6 +63,16 @@ public class MNavigationComponent : EntityComponentBase
 
     /// <summary>当前完整可达路线的末点，世界单位为米。</summary>
     public Vector3 Destination { get { return _destination; } }
+
+    /// <summary>将尚未走过的真实转折点复制到小地图复用的列表，路线中止时返回空表。</summary>
+    /// <param name="points">调用方复用的世界坐标列表，按移动顺序排列。</param>
+    public void CopyRemainingWaypoints(List<Vector3> points)
+    {
+        points.Clear();
+        if (!_isNavigation) return;
+        for (int index = _currentPathIdx; index < _pathPoints.Count; index++)
+            points.Add(_pathPoints[index]);
+    }
     #endregion
 
     #region 构造、初始化与事件注册

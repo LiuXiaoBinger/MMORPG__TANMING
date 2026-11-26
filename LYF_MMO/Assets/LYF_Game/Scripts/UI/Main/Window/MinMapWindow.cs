@@ -35,8 +35,22 @@ public class MinMapWindow : WindowBase
    public event System.Action RegionRequested;
    /// <summary>地图中央的透明热区，与原有缩放和切线按钮独立。</summary>
    [SerializeField] private Button _openRegion;
-   /// <summary>两种地图共用的区域目录预制体，提供同一张可行走道路图。</summary>
-   [SerializeField] private AreaMapWindow _atlas;
+   /// <summary>位于地图真实位置的城际传送标记。</summary>
+   [SerializeField] private Button _portalMark;
+   /// <summary>RO 寻路方向标的预制样板。</summary>
+   [SerializeField] private Image _routeTemplate;
+   /// <summary>当前路径终点的 RO 定位针。</summary>
+   [SerializeField] private Image _routeGoal;
+   /// <summary>羊皮纸地图名下单独显示坐标。</summary>
+   [SerializeField] private TMP_Text _positionText;
+   /// <summary>本场景显示在底图上的门；副本中为空。</summary>
+   private PublicCityPortal _portal;
+   /// <summary>城门在当前底图上的归一化坐标，缩放时按画布像素重算。</summary>
+   private Vector2 _portalPoint;
+   /// <summary>当前窗口拥有的可复用路径标记。</summary>
+   private MinimapRouteTrail _route;
+   /// <summary>玩家点选城门，希望当前角色步行到此处。</summary>
+   public event System.Action<Vector3> PortalSelected;
    /// <summary>当前小地图底图宽高比，用来让矩形区域图在 HUD 中保持等比例。</summary>
    private float _mapAspect = 1f;
    /// <summary>常驻地图上的场景名和主角实时坐标。</summary>
@@ -47,8 +61,8 @@ public class MinMapWindow : WindowBase
    private MapEntityMarkers _markers;
    /// <summary>下次更新附近实体的未缩放时间，单位秒。</summary>
    private float _refreshAt;
-   /// <summary>进入区域时生成一次的坐标格式，避免跟随箭头时每帧拼接地名。</summary>
-   private string _coordinateFormat;
+   /// <summary>羊皮标题下的世界 X、Z 坐标格式，按整米显示。</summary>
+   private const string CoordinateFormat = "{0} , {1}";
    /// <summary>当前本地玩家实体；模型异步加载完成后从实体中读取真实 Transform。</summary>
    private PlayerEntity _mainRole;
 
@@ -68,6 +82,8 @@ public class MinMapWindow : WindowBase
       _mapsize = _imgMinMap.rectTransform.rect.height;
       _openRegion.onClick.AddListener(OpenRegion);
       _markers = new MapEntityMarkers(_entityTemplate);
+      _route = new MinimapRouteTrail(_routeTemplate);
+      _portalMark.onClick.AddListener(SelectPortal);
       SceneManager.sceneLoaded += OnSceneLoaded;
       BindSceneMap();
 
@@ -87,6 +103,11 @@ public class MinMapWindow : WindowBase
          SceneWorldSystem world = null;
          if (Global.Instance != null) world = Global.Instance.SceneWorld;
          _markers.Refresh(_mapHelp, world, _mapAspect);
+         _route.Refresh(_mainRole, _mapHelp, _mapsize, ((RectTransform)_imgMinMap.transform.parent).rect.height * 0.5f);
+         // 终点单独绘制，停止或走完后与路线一并消失。
+         bool navigating = _mainRole != null && _mainRole.NavComp != null && _mainRole.NavComp.IsNavigation;
+         _routeGoal.gameObject.SetActive(navigating);
+         if (navigating) MinMapHelp.Place(_routeGoal.rectTransform, _mapHelp.WorldToMap(_mainRole.NavComp.Destination), _mapAspect);
       }
       if (_mainRole != null && _mainRole.Model != null &&
           _mainRole.Model.GameObject != null)
@@ -99,10 +120,20 @@ public class MinMapWindow : WindowBase
          }
          // 角色保持在圆心，底图与活动图标一起向相反方向平移。
          Vector3 position = roleTransform.position;
-         _imgMinMap.rectTransform.anchoredPosition = -_mapHelp.WorldToMap(position) * _mapsize;
-         _mapCaption.SetText(_coordinateFormat, Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
-         // 角色绕 Y 轴的朝向转成 UI 绕 Z 轴旋转，并补偿底图的 90 度方向差。
-         _imgArrow.transform.localEulerAngles = new Vector3(0,0,360-roleTransform.localEulerAngles.y+90);
+         // 角色距制图中心的像素偏移，每帧只进行一次投影。
+         Vector2 playerPoint = _mapHelp.WorldToMap(position) * _mapsize;
+         _imgMinMap.rectTransform.anchoredPosition = -playerPoint;
+         if (_portal != null)
+         {
+            // 门在视野外时停在对应方向的圆边，点击仍会前往真实门心。
+            RectTransform marker = (RectTransform)_portalMark.transform;
+            float radius = ((RectTransform)_imgMinMap.transform.parent).rect.height * 0.5f - marker.rect.width * 0.5f;
+            marker.anchoredPosition = playerPoint + Vector2.ClampMagnitude(_portalPoint * _mapsize - playerPoint, radius);
+         }
+         _positionText.SetText(CoordinateFormat, Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
+         // RO 图标默认朝左，地图框的实际北向决定屏幕旋转角，箭头尖端固定在角色位置。
+         Vector3 facing = _mapHelp.transform.parent.InverseTransformDirection(roleTransform.forward);
+         _imgArrow.rectTransform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(facing.z, facing.x) * Mathf.Rad2Deg - 180f);
       }
    }
 
@@ -111,12 +142,19 @@ public class MinMapWindow : WindowBase
    {
       if (_lineSelector != null) _lineSelector.onValueChanged.RemoveListener(SelectLine);
       if (_openRegion != null) _openRegion.onClick.RemoveListener(OpenRegion);
+      if (_portalMark != null) _portalMark.onClick.RemoveListener(SelectPortal);
       SceneManager.sceneLoaded -= OnSceneLoaded;
    }
    #endregion
 
    #region 交互响应
    /// <summary>仅点圆形地图时打开区域图，原有切线控件继续独立响应。</summary>
+   /// <summary>把当前城门的世界位置交给主界面控制器寻路。</summary>
+   private void SelectPortal()
+   {
+      if (_portal != null) PortalSelected?.Invoke(new Vector3(_portal.X, _portal.Y, _portal.Z));
+   }
+
    private void OpenRegion()
    {
       RegionRequested?.Invoke();
@@ -204,11 +242,17 @@ public class MinMapWindow : WindowBase
       {
          // 按场景切图，同时保留玩家设置的缩放倍率。
          _mapCaption.text = _mapHelp.AreaName;
-         _coordinateFormat = _mapHelp.AreaName + " ({0}, {1})";
-         _imgMinMap.sprite = _atlas.TerrainForScene(_mapHelp.gameObject.scene.name);
-         if (_imgMinMap.sprite == null) _imgMinMap.sprite = _mapHelp.MapSprite;
+         _imgMinMap.sprite = _mapHelp.MapSprite;
          if (_imgMinMap.sprite == null) _imgMinMap.sprite = _defaultMapSprite;
          _mapAspect = _imgMinMap.sprite.rect.width / _imgMinMap.sprite.rect.height;
+         _portal = MinMapHelp.CityPortal(_mapHelp.gameObject.scene.name);
+         _portalMark.gameObject.SetActive(_portal != null);
+         if (_portal != null)
+         {
+            // 与场景特效、服务端触发范围使用同一门心。
+            Vector3 center = new Vector3(_portal.X, _portal.Y, _portal.Z);
+            _portalPoint = _mapHelp.WorldToMap(center);
+         }
          _imgMinMap.rectTransform.sizeDelta = new Vector2(_mapsize * _mapAspect, _mapsize);
       }
       gameObject.SetActive(_mapHelp != null);

@@ -31,4 +31,6 @@ public static class SceneLineCode
     public const ushort RealmOnline = 11313;
     /// <summary>网关撤下当前连接登记的区服入口。</summary>
     public const ushort RealmOffline = 11314;
+    /// <summary>走入公共城市传送门，服务端回送已进入的场景或拒绝原因。</summary>
+    public const ushort Portal = 11315;
 }

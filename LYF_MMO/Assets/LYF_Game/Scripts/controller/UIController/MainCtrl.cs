@@ -69,6 +69,7 @@ public class MainCtrl : CtrlBase
         if (_mainView.MinMapWindow != null)
         {
             _mainView.MinMapWindow.LineSelected += SelectSceneLine;
+            _mainView.MinMapWindow.PortalSelected += NavigateCityPortal;
             _mainView.MinMapWindow.RegionRequested += OpenAreaMap;
         }
         if (_mainView.AreaMap != null)
@@ -88,6 +89,7 @@ public class MainCtrl : CtrlBase
         }
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.List, OnSceneLineList);
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.Change, OnSceneLineChanged);
+        SocketDispatcher.Instance.AddEventHandler(SceneLineCode.Portal, OnCityPortal);
         _shopCtrl = new ShopCtrl(_mainView);
         _skillCtrl = new SkillCtrl(_mainView);
         _roleInfoCtrl = new RoleInfoCtrl(_mainView);
@@ -194,6 +196,7 @@ public class MainCtrl : CtrlBase
         if (_mainView != null && _mainView.MinMapWindow != null)
         {
             _mainView.MinMapWindow.LineSelected -= SelectSceneLine;
+            _mainView.MinMapWindow.PortalSelected -= NavigateCityPortal;
             _mainView.MinMapWindow.RegionRequested -= OpenAreaMap;
         }
         if (_mainView != null && _mainView.AreaMap != null)
@@ -213,6 +216,7 @@ public class MainCtrl : CtrlBase
         }
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.List, OnSceneLineList);
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.Change, OnSceneLineChanged);
+        SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.Portal, OnCityPortal);
         _yimengChatCtrl?.Dispose();
         _dungeonFlowCtrl?.Dispose();
         _mainView.FunctionMenuButton.onClick.RemoveListener(OnFunctionMenuRequested);
@@ -792,6 +796,38 @@ public class MainCtrl : CtrlBase
         // 由移动组件切回待机，与键盘中止寻路的行为一致。
         PlayerEntity role = Global.Instance.SceneWorld.LocalRole;
         if (role != null && role.NavComp != null) role.NavComp.Interrupt();
+    }
+
+    /// <summary>点击传送标记后沿实际场景导航走到门心，触碰时再传送。</summary>
+    /// <param name="point">传送门在导航平台上的世界坐标。</param>
+    private void NavigateCityPortal(Vector3 point)
+    {
+        // 这里已知门所在楼层，不从空中向下射线，避免选中上一层屋顶。
+        PlayerEntity role = Global.Instance.SceneWorld.LocalRole;
+        if (role == null) return;
+        role.DispatchEvent(MEventType.MEvent_Navigation, MNavigationEventArgs.Create(point));
+    }
+
+    /// <summary>收到游戏服正式接管的城市后，用现有场景加载器携带本地角色进城。</summary>
+    /// <param name="data">包含目的地图与线路的成功回执，或本次拒绝原因。</param>
+    private void OnCityPortal(ByteString data)
+    {
+        // 地图编号由实际接管玩家的区服返回。
+        SceneLineResult result = SceneLineResult.Parser.ParseFrom(data);
+        if (result.Reason.Length > 0)
+        {
+            TipsMgr.Instance.ShowSystemTips(result.Reason);
+            return;
+        }
+        if (result.Lines.Count == 0) return;
+        // 服务端确认的目的地图及将由场景加载器携带的常驻玩家。
+        int mapId = result.Lines[0].MapId;
+        PlayerEntity role = Global.Instance.SceneWorld.LocalRole;
+        role.BaseInfo.MapId = mapId;
+        // 复用创角进城时的地图编号对应关系。
+        SceneType destination = SceneType.Scene_MainCity;
+        if (mapId == PublicCityPortal.Sky.MapId) destination = SceneType.Scene_SkyCity;
+        SceneMgr.Instance.LoadSceneMode(destination);
     }
 
     /// <summary>从小地图提交所选线路；地图和角色归属由区服确定。</summary><param name="line">目标线路编号。</param>

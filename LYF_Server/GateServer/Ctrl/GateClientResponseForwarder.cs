@@ -143,6 +143,10 @@ public static class GateClientResponseForwarder
                 // 直接校验复活结果类型，再按原会话和原始载荷转给客户端。
                 RoleReviveRet.Parser.ParseFrom(package.Data);
                 return true;
+            case SceneLineCode.Portal:
+                // 单服沿公共网关回送目标城市，拒绝原因由传送入口展示。
+                SceneLineResult.Parser.ParseFrom(package.Data);
+                return true;
             case NetDefine.CMD_SyncMoveCode:
             case NetDefine.CMD_MovePositionCorrectionCode:
                 // 附近状态和本人纠正复用移动消息载荷，按网关会话转发。

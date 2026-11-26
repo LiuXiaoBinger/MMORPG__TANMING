@@ -129,6 +129,7 @@
     <Compile Include="Socket\com\StallCode.cs" />
     <Compile Include="Socket\com\RealmTopology.cs" />
     <Compile Include="Socket\com\SceneLineCode.cs" />
+    <Compile Include="Socket\com\PublicCityPortal.cs" />
     <Compile Include="Proto\MasterTeam.cs" />
     <Compile Include="Proto\PbcDungeon.cs" />
     <Compile Include="Proto\PbcChat.cs" />

@@ -59,6 +59,15 @@ public class MinMapHelp : MonoBehaviour
    }
 
    /// <summary>组件加载时把自身写入静态单例，便于全局取用小地图节点。</summary>
+   /// <summary>按实际 Unity 场景对应公共城市；独立副本没有城际传送门。</summary>
+   /// <param name="sceneName">当前已加载的场景资源名。</param>
+   public static PublicCityPortal CityPortal(string sceneName)
+   {
+      if (sceneName == "天空中之城") return PublicCityPortal.Sky;
+      if (sceneName == "Scene_MainCity") return PublicCityPortal.Town;
+      return null;
+   }
+
    private void Awake()
    {
       instance = this;

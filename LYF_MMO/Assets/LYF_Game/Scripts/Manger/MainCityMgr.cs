@@ -17,6 +17,11 @@ public class MainCityMgr : MonoBehaviour
    /// <summary>天空中之城和副本中角色可低于本场景出生点的最大距离，单位米。</summary>
    private const float FallResetDistance = 100f;
 
+   /// <summary>当前公共城的传送入口，独立副本为空。</summary>
+   private PublicCityPortal _cityPortal;
+   /// <summary>上帧是否站在入口内，每次走入只发送一次申请。</summary>
+   private bool _insideCityPortal;
+
    /// <summary>主城管理器单例。</summary>
    public static MainCityMgr Instance;
 
@@ -78,6 +83,7 @@ public class MainCityMgr : MonoBehaviour
    {
       TrySubscribeLocalRoleLoad();
       TryCreateCurrentLocalRole();
+      CreateCityPortal();
       // 正式进城前 Global 已完成配置和实体世界初始化，复用同物体上的 NPC 管理器。
       // 场景上有 NpcManager 才创建 NPC；魔神塔没有配置城市 NPC 管理器。
       if (TryGetComponent<NpcManager>(out NpcManager npcManager))
@@ -92,6 +98,34 @@ public class MainCityMgr : MonoBehaviour
       TrySubscribeLocalRoleLoad();
       TryCreateCurrentLocalRole();
       RecoverFallenLocalRole();
+      CheckCityPortal();
+   }
+
+   /// <summary>在两座公共城市的导航地面摆放项目自带的 RO 传送阵。</summary>
+   private void CreateCityPortal()
+   {
+      _cityPortal = MinMapHelp.CityPortal(gameObject.scene.name);
+      if (_cityPortal != null)
+      {
+         // 复用项目已导入的 RO 常驻传送阵，挂在当前场景下随场景一起卸载。
+         GameObject effect = Resources.Load<GameObject>("Dungeons/Moshenta/MoshentaPortal");
+         Vector3 center = new Vector3(_cityPortal.X, _cityPortal.Y, _cityPortal.Z);
+         GameObject gate = Instantiate(effect, center, Quaternion.identity);
+         UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(gate, gameObject.scene);
+      }
+   }
+
+   /// <summary>本地角色实际走进门圈后发起传送，切场由服务器回执驱动。</summary>
+   private void CheckCityPortal()
+   {
+      if (_cityPortal == null) return;
+      // 旧场景的常驻模型可能正在迁移，使用本场景已放置的真实角色。
+      PlayerEntity role = Global.Instance?.SceneWorld?.LocalRole;
+      if (role == null || !role.Model.IsLoaded || role.UID != _localRoleCreateRequestedUid) return;
+      Vector3 position = role.Position;
+      bool inside = _cityPortal.Contains(position.x, position.y, position.z, 2.5f);
+      if (inside && !_insideCityPortal) MNetClient.Instance.Send(SceneLineCode.Portal, ByteString.Empty);
+      _insideCityPortal = inside;
    }
 
    /// <summary>在天空中之城和副本中检查本地主角的下落高度，越界后复用场景出生定位。</summary>

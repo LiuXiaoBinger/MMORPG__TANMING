@@ -371,6 +371,9 @@ public static class GameMessageProtocolRegister
         }
 
         ClientMessageManager messageManager = ClientMessageManager.Instance;
+        server.RegistCommand(SceneLineCode.Portal, messageManager);
+        RegisterHandler(messageManager, GameCommandSource.GateServer, SceneLineCode.Portal,
+            new CityPortalHandler(), CenterMessageRoute.Internal);
         TeamMessageHandler.Register(server, messageManager);
         ChatMessageHandler.Register(server, messageManager);
         IGameMessageHandler loginGameServerHandler = new LoginGameServerHandler();
