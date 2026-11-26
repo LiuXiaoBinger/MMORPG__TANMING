@@ -17,10 +17,11 @@ public sealed class MinimapRouteTrail
     /// <summary>绑定随窗口销毁的图标样板。</summary><param name="template">默认隐藏的橙色箭头。</param>
     public MinimapRouteTrail(Image template) { _template = template; }
 
-    /// <summary>裁去圆形视口外的方向标，转角处延续前一段未走完的间距。</summary>
+    /// <summary>只在可见扇区内放置方向标，转角处延续前一段未走完的间距。</summary>
     /// <param name="role">当前追踪玩家。</param><param name="map">地图世界坐标投影。</param>
-    /// <param name="scale">底图每个归一化纵向单位对应的画布像素。</param><param name="radius">圆形视口半径。</param>
-    public void Refresh(PlayerEntity role, MinMapHelp map, float scale, float radius)
+    /// <param name="scale">底图每个归一化纵向单位对应的画布像素。</param>
+    /// <param name="viewport">小地图实际显示的扇形遮罩。</param><param name="focus">玩家箭头在遮罩平面内的固定位置。</param>
+    public void Refresh(PlayerEntity role, MinMapHelp map, float scale, MinimapCompassRim viewport, Vector2 focus)
     {
         // 已使用的图标数量；本帧多出的旧图标统一隐藏。
         int used = 0;
@@ -28,7 +29,7 @@ public sealed class MinimapRouteTrail
         if (role != null && role.NavComp != null) role.NavComp.CopyRemainingWaypoints(_points);
         if (_points.Count > 0)
         {
-            // 画布局部坐标以制图中心为零，角色始终处于视口中心。
+            // 地图投影以制图中心为零，减去角色坐标后再平移至扇区跟踪点。
             Vector2 origin = map.WorldToMap(role.Position) * scale;
             Vector2 start = origin;
             float next = Spacing;
@@ -44,7 +45,7 @@ public sealed class MinimapRouteTrail
                 {
                     // 标记落在真实折线上，只为当前能看到的范围取出样板。
                     Vector2 point = start + direction * next;
-                    if ((point - origin).sqrMagnitude <= radius * radius)
+                    if (viewport.ContainsPoint(focus + (point - origin)))
                     {
                         if (used == _marks.Count) _marks.Add(Object.Instantiate(_template, _template.transform.parent));
                         Image mark = _marks[used++];

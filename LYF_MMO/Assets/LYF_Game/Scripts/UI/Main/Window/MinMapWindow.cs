@@ -35,6 +35,8 @@ public class MinMapWindow : WindowBase
    }
    /// <summary>小地图底图，通过尺寸和偏移显示角色附近区域。</summary>
    [SerializeField,Header("小地图背景图片")]private Image _imgMinMap;
+   /// <summary>贴在屏幕右上角的扇形可视区，用于裁剪寻路方向标和吸附传送点。</summary>
+   [SerializeField] private MinimapCompassRim _viewport;
 
    /// <summary>本地角色朝向箭头，随角色绕 Y 轴的方向旋转。</summary>
    [SerializeField,Header("小地图箭头图片")]private Image _imgArrow;
@@ -120,7 +122,7 @@ public class MinMapWindow : WindowBase
          SceneWorldSystem world = null;
          if (Global.Instance != null) world = Global.Instance.SceneWorld;
          _markers.Refresh(_mapHelp, world, _mapAspect);
-         _route.Refresh(_mainRole, _mapHelp, _mapsize, ((RectTransform)_imgMinMap.transform.parent).rect.height * 0.5f);
+         _route.Refresh(_mainRole, _mapHelp, _mapsize, _viewport, _imgArrow.rectTransform.localPosition);
          // 终点单独绘制，停止或走完后与路线一并消失。
          bool navigating = _mainRole != null && _mainRole.NavComp != null && _mainRole.NavComp.IsNavigation;
          _routeGoal.gameObject.SetActive(navigating);
@@ -135,7 +137,7 @@ public class MinMapWindow : WindowBase
          {
             return;
          }
-         // 角色保持在圆心，底图与活动图标一起向相反方向平移。
+         // 玩家箭头固定在扇区内部的跟踪点，底图和实体标记随玩家反向平移。
          Vector3 position = roleTransform.position;
          // 角色距制图中心的像素偏移，每帧只进行一次投影。
          Vector2 playerPoint = _mapHelp.WorldToMap(position) * _mapsize;
@@ -144,10 +146,13 @@ public class MinMapWindow : WindowBase
          {
             // 多入口时，复用原来的可点击标记指向最近的门，点选和实际踩门使用同一坐标。
             if (_mapDoors.Count > 1) SelectNearestPortal(position);
-            // 门在视野外时停在对应方向的圆边，点击仍会前往真实门心。
+            // 门在视野外时沿真实方向停在扇区边缘，点击仍会前往门心。
             RectTransform marker = (RectTransform)_portalMark.transform;
-            float radius = ((RectTransform)_imgMinMap.transform.parent).rect.height * 0.5f - marker.rect.width * 0.5f;
-            marker.anchoredPosition = playerPoint + Vector2.ClampMagnitude(_portalPoint * _mapsize - playerPoint, radius);
+            // 预留半条对角线，使可点击的方形标记四角都落在视口内。
+            float padding = marker.rect.size.magnitude * 0.5f;
+            // 门相对玩家的投影位移，缩放后按当前画布像素重算。
+            Vector2 offset = _portalPoint * _mapsize - playerPoint;
+            marker.anchoredPosition = playerPoint + _viewport.ClampMarkerOffset(_imgArrow.rectTransform.localPosition, offset, padding);
          }
          _positionText.SetText(CoordinateFormat, Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
          // RO 图标默认朝左，地图框的实际北向决定屏幕旋转角，箭头尖端固定在角色位置。
