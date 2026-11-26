@@ -45,8 +45,10 @@ public static class GeneEquipmentTests
     /// <summary>用真实事务穿四个不同部位，验证同名等级封顶和实例词条独立累计。</summary>
     private static void VerifyEquipmentAndResources()
     {
-        // 正式配置列表，用第一件的职业选择兼容的四个部位。
+        // 正式装备中按职业和特技允许部位选取样本。
         List<cfg.EquipInfo> rows = new List<cfg.EquipInfo>(LubanMgr.Instance.GetEquipInfos().Values);
+        // 疗伤圣手、血殇与神力·外使用相同四个部位，存档里的其他部位不能凑齐等级。
+        int allowedParts = LubanMgr.Instance.GetEquipSpecialSkillInfo(101).AllowedEquipTypeMask;
         // 测试角色有明确裸属性，任何穿脱都不能写回这些基础数值。
         OnlineRole role = CreateRole(rows[0].Job, 93001);
         // 真实在线装备模块，包含实际生命周期注册的 GeneRuntime。
@@ -65,13 +67,15 @@ public static class GeneEquipmentTests
             // 当前真实装备候选，职业不兼容时不参与测试。
             cfg.EquipInfo row = rows[i];
             if (row.Job != 0 && row.Job != rows[0].Job) continue;
+            if (!EquipBase.IsSpecialSkillPartAllowed(allowedParts, row.EquipType)) continue;
             if (!slots.Add(row.EquipType)) continue;
             // 由正式发放入口生成装备，只在测试实例上设置特技与重复词条。
             EquipBase item = (EquipBase)items.AddItem(row.ItemTypeId, 1, new ChangeReason(ItemChangeReason.ITEM_REASON_NONE),
                 ItemSign.IsNoSign, 0, 0, Server::UpdateType.eUT_Normal, new IdipParam());
+            item.OpenedSpecialSkillCount = 3;
             item.SpecialSkillId0 = 1;
             item.SpecialSkillId1 = 4;
-            item.SpecialSkillId2 = 5;
+            item.SpecialSkillId2 = 16;
             item.ActiveSpecialSkillIndex = 0;
             item.GeneID0 = 3;
             item.GeneValue0 = 20;
@@ -80,6 +84,11 @@ public static class GeneEquipmentTests
             item.GeneID2 = 0;
             Check(new BagWearItemTransition(role).WearItem(item.GetItemUID()) == Server::BagTransitionResult.Success, "正式穿戴事务成功");
             worn.Add(item);
+            if (worn.Count == 2)
+            {
+                Equal(1, CountRoots(equipment.Runtime, 81002), "两件装备激活同族只挂一个二级根");
+                Equal(0, CountRoots(equipment.Runtime, 81001), "升二级后撤下一级根");
+            }
             // 新装备贡献两个相同编号的不同槽，不能把后一项覆盖前一项。
             Check(equipment.Runtime.FindGene(3, (ulong)item.GetItemUID(), 7) != null, "第一实例攻击词条已挂载");
             Check(equipment.Runtime.FindGene(3, (ulong)item.GetItemUID(), 8) != null, "第二重复攻击词条独立挂载");
@@ -89,7 +98,7 @@ public static class GeneEquipmentTests
         Equal(16, equipment.CalculateAttribute().HealBonus - role.mainRoleInfo.BaseInfo.HealBonus, "同名四件封顶三级");
         Equal(100, role.mainRoleInfo.BaseInfo.AtkExternalMin, "穿戴未污染裸攻击");
         Equal(1000, role.mainRoleInfo.BaseInfo.MaxHp, "穿戴未污染裸生命上限");
-        Check(CountRoots(equipment.Runtime, 84001) == 0 && CountRoots(equipment.Runtime, 85001) == 0, "另两个保存槽没有启用");
+        Check(CountRoots(equipment.Runtime, 84001) == 0 && CountRoots(equipment.Runtime, 1116010) == 0, "另两个保存槽没有启用");
         // 同一套穿戴重复调用不能把属性叠算或刷新事件实例。
         RoleBaseInfo before = equipment.CalculateAttribute();
         equipment.OnEquipChange();
@@ -112,7 +121,7 @@ public static class GeneEquipmentTests
         // 确认同一特技根对象未被重复 OnEquipChange 替换。
         GeneBase root = equipment.Runtime.FindGene(84001, (ulong)worn[1].GetItemUID(), 104);
         equipment.OnEquipChange();
-        Check(ReferenceEquals(root, equipment.Runtime.FindGene(84001, (ulong)worn[1].GetItemUID(), 104)), "重复变更保留特技运行实例");
+        Check(root != null && ReferenceEquals(root, equipment.Runtime.FindGene(84001, (ulong)worn[1].GetItemUID(), 104)), "重复变更保留特技运行实例");
         role.mainRoleInfo.BaseInfo.CurrHp = 10;
         before = equipment.CalculateAttribute();
         equipment.Trigger(new GeneTriggerArgs(GeneEventType.Kill));
@@ -125,6 +134,19 @@ public static class GeneEquipmentTests
         Equal(before.MaxHp, role.mainRoleInfo.BaseInfo.CurrHp, "当前生命按最终上限裁切");
         Equal(before.MaxMp, role.mainRoleInfo.BaseInfo.CurrMp, "当前法力按最终上限裁切");
         Equal(200, role.mainRoleInfo.BaseInfo.MaxMp, "法力上限仍保存裸值");
+        // 留在装备背包的第一件只选中神力，不贡献角色等级。
+        BagWearItemTransition transition = new BagWearItemTransition(role);
+        Check(transition.SwitchSpecialSkill(worn[0].GetItemUID(), 2) == Server::BagTransitionResult.Success, "背包装备选择神力");
+        Check(transition.SwitchSpecialSkill(worn[1].GetItemUID(), 2) == Server::BagTransitionResult.Success, "第一件穿戴装备激活神力");
+        Equal(1, CountRoots(equipment.Runtime, 1116010), "只计算已穿戴且选中神力的一件");
+        Check(transition.WearItem(worn[0].GetItemUID()) == Server::BagTransitionResult.Success, "穿上已选神力的第二件");
+        Equal(1, CountRoots(equipment.Runtime, 1116020), "两件激活神力外生效一个二级");
+        Equal(0, CountRoots(equipment.Runtime, 1116010), "两件神力不会同时保留一级");
+        Check(transition.SwitchSpecialSkill(worn[0].GetItemUID(), 0) == Server::BagTransitionResult.Success, "第二件切回疗伤圣手");
+        Equal(1, CountRoots(equipment.Runtime, 1116010), "切走一件神力恢复一级");
+        Equal(0, CountRoots(equipment.Runtime, 1116020), "切走一件撤销二级神力");
+        Check(transition.TakeOffItem(worn[1].GetItemUID()) == Server::BagTransitionResult.Success, "卸下剩余激活神力的装备");
+        Equal(0, CountRoots(equipment.Runtime, 1116010), "所有神力均未穿戴激活时卸下特技");
     }
 
     /// <summary>用真实怪物防御、场景生命周期及正式 ChangeHP 验证破甲和击败事件。</summary>
@@ -178,15 +200,17 @@ public static class GeneEquipmentTests
         MethodInfo changeHp = typeof(SceneWaveSpawner).GetMethod("ChangeHP", BindingFlags.Instance | BindingFlags.NonPublic);
         role.GetComponent<RoleEquipComponent>().Runtime.AddGene(84001, 102, null, 0, role.GetID());
         role.GetComponent<RoleEquipComponent>().Runtime.AddGene(85001, 103, null, 0, role.GetID());
+        // 一级血殇按实际生命上限回复 10%，测试角色的已生效加成同样计入上限。
+        int expectedHp = role.mainRoleInfo.BaseInfo.CurrHp + role.AttrComp.MaxHp / 10;
         target.CurrentHp = 1;
         // 仅反射调用边界需要 object[]；业务事件载荷仍为 GeneTriggerArgs。
         changeHp.Invoke(scene, new object[] { new MonsterAttrUpdateNtf(), Vector3.Zero, new Vector2(0, 1), 100, new HashSet<ulong>(), role });
         Equal(0, target.CurrentHp, "正式命中流程扣至零");
-        Equal(600, role.mainRoleInfo.BaseInfo.CurrHp, "真实新死亡触发一次10%回血");
+        Equal(expectedHp, role.mainRoleInfo.BaseInfo.CurrHp, "真实新死亡触发一次10%回血");
         Equal(70, role.mainRoleInfo.BaseInfo.CurrMp, "真实新死亡触发一次10%回蓝");
         // 即使用新的命中集合，已经零血的怪物也不能再次奖励。
         changeHp.Invoke(scene, new object[] { new MonsterAttrUpdateNtf(), Vector3.Zero, new Vector2(0, 1), 100, new HashSet<ulong>(), role });
-        Equal(600, role.mainRoleInfo.BaseInfo.CurrHp, "已死亡目标不重复触发击败回血");
+        Equal(expectedHp, role.mainRoleInfo.BaseInfo.CurrHp, "已死亡目标不重复触发击败回血");
         Equal(70, role.mainRoleInfo.BaseInfo.CurrMp, "已死亡目标不重复触发击败回蓝");
     }
 

@@ -941,24 +941,38 @@ public sealed class KnapsackCtrl : IDisposable
             }
             // 本装备当前选择状态，未穿戴时不作为已生效显示。
             bool selected = equip.ActiveSpecialSkillIndex == index;
-            // 同名已启用装备的真实件数，不对未启用槽进行换装模拟。
-            int pieces = CountWornSpecialSkill(familyId);
-            // 当前族的有效等级配置；没有穿戴时显示一级基础说明。
-            cfg.EquipSpecialSkillInfo skill = ResolveSpecialSkill(familyId, pieces);
+            // 一级行同时提供本族的部位限制，无穿戴时仍可查看基础效果。
+            cfg.EquipSpecialSkillInfo skill = ResolveSpecialSkillLevel(familyId, 1);
             if (skill == null) continue;
+            // 只计入穿在合法部位且选中同族的实例，按件数读取该族的唯一生效等级。
+            int pieces = CountWornSpecialSkill(skill);
+            if (pieces > 1) skill = ResolveSpecialSkill(familyId, pieces);
+            // 旧装备可能保留部位不符的槽位，详情仍可查看该条说明。
+            bool partAllowed = EquipBase.IsSpecialSkillPartAllowed(skill.AllowedEquipTypeMask, equip.EquipType);
             // 当前槽状态说明，详情层保留完整措辞。
             string state = "未启用";
-            if (selected)
-            {
-                state = "已选，未穿戴";
-                if (result.IsWorn) state = "已启用，同名" + pieces + "件";
-            }
             // 标题行只放短状态，窄行内不会被省略号截断而丢掉「未穿戴」。
             string shortState = "未启用";
-            if (selected)
+            // 侧卡同步使用本槽在当前装备上的生效状态。
+            string cardState = "未使用";
+            if (!partAllowed || skill.GeneId == 0)
             {
+                state = "部位不符";
+                if (partAllowed) state = "效果未配置";
+                shortState = state;
+                cardState = state;
+            }
+            else if (selected && result.IsWorn)
+            {
+                state = "已启用，同名" + pieces + "件";
+                shortState = "已启用·" + pieces + "件";
+                cardState = "当前生效";
+            }
+            else if (selected)
+            {
+                state = "已选，未穿戴";
                 shortState = "已选·未穿";
-                if (result.IsWorn) shortState = "已启用·" + pieces + "件";
+                cardState = shortState;
             }
             result.SpecialSkillTexts[index] = skill.Name + " Lv." + skill.Level + "（" + state + "）\n" + skill.Description;
             // 主列表保持视频中的紧凑单行，只有已选槽附带次级状态，完整效果进入侧卡查看。
@@ -968,17 +982,12 @@ public sealed class KnapsackCtrl : IDisposable
                 result.SpecialSkillHeadlines[index] += " <size=12><color=#627E94>（" + shortState + "）</color></size>";
             }
             result.SpecialSkillCardTitles[index] = "特技" + (index + 1) + "：" + skill.Name + " +" + skill.Level + "级";
-            result.SpecialSkillCardStates[index] = "未使用";
-            if (selected)
-            {
-                result.SpecialSkillCardStates[index] = "已选·未穿";
-                if (result.IsWorn) result.SpecialSkillCardStates[index] = "当前生效";
-            }
+            result.SpecialSkillCardStates[index] = cardState;
             // 说明卡按区展示：当前层取真实配置等级，下一层取同族下一等级行，缺失写暂无信息。
             int maxLevel = ResolveSpecialSkillMaxLevel(familyId);
             cfg.EquipSpecialSkillInfo nextSkill = ResolveSpecialSkillLevel(familyId, skill.Level + 1);
             result.SpecialSkillCards[index] = BuildSpecialSkillCard(skill, nextSkill, maxLevel);
-            result.CanActivateSpecialSkill[index] = !selected;
+            result.CanActivateSpecialSkill[index] = !selected && partAllowed;
         }
         // 头部角标只由服务器穿戴状态派生，不根据按钮显隐猜测。
         result.WornBadgeText = "未装备";
@@ -1127,10 +1136,11 @@ public sealed class KnapsackCtrl : IDisposable
         result.SetExpandText = status.ToString();
     }
 
-    /// <summary>只统计当前穿戴栏中启用该特技族的装备件数。</summary>
-    /// <param name="familyId">特技稳定族编号。</param>
-    private int CountWornSpecialSkill(int familyId)
+    /// <summary>统计当前穿戴栏中在允许部位启用同族特技的不同装备。</summary>
+    /// <param name="skill">同族一级配置，提供稳定族号、允许部位与已接入的基因。</param>
+    private int CountWornSpecialSkill(cfg.EquipSpecialSkillInfo skill)
     {
+        if (skill.GeneId == 0) return 0;
         // 当前穿戴装备容器，服务器增量后已经是权威状态。
         RoItemContainer container = _itemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack);
         // 用原装备引用的快照按索引遍历。
@@ -1141,7 +1151,8 @@ public sealed class KnapsackCtrl : IDisposable
         {
             // 当前穿戴条目必须是完整装备实例。
             EquipBase equip = items[index] as EquipBase;
-            if (equip != null && equip.GetActiveSpecialSkillId() == familyId) count++;
+            if (equip == null || equip.GetActiveSpecialSkillId() != skill.SpecialSkillId) continue;
+            if (EquipBase.IsSpecialSkillPartAllowed(skill.AllowedEquipTypeMask, equip.EquipType)) count++;
         }
         return count;
     }
