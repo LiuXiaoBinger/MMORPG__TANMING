@@ -999,3 +999,8 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 ## [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload
 
 - Marked the generated shelf cache in `TradeMarketCatalog.cs` as nonserialized. Opening the stall from the main menu now rebuilds the configured shelves and additional materials after a domain reload. Feature commit `e3a789f`. See `项目修改日志/2026-11-25-交易商城货架重载修复.md`.
+
+## [CODE][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] RO entry routing for the two public cities
+
+- Login takes the first line below the warning in line-number order. City portals prefer the current GS when it has room, then use ordinary map selection. On expanding maps, the all-at-warning fallback takes the lowest occupancy; manual line and required-GS requests enforce capacity. Reservations guide selection; confirmed arrivals trigger expansion. A new scene UID is published only after its host creates the instance and acknowledges it.
+- Realm 1 keeps two permanent lines per city, warning 400, capacity 500, up to eight lines per map. Ordinary host selection defaults to round-robin; mode 2 uses CPU and active scenes. Opening the existing minimap selector fetches the current directory. Configuration: `LYF_Server/区服部署/配置/1区.xml`. Files and receipts: `项目修改日志/2026-11-26-RO进图选线扩线与双城传送.md`.

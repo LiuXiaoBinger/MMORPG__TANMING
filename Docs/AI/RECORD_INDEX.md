@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `85e9f3f135a440207d49f728fe01d0011f334691b241052e78da6002a764f432`
+Source normalized SHA256: `596db632dc6b9f25cb9cd0436b3ba306549abcb5ff86414105a49a14448801c4`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -145,11 +145,12 @@ Source normalized SHA256: `85e9f3f135a440207d49f728fe01d0011f334691b241052e78da6
 | [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 983-987 |
 | [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes | 988-992 |
 | [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves | 993-998 |
-| [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload | 999-1001 |
+| [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload | 999-1002 |
+| [CODE][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] RO entry routing for the two public cities | 1003-1006 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `c269566d1c6cb899dc31333ccf4ee14e4587e250b33c729a0e37a99553a8a9d8`
+Source normalized SHA256: `516f442698e698d397d70ea85ed77ada0e5b3f5014ce4a2b08526dbfe51c0c03`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -287,7 +288,8 @@ Source normalized SHA256: `c269566d1c6cb899dc31333ccf4ee14e4587e250b33c729a0e37a
 | [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1021-1025 |
 | [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf | 1026-1030 |
 | [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload | 1031-1034 |
-| [VERIFY][交易][STALL-REALM1-LIVE-20261126] One authenticated, partially filled stall order on running realm 1 | 1035-1040 |
+| [VERIFY][交易][STALL-REALM1-LIVE-20261126] One authenticated, partially filled stall order on running realm 1 | 1035-1041 |
+| [VERIFY][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] One-realm expansion and live portal travel | 1042-1045 |
 
 ## Docs/AI/DECISIONS.en.md
 
