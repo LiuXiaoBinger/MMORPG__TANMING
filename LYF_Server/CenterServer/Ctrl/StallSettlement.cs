@@ -164,6 +164,7 @@ internal static class StallSettlement
         StallDealArg args = deal.Arg;
         if (args.Action == StallAction.StallSellItem)
         {
+            if (StallCode.IsWorkshopOnly(args.ItemId)) return "宝石和强化石不能在交易所交易。";
             // 首期仅允许材料包内的有效配置，单笔价款符合虚拟钱包接口范围。
             ItemConfigBase config = LubanMgr.Instance.GetItemConfigById(args.ItemId);
             if (config == null || config.ItemMainType != ItemMainType.ItemType_Material)
@@ -192,6 +193,11 @@ internal static class StallSettlement
             return "该挂单正在结算或已失效。";
         if (args.Action != StallAction.StallItemBuy && listing.SellerRoleId != deal.Actor.RoleId)
             return "只能操作自己的挂牌。";
+        // 历史挂单用数据库中的物品编号判断，卖家仍可取回余货和已成交货款。
+        if (args.Action == StallAction.StallItemBuy || args.Action == StallAction.StallReSellItem)
+        {
+            if (StallCode.IsWorkshopOnly(listing.ItemTypeId)) return "宝石和强化石不能在交易所交易。";
+        }
         deal.Offer = Offer(listing);
         switch (args.Action)
         {

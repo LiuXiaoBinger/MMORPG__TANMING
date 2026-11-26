@@ -37,6 +37,8 @@ public sealed class KnapsackCtrl : IDisposable
     private readonly EquipmentDetailWindow _detailWindow;
     /// <summary>展示当前选中装备及五个养成分页的主城子窗口。</summary>
     private readonly EquipmentWorkshopWindow _workshopWindow;
+    /// <summary>珍宝阁商会与工坊共享铜钱余额、宝石购买命令和配额回执。</summary>
+    private readonly TreasurePavilionWindow _pavilionWindow;
     /// <summary>已穿戴装备槽的点击来源。</summary>
     private readonly RoleAttriibuteWindow _equipmentWindow;
     /// <summary>当前详情所选实例的 UID，切换角色时清空。</summary>
@@ -71,6 +73,7 @@ public sealed class KnapsackCtrl : IDisposable
             _mainView = mainView;
             _detailWindow = mainView.EquipmentDetailWindow;
             _workshopWindow = mainView.EquipmentWorkshopWindow;
+            _pavilionWindow = mainView.TreasurePavilionWindow;
             _equipmentWindow = mainView.RoleAttributeWindow;
         }
         Initialize();
@@ -150,6 +153,7 @@ public sealed class KnapsackCtrl : IDisposable
             _workshopWindow.Owned = OwnedGem;
             _workshopWindow.SendTrade = SendGemTrade;
         }
+        if (_pavilionWindow != null) _pavilionWindow.SendGemTrade = SendGemTrade;
 
         PlayerEntity localRole = null;
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
@@ -188,6 +192,7 @@ public sealed class KnapsackCtrl : IDisposable
             _workshopWindow.Owned = null;
             _workshopWindow.SendTrade = null;
         }
+        if (_pavilionWindow != null) _pavilionWindow.SendGemTrade = null;
         if (_itemComponent != null) _itemComponent.KnapsackChangedDetailed -= OnWorkshopStockChanged;
         _itemComponent = null;
         _role = null;
@@ -408,7 +413,7 @@ public sealed class KnapsackCtrl : IDisposable
         if (role != null)
         {
             role.TryGetComponent(out _itemComponent);
-            if (_itemComponent != null && _workshopWindow != null)
+            if (_itemComponent != null && (_workshopWindow != null || _pavilionWindow != null))
                 _itemComponent.KnapsackChangedDetailed += OnWorkshopStockChanged;
         }
         if (_role != null && _role.DirtyTracker != null)
@@ -661,7 +666,11 @@ public sealed class KnapsackCtrl : IDisposable
     /// <param name="change">已完成写入的物品变更，整包同步携带的物品编号为零。</param>
     private void OnWorkshopStockChanged(KnapsackChangedEventArgs change)
     {
-        if (!_workshopWindow.isActiveAndEnabled) return;
+        if (_pavilionWindow != null && _pavilionWindow.isActiveAndEnabled)
+        {
+            if (change.ItemTypeId == CopperItemId || change.ItemTypeId == 0) _pavilionWindow.RefreshWallet();
+        }
+        if (_workshopWindow == null || !_workshopWindow.isActiveAndEnabled) return;
         if (change.ItemTypeId == CopperItemId || change.ItemTypeId == 0)
             _workshopWindow.RenderMoney(_itemComponent.GetVirtualItemCount(CopperItemId), _itemComponent.GetVirtualItemCount(SilverItemId),
                 _itemComponent.GetVirtualItemCount(TicketItemId), _itemComponent.GetVirtualItemCount(YuanbaoItemId));
@@ -689,6 +698,7 @@ public sealed class KnapsackCtrl : IDisposable
     public void ApplyGemTrade(EquipOperationRet reply)
     {
         if (_workshopWindow != null) _workshopWindow.RenderTrade(reply);
+        if (_pavilionWindow != null) _pavilionWindow.RenderGemTrade(reply);
         if (reply.GemMessage.Length > 0) TipsMgr.Instance.ShowSystemTips(reply.GemMessage);
         else if (reply.CmdCode != CmdCode.Succeed) TipsMgr.Instance.ShowSystemTips("宝石操作失败：" + reply.CmdCode);
     }

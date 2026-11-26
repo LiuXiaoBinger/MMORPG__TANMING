@@ -45,9 +45,13 @@ public static class GemWorkshopTrade
     private static string Settle(RoItemComponent items, RoleCountComponent counts, EquipOperationReq req,
         int first, int target, EquipOperationRet reply)
     {
-        // 直接购买只买一颗，合成只接受已开放的二至七级。
+        // 工坊旧版直购不传数量，仍然只买一颗；合成每次也只产出一颗。
         bool buy = req.Operation == EquipOperation.BuyGem;
+        // 本次入包的颗数，同时决定直购扣款额及占用的商品配额。
+        int outputCount = 1;
+        if (buy && req.HasBuyQuantity) outputCount = req.BuyQuantity;
         if (buy && target > EquipmentGemRules.MarketGrades) return "商会只出售1至3级宝石";
+        if (outputCount < 1 || outputCount > EquipmentGemRules.MarketLimit) return "购买数量无效";
         if (!buy && (target < 2 || target > EquipmentGemRules.ComposeCap)) return "该等级尚未开放合成";
         if (!buy && (req.BagGemCounts.Count != EquipmentGemRules.ComposeCap || req.MarketGemCounts.Count != EquipmentGemRules.MarketGrades))
             return "材料清单不完整";
@@ -63,11 +67,13 @@ public static class GemWorkshopTrade
         // 品种相同，不接受与目标同级或更高的材料。
         for (int index = 0; index < EquipmentGemRules.ComposeCap; index++)
         {
-            // 一级在零下标；直接购买通过对应商品档位投入一颗。
+            // 一级在零下标，直购只在目标商品的档位计入所选颗数。
             int grade = index + 1;
+            // 本档从玩家库存中投入的合成材料数量。
             int bag = 0;
+            // 本档从商会购买的颗数。
             int shop = 0;
-            if (buy) { if (grade == target) shop = 1; }
+            if (buy) { if (grade == target) shop = outputCount; }
             else
             {
                 bag = req.BagGemCounts[index];
@@ -77,7 +83,7 @@ public static class GemWorkshopTrade
             // 单笔最高目标七级仅需64份，在乘法前限定不可信数量。
             int max = EquipmentGemRules.Units(EquipmentGemRules.ComposeCap);
             if (bag < 0 || bag > max) return "背包材料数量无效";
-            if (shop < 0 || shop > max) return "商会材料数量无效";
+            if (!buy && (shop < 0 || shop > max)) return "商会材料数量无效";
             if (shop > 0)
             {
                 if (shop > Remaining(counts, first + index)) return "该等级商会宝石已达限购";
@@ -88,7 +94,7 @@ public static class GemWorkshopTrade
             if (bag > 0 && !Reserve(items.GetItemForReduce(first + index, ItemBind.kItemBindIs, -2), bag, debits, ref sign))
                 return "背包中的宝石不足";
         }
-        if (units != EquipmentGemRules.Units(target)) return "选中材料与目标所需份数不符";
+        if (units != EquipmentGemRules.Units(target) * outputCount) return "选中材料与目标所需份数不符";
         // 只从虚拟货币容器扣铜币；货币上的绑定标记不传递给商品。
         ItemSign walletSign = ItemSign.IsNoSign;
         if (copper > 0 && !Reserve(items.GetItemForReduce((int)ItemEnum.ZENY, ItemBind.kItemBindIs,
@@ -98,7 +104,7 @@ public static class GemWorkshopTrade
             return "铜币不足";
         }
         // 允许用本次恰好耗尽的材料格放产物，背包满且合成后仍无格时整笔拒绝。
-        if (!FitsOutput(items, req.GemItemId, sign, debits))
+        if (!FitsOutput(items, req.GemItemId, outputCount, sign, debits))
         {
             reply.CmdCode = CmdCode.BagFull;
             return "背包空间不足";
@@ -112,7 +118,7 @@ public static class GemWorkshopTrade
             if (debit.Key.GetItemCount() == debit.Value) items.DeleteItem(debit.Key.GetItemUID(), reason);
             else items.DeleteItem(debit.Key.GetItemUID(), debit.Value, reason, UpdateType.eUT_Normal);
         }
-        items.AddItem(req.GemItemId, 1, reason, sign, 0, 0L, UpdateType.eUT_Normal, new IdipParam());
+        items.AddItem(req.GemItemId, outputCount, reason, sign, 0, 0L, UpdateType.eUT_Normal, new IdipParam());
         for (int index = 0; index < purchases.Length; index++)
         {
             if (purchases[index] == 0) continue;
@@ -146,29 +152,40 @@ public static class GemWorkshopTrade
         return needed == 0;
     }
 
-    /// <summary>按 AddItem 的容器和绑定规则判断能否放入一颗目标宝石。</summary>
+    /// <summary>按 AddItem 的容器和绑定规则核对整单空间，包含部分空闲的堆叠和将被耗尽的材料格。</summary>
     /// <param name="items">当前角色物品组件。</param>
     /// <param name="id">真实目标宝石编号。</param>
+    /// <param name="quantity">整笔直购或合成需入包的颗数。</param>
     /// <param name="sign">产物绑定状态。</param>
     /// <param name="debits">扣款前已定位的消耗，用于识别即将腾出的格位。</param>
-    private static bool FitsOutput(RoItemComponent items, int id, ItemSign sign, List<KeyValuePair<ItemBase, int>> debits)
+    private static bool FitsOutput(RoItemComponent items, int id, int quantity, ItemSign sign, List<KeyValuePair<ItemBase, int>> debits)
     {
-        // 产物必须确实在物品表中，已有空格时可直接落包。
+        // 从正式物品配置确定产物的容器和每格堆叠上限。
         ItemConfigBase config = LubanMgr.Instance.GetItemConfigById(id);
         if (config == null) return false;
+        // 入包时只会在该容器寻找空格及可合并的堆叠。
         RoItemContainer container = items.GetContainer(config.PackType);
         if (container == null) return false;
-        if (container.GetEmptySize() > 0) return true;
-        // 先找与产物同绑定标记的未满堆叠。
-        List<ItemBase> stacks = items.GetItemForReduce(id, ItemBind.kItemBindIs);
+        // 先计算空格能容纳的颗数，再计入尚能叠加的库存。
+        long capacity = (long)container.GetEmptySize() * config.MaxStackCount;
+        if (capacity >= quantity) return true;
+        // 只累计实际入包容器中同物品、同绑定属性的堆叠。
+        List<ItemBase> stacks = new List<ItemBase>(container.GetItemMap().Values);
         for (int index = 0; index < stacks.Count; index++)
-            if (stacks[index].GetItemSign() == (int)sign && stacks[index].GetItemCount() < config.MaxStackCount) return true;
-        // 同一容器的材料在本单耗尽也能提供产物所需的一个格。
+        {
+            // 当前堆叠可接收的颗数与 AddItem 的合并条件相同。
+            ItemBase stack = stacks[index];
+            if (stack.GetItemID() == id && stack.GetItemSign() == (int)sign)
+                capacity += Math.Max(0L, config.MaxStackCount - stack.GetItemCount());
+        }
+        // 同容器且整堆用尽的材料会空出一格。
         for (int index = 0; index < debits.Count; index++)
         {
+            // 此项保存已预检的堆叠及该堆实际扣量。
             KeyValuePair<ItemBase, int> debit = debits[index];
-            if (debit.Key.GetBagType() == (int)container.ContainerType && debit.Key.GetItemCount() == debit.Value) return true;
+            if (debit.Key.GetBagType() == (int)container.ContainerType && debit.Key.GetItemCount() == debit.Value)
+                capacity += config.MaxStackCount;
         }
-        return false;
+        return capacity >= quantity;
     }
 }

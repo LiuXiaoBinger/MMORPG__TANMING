@@ -22,8 +22,20 @@ public sealed class TradeMarketDialog : MonoBehaviour
     [SerializeField] private Image _icon;
     /// <summary>商品配置中的中文名。</summary>
     [SerializeField] private Text _itemName;
-    /// <summary>商品描述或当前展开的获取途径。</summary>
+    /// <summary>交易单据顶栏下方的简短说明。</summary>
     [SerializeField] private Text _description;
+    /// <summary>物品简介单独占用的正文区域，包含使用等级和用途。</summary>
+    [SerializeField] private GameObject _detailBody;
+    /// <summary>控制简介列宽，展开获取途径时为右栏留出空间。</summary>
+    [SerializeField] private RectTransform _detailColumn;
+    /// <summary>左栏中的等级、材料类别和物品描述。</summary>
+    [SerializeField] private Text _detailText;
+    /// <summary>物品简介右侧可收起的获取途径栏。</summary>
+    [SerializeField] private GameObject _sourcePanel;
+    /// <summary>显示配置表提供的普通物品来源。</summary>
+    [SerializeField] private Text _sourceText;
+    /// <summary>用摆摊和兑换图标展示两种升级材料来源。</summary>
+    [SerializeField] private GameObject _upgradeSources;
     /// <summary>数量、天数和价格所在的下半区。</summary>
     [SerializeField] private GameObject _terms;
     /// <summary>有份数的单据显示此行。</summary>
@@ -114,6 +126,7 @@ public sealed class TradeMarketDialog : MonoBehaviour
         _title.text = heading;
         _messageText.text = message;
         _itemPanel.SetActive(false);
+        _detailBody.SetActive(false);
         _terms.SetActive(false);
         _daysMenu.SetActive(false);
         _messagePanel.SetActive(true);
@@ -129,6 +142,7 @@ public sealed class TradeMarketDialog : MonoBehaviour
     /// <param name="ticket">此入口是否使用银票计价。</param>
     public void Open(Form form, ItemConfigBase item, Sprite icon, int maximum, bool ticket)
     {
+        _muteSellReceipt.gameObject.SetActive(false);
         _form = form;
         _stallQuote = null;
         _item = item;
@@ -139,6 +153,24 @@ public sealed class TradeMarketDialog : MonoBehaviour
         _icon.enabled = icon != null;
         _itemName.text = item.ItemName;
         _description.text = item.Description;
+        _detailBody.SetActive(form == Form.Detail);
+        if (form == Form.Detail)
+        {
+            _description.text = "";
+            _detailColumn.anchorMax = Vector2.one;
+            _sourcePanel.SetActive(false);
+            // 等级为零的商品没有使用等级要求。
+            string facts = "";
+            if (item.NeedLevel > 0) facts = "使用等级　" + item.NeedLevel + "级\n";
+            if (item.Attribute == "装备升级材料") facts += "装备升级材料\n";
+            _detailText.text = facts + "\n<color=#34577B>物品简介</color>\n" + item.Description;
+            _sourceText.text = item.Source;
+            if (string.IsNullOrEmpty(item.Source)) _sourceText.text = "暂无获取途径";
+            // 此组合有两张对应来源图卡，其余来源按配置原文显示。
+            bool showRoutes = item.Source == "摆摊购买、副本商店兑换";
+            _upgradeSources.SetActive(showRoutes);
+            _sourceText.gameObject.SetActive(!showRoutes);
+        }
         _itemPanel.SetActive(form != Form.Bid);
         _messagePanel.SetActive(false);
         _terms.SetActive(form == Form.Sell || form == Form.Wanted);
@@ -169,7 +201,16 @@ public sealed class TradeMarketDialog : MonoBehaviour
     /// <summary>切换至选中物品在配置表中的获取途径。</summary>
     public void ToggleSource()
     {
-        // 有来源的配置直接呈现来源，无来源时给出实际缺省状态。
+        if (_form == Form.Detail)
+        {
+            // 同一弹窗内切换列宽，便于在手机横屏同时阅读来源与简介。
+            bool expand = !_sourcePanel.activeSelf;
+            _sourcePanel.SetActive(expand);
+            if (expand) _detailColumn.anchorMax = new Vector2(0.56f, 1f);
+            else _detailColumn.anchorMax = Vector2.one;
+            return;
+        }
+        // 交易草稿保留紧凑的单行来源显示。
         string source = _item.Source;
         if (string.IsNullOrEmpty(source)) source = "暂无获取途径";
         if (_description.text == source) _description.text = _item.Description;

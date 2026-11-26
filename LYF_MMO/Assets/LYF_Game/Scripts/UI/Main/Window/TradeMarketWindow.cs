@@ -604,34 +604,31 @@ public sealed class TradeMarketWindow : WindowBase
     private void BindCard(TradeMarketCard card, ItemConfigBase item, bool detail)
     {
         // 求购页显示求购数量，买入侧展示在售状态。
-        string state = "在售：—";
+        string state = "在售 0";
+        // 只有当前市场报出正数余量，购买卡片才有挂单可以查看。
+        bool hasOffers = false;
         if (_market == Market.Stall && _tab == 0)
         {
             // 行情只含有余货的物品，成功装载后缺项即代表零件在售。
             StallQuote quote;
-            if (_quotes.TryGetValue(item.ItemId, out quote))
+            if (_quotes.TryGetValue(item.ItemId, out quote) && quote.Quantity > 0)
+            {
+                hasOffers = true;
                 state = "在售 " + quote.Quantity + "  ·  " + quote.Price + CurrencyName(quote.CurrencyId) + "起";
-            else if (_quoteState.Length == 0) state = "在售 0";
-            else state = _quoteState;
+            }
+            else if (_quoteState.Length > 0) state = _quoteState;
         }
         if (WantedPage) state = "求购：—";
-        // 材料与藏拍货物的单据按钮使用不同的标题。
-        string action = "求购";
-        // 仅有单据入口的卡片才绑定这一点击回调。
+        // 求购页可单独填写材料求购单，购买目录的无货卡片仅展示物品。
         Action order = null;
-        if (_market == Market.Stall && item.ItemMainType == ItemMainType.ItemType_Material)
+        if ((WantedPage || hasOffers) && item.ItemMainType == ItemMainType.ItemType_Material)
             order = () => OpenForm(TradeMarketDialog.Form.Wanted, item, 99);
-        if (_market == Market.Auction)
-        {
-            action = "出价";
-            order = () => OpenForm(TradeMarketDialog.Form.Bid, item, 1);
-        }
         if (detail) order = null;
         card.Bind(item, _catalog.GetIcon(item.ItemId), state, () =>
         {
-            if (detail) OpenForm(TradeMarketDialog.Form.Detail, item, 1);
-            else ShowListings(item);
-        }, _favorites[_market].Contains(item.ItemId), () => ToggleFavorite(card, item, detail), action, order);
+            if (hasOffers && !detail) ShowListings(item);
+            else OpenForm(TradeMarketDialog.Form.Detail, item, 1);
+        }, _favorites[_market].Contains(item.ItemId), () => ToggleFavorite(card, item, detail), "求购", order);
     }
 
     /// <summary>更新当前市场的会话关注，保留普通列表的滚动位置。</summary>
@@ -764,6 +761,17 @@ public sealed class TradeMarketWindow : WindowBase
         bool own = page.Query.View == StallView.StallOwn;
         if (own && _tab != 1) return;
         if (!own && (_listedItem == null || page.Query.ItemId != _listedItem.ItemId)) return;
+        // 查看报价与读取首页之间若已售罄，退回同一目录并直接展示该物品。
+        if (!own && page.Query.AfterId == 0 && page.Reason.Length == 0)
+        {
+            if (page.Offers.Count == 0)
+            {
+                _quotes.Remove(_listedItem.ItemId);
+                OpenForm(TradeMarketDialog.Form.Detail, _listedItem, 1);
+                BackToCatalog();
+                return;
+            }
+        }
         ClearSellRows();
         _nextOffer = page.NextId;
         // 每页最多三条记录，分页控件在末页提供刷新。
@@ -954,7 +962,7 @@ public sealed class TradeMarketWindow : WindowBase
                 ItemBase stack = entries[j];
                 // 用该堆叠的配置查找实际图标和名称。
                 ItemConfigBase item = LubanMgr.Instance.GetItemConfigById(stack.GetItemID());
-                if (item == null) continue;
+                if (item == null || StallCode.IsWorkshopOnly(item.ItemId)) continue;
                 if (_market == Market.Stall && item.ItemMainType != ItemMainType.ItemType_Material) continue;
                 if (_market == Market.Stall && (stack.GetItemSign() != 0 || stack.GetExpireTime() != DateTime.MinValue)) continue;
                 if (count == _bagCards.Count) _bagCards.Add(Instantiate(_bagTemplate, _bag.content));
@@ -1067,9 +1075,12 @@ public sealed class TradeMarketWindow : WindowBase
                 if (row.Status == 1 && row.ExpiresAt > DateTimeOffset.UtcNow.ToUnixTimeSeconds()) DealButton(1, "下架商品");
                 else
                 {
-                    _dealPrice.interactable = true;
                     DealButton(1, "取回余货");
-                    DealButton(2, "重新上架");
+                    if (!StallCode.IsWorkshopOnly(row.ItemId))
+                    {
+                        _dealPrice.interactable = true;
+                        DealButton(2, "重新上架");
+                    }
                 }
             }
         }

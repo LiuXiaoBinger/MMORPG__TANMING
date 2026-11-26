@@ -71,7 +71,9 @@ public sealed class TradeMarketCatalog : ScriptableObject
         var configs = new System.Collections.Generic.List<ItemConfigBase>(definitions.Values);
         for (int i = 0; i < configs.Count; i++)
         {
+            // 退出玩家交易的养成材料也不能进入自动补充的「其他材料」。
             ItemConfigBase item = configs[i];
+            if (StallCode.IsWorkshopOnly(item.ItemId)) continue;
             if (item.ItemMainType == ItemMainType.ItemType_Material && !assigned.Contains(item.ItemId)) items.Add(item.ItemId);
         }
         if (items.Count == 0) { _stallShelves = _shelves; return _stallShelves; }

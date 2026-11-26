@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `8384adf131f46b06df5deaa8fd83b7fda2ab5b9140596a30b31e94452f71274f`
+Source normalized SHA256: `03e089d287d0878ad051469f694e6ca7d125248f1e8cc44c54382a29f550238b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -147,11 +147,12 @@ Source normalized SHA256: `8384adf131f46b06df5deaa8fd83b7fda2ab5b9140596a30b31e9
 | [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves | 993-998 |
 | [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload | 999-1002 |
 | [CODE][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] RO entry routing for the two public cities | 1003-1007 |
-| [CODE][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] Sky City chapel and restaurant interiors | 1008-1011 |
+| [CODE][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] Sky City chapel and restaurant interiors | 1008-1012 |
+| [CODE][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Chamber gems, player listings and Magic Swordsman upgrade patterns | 1013-1018 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `68608e2bf2580b18e618950d146af07fb6cfa72bf907b7673bced3b6c4f05397`
+Source normalized SHA256: `1e7ddd3e56522020fdfbc0e380dc25ad1072e934e35a1d0c7431563f70adb531`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -291,7 +292,8 @@ Source normalized SHA256: `68608e2bf2580b18e618950d146af07fb6cfa72bf907b7673bced
 | [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload | 1031-1034 |
 | [VERIFY][交易][STALL-REALM1-LIVE-20261126] One authenticated, partially filled stall order on running realm 1 | 1035-1041 |
 | [VERIFY][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] One-realm expansion and live portal travel | 1042-1046 |
-| [VERIFY][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] One-realm interior travel, character scale and baked lighting | 1047-1050 |
+| [VERIFY][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] One-realm interior travel, character scale and baked lighting | 1047-1051 |
+| [VERIFY][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Gem settlement and stock-aware item introductions | 1052-1057 |
 
 ## Docs/AI/DECISIONS.en.md
 

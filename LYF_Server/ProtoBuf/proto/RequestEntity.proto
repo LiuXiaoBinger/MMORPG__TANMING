@@ -200,4 +200,5 @@ message EquipOperationReq {
 	int32 gem_item_id = 5;//镶嵌材料、合成目标或商会商品的实际物品编号
 	repeated int32 bag_gem_counts = 6;//按一至七级排列的背包投入颗数；只能用低于目标的同品种宝石
 	repeated int32 market_gem_counts = 7;//按一至三级排列的商会投入颗数；单价由服务器计算
+	optional int32 buy_quantity = 8;//商会直购的颗数，旧工坊未指定时购买一颗
 }

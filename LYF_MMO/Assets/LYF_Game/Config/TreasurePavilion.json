@@ -79,7 +79,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8201
     },
     {
       "key": "chamber.gem.8301",
@@ -95,7 +96,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8301
     },
     {
       "key": "chamber.gem.8401",
@@ -111,7 +113,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8401
     },
     {
       "key": "chamber.gem.8501",
@@ -127,7 +130,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8501
     },
     {
       "key": "chamber.gem.8601",
@@ -143,7 +147,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8601
     },
     {
       "key": "chamber.gem.8701",
@@ -159,7 +164,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8701
     },
     {
       "key": "chamber.gem.8801",
@@ -175,7 +181,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8801
     },
     {
       "key": "chamber.gem.8901",
@@ -191,7 +198,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8901
     },
     {
       "key": "chamber.gem.9001",
@@ -207,7 +215,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9001
     },
     {
       "key": "chamber.gem.9101",
@@ -223,7 +232,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9101
     },
     {
       "key": "chamber.gem.9201",
@@ -239,7 +249,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9201
     },
     {
       "key": "chamber.gem.9301",
@@ -255,7 +266,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9301
     },
     {
       "key": "chamber.gem.9401",
@@ -271,7 +283,178 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9401
+    },
+    {
+      "key": "chamber.gem.9501",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "1级宝石",
+      "name": "1级蓝玛瑙",
+      "price": 60000,
+      "art": 9501,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的蓝玛瑙，等级 1。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9501
+    },
+    {
+      "key": "chamber.gem.9601",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "1级宝石",
+      "name": "1级黑玛瑙",
+      "price": 60000,
+      "art": 9601,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黑玛瑙，等级 1。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9601
+    },
+    {
+      "key": "chamber.gem.9701",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "1级宝石",
+      "name": "1级红玛瑙",
+      "price": 60000,
+      "art": 9701,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的红玛瑙，等级 1。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9701
+    },
+    {
+      "key": "chamber.gem.9801",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "1级宝石",
+      "name": "1级绿玛瑙",
+      "price": 60000,
+      "art": 9801,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的绿玛瑙，等级 1。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9801
+    },
+    {
+      "key": "chamber.gem.9901",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "1级宝石",
+      "name": "1级黄玛瑙",
+      "price": 60000,
+      "art": 9901,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黄玛瑙，等级 1。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9901
+    },
+    {
+      "key": "chamber.gem.10001",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "1级宝石",
+      "name": "1级蓝琉璃",
+      "price": 60000,
+      "art": 10001,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的蓝琉璃，等级 1。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10001
+    },
+    {
+      "key": "chamber.gem.10101",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "1级宝石",
+      "name": "1级黑琉璃",
+      "price": 60000,
+      "art": 10101,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黑琉璃，等级 1。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10101
+    },
+    {
+      "key": "chamber.gem.10201",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "1级宝石",
+      "name": "1级红琉璃",
+      "price": 60000,
+      "art": 10201,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的红琉璃，等级 1。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10201
+    },
+    {
+      "key": "chamber.gem.10301",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "1级宝石",
+      "name": "1级绿琉璃",
+      "price": 60000,
+      "art": 10301,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的绿琉璃，等级 1。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10301
+    },
+    {
+      "key": "chamber.gem.10401",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "1级宝石",
+      "name": "1级黄琉璃",
+      "price": 60000,
+      "art": 10401,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黄琉璃，等级 1。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10401
     },
     {
       "key": "chamber.gem.8202",
@@ -287,7 +470,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8202
     },
     {
       "key": "chamber.gem.8302",
@@ -303,7 +487,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8302
     },
     {
       "key": "chamber.gem.8402",
@@ -319,7 +504,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8402
     },
     {
       "key": "chamber.gem.8502",
@@ -335,7 +521,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8502
     },
     {
       "key": "chamber.gem.8602",
@@ -351,7 +538,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8602
     },
     {
       "key": "chamber.gem.8702",
@@ -367,7 +555,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8702
     },
     {
       "key": "chamber.gem.8802",
@@ -383,7 +572,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8802
     },
     {
       "key": "chamber.gem.8902",
@@ -399,7 +589,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8902
     },
     {
       "key": "chamber.gem.9002",
@@ -415,7 +606,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9002
     },
     {
       "key": "chamber.gem.9102",
@@ -431,7 +623,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9102
     },
     {
       "key": "chamber.gem.9202",
@@ -447,7 +640,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9202
     },
     {
       "key": "chamber.gem.9302",
@@ -463,7 +657,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9302
     },
     {
       "key": "chamber.gem.9402",
@@ -479,7 +674,178 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9402
+    },
+    {
+      "key": "chamber.gem.9502",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "2级宝石",
+      "name": "2级蓝玛瑙",
+      "price": 120000,
+      "art": 9502,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的蓝玛瑙，等级 2。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9502
+    },
+    {
+      "key": "chamber.gem.9602",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "2级宝石",
+      "name": "2级黑玛瑙",
+      "price": 120000,
+      "art": 9602,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黑玛瑙，等级 2。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9602
+    },
+    {
+      "key": "chamber.gem.9702",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "2级宝石",
+      "name": "2级红玛瑙",
+      "price": 120000,
+      "art": 9702,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的红玛瑙，等级 2。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9702
+    },
+    {
+      "key": "chamber.gem.9802",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "2级宝石",
+      "name": "2级绿玛瑙",
+      "price": 120000,
+      "art": 9802,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的绿玛瑙，等级 2。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9802
+    },
+    {
+      "key": "chamber.gem.9902",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "2级宝石",
+      "name": "2级黄玛瑙",
+      "price": 120000,
+      "art": 9902,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黄玛瑙，等级 2。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9902
+    },
+    {
+      "key": "chamber.gem.10002",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "2级宝石",
+      "name": "2级蓝琉璃",
+      "price": 120000,
+      "art": 10002,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的蓝琉璃，等级 2。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10002
+    },
+    {
+      "key": "chamber.gem.10102",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "2级宝石",
+      "name": "2级黑琉璃",
+      "price": 120000,
+      "art": 10102,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黑琉璃，等级 2。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10102
+    },
+    {
+      "key": "chamber.gem.10202",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "2级宝石",
+      "name": "2级红琉璃",
+      "price": 120000,
+      "art": 10202,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的红琉璃，等级 2。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10202
+    },
+    {
+      "key": "chamber.gem.10302",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "2级宝石",
+      "name": "2级绿琉璃",
+      "price": 120000,
+      "art": 10302,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的绿琉璃，等级 2。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10302
+    },
+    {
+      "key": "chamber.gem.10402",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "2级宝石",
+      "name": "2级黄琉璃",
+      "price": 120000,
+      "art": 10402,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黄琉璃，等级 2。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10402
     },
     {
       "key": "chamber.gem.8203",
@@ -495,7 +861,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8203
     },
     {
       "key": "chamber.gem.8303",
@@ -511,7 +878,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8303
     },
     {
       "key": "chamber.gem.8403",
@@ -527,7 +895,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8403
     },
     {
       "key": "chamber.gem.8503",
@@ -543,7 +912,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8503
     },
     {
       "key": "chamber.gem.8603",
@@ -559,7 +929,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8603
     },
     {
       "key": "chamber.gem.8703",
@@ -575,7 +946,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8703
     },
     {
       "key": "chamber.gem.8803",
@@ -591,7 +963,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8803
     },
     {
       "key": "chamber.gem.8903",
@@ -607,7 +980,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 8903
     },
     {
       "key": "chamber.gem.9003",
@@ -623,7 +997,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9003
     },
     {
       "key": "chamber.gem.9103",
@@ -639,7 +1014,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9103
     },
     {
       "key": "chamber.gem.9203",
@@ -655,7 +1031,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9203
     },
     {
       "key": "chamber.gem.9303",
@@ -671,7 +1048,8 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9303
     },
     {
       "key": "chamber.gem.9403",
@@ -687,7 +1065,178 @@
       "limit": 900,
       "picture": "",
       "level": 0,
-      "discount": ""
+      "discount": "",
+      "gemItemId": 9403
+    },
+    {
+      "key": "chamber.gem.9503",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "3级宝石",
+      "name": "3级蓝玛瑙",
+      "price": 240000,
+      "art": 9503,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的蓝玛瑙，等级 3。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9503
+    },
+    {
+      "key": "chamber.gem.9603",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "3级宝石",
+      "name": "3级黑玛瑙",
+      "price": 240000,
+      "art": 9603,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黑玛瑙，等级 3。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9603
+    },
+    {
+      "key": "chamber.gem.9703",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "3级宝石",
+      "name": "3级红玛瑙",
+      "price": 240000,
+      "art": 9703,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的红玛瑙，等级 3。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9703
+    },
+    {
+      "key": "chamber.gem.9803",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "3级宝石",
+      "name": "3级绿玛瑙",
+      "price": 240000,
+      "art": 9803,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的绿玛瑙，等级 3。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9803
+    },
+    {
+      "key": "chamber.gem.9903",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "3级宝石",
+      "name": "3级黄玛瑙",
+      "price": 240000,
+      "art": 9903,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黄玛瑙，等级 3。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 9903
+    },
+    {
+      "key": "chamber.gem.10003",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "3级宝石",
+      "name": "3级蓝琉璃",
+      "price": 240000,
+      "art": 10003,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的蓝琉璃，等级 3。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10003
+    },
+    {
+      "key": "chamber.gem.10103",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "3级宝石",
+      "name": "3级黑琉璃",
+      "price": 240000,
+      "art": 10103,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黑琉璃，等级 3。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10103
+    },
+    {
+      "key": "chamber.gem.10203",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "3级宝石",
+      "name": "3级红琉璃",
+      "price": 240000,
+      "art": 10203,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的红琉璃，等级 3。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10203
+    },
+    {
+      "key": "chamber.gem.10303",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "3级宝石",
+      "name": "3级绿琉璃",
+      "price": 240000,
+      "art": 10303,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的绿琉璃，等级 3。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10303
+    },
+    {
+      "key": "chamber.gem.10403",
+      "channel": "商会",
+      "group": "宝石",
+      "shelf": "3级宝石",
+      "name": "3级黄琉璃",
+      "price": 240000,
+      "art": 10403,
+      "currency": "铜钱",
+      "kind": "宝石",
+      "description": "用于装备镶嵌的黄琉璃，等级 3。",
+      "limit": 900,
+      "picture": "",
+      "level": 0,
+      "discount": "",
+      "gemItemId": 10403
     },
     {
       "key": "chamber.气血食品药品.野萃药",

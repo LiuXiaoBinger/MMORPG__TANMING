@@ -35,4 +35,12 @@ public static class StallCode
     public const int Silver = 102;
     /// <summary>交易服务离线或正在恢复时显示给玩家的提示。</summary>
     public const string Unavailable = "本服交易市场暂不可用，请稍后再试。";
+
+    /// <summary>识别退出玩家交易的装备养成材料。旧挂单仍允许卖家撤单、取回和提款。</summary>
+    /// <param name="itemId">物品表编号，8101 至 8105 分别为一至五级强化石。</param>
+    public static bool IsWorkshopOnly(int itemId)
+    {
+        if (itemId >= 8101 && itemId <= 8105) return true;
+        return EquipmentGemRules.TryRead(itemId, out _, out _);
+    }
 }

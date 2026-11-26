@@ -29,6 +29,8 @@ public sealed class PavilionEntry
     public int level;
     /// <summary>项目内提供物品图标的配置编号。</summary>
     public int art;
+    /// <summary>商会直购交付的真实宝石编号，其他展示商品留零，可独立更换插画。</summary>
+    public int gemItemId;
     /// <summary>商城图集里的专用插画名称，设置时优先使用。</summary>
     public string picture;
     /// <summary>商品上角的折扣文字。</summary>

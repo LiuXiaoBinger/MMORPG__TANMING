@@ -211,16 +211,26 @@ internal sealed class StallManager : IContainer
         // 旧版本的重放不覆盖后来的购买或领取。
         StallOffer old = FindOwnOffer(offer.SellerId,offer.ListingId);
         if(old!=null && old.Version>=offer.Version)return;
-        if(!goods.ContainsKey(offer.ItemId))goods.Add(offer.ItemId,new List<StallOffer>());
         if(!sellers.ContainsKey(offer.SellerId))sellers.Add(offer.SellerId,new List<StallOffer>());
-        if(old!=null){goods[old.ItemId].Remove(old);sellers[old.SellerId].Remove(old);}
-        if(offer.Quantity==0 && offer.Income==0)return;
-        goods[offer.ItemId].Add(offer); sellers[offer.SellerId].Add(offer);
-        if(ready)
+        if (old != null)
         {
-            goods[offer.ItemId].Sort((left,right)=>{int price=left.Price.CompareTo(right.Price);if(price!=0)return price;return left.ListingId.CompareTo(right.ListingId);});
-            sellers[offer.SellerId].Sort((left,right)=>left.ListingId.CompareTo(right.ListingId));
+            // 旧挂单可能只在卖家的托管列表内，公开市场无需保留对应商品。
+            if (goods.TryGetValue(old.ItemId, out List<StallOffer> previous)) previous.Remove(old);
+            sellers[old.SellerId].Remove(old);
         }
+        if(offer.Quantity==0 && offer.Income==0)return;
+        sellers[offer.SellerId].Add(offer);
+        if (ready) sellers[offer.SellerId].Sort((left,right)=>left.ListingId.CompareTo(right.ListingId));
+        if (StallCode.IsWorkshopOnly(offer.ItemId)) return;
+        if (!goods.ContainsKey(offer.ItemId)) goods.Add(offer.ItemId, new List<StallOffer>());
+        goods[offer.ItemId].Add(offer);
+        if (ready) goods[offer.ItemId].Sort((left, right) =>
+        {
+            // 先比较单价，同价时按挂牌号保持稳定次序。
+            int price = left.Price.CompareTo(right.Price);
+            if (price != 0) return price;
+            return left.ListingId.CompareTo(right.ListingId);
+        });
     }
 
     /// <summary>在当前卖家的寄存记录中匹配指定挂牌号。</summary>

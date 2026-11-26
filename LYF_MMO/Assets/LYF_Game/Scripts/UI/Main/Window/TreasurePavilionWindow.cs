@@ -80,6 +80,8 @@ public sealed class TreasurePavilionWindow : WindowBase
     [SerializeField] private GameObject rewardHeader;
     /// <summary>商城或商会的购买请求，由后续业务控制器订阅。</summary>
     public event Action<PavilionEntry.Order> PurchaseRequested;
+    /// <summary>由背包控制器发送商会查询或直购请求，与装备工坊共用角色配额。</summary>
+    public Func<EquipOperationReq, bool> SendGemTrade { get; set; }
     /// <summary>从当前包裹堆叠选择的商会出售请求。</summary>
     public event Action<PavilionEntry.Order> SaleRequested;
     /// <summary>请求打开指定元宝面值的充值渠道。</summary>
@@ -131,6 +133,8 @@ public sealed class TreasurePavilionWindow : WindowBase
     private bool lowerOnly;
     /// <summary>详情当前是否展开获取途径。</summary>
     private bool showSource;
+    /// <summary>当前宝石的服务端剩余配额，换商品后重新查询。</summary>
+    private int? gemRemaining;
     /// <summary>空串表示全部币种。</summary>
     private string currency = "";
     /// <summary>空串表示全部类型。</summary>
@@ -271,7 +275,7 @@ public sealed class TreasurePavilionWindow : WindowBase
     }
 
     /// <summary>钱包只读取角色持有的虚拟物品。</summary>
-    private void RefreshWallet()
+    public void RefreshWallet()
     {
         for (int i = 0; i < balances.Length; i++)
         {
@@ -514,6 +518,7 @@ public sealed class TreasurePavilionWindow : WindowBase
             card.title.text = row.name;
             card.note.text = row.discount;
             if (channel == 4 && row.limit > 0) card.note.text = "日限 " + row.limit;
+            if (row.gemItemId != 0) card.note.text = "限购 " + row.limit;
             if (row.stack != 0) card.note.text = "持有 " + row.available;
             card.price.text = row.price.ToString("N0") + " " + row.currency;
             PavilionTile.SetPicture(card.picture, Illustration(row));
@@ -611,6 +616,7 @@ public sealed class TreasurePavilionWindow : WindowBase
     private void SelectProduct(PavilionEntry row)
     {
         selected = row;
+        gemRemaining = null;
         quantity = 1;
         showSource = false;
         feedback.text = "";
@@ -619,10 +625,29 @@ public sealed class TreasurePavilionWindow : WindowBase
         description.text = row.description;
         limitText.text = "单价   " + row.price.ToString("N0") + " " + row.currency;
         if (row.limit > 0) limitText.text = "每日限购   " + row.limit;
+        if (row.gemItemId != 0) limitText.text = "限购   " + row.limit;
         if (row.stack != 0) limitText.text = "包裹中数量   " + row.available;
         PavilionTile.SetPicture(detailArt, Illustration(row));
         for (int i = 0; i < visible.Count; i++) cards[i].selection.SetActive(visible[i] == row);
         ChangeQuantity(0);
+        if (row.gemItemId != 0)
+            SendGemTrade?.Invoke(new EquipOperationReq { Operation = EquipOperation.GemMarket, GemItemId = row.gemItemId });
+    }
+
+    /// <summary>显示选中宝石的权威额度和直购结果，玩家换货架后仍按当前商品显示。</summary>
+    /// <param name="reply">包含物品编号、该品种三级库存及结算提示的工坊回执。</param>
+    public void RenderGemTrade(EquipOperationRet reply)
+    {
+        if (!isActiveAndEnabled || selected == null || selected.gemItemId != reply.GemItemId) return;
+        // 物品编号末两位为等级，额度列表从一级开始。
+        if (!EquipmentGemRules.TryRead(reply.GemItemId, out _, out int grade)) return;
+        if (grade <= reply.MarketRemaining.Count)
+        {
+            gemRemaining = reply.MarketRemaining[grade - 1];
+            limitText.text = "剩余可购   " + gemRemaining.Value + " / " + selected.limit;
+            ChangeQuantity(0);
+        }
+        if (reply.Operation == EquipOperation.BuyGem) feedback.text = reply.GemMessage;
     }
 
     /// <summary>切换详情的商品说明与获取位置。</summary>
@@ -645,8 +670,10 @@ public sealed class TreasurePavilionWindow : WindowBase
         // 有日限时使用目录额度，有堆叠时使用当前持有量。
         int max = int.MaxValue;
         if (selected.limit > 0) max = selected.limit;
+        if (gemRemaining.HasValue) max = gemRemaining.Value;
         if (selected.stack != 0) max = selected.available;
         quantity = (int)Math.Max(1L, Math.Min(max, (long)quantity + step));
+        if (max == 0) quantity = 0;
         quantityText.text = quantity.ToString();
         minus.interactable = quantity > 1;
         plus.interactable = quantity < max;
@@ -654,6 +681,7 @@ public sealed class TreasurePavilionWindow : WindowBase
         long amount = (long)selected.price * quantity;
         total.text = "购买   " + amount.ToString("N0") + " " + selected.currency;
         if (selected.stack != 0) total.text = "出售   " + amount.ToString("N0") + " " + selected.currency;
+        if (max == 0) total.text = "已达限购";
         PavilionTile.SetPicture(totalCoin, Coin(selected.currency));
     }
 
@@ -661,6 +689,16 @@ public sealed class TreasurePavilionWindow : WindowBase
     public void SubmitOrder()
     {
         if (selected == null) return;
+        if (selected.gemItemId != 0)
+        {
+            if (quantity <= 0) return;
+            // 只提交实际商品和颗数，价格、库存及钱包消耗由角色服务器结算。
+            EquipOperationReq request = new EquipOperationReq { Operation = EquipOperation.BuyGem,
+                GemItemId = selected.gemItemId, BuyQuantity = quantity };
+            if (SendGemTrade?.Invoke(request) == true) feedback.text = "正在购买…";
+            else feedback.text = "未连接服务器";
+            return;
+        }
         // 点击这一刻的稳定键、价格与堆叠号交给订阅方。
         PavilionEntry.Order order = new PavilionEntry.Order { Key = selected.key, Channel = selected.channel,
             Stack = selected.stack, Quantity = quantity, Currency = selected.currency, UnitPrice = selected.price };
