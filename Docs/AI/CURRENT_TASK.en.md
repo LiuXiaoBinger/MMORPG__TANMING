@@ -1016,6 +1016,7 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 - In the stall's 装备升级 → 魔剑士材料, the ten 锤锻 patterns (10501–10510) require level 90 and describe upgrading equipment from 80 to 120. The ten 冶铸 patterns (10601–10610) require level 130 and describe 120 to 160. Each series covers weapon, crown, coat, legwear, shoes, belt, bracers, ring, necklace and jade pendant. The introduction lists 摆摊购买 and 副本商店兑换 as sources.
 - Tapping a market product with no offer opens its introduction in place. A positive stall quote opens seller listings. If the first listing page has already sold out, the client returns to the same catalogue and shows the introduction. Gem art reuses RO item illustrations. The two upgrade scroll designs are newly generated artwork.
 - Scope, assets, tests and Git receipts are in `项目修改日志/2026-11-26-宝石商会直购与交易所下架.md`. No live realm deployment or mobile-device test was performed.
+- The stall's 特技谱 shelf now contains one shield-shaped iron token item per base equipment special skill. The 98 items keep the six original IDs and add 92. The 202 higher-level rows reuse their base family's item and icon. Independent blue / green resistance-reduction families keep their own quality and emblem. The other catalogues retain their existing shelf selections.
 
 ## [CODE][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Sky City professions and public-line guard patrols
 

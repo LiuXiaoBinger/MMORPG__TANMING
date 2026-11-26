@@ -1046,6 +1046,7 @@ Luban、隔离游戏服 27 项和 Unity Play Mode 14 项通过，当前工作区
 - Unity Play Mode 通过 30 项检查。在界面购买两颗 3 级红玛瑙，扣除 480,000 铜币，背包增加两颗，剩余额度从 900 降至 898。点击检查覆盖全部 20 张配置图纸、零库存商品介绍、来源面板展开、有货时的卖家列表、第一页已售罄的回退、普通商品，以及本服市场和拍卖中无货的商品。
 - 新工作簿保留原表全部 340 行。隔离运行 Luban 导出后，原记录数据保持一致，新增 20 条记录。工作区内的服务端项目和 Unity 客户端程序集编译通过。干净分支与候选版本均报告了相同的既有编译错误 `CurrencyExchangeCtrl`（`CS0246`）。本次未验证正式 1 服、移动端安装包及副本商店兑换。
 - 证据位于 `_temp/gem-chamber-20261126/` 下的 `server-checks.log`、`unity-checks.txt`、`mjs-catalog.png`、`mjs-no-stock.png` 和 `branch-client-check.json`。文件清单与回执见 `项目修改日志/2026-11-26-宝石商会直购与交易所下架.md`。
+- 本次补充 6 项 Unity Play Mode 检查。98 个 1 级特技系列各有独立的物品 ID 和盾形铁牌图标，品质与背包图标路径均匹配。检查覆盖原有 6 个物品 ID 及排列顺序、蓝绿两种品质的弱水、无货时的妙手介绍，以及真实背包变动后卖家背包格显示同一图标。原物品表 360 行中，354 行完全一致，另 6 行仅修改 `Icon` 和 `Desc`。Luban 导出新增 92 件物品，高等级特技均复用基础物品。本次证据见 `_temp/gem-chamber-20261126/feats/item-proof.json` 和同目录的 `unity-checks.txt`、`technique-stall.png`、`特技铁牌图鉴.png`。正式服及移动真机仍待验证。
 
 ## [VERIFY][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] 两台 Unity 客户端与三个真实 Socket 角色的验证
 
