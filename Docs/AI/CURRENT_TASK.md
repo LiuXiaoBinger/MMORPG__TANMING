@@ -1051,3 +1051,7 @@ GameServer 在常规情况下按 `min + (max - min) * u` 计算攻击力，其�
 
 - 主城菜单可打开原生 `EmailPanel`。`EmailMgr`、`EmailHandler`、`EmailItemTemplate` 沿用 RO 客户端的职责划分。Gate 和 GS 校验玩家路由，MS 管理 `RoleMail`，Center 负责 `role_mail`。游戏服务可通过 `MailAction` 发送个人邮件（含离线角色）和全服邮件。模板 20、21 的有效期均为 30 天。
 - 背包更新和附件领取 UID 在同一角色存档事务中提交。为完成已获授权的分支构建，补齐了已有货币兑换功能的依赖，并保留了任务页签数字 1/2/3 的映射。详见 `项目分析/RO邮箱系统与本项目实现.md`、`项目修改日志/RO邮箱系统移植-2026-11-26.md`。本次开发由 Codex 独立完成，未使用 WorkBuddy。
+
+## [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] 角色委托与副本阶段寻路
+
+Codex 已接入五条委托、游戏服存档、NPC 办理、公共地图选门和副本阶段目标。任务簿与快捷栏共用寻路。业务提交 `833c23fb`、`14a582ec`。`项目修改日志/2026-11-26-角色委托与跨场景任务寻路.md`。

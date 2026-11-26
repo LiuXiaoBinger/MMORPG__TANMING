@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `abfa6ebc5ed57075c1e8c374351f1fc306cea41329475820fed32ab5094a4680`
+Source normalized SHA256: `315c6c3833952221656f5474c641d046c339d14e64595bc79d038771179c0536`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -156,11 +156,12 @@ Source normalized SHA256: `abfa6ebc5ed57075c1e8c374351f1fc306cea41329475820fed32
 | [CODE][FILES][HANDOFF][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Dark fantasy art for every configured skill | 1043-1046 |
 | [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Interrupting an ordinary monster attack before release | 1047-1050 |
 | [CODE][FILES][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Rank by worn items with the same active family | 1051-1054 |
-| [CODE][FILES][邮箱][MAIL-RO-20261126] RO role inbox and Unity integration | 1055-1058 |
+| [CODE][FILES][邮箱][MAIL-RO-20261126] RO role inbox and Unity integration | 1055-1059 |
+| [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] Playable role quests and dungeon objective navigation | 1060-1062 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `6ffc7f57d3ef37cb29ee50c6de54c40249719b77a8302926987bab800e5135e1`
+Source normalized SHA256: `aac958c5dadd6d8fadbcf02d103544f4fd5cfb0afb1b8862ee6fc4813db3280f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -310,7 +311,8 @@ Source normalized SHA256: `6ffc7f57d3ef37cb29ee50c6de54c40249719b77a8302926987ba
 | [VERIFY][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Hit frames, interruption and released projectiles | 1086-1089 |
 | [VERIFY][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Same-family activation on two items | 1090-1093 |
 | [VERIFY][邮箱][MAIL-RO-20261126] Inbox, item claims and client build | 1094-1098 |
-| [VERIFY][装备][特技][EQUIP-DIVINE-LIVE-20261126] Divine Power (external) on two weapons in Unity Play | 1099-1101 |
+| [VERIFY][装备][特技][EQUIP-DIVINE-LIVE-20261126] Divine Power (external) on two weapons in Unity Play | 1099-1102 |
+| [VERIFY][任务][导航][WORLD-QUEST-NAV-20261126] Role quest progression and route verification | 1103-1107 |
 
 ## Docs/AI/DECISIONS.en.md
 
