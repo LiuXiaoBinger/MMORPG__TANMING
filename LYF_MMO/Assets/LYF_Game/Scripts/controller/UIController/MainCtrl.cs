@@ -57,6 +57,14 @@ public class MainCtrl : CtrlBase
 
     /// <summary>当前对话关联的 NPC，仅由控制器保存领域对象。</summary>
     private NpcEntity _currentTalkNpc;
+    /// <summary>附近交谈扫描复用的场景实体引用，角色切图后随下一次扫描覆盖。</summary>
+    private readonly List<MEntity> _nearbyTalkEntities = new List<MEntity>();
+    /// <summary>本轮进入交谈距离的所有可见 NPC，同一列表重复用于每次距离检查。</summary>
+    private readonly List<NpcEntity> _nearbySpeakers = new List<NpcEntity>();
+    /// <summary>提示出现的三维半径，单位米；较短的距离用于区分相邻店铺。</summary>
+    private const float NearbyTalkRadius = 4f;
+    /// <summary>建筑、墙面和楼板所在的物理层，用于筛掉隔墙或隔层的说话者。</summary>
+    private static readonly int TalkGeometryMask = LayerMask.GetMask("Geometry");
     #endregion
 
     #region 构造、初始化与事件注册
@@ -147,6 +155,8 @@ public class MainCtrl : CtrlBase
     /// <summary>注册功能菜单、NPC对话和聊天视图事件。</summary>
     private void RegisterViewActions()
     {
+        if (_mainView.NpcTalkPrompt != null)
+            _mainView.NpcTalkPrompt.TalkRequested += OnNearbyTalkRequested;
         _mainView.FunctionMenuButton.onClick.AddListener(OnFunctionMenuRequested);
         _mainView.TradeMarketButton.onClick.AddListener(OnTradeMarketRequested);
         _mainView.TreasurePavilionButton.onClick.AddListener(OnTreasurePavilionRequested);
@@ -216,6 +226,11 @@ public class MainCtrl : CtrlBase
         {
             _mainView.AreaMap.TravelRequested -= NavigateMapPoint;
             _mainView.AreaMap.StopRequested -= StopMapNavigation;
+        }
+        if (_mainView.NpcTalkPrompt != null)
+        {
+            _mainView.NpcTalkPrompt.TalkRequested -= OnNearbyTalkRequested;
+            _mainView.NpcTalkPrompt.SetSpeakers(null);
         }
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.State, OnSceneLineState);
         SocketDispatcher.Instance.RemoveEventHandler(StallCode.Result, OnStallResult);
@@ -357,6 +372,7 @@ public class MainCtrl : CtrlBase
                 return;
             }
             _currentTalkNpc = speaker;
+            _mainView.NpcTalkPrompt?.SetSpeakers(null);
             // 切换说话者时刷新正在显示的窗口，避免通用窗口入口将它反向关闭。
             NpcTalkViewData dialogue = CreateNpcTalkViewData(speaker);
             if (_mainView.TalkWindow.gameObject.activeSelf) _mainView.TalkWindow.ReFreshUI(dialogue);
@@ -641,6 +657,67 @@ public class MainCtrl : CtrlBase
     private void OnCombatStatusClicked()
     {
         ShowMainWindow(WindowType.CombatStatusWindow);
+    }
+
+    /// <summary>列出交谈距离内的每个可见人物，交由窗口按姓名分别显示。</summary>
+    internal void RefreshNearbyTalkPrompt()
+    {
+        // 角色卸载、正在说话或浏览货架时隐藏世界交互入口。
+        SceneWorldSystem world = Global.Instance?.SceneWorld;
+        if (world?.LocalRole == null || !world.LocalRole.Model.IsLoaded || _currentTalkNpc != null)
+        {
+            _mainView.NpcTalkPrompt.SetSpeakers(null);
+            return;
+        }
+        if (_mainView.ShopWindow != null && _mainView.ShopWindow.gameObject.activeInHierarchy)
+        {
+            _mainView.NpcTalkPrompt.SetSpeakers(null);
+            return;
+        }
+
+        // 使用主角的实际世界坐标，距离比较同时计入楼层高差。
+        Vector3 origin = world.LocalRole.Position;
+        _nearbySpeakers.Clear();
+        world.CopyEntities(_nearbyTalkEntities);
+        for (int index = 0; index < _nearbyTalkEntities.Count; index++)
+        {
+            // 只从已实例化的 NPC 中挑选，角色、怪物和场景特效跳过。
+            NpcEntity npc = _nearbyTalkEntities[index] as NpcEntity;
+            if (npc == null || !npc.Model.IsLoaded) continue;
+            // 移动中的巡卫使用当前模型位置。
+            float distance = (npc.Position - origin).sqrMagnitude;
+            if (distance > NearbyTalkRadius * NearbyTalkRadius) continue;
+            if (CanSpeakToNearbyNpc(npc, origin)) _nearbySpeakers.Add(npc);
+        }
+        _mainView.NpcTalkPrompt.SetSpeakers(_nearbySpeakers);
+    }
+
+    /// <summary>检查面前的实体是否属于当前场景、能说话且未被建筑挡住。</summary>
+    /// <param name="npc">已载入模型的候选居民或有车夫的马车。</param>
+    /// <param name="origin">本地玩家脚下的世界坐标，单位米。</param>
+    private bool CanSpeakToNearbyNpc(NpcEntity npc, Vector3 origin)
+    {
+        if (npc.Model.GameObject.NativeObject.scene != UnityEngine.SceneManagement.SceneManager.GetActiveScene()) return false;
+        if (npc.IsSceneObject && !_mainView.TalkWindow.Catalog.HasNearbySpeaker(npc.NpcID)) return false;
+        // 在胸口高度检测建筑遮挡，允许看见矮台或台阶边站立的人。
+        Vector3 chest = Vector3.up * 1.15f;
+        return !Physics.Linecast(origin + chest, npc.Position + chest, TalkGeometryMask, QueryTriggerInteraction.Ignore);
+    }
+
+    /// <summary>按下交谈时核对屏幕上那位说话者，再进入与点击模型共用的导航事件。</summary>
+    /// <param name="speaker">实际点到的按钮所显示的 NPC，不随其他人的距离变化。</param>
+    private void OnNearbyTalkRequested(NpcEntity speaker)
+    {
+        // 玩家和巡卫可在两次提示刷新之间移动，因此按实际位置确认本次点击。
+        PlayerEntity player = Global.Instance?.SceneWorld?.LocalRole;
+        if (player == null || speaker == null || !speaker.Model.IsLoaded) return;
+        if ((speaker.Position - player.Position).sqrMagnitude > NearbyTalkRadius * NearbyTalkRadius ||
+            !CanSpeakToNearbyNpc(speaker, player.Position))
+        {
+            RefreshNearbyTalkPrompt();
+            return;
+        }
+        TouchObject.singleton.ClickNpc(speaker);
     }
 
     /// <summary>角色到达交互范围后，让当前 NPC 面向角色并打开既有对话窗。</summary>

@@ -36,6 +36,7 @@ public enum WindowType
     TradeMarketWindow = 1004, // 主城交易目录、个人摊位与风雷藏拍。
     TreasurePavilionWindow = 1006, // 主城珍宝阁的四个频道。
     EmailPanel = 1008, // 主城角色收件箱，列出信件并领取附件。
+    NpcTalkPromptWindow = 1007, // 靠近场景说话者时在主 HUD 显示的交谈入口。
     AreaMapWindow = 1005 // 从小地图进入的区域与世界地图。
 }
 

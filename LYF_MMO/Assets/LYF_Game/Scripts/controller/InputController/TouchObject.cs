@@ -187,7 +187,7 @@ public sealed class TouchObject
         return false;
     }
 
-    /// <summary>点击现有NPC时沿目标导航走进原对话距离，不改写战斗选择目标。</summary>
+    /// <summary>点击 NPC 模型或附近交谈按钮时，沿同一条导航流程进入对话距离。</summary>
     /// <param name="entity">当前点击的 NPC 实体，提供模型上的实际世界位置。</param>
     /// <returns>已提交本次NPC导航事件时为true。</returns>
     internal bool ClickNpc(NpcEntity entity)

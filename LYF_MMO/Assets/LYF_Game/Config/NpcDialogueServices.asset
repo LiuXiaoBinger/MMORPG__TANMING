@@ -53,6 +53,7 @@ MonoBehaviour:
     Title: 南街巡卫
     Services: []
   - NpcId: 4105
+    HasNearbySpeaker: 1
     Title: 云帆驿站车夫
     Services:
     - Label: 乘车前往主城
@@ -100,6 +101,7 @@ MonoBehaviour:
     Title: 查看菜单
     Services: []
   - NpcId: 4131
+    HasNearbySpeaker: 1
     Title: 主城驿站车夫
     Services:
     - Label: 乘车前往天空中之城

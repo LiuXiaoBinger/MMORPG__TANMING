@@ -265,6 +265,21 @@ public class MainView : UIBase
    public KnapsackWindow KnapsackWindow => _knapsackWindow;
    /// <summary>供交互控制器显示 NPC 文本并绑定商店按钮。</summary>
    public TalkWindow TalkWindow => _talkWindow;
+
+   /// <summary>主 HUD 中列出附近所有可交谈者的小窗，默认隐藏。</summary>
+   [SerializeField] private NpcTalkPromptWindow _npcTalkPrompt;
+   /// <summary>下一次检查附近说话者的本地秒数，主视图隐藏期间无需扫描。</summary>
+   private float _nextNpcTalkScan;
+   /// <summary>供主控制器更新人物列表并订阅逐人交谈事件。</summary>
+   internal NpcTalkPromptWindow NpcTalkPrompt => _npcTalkPrompt;
+
+   /// <summary>主界面可见时每 0.2 秒更新附近交谈对象，移动和巡逻共用该频率。</summary>
+   private void Update()
+   {
+      if (_npcTalkPrompt == null || Time.unscaledTime < _nextNpcTalkScan) return;
+      _nextNpcTalkScan = Time.unscaledTime + 0.2f;
+      UIRoot.Instance?.MainCtrl?.RefreshNearbyTalkPrompt();
+   }
    /// <summary>取得小地图窗口；未手动绑定时查找包括隐藏节点在内的子组件。</summary>
    public MinMapWindow MinMapWindow
    {
@@ -355,6 +370,11 @@ public class MainView : UIBase
       windowDic[WindowType.SkillInfoWindow] = _skillInfoWindow;
       windowDic[WindowType.KnapsackWindow] = _knapsackWindow;
       windowDic[WindowType.TalkWindow] = _talkWindow;
+      if (_npcTalkPrompt != null)
+      {
+         windowDic[WindowType.NpcTalkPromptWindow] = _npcTalkPrompt;
+         _npcTalkPrompt.SetSpeakers(null);
+      }
       windowDic[WindowType.ShopWindow] = _shopWindow;
       windowDic[WindowType.TradeMarketWindow] = _tradeMarketWindow;
       windowDic[WindowType.EmailPanel] = emailPanel;

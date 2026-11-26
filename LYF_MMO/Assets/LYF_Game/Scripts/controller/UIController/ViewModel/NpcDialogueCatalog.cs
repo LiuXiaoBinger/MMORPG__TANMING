@@ -35,6 +35,8 @@ public sealed class NpcDialogueCatalog : ScriptableObject
     {
         /// <summary>主城或副本 NPC 的配置编号。</summary>
         public int NpcId;
+        /// <summary>固定设施带有可对话人物时开启，例如含车夫的马车。</summary>
+        public bool HasNearbySpeaker;
         /// <summary>头顶显示的职业或身份，填写原文，例如“杂货商人”。</summary>
         public string Title;
         /// <summary>该 NPC 在对话中提供的全部功能。</summary>
@@ -54,6 +56,15 @@ public sealed class NpcDialogueCatalog : ScriptableObject
             if (_npcs[index].NpcId == npcId) return _npcs[index];
         }
         return null;
+    }
+
+    /// <summary>查询固定设施是否还包含可在附近交谈的角色，普通居民无需配置。</summary>
+    /// <param name="npcId">固定设施在 NPC 出生表中的编号。</param>
+    public bool HasNearbySpeaker(int npcId)
+    {
+        // 旧设施的配置默认关闭附近交谈，保留其原有点击动作。
+        Entry entry = FindEntry(npcId);
+        return entry != null && entry.HasNearbySpeaker;
     }
 
     /// <summary>在实体出生时生成名牌称谓，沿用玩家名牌的尖括号格式。</summary>
