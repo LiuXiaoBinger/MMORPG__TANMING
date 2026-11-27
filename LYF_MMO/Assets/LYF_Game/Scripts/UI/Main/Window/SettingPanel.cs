@@ -94,6 +94,7 @@ public sealed class SettingPanel : WindowBase
     /// <summary>打开时置于聊天等主界面窗口上方，回到基础页和页签列表顶部。</summary>
     private void OnEnable()
     {
+        GameHotkeys.SettingsVisible = true;
         transform.SetAsLastSibling();
         OnRectTransformDimensionsChange();
         ScrollTabs(1);
@@ -104,6 +105,7 @@ public sealed class SettingPanel : WindowBase
     /// <summary>关闭窗口时统一将已改动的音量与镜头设置写入本机存档。</summary>
     private void OnDisable()
     {
+        GameHotkeys.SettingsVisible = false;
         PlayerPrefs.Save();
     }
 

@@ -47,6 +47,16 @@ public class SkillSlotWidget : MonoBehaviour, IPointerClickHandler
     private float _cooldownDuration;
     #endregion
 
+    /// <summary>技能栏显示时按本机绑定更新物理键提示。</summary>
+    private void OnEnable()
+    {
+        GameHotkeys.Changed += RefreshKeyLabel;
+        RefreshKeyLabel();
+    }
+
+    /// <summary>隐藏时释放绑定变更通知。</summary>
+    private void OnDisable() => GameHotkeys.Changed -= RefreshKeyLabel;
+
     /// <summary>组件销毁时释放冷却订阅。</summary>
     private void OnDestroy()
     {
@@ -106,13 +116,20 @@ public class SkillSlotWidget : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    /// <summary>设置 key 对应的固定快捷键文字；清空技能时仍保留此文字。</summary>
+    /// <summary>绑定服务端技能槽，并显示其当前物理键。</summary>
+    /// <param name="key">用于查找技能和点击施法的原槽号，例如 Q 或 1。</param>
     public void SetKey(string key)
     {
         _skillKey = key;
-        if (_texKey != null)
+        RefreshKeyLabel();
+    }
+
+    /// <summary>更新文字，鼠标点击仍使用原技能槽号。</summary>
+    private void RefreshKeyLabel()
+    {
+        if (_texKey != null && !string.IsNullOrEmpty(_skillKey))
         {
-            _texKey.SetText(key);
+            _texKey.SetText(GameHotkeys.SkillLabel(_skillKey));
         }
     }
 

@@ -165,7 +165,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
 
     #region 界面显示与刷新
     /// <summary>展开正式队伍窗，窗口实例由主界面持有，重复打开不会被收起。</summary>
-    private void OpenTeamWindow()
+    internal void OpenTeamWindow()
     {
         if (_teamWindow == null)
         {

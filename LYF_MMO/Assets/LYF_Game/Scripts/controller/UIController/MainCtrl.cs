@@ -1194,12 +1194,21 @@ public class MainCtrl : CtrlBase
     }
 
     /// <summary>处理主界面快捷键。</summary>
-    /// <param name="key">L 切技能、B 切背包、I 切角色属性；其他字符不处理。</param>
+    /// <param name="key">窗口命令，和玩家在设置中选择的物理键分开保存。</param>
     public void MainUIKeyHandler(string key)
     {
         if (_currentTalkNpc != null) return;
         switch (key)
         {
+            case "H": OpenFriends(); break;
+            case "T": _themeDungeonTeamCtrl.OpenTeamWindow(); break;
+            case "Settings":
+                // 交易界面的 Esc 先收起当前详情或订单。
+                if (_mainView.TradeMarketWindow != null && _mainView.TradeMarketWindow.gameObject.activeInHierarchy) break;
+                OnSettingRequested();
+                break;
+            case "Y": OnTaskRequested(); break;
+            case "M": OpenAreaMap(); break;
             case "L":
                 ShowMainWindow(WindowType.SkillInfoWindow);
                 break;

@@ -1,4 +1,7 @@
 using System;
+using TMPro;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TouchPhase = UnityEngine.TouchPhase;
@@ -38,18 +41,12 @@ public class PlayerInputCtr : MonoBehaviour
     /// <summary>本轮输入是否已经收到取消；用于区分同一时间戳的真实 Started 与迟到 Performed。</summary>
     private bool _movementInputCanceled;
 
-    /// <summary>最近一次派发技能快捷键所在的 Unity 帧编号，用于过滤同帧文本与物理事件重复通知。</summary>
-    private int _lastSkillDispatchFrame = -1;
-
-    /// <summary>最近一次派发的技能快捷键字符；仅与同帧编号组合使用。</summary>
-    private string _lastSkillDispatchKey;
-
     /// <summary>读取当前 Movement 动作向量，供角色控制器进行移动计算。</summary>
     public Vector2 Movement
     {
         get
         {
-            if (playerInput == null)
+            if (playerInput == null || GameHotkeys.SettingsVisible)
             {
                 return Vector2.zero;
             }
@@ -64,6 +61,8 @@ public class PlayerInputCtr : MonoBehaviour
     {
         Instance = this;
         playerInput = new PlayerInput();
+        ApplyHotkeys();
+        GameHotkeys.Changed += ApplyHotkeys;
         RegisterInputEvents();
     }
 
@@ -83,11 +82,17 @@ public class PlayerInputCtr : MonoBehaviour
     /// <summary>每帧处理目标与技能快捷键，并约每 0.033 秒读取方向，补发持续移动或停止事件。</summary>
     private void Update()
     {
-        // 文本输入事件并不保证由 QueueStateEvent 或所有键盘布局产生，物理边沿作为统一技能入口的补充来源。
         // 选择输入先检查目标有效性，技能快捷键使用同帧最新的当前目标。
+        if (GameHotkeys.SettingsVisible)
+        {
+            StopMovementInput();
+            if (!GameHotkeys.Editing) PollShortcuts(true);
+            return;
+        }
         MSkillTargetMgr.singleton.UpdateToCheckTarget();
         PollTargetSelection();
-        PollPhysicalSkillKeys();
+        PollShortcuts(false);
+        if (GameHotkeys.SettingsVisible) return;
         _movementCheckElapsedSeconds += Time.unscaledDeltaTime;
         if (_movementCheckElapsedSeconds < MovementCheckIntervalSeconds)
         {
@@ -134,6 +139,8 @@ public class PlayerInputCtr : MonoBehaviour
     /// <summary>销毁组件时停止角色、禁用动作并取消文本输入订阅；此处没有调用输入资产的 Dispose。</summary>
     private void OnDestroy()
     {
+        GameHotkeys.Changed -= ApplyHotkeys;
+        if (Instance == this) Instance = null;
         // 销毁前再次收敛角色状态；重复停止不会产生额外业务副作用。
         _movementInputCanceled = true;
         DispatchStopMovement();
@@ -175,6 +182,7 @@ public class PlayerInputCtr : MonoBehaviour
     /// <param name="context">Input System 提供的移动动作阶段和二维输入值。</param>
     private void OnMovementChanged(InputAction.CallbackContext context)
     {
+        if (GameHotkeys.SettingsVisible) return;
         // 回调时间早于最近一次移动取消时间，属于取消之前的旧回调。
         bool isBeforeCancelTime = context.time < _lastMovementCanceledTime;
         // 与取消时间同戳、仍标记为已取消且本次不是 Started 阶段，仍视为排队旧回调。
@@ -226,6 +234,7 @@ public class PlayerInputCtr : MonoBehaviour
     /// <param name="context">Input System 提供的本次跳跃按键阶段信息。</param>
     private void OnJumpStarted(InputAction.CallbackContext context)
     {
+        if (GameHotkeys.SettingsVisible) return;
         // 跳跃只在按下沿执行；松开按键不再连接旧角色控制器或结束跳跃。
         PlayerEntity localRole = GetLocalRole();
         if (localRole == null || localRole.MoveComp == null)
@@ -240,48 +249,13 @@ public class PlayerInputCtr : MonoBehaviour
     /// <param name="inputCharacter">Input System 产生的字符。</param>
     private void OnTextInput(char inputCharacter)
     {
-        if (playerInput == null || !playerInput.asset.enabled)
-        {
-            return;
-        }
-
+        if (playerInput == null || !playerInput.asset.enabled || GameHotkeys.SettingsVisible) return;
+        // 原始字符仍发给实体；技能与窗口由物理键按下沿统一派发。
         DispatchTextInput(inputCharacter);
-        // 将文本字符转为大写字符串，用于技能和界面快捷键匹配。
-        string key = inputCharacter.ToString().ToUpperInvariant();
-        if (IsSkillKey(key))
-        {
-            DispatchSkillShortcut(key);
-        }
-        else if (key == "L" || key == "B" || key == "I")
-        {
-            MainUIKeyHandler?.Invoke(key);
-        }
     }
     #endregion
 
     #region 查询与判定
-    /// <summary>判断字符是否为技能快捷键。</summary>
-    /// <param name="key">转为大写后的单字符字符串。</param>
-    /// <returns>属于技能快捷键时返回 true。</returns>
-    private bool IsSkillKey(string key)
-    {
-        // 字母快捷键分组 Q/E/R。
-        bool isLetterQer = key == "Q" || key == "E" || key == "R";
-        // 字母 F 与数字快捷键 1/2。
-        bool isLetterF12 = key == "F" || key == "1" || key == "2";
-        // 字母快捷键组合。
-        bool isLetterGroup = isLetterQer || isLetterF12;
-        // 数字快捷键 3/4/5。
-        bool isDigit345 = key == "3" || key == "4" || key == "5";
-        // 数字快捷键 6/7/8。
-        bool isDigit678 = key == "6" || key == "7" || key == "8";
-        // 数字快捷键 9。
-        bool isDigit9 = key == "9";
-        // 数字快捷键组合。
-        bool isDigitGroup = isDigit345 || isDigit678 || isDigit9;
-        return isLetterGroup || isDigitGroup;
-    }
-
     /// <summary>获取场景中的本地玩家实体。</summary>
     /// <returns>本地玩家实体；场景未准备好时返回 null。</returns>
     private PlayerEntity GetLocalRole()
@@ -362,7 +336,7 @@ public class PlayerInputCtr : MonoBehaviour
     }
 
     #region 核心逻辑
-    /// <summary>用现有 Input System 采集鼠标按下松开与 Tab，Tab 和瞄准按钮走同一切换方法。</summary>
+    /// <summary>采集鼠标按下与松开的屏幕位置，转交场景点击选中入口。</summary>
     private void PollTargetSelection()
     {
         // 当前鼠标设备，桌面点击以左键的真实边沿为准。
@@ -379,12 +353,6 @@ public class PlayerInputCtr : MonoBehaviour
             {
                 TouchObject.singleton.JudegeType(position, TouchPhase.Ended);
             }
-        }
-        // Tab 是桌面便捷入口，不修改已有技能字符和移动动作绑定。
-        Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && keyboard.tabKey.wasPressedThisFrame)
-        {
-            MSkillTargetMgr.singleton.FindEnemyByAimBtn();
         }
     }
 
@@ -424,72 +392,59 @@ public class PlayerInputCtr : MonoBehaviour
         DispatchStopMovement();
     }
 
-    /// <summary>读取 Q/E/R/F/数字键的物理按下边沿并派发技能快捷键。</summary>
-    private void PollPhysicalSkillKeys()
+    /// <summary>覆盖已有移动组合、跳跃和奔跑动作，键位变更后同帧生效。</summary>
+    private void ApplyHotkeys()
     {
-        // 每帧读取当前键盘设备；设备不存在时测试输入和真实输入都不应抛异常。
+        // 每个移动条目覆盖原动作上相应的键盘绑定，不替换动作本身。
+        for (int index = 0; index < GameHotkeys.Rows.Length; index++)
+        {
+            // 目录行提供保存后的键与稳定方向名。
+            GameHotkeys.Entry row = GameHotkeys.Rows[index];
+            if (row.Type != GameHotkeys.Kind.Motion) continue;
+            // Input System 路径从键码构造，无键盘连接时也可加载。
+            string path = GameHotkeys.ControlPath(row.Bound);
+            if (row.Command == "jump") playerInput.player.Jump.ApplyBindingOverride(0, path);
+            else if (row.Command == "run") playerInput.player.Shift.ApplyBindingOverride(0, path);
+            else
+            {
+                // 仅覆盖组合中对应方向的部件，不改动组合根。
+                InputAction movement = playerInput.player.Movement;
+                for (int part = 0; part < movement.bindings.Count; part++)
+                {
+                    if (movement.bindings[part].name == row.Command) movement.ApplyBindingOverride(part, path);
+                }
+            }
+        }
+    }
+
+    /// <summary>根据本机物理键分发稳定的槽号和窗口命令；文本输入不重复施法。</summary>
+    /// <param name="settingsOnly">设置已打开时只接受关闭设置的快捷键。</param>
+    private void PollShortcuts(bool settingsOnly)
+    {
+        // 聊天获得焦点时输入动作已停用，不抢占文本框输入。
         Keyboard keyboard = Keyboard.current;
-        if (keyboard == null)
+        if (keyboard == null || !playerInput.asset.enabled) return;
+        // 搜索、私聊等输入框持有焦点时，字母、数字和 Esc 留给正在编辑的控件。
+        GameObject focus = EventSystem.current?.currentSelectedGameObject;
+        if (focus != null)
         {
-            return;
+            if (focus.TryGetComponent(out TMP_InputField text) && text.isFocused) return;
+            if (focus.TryGetComponent(out InputField legacyText) && legacyText.isFocused) return;
         }
-        if (playerInput == null || playerInput.asset == null)
+        for (int index = 0; index < GameHotkeys.Rows.Length; index++)
         {
-            return;
-        }
-        if (!playerInput.asset.enabled)
-        {
-            return;
-        }
-
-        DispatchPhysicalKeyIfPressed(keyboard, Key.Q, "Q");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.E, "E");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.R, "R");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.F, "F");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.Digit1, "1");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.Digit2, "2");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.Digit3, "3");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.Digit4, "4");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.Digit5, "5");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.Digit6, "6");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.Digit7, "7");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.Digit8, "8");
-        DispatchPhysicalKeyIfPressed(keyboard, Key.Digit9, "9");
-    }
-
-    /// <summary>检查单个物理按键的本帧按下边沿并转为技能字符。</summary>
-    /// <param name="keyboard">Input System 当前键盘设备。</param>
-    /// <param name="key">需要检测的物理按键。</param>
-    /// <param name="skillKey">该按键对应的技能快捷键字符。</param>
-    private void DispatchPhysicalKeyIfPressed(Keyboard keyboard, Key key, string skillKey)
-    {
-        if (keyboard[key].wasPressedThisFrame)
-        {
-            DispatchSkillShortcut(skillKey);
-        }
-    }
-
-    /// <summary>派发技能快捷键并过滤同一帧由文本和物理链路产生的重复事件。</summary>
-    /// <param name="skillKey">已经规范化为大写或数字的技能快捷键。</param>
-    private void DispatchSkillShortcut(string skillKey)
-    {
-        if (!IsSkillKey(skillKey))
-        {
-            return;
-        }
-
-        // 当前 Unity 帧编号，用于合并同一帧的文本输入与物理边沿。
-        int currentFrame = Time.frameCount;
-        if (_lastSkillDispatchFrame == currentFrame && _lastSkillDispatchKey == skillKey)
-        {
-            return;
-        }
-
-        _lastSkillDispatchFrame = currentFrame;
-        _lastSkillDispatchKey = skillKey;
-        if (SkillKeyEvent != null)
-        {
-            SkillKeyEvent.Invoke(skillKey);
+            // 未开放条目与由 InputAction 处理的移动动作无需轮询。
+            GameHotkeys.Entry row = GameHotkeys.Rows[index];
+            if (row.Type == GameHotkeys.Kind.Unavailable || row.Type == GameHotkeys.Kind.Motion) continue;
+            if (settingsOnly && row.Command != "Settings") continue;
+            if (!GameHotkeys.Pressed(keyboard, row.Bound)) continue;
+            switch (row.Type)
+            {
+                case GameHotkeys.Kind.Skill: SkillKeyEvent?.Invoke(row.Command); break;
+                case GameHotkeys.Kind.Target: MSkillTargetMgr.singleton.FindEnemyByAimBtn(); break;
+                case GameHotkeys.Kind.Window: MainUIKeyHandler?.Invoke(row.Command); break;
+            }
+            if (row.Command == "Settings") return;
         }
     }
 
@@ -504,7 +459,7 @@ public class PlayerInputCtr : MonoBehaviour
             return;
         }
 
-        localRole.MoveComp.SetRunning(isRunning);
+        localRole.MoveComp.SetRunning(isRunning && !GameHotkeys.SettingsVisible);
     }
 
     /// <summary>根据当前相机朝向把移动输入封装为池化移动事件并发送给本地玩家实体。</summary>
