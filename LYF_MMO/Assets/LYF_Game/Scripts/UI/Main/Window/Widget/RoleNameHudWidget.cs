@@ -95,15 +95,15 @@ public sealed class RoleNameHudWidget : MonoBehaviour
         HideUnused(visibleCount);
     }
 
-    /// <summary>把头骨位置投影到主画布，供护盾和名牌共用同一条垂直中线。</summary>
-    /// <param name="role">当前显示名牌或护盾的角色。</param>
-    /// <param name="worldCamera">本帧观察角色的场景相机。</param>
-    /// <param name="anchor">名牌最下缘的中点，以画布中心为原点，单位为逻辑像素。</param>
-    /// <param name="scale">角色投影相对原版名牌的比例，近景最大为一，文字、盾条和行距共用。</param>
-    /// <returns>头部锚点在场景相机的可见屏幕内时为真。</returns>
-    public bool TryGetHeadAnchor(RoleEntity role, Camera worldCamera, out Vector2 anchor, out float scale)
+    /// <summary>把头骨位置投影到主画布，供名牌、护盾和怪物血条共用同一条垂直中线。</summary>
+    /// <param name="entity">当前需要绘制头顶 HUD 的实体，玩家、NPC 或怪物都可以。</param>
+    /// <param name="worldCamera">本帧观察该实体的场景相机。</param>
+    /// <param name="anchor">实体头部上方按距离留出间距后的画布坐标。</param>
+    /// <param name="scale">按实体屏幕高度计算的等比缩放，与名牌使用同一公式。</param>
+    /// <returns>锚点位于该相机可见范围内时为真。</returns>
+    public bool TryGetHeadAnchor(MEntity entity, Camera worldCamera, out Vector2 anchor, out float scale)
     {
-        return TryProjectHead(role, worldCamera, out anchor, out scale);
+        return TryProjectHead(entity, worldCamera, out anchor, out scale);
     }
 
     /// <summary>用最终游戏相机投影名牌，玩家跟随头骨，NPC 使用按模型标定的站立高度。</summary>
