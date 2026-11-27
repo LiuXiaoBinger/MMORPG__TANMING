@@ -1128,3 +1128,7 @@ The 12 existing HUD entries in the `FunctionMenu` subtree of `UIRoot.prefab` use
 ## [CODE][FILES][HANDOFF][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed
 
 Clicking the combat HUD run icon or pressing the default F4 key toggles the local player’s slow/fast mode. Releasing F4 or a movement key preserves the selection. Saved custom keys update the HUD label. A legacy F4 assigned to another action remains available to that action and the run icon stays clickable. The slow and fast speed caps are 6 and 10 m/s. `项目修改日志/2026-11-27-快慢跑按钮切换.md`
+
+## [CODE][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag item details and recovery shortcuts
+
+All 460 ItemInfo rows specify a detail category. Ordered actions and per-bottle HP/MP recovery are configured in the same workbook. The RO bag card stays beside the grid and fits its contents. Actions use the selected stack and existing manual, gem, workshop and market routes. Bound stacks cannot be offered. White/green technique badges have no sale action, gold uses the local market draft. Actions without economic recipes are hidden. F1 equips mana and F2 health by default. Equipment uses the existing instance detail window. Full file inventory and handoff in 项目修改日志/2026-11-27-背包分类详情与药品快捷位.md.

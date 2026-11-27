@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `904f32eea62d7b7280277d05cf597a84febc88b9a777a13ebcb21b446da8c34a`
+Source normalized SHA256: `9774924629ea0aec89101623357261e30b51ee1e7431bbfb588146e5786ae222`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -171,11 +171,12 @@ Source normalized SHA256: `904f32eea62d7b7280277d05cf597a84febc88b9a777a13ebcb21
 | [CODE][FILES][HANDOFF][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD function menu icons and fold animation | 1114-1117 |
 | [CODE][FILES][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Visible-player friend discovery and two-column mailbox | 1118-1122 |
 | [CODE][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Create a party dungeon before admitting its members | 1123-1127 |
-| [CODE][FILES][HANDOFF][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1128-1130 |
+| [CODE][FILES][HANDOFF][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1128-1131 |
+| [CODE][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag item details and recovery shortcuts | 1132-1134 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `a39361c09b37d8cecb7b75f08833ae1893791fa10a80740e928f1689c8fc46d9`
+Source normalized SHA256: `1c2efcb78d0f4f7f8ab8e7647fbbc0f18820ac6726ec73198d743795d7b1a2a0`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -341,7 +342,8 @@ Source normalized SHA256: `a39361c09b37d8cecb7b75f08833ae1893791fa10a80740e928f1
 | [VERIFY][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD menu pointer and animation checks | 1165-1168 |
 | [VERIFY][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Friend discovery and mailbox layout checks | 1169-1173 |
 | [VERIFY][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Verify creation, party transfer and return across GameServers | 1174-1178 |
-| [VERIFY][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1179-1181 |
+| [VERIFY][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1179-1182 |
+| [VERIFY][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag card, shortcuts and server potion settlement | 1183-1185 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -1179,3 +1179,7 @@ The working client and the isolated branch sources both compiled for Editor and 
 ## [VERIFY][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed
 
 Editor and Windows Player LYF_Game assemblies compiled. The production HUD prefab and local player passed 29 Play Mode checks covering pointer clicks, held/released F4, Shift, movement animation slots, rebinding and legacy F4 conflicts. On the same 60 m flat course from rest with a CharacterController at 20 ms steps, slow mode took 10.10 s before and after. Fast mode went from 8.12 s to 6.16 s, peaking at 10 m/s. Live account play, remote-player presentation and a complete Windows build were not tested. `项目修改日志/2026-11-27-快慢跑按钮切换.md`
+
+## [VERIFY][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag card, shortcuts and server potion settlement
+
+The production client, GameServer and GateServer built. Unity isolated Play Mode passed 118 checks including pointer selection with the card open, category actions, binding, market forms, gem grade, F1/F2, rebinding and actual refusal text. At design scale a short potion card is 540 × 184, a read-only card is 392 wide and the longest bound description is 311 high without clipping. The server fixture passed 47 checks covering the four potions, full-resource refusal without consumption, caps, last-stack removal and repeat use. Client transport and asset loading were isolated. No live realm or mobile package test. Evidence under _temp/bag-potion-20261127/ and 项目修改日志/2026-11-27-背包分类详情与药品快捷位.md.
