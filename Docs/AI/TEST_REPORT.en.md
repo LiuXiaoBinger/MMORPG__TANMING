@@ -1165,3 +1165,8 @@ The Editor and Windows Player LYF_Game assemblies compiled with the current sour
 ## [VERIFY][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD menu pointer and animation checks
 
 The working client and the isolated branch sources both compiled for Editor and Player. The isolated Unity 2023.2.20f1c1 Play Mode run used the serialized menu subtree and 17 bindings from the official prefab, the compiled MainView and the existing MainCtrl toggle handler. At 1920 × 1080 and 1366 × 768, 61 combined assertions passed including 12 sprite and pointer targets, the two unread badges, partial reveal, interrupted close and reopen, HUD hide/show, and input release through the external close method. Play Mode used a paused game clock. The 23-frame preview and captures are under `_temp/menu-icons-motion-20261127/`. Live account login and a published client build were not tested. See `项目修改日志/2026-11-27-主城功能菜单图标与折叠动画.md`.
+
+## [VERIFY][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Friend discovery and mailbox layout checks
+
+- Unity Play Mode passed 26 checks in the isolated UI scene using the production panels, controllers and a test network/scene adapter. Coverage included filtering, page wrap, ID/nickname search, explicit add target and no automatic read on inbox open, detail and attachment binding, inbox/outbox navigation and a late inbox reply. Layout was rendered at 1280×720 and the modal bounds were checked at 1024×768 and 1600×720.
+- The Editor and Player hot-update assemblies compiled in both the working tree and the clean feature-branch source tree. No test database was created. Physical touch, a live realm session and deployment were not tested. Evidence and Git receipts are in 项目修改日志/添加好友与邮箱布局-2026-11-27.md.

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `34e3b28bc8cf8553c5be1b117a82c7dc29b67bc182cc48acc0a9caf08f615ad9`
+Source normalized SHA256: `8d3cf86955452b00af26049c9a7c71f68769598f628d1e3ee22ff0f55d869afb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -168,11 +168,12 @@ Source normalized SHA256: `34e3b28bc8cf8553c5be1b117a82c7dc29b67bc182cc48acc0a9c
 | [CODE][FILES][HANDOFF][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals | 1102-1105 |
 | [CODE][FILES][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] RO names for workshop materials and Magic Swordsman upgrade patterns | 1106-1109 |
 | [CODE][FILES][HANDOFF][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1110-1113 |
-| [CODE][FILES][HANDOFF][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD function menu icons and fold animation | 1114-1116 |
+| [CODE][FILES][HANDOFF][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD function menu icons and fold animation | 1114-1117 |
+| [CODE][FILES][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Visible-player friend discovery and two-column mailbox | 1118-1121 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `a224d9cbecd02380ed14cebe59d792325a9e86a74bfc2dd51e66695b3d575d0a`
+Source normalized SHA256: `24ed71783d893ab5f8a5e4391b8551041de8ebb27c696d0aa5e5fb27015c3366`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -335,7 +336,8 @@ Source normalized SHA256: `a224d9cbecd02380ed14cebe59d792325a9e86a74bfc2dd51e666
 | [VERIFY][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] Renamed materials in workshop, inventory and market search | 1150-1153 |
 | [VERIFY][数据库][LOCAL-DB-CLEANUP-20261127] Local mailbox and chat test database cleanup | 1154-1160 |
 | [VERIFY][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1161-1164 |
-| [VERIFY][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD menu pointer and animation checks | 1165-1167 |
+| [VERIFY][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD menu pointer and animation checks | 1165-1168 |
+| [VERIFY][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Friend discovery and mailbox layout checks | 1169-1172 |
 
 ## Docs/AI/DECISIONS.en.md
 

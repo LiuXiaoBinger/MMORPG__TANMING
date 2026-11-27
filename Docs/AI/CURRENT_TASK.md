@@ -1109,3 +1109,8 @@ Codex 已接入五条委托、游戏服存档、NPC 办理、公共地图选门�
 ## [CODE][FILES][HANDOFF][界面][FUNCTION-MENU-RO-ANIMATION-20261127] 主城 HUD 功能菜单图标与折叠动画
 
 `UIRoot.prefab` 的 `FunctionMenu` 子树中，原有的 12 个 HUD 入口使用取自 RO 美术资源的 `FunctionMenuIcons` 图集。名称统一采用 20 点字号，透明按钮保留 80 × 84 的点击区域。邮件和好友角标分别使用独立的子节点。`MainView.ToggleFunctionMenu` 和 `SetFunctionMenuVisible` 更新 `CanvasGroup` 的输入标志和 `Animator` 的 `Expanded` 参数。`Animas/UI` 下的两个动画片段控制 `RectMask2D` 的水平显隐、菜单透明度和开关箭头。动画控制器的展开过渡为 0.26 秒，收起过渡为 0.21 秒。资源路径、精灵映射和预览见 `项目修改日志/2026-11-27-主城功能菜单图标与折叠动画.md`。
+
+## [CODE][FILES][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] 从本区可见玩家中添加好友与邮箱双栏布局
+
+- `FriendsPanel` 打开现有的添加好友弹窗。`AddFriendsPanel`、`AddFriendsCtrl` 和 `AddFriendTemplate` 每页以 4 行展示本区实际可见的玩家，排除自己的角色和现有好友。玩家可以筛选、翻页，并按角色 ID 或昵称搜索。明确点击添加后，才通过已有好友协议向选中的角色发送请求。玩家头像使用 RO 职业插画，配上与其实际职业相符的徽记。
+- `EmailPanel` 沿用 RO 资源和导航。左列上方显示交易入口和收件箱邮件列表，下方是发件箱、批量删除和批量领取按钮。打开收件箱时不自动读信，右列先提示选择邮件。玩家点击邮件后，右列才读取并显示详情。发件箱页面提供发送赠礼的入口。历史已发邮件和跨区服好友推荐均不在本次范围内。完整文件清单与界面预览见 `项目修改日志/添加好友与邮箱布局-2026-11-27.md`。
