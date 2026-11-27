@@ -1148,3 +1148,9 @@ RO 背包新增两个页签。6 号秘籍背包收纳 32 种整本秘籍和对�
 ## [CODE][FILES][网络][区服][REALM-START-LOCK-20261127] 旧服务 DLL 被占用时启动开发区服
 
 Windows 区服启动脚本将构建产物输出到 `_temp/realm-build`。各服务从 `_temp/realm-runtime` 下各自的运行副本启动，副本路径由文件内容决定。配置或依赖变化时使用新副本。输入相同时，Windows PowerShell 5.1 和 PowerShell 7 会复用同一套文件。MasterServer 的两个音频目录指向 `MasterServer/bin/<Configuration>` 下原有的存储位置。两个停止脚本都能识别开发部署路径和传统部署路径。不含解决方案的分发包仍可从随包提供的二进制文件启动。五个部署文件由 Codex 直接修改。业务提交 `58aae24` 和 `313dad0` 位于 `codex/feature-development` 分支。见 `项目修改日志/2026-11-27-区服启动时构建输出占用.md`。
+
+## [CODE][FILES][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] 旧文件被映射期间发布着色器变体 JSON 清单
+
+- 仓库跟踪的 YooAsset 1.5.7 压缩包已更新。编辑器先在项目所在卷写出完整 JSON，再替换目标文件。允许共享删除的读取方仍可读取旧内容。发布时仅对 Windows 错误 32 或 1224 进行重试，编辑器在等待期间交还控制，间隔 200 ms，最多重试 10 次。流程结束时取消订阅编辑器更新事件，发布成功后才调用成功回调。数量取自已保存的变体集合。
+- 更新了累积补丁，将包重命名为 `LYF_MMO/Packages/com.tuyoogame.yooasset-1.5.7-build-filter-atomic-manifest.tgz`，并同步更新 UPM 清单与锁文件。包内仍有 1,424 个条目，仅 `ShaderVariantCollector.cs` 和 `ShaderVariantCollectionManifest.cs` 的内容有变化，既有构建过滤逻辑保留。
+- 经开发者批准，已从本地有改动的现有变体集合重新生成 `LYF_MMO/Assets/LYF_Game/Shaders/MyShaderVariants.json`。变体集合与 JSON 两项生成资源均保留在本地。详见 `项目修改日志/2026-11-27_YooAsset变体清单映射占用修复.md`。

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `dff578698e880c7682a5bc2703e3e10f46f9f648aeb28dd21e6bc83b6d5e257b`
+Source normalized SHA256: `db69da9a1a233ab579d4502d394d4afba17d178b4465f9d02c5790c71a20196a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -177,11 +177,12 @@ Source normalized SHA256: `dff578698e880c7682a5bc2703e3e10f46f9f648aeb28dd21e6bc
 | [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-ROLL-20261127] Per-instance equipment attributes and growth | 1141-1144 |
 | [CODE][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Independent manual and gem bags | 1145-1148 |
 | [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing and jade locks | 1149-1152 |
-| [CODE][FILES][网络][区服][REALM-START-LOCK-20261127] Start the development realm while old service DLLs are in use | 1153-1155 |
+| [CODE][FILES][网络][区服][REALM-START-LOCK-20261127] Start the development realm while old service DLLs are in use | 1153-1156 |
+| [CODE][FILES][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Publish the shader variant JSON while its old file is mapped | 1157-1161 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `7ec2e6f4b3a46095bc9685990b2785b3a145e5a66a3ca605506baf6871c7efca`
+Source normalized SHA256: `4f430b632a379e7c368166ee461ab3403598092aedd589cf4c69da57fe600702`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -353,7 +354,8 @@ Source normalized SHA256: `7ec2e6f4b3a46095bc9685990b2785b3a145e5a66a3ca605506ba
 | [VERIFY][装备][数据库][界面][EQUIP-ROLL-20261127] Equipment rolls, database reload and eye interaction | 1192-1195 |
 | [VERIFY][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Inventory routing, persistence and outside-click verification | 1196-1199 |
 | [VERIFY][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing, persistence and client interaction | 1200-1203 |
-| [VERIFY][网络][区服][REALM-START-LOCK-20261127] Reproduce the startup failure and verify the live first realm | 1204-1206 |
+| [VERIFY][网络][区服][REALM-START-LOCK-20261127] Reproduce the startup failure and verify the live first realm | 1204-1207 |
+| [VERIFY][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Reproduce mapped-file contention and verify the saved collection in Unity | 1208-1212 |
 
 ## Docs/AI/DECISIONS.en.md
 
