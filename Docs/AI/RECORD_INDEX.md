@@ -170,7 +170,7 @@ Source normalized SHA256: `3fc34f7f57baba9cdaca88fbcfbc7fd44b3cfe0c3b69e31bad9d2
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `018a2577cb0c7ca19defee558185783682cf8a448f149c5c28681fe468d9ee2a`
+Source normalized SHA256: `916b922154db75e26085f7805f4092d135d45b1c7a782de2b2c76af7cb672908`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -330,7 +330,8 @@ Source normalized SHA256: `018a2577cb0c7ca19defee558185783682cf8a448f149c5c28681
 | [VERIFY][好友聊天][SOCIAL-CHAT-20261127] Private delivery, group persistence and Unity input | 1136-1141 |
 | [VERIFY][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Full graphical client clear of Moshenta 4060 | 1142-1145 |
 | [VERIFY][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals | 1146-1149 |
-| [VERIFY][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] Renamed materials in workshop, inventory and market search | 1150-1152 |
+| [VERIFY][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] Renamed materials in workshop, inventory and market search | 1150-1153 |
+| [VERIFY][数据库][LOCAL-DB-CLEANUP-20261127] Local mailbox and chat test database cleanup | 1154-1158 |
 
 ## Docs/AI/DECISIONS.en.md
 

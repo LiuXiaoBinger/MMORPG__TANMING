@@ -1150,3 +1150,9 @@ Luban export succeeded. An isolated copy of the actual game server loaded the fo
 ## [VERIFY][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] Renamed materials in workshop, inventory and market search
 
 Luban reproduced the baseline binary. Comparison of all 460 item rows identified 31 name and nine description changes. Unity Play Mode passed 288 isolated checks including the 31 item names, icons and shelves, exact new-name searches, old-name misses, zero-stock item details and both ten-pattern searches. The three workshop operations retained their ingredient counts. A restored seven-item stack kept its UID and showed the new name in the sell panel. Live realm 1 and mobile builds were not tested. Evidence is in `_temp/gold-material-names-20261127/unity-proof.txt` and `项目修改日志/2026-11-27-作坊材料与魔剑士升级图纸改名.md`.
+
+## [VERIFY][数据库][LOCAL-DB-CLEANUP-20261127] Local mailbox and chat test database cleanup
+
+- Codex removed the 11 databases traced to this conversation on the local MySQL instance on port 3308. Six came from mailbox runs, one from friend gifts and four from private/group chat. Each exact name was matched to this conversation's fixture start and the MySQL binary log entry for database creation.
+- The final teardown had stopped the test servers and left their databases behind. Before removal, all 11 had no active session, metadata lock, live realm configuration reference or running fixture server. A new connection then compared the entire catalog. It fell from 136 to 125. All 117 other candidate databases and all eight protected databases were present, including game_db with its role_mail table.
+- Verification covered this local instance. Client gameplay and remote instances were outside the check. The full database names, creation evidence and deletion receipt are in 项目修改日志/本地MySQL验收库清理-2026-11-27.md.
