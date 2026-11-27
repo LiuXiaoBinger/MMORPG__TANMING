@@ -58,6 +58,7 @@ internal sealed class TeamManager
     public TeamManager(BaseLink game)
     {
         _game = game;
+        if (game is RealmSocialLink realm) realm.Teams = this;
     }
 
     /// <summary>按原客户端协议处理已由游戏服会话识别的角色请求。</summary>
@@ -219,6 +220,7 @@ internal sealed class TeamManager
     /// <param name="roleId">已通过检查的成员角色号。</param>
     private void Join(Team team, ulong roleId)
     {
+        if (_game is RealmSocialLink realm) realm.Cancel(team.Id);
         CancelConfirmation(team, roleId, FailEnterFBReason.FailEnterFbSomeoneLeaveWaitingScene);
         team.Members.Add(roleId);
         _roleTeams.Add(roleId, team);
@@ -250,6 +252,7 @@ internal sealed class TeamManager
         Team team;
         if (!_roleTeams.TryGetValue(roleId, out team)) return;
         CancelConfirmation(team, roleId, FailEnterFBReason.FailEnterFbSomeoneLeaveWaitingScene);
+        if (_game is RealmSocialLink realm) realm.Cancel(team.Id);
         team.Members.Remove(roleId);
         _roleTeams.Remove(roleId);
         if (notifySelf)
@@ -259,6 +262,7 @@ internal sealed class TeamManager
         if (team.Members.Count == 0)
         {
             _teams.Remove(team.Id);
+            if (_game is RealmSocialLink) NotifyRoster(team);
             return;
         }
         if (team.Captain == roleId) team.Captain = team.Members[0];
@@ -403,17 +407,36 @@ internal sealed class TeamManager
     {
         // 地图、难度、层数共同标识场景内容；任一改变都不能复用旧怪物状态。
         bool sameSelection = team.DungeonId == dungeonId && team.DungeonsDegree == degree && team.DungeonLayer == layer;
-        if (team.InstanceId == 0 || !sameSelection)
-        {
-            team.InstanceId = _nextInstanceId++;
-            team.DungeonId = dungeonId;
-            team.DungeonsDegree = degree;
-            team.DungeonLayer = layer;
-        }
+        // 预留编号与已经建好的实例区分，建本失败时队伍仍可邀请成员或再开本。
+        ulong instance = team.InstanceId;
+        if (instance == 0 || !sameSelection) instance = _nextInstanceId++;
         // 创建怪物和切换角色场景属于 GS，MS 只传入队伍、实例编号和名单。
-        MasterTeamDungeonOrder order = new MasterTeamDungeonOrder { TeamId = team.Id, InstanceId = team.InstanceId, DungeonId = dungeonId, DungeonsDegree = degree, DungeonLayer = layer };
+        MasterTeamDungeonOrder order = new MasterTeamDungeonOrder { TeamId = team.Id, InstanceId = instance, DungeonId = dungeonId, DungeonsDegree = degree, DungeonLayer = layer };
         order.MemberIds.Add(team.Members);
-        _game.Send(NetDefine.CMD_MasterTeamEnter, order.ToByteString());
+        if (!_game.Send(NetDefine.CMD_MasterTeamEnter, order.ToByteString())) return;
+        // 开发用单 GS 连接直接承接原入场命令；区服模式由真实建本回执发布实例。
+        if (!(_game is RealmSocialLink)) DungeonReady(order);
+    }
+
+    /// <summary>把成功创建或复用的副本公开给当前队伍。</summary><param name="order">宿主已接受的实例及目标配置。</param>
+    internal void DungeonReady(MasterTeamDungeonOrder order)
+    {
+        // 收到建本结果时仍然存在的队伍。
+        Team team = _teams[order.TeamId];
+        team.InstanceId = order.InstanceId;
+        team.DungeonId = order.DungeonId;
+        team.DungeonsDegree = order.DungeonsDegree;
+        team.DungeonLayer = order.DungeonLayer;
+        NotifyRoster(team);
+    }
+
+    /// <summary>原 GS 销毁副本时解除队伍的对应实例绑定。</summary><param name="teamId">所属队伍。</param><param name="instanceId">实际释放的实例。</param>
+    internal void DungeonClosed(ulong teamId, ulong instanceId)
+    {
+        // 队伍可能已解散或已进入另一层。
+        Team team;
+        if (!_teams.TryGetValue(teamId, out team) || team.InstanceId != instanceId) return;
+        team.InstanceId = 0;
         NotifyRoster(team);
     }
 

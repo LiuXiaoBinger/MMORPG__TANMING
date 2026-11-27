@@ -25,6 +25,8 @@ internal static class MasterServerApp
         MasterTeamService teams = new MasterTeamService(realm);
         server.RegistCommand(SceneLineCode.Register, teams);
         server.RegistCommand(SceneLineCode.Presence, teams);
+        server.RegistCommand(SceneLineCode.DungeonPrepared, teams);
+        server.RegistCommand(SceneLineCode.DungeonClosed, teams);
         server.RegistCommand(NetDefine.RpcC2M_SendChatMsg, teams);
         server.RegistCommand(NetDefine.PtcG2M_ChatAudioTransfer, teams);
         server.RegistCommand(NetDefine.CMD_MasterTeamRequest, teams);

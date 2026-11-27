@@ -1119,3 +1119,8 @@ The 12 existing HUD entries in the `FunctionMenu` subtree of `UIRoot.prefab` use
 
 - FriendsPanel opens the existing add-friend modal. AddFriendsPanel, AddFriendsCtrl and AddFriendTemplate show four currently visible players from the local role’s realm per page, excluding the local role and existing friends. Players can filter, page and search by role ID or nickname. An explicit add uses the existing friend protocol. Character portraits are RO class illustrations with the actual profession badge.
 - EmailPanel keeps its RO assets and navigation. The trade entry and inbox rows sit on the left above the outbox, batch delete and batch claim buttons. The right pane initially prompts for a selection and only opens the letter after a click. The outbox is a page with a send-gift entry. Historical sent mail and cross-realm recommendations were outside the requested scope. Full file list and previews are in 项目修改日志/添加好友与邮箱布局-2026-11-27.md.
+
+## [CODE][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Create a party dungeon before admitting its members
+
+- In a multi-GS realm MasterServer asks ControlServer to select a live GS using the realm's existing round-robin or load policy. Only a successful prepare reply from the chosen GS publishes the instance and sends the confirmed party to it. Re-entry targets that active instance's host. A rejected create leaves every player on their original map.
+- The gate transfers each member directly to the private instance, including from maps whose only public line is on another GS. Return allocates a public line on the departure map. A world waits for in-flight members and releases an unused reservation or a world that has finished. Full file list and receipts are in `项目修改日志/2026-11-27-副本选服与建成后传送.md`.

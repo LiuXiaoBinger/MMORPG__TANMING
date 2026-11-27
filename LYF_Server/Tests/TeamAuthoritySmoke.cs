@@ -27,13 +27,15 @@ public static class TeamAuthoritySmoke
     /// <returns>全部通过返回 0，否则返回失败条数。</returns>
     public static int Main(string[] args)
     {
-        // 本测试不依赖 Luban 配置表与数据库，直接使用强类型协议对象。
+        // 与正式 GS 一样从配置初始化角色组件和真实副本，不需要角色数据库。
         try
         {
             // 从实际 MS 读取权威结果，端口由隔离测试启动器传入。
             int port = NetDefine.MasterServerPort;
             if (args.Length > 0) port = int.Parse(args[0]);
             MasterTeamProbe.Instance = new MasterTeamProbe(port);
+            LubanMgr.Instance.Init();
+            CheckPreparedDungeonArrival();
             CheckCreateAndInviteFlow();
             CheckCapacityAndSixthRejected();
             CheckApplicationNeedsCaptainApproval();
@@ -318,6 +320,34 @@ public static class TeamAuthoritySmoke
 
         MasterTeamProbe.Instance.LeaveTeam(1302UL);
         MasterTeamProbe.Instance.LeaveTeam(1301UL);
+    }
+
+    /// <summary>验证无人时先建本、跨服成员依次抵达，以及最后一人真正离开后的回收。</summary>
+    private static void CheckPreparedDungeonArrival()
+    {
+        // 仅用测试反射绑定区服内部入口，正式 GS 无需给客户端开放建本接口。
+        Func<MasterTeamDungeonOrder, bool> prepare = (Func<MasterTeamDungeonOrder, bool>)Delegate.CreateDelegate(
+            typeof(Func<MasterTeamDungeonOrder, bool>), TeamManager.Instance, "PrepareDungeon");
+        // 使用宿主实际的单角色接管入口完成场景切换。
+        Func<OnlineRole, ulong, bool> enter = (Func<OnlineRole, ulong, bool>)Delegate.CreateDelegate(
+            typeof(Func<OnlineRole, ulong, bool>), TeamManager.Instance, "EnterPreparedMember");
+        // 独立测试编号不与下方通过真实 MS 分配的实例相撞。
+        MasterTeamDungeonOrder order = new MasterTeamDungeonOrder { TeamId = 900001, InstanceId = 900001, DungeonId = 4060 };
+        order.MemberIds.Add(9101UL);
+        order.MemberIds.Add(9102UL);
+        Expect(prepare(order), "宿主在两名队员到达前已建好副本");
+        // 第一名到达的真实测试角色；在第二名完成传送前离队。
+        OnlineRole first = NewRole(9101, "先到队员");
+        // 第二名在途的队员使用最初批准的同一实例。
+        OnlineRole second = NewRole(9102, "跨线队员");
+        Expect(!enter(NewRole(9103, "其他队伍"), order.InstanceId), "其他队伍的角色不能进入已建实例");
+        Expect(enter(first, order.InstanceId), "第一名队员进入已建实例");
+        TeamManager.Instance.LeaveDungeon(9101UL);
+        Expect(enter(second, order.InstanceId), "第一名离开后仍为在途队员保留世界");
+        second.mainRoleInfo.BaseInfo.Pos = "1_2_3";
+        Expect(enter(second, order.InstanceId) && second.mainRoleInfo.BaseInfo.Pos == "1_2_3", "重入同一实例保留本人位置");
+        TeamManager.Instance.LeaveDungeon(9102UL);
+        Expect(!enter(second, order.InstanceId), "最后一人退本后原世界释放");
     }
 
     /// <summary>验证单人成队后可以入场，且实例ID非0。</summary>
@@ -871,6 +901,8 @@ public static class TeamAuthoritySmoke
         {
             throw new InvalidOperationException("RoleManager.m_onlineRoleMap 不是字典");
         }
+        // 测试直接注册在线索引，也要装配正式组队展示与副本入口需要的角色属性和装备组件。
+        role.InitSerializes();
         role.State = OnlineRoleState.Online;
         map[role.mainRoleInfo.BaseInfo.RoleId] = role;
         _registeredRoles.Add(role);

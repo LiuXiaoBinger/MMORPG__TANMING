@@ -45,4 +45,14 @@ public static class SceneLineCode
     public const ushort NpcPatrol = 11320;
     /// <summary>玩家实际接触公共居民时上报一次，GS 只转发给其他同线可见角色。</summary>
     public const ushort NpcContact = 11321;
+    /// <summary>MS 请控制服按本区配置选择新副本的 GS，同一命令返回选服结果。</summary>
+    public const ushort ChooseDungeonHost = 11322;
+    /// <summary>MS 让指定 GS 准备队伍已经确认的实例及入场名单。</summary>
+    public const ushort PrepareDungeon = 11323;
+    /// <summary>目标 GS 将真实建本结果发回 MS。</summary>
+    public const ushort DungeonPrepared = 11324;
+    /// <summary>实例释放后由原 GS 通知 MS 撤销宿主绑定。</summary>
+    public const ushort DungeonClosed = 11325;
+    /// <summary>沿用组队入场交接的最长等待时间，单位秒。</summary>
+    public const int DungeonEntrySeconds = 20;
 }

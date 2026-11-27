@@ -47,6 +47,9 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
         _client.RegistCommand(NetDefine.PtcM2G_ChatBroadCastM2Gs, this);
         if (RealmNode != null)
         {
+            _client.RegistCommand(SceneLineCode.PrepareDungeon, this);
+            ClientMessageManager.Instance.Register(new GameMessageHandlerKey(GameCommandSource.MasterServer, SceneLineCode.PrepareDungeon),
+                this, CenterMessageRoute.Internal);
             _client.RegistCommand(SceneLineCode.Gather, this);
             ClientMessageManager.Instance.Register(new GameMessageHandlerKey(GameCommandSource.MasterServer, SceneLineCode.Gather),
                 this, CenterMessageRoute.Internal);
@@ -166,6 +169,7 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
             case NetDefine.CMD_MasterTeamLost:
             case SceneLineCode.Gather:
             case SceneLineCode.Register:
+            case SceneLineCode.PrepareDungeon:
                 return true;
             default:
                 return false;
@@ -186,10 +190,21 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
                 for (int index = 0; index < roles.Count; index++)
                     if (roles[index].State == OnlineRoleState.Online) PublishLocation(roles[index]);
                 break;
+            case SceneLineCode.PrepareDungeon:
+                // 游戏线程先构造场景和波次，成功后 MS 才有权发出队员传送。
+                MasterTeamDungeonOrder order = MasterTeamDungeonOrder.Parser.ParseFrom(data);
+                _client.Send(SceneLineCode.DungeonPrepared, new MasterDungeonHostResult { TeamId = order.TeamId,
+                    InstanceId = order.InstanceId, GameId = RealmNode.GameId, Success = TeamManager.Instance.PrepareDungeon(order) }.ToByteString());
+                break;
             case SceneLineCode.Gather:
-                // 已确认的队员由其真实网关路由到同一副本宿主。
+                // 已在同一实例的角色只补发快照，其余角色走网关的实际接管。
                 SceneRouteRequest gather = SceneRouteRequest.Parser.ParseFrom(data);
-                RoleManager.Instance.GetOnlineRole(gather.RoleId)?.SendToClient(SceneLineCode.Gather, data);
+                // 本机持有的真实在线成员。
+                OnlineRole member = RoleManager.Instance.GetOnlineRole(gather.RoleId);
+                if (member == null) break;
+                if (gather.SceneUid < 0 && member.mainRoleInfo.BaseInfo.InstanceId == -gather.SceneUid)
+                    TeamManager.Instance.EnterPreparedMember(member, (ulong)-gather.SceneUid);
+                else member.SendToClient(SceneLineCode.Gather, data);
                 break;
             case NetDefine.CMD_MasterTeamDelivery:
                 // 指定单一游戏角色的错误或邀请。

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using cfg;
 using Google.Protobuf;
 using System.Numerics;
@@ -52,6 +53,10 @@ public sealed class TeamManager
         public readonly List<ulong> Members = new List<ulong>();
         /// <summary>本实例独立的刷怪和生命值状态。</summary>
         public SceneWaveSpawner WaveSpawner;
+        /// <summary>MS 最近确认的入场名单，跨 GS 抵达的成员据此进入该实例。</summary>
+        public MasterTeamDungeonOrder Order;
+        /// <summary>建好后还没有队员抵达时，空实例保留到此 UTC 时刻。</summary>
+        public DateTime EmptyDeadline;
         /// <summary>复用本实例的逐帧怪物动作通知。</summary>
         public readonly MonsterAttrUpdateNtf MonsterFrame = new MonsterAttrUpdateNtf();
         /// <summary>全灭状态只处理一次，直到成员复活后允许下一次重置。</summary>
@@ -220,6 +225,12 @@ public sealed class TeamManager
         {
             // 同一副本的兽人及该实例本次复用的事件集合。
             Dungeon team = dungeonTeams[index];
+            if (team.Members.Count == 0)
+            {
+                // 空世界等待传送，期间不刷怪、不计全灭；无人抵达时回收。
+                if (team.Order.MemberIds.Count == 0 || DateTime.UtcNow >= team.EmptyDeadline) { ReleaseDungeon(team); index--; }
+                continue;
+            }
             // 当前帧本实例专属的广播载荷，跳过没有动作和伤害的帧。
             MonsterAttrUpdateNtf frame = team.MonsterFrame;
             frame.InstanceId = team.InstanceId;
@@ -412,6 +423,29 @@ public sealed class TeamManager
     /// <param name="notice">MS 已确定的队伍号、队长、成员和实例号。</param>
     public void PublishRoster(TeamInfoNtf notice)
     {
+        if (notice.Members.Count == 0)
+        {
+            // 解散可能发生在建本与队员实际抵达之间，撤销这支队伍还在途的资格。
+            for (int index = 0; index < dungeonTeams.Count; index++)
+                if (dungeonTeams[index].Order.TeamId == notice.TeamId) dungeonTeams[index].Order.MemberIds.Clear();
+        }
+        else
+        {
+            // 入场前退队的角色不会被迟到的跨服交接再次拉进副本。
+            Dungeon target;
+            if (_instances.TryGetValue((ulong)notice.Members[0].InstanceId, out target))
+            {
+                for (int index = target.Order.MemberIds.Count - 1; index >= 0; index--)
+                {
+                    // 仅从此前已批准的名单撤销资格，新入队员须参加自己的入场确认。
+                    ulong id = target.Order.MemberIds[index];
+                    // 扫描队伍展示的至多五名成员，判断此人是否还在队内。
+                    int memberIndex = 0;
+                    while (memberIndex < notice.Members.Count && notice.Members[memberIndex].RoleId != id) memberIndex++;
+                    if (memberIndex == notice.Members.Count) target.Order.MemberIds.RemoveAt(index);
+                }
+            }
+        }
         // 先填所有成员的展示数据，再编码一次供整队共用。
         for (int index = 0; index < notice.Members.Count; index++)
         {
@@ -468,6 +502,8 @@ public sealed class TeamManager
         List<ulong> roles = new List<ulong>(_visibleTeamRoles);
         // 对实际显示过队伍的角色执行与主动离队相同的场景清理。
         for (int index = 0; index < roles.Count; index++) LeaveDungeon(roles[index]);
+        // 尚无人抵达的预建实例同样属于旧 MS，不能让新连接复用这些编号。
+        for (int index = dungeonTeams.Count - 1; index >= 0; index--) ReleaseDungeon(dungeonTeams[index]);
     }
 
     /// <summary>
@@ -489,23 +525,51 @@ public sealed class TeamManager
         role.SendToClient(NetDefine.CMD_TeamInfoCode, emptyNotice.ToByteString());
     }
 
-    /// <summary>按 MS 批准的名单创建或复用场景，再按原顺序广播离场、入场及副本内容。</summary>
-    /// <param name="order">已获队长权限检查的队伍、实例、目标副本和成员。</param>
+    /// <summary>准备真实的独立战斗世界，建本期间无需任何玩家已经抵达本机。</summary>
+    /// <param name="order">队伍确认的实例、难度、层数及可进入的成员。</param>
+    internal bool PrepareDungeon(MasterTeamDungeonOrder order)
+    {
+        // 两端使用同一难度表规范化难度和层数。
+        DungeonDifficultyTable difficulty;
+        // 副本内实际采用的层数。
+        int layer;
+        if (!LubanMgr.Instance.TryGetDungeonDifficulty(order.DungeonsDegree, order.DungeonLayer, out difficulty, out layer)) return false;
+        // 已存在的实例保留原怪物、阶段与角色状态。
+        Dungeon team;
+        if (_instances.TryGetValue(order.InstanceId, out team))
+        {
+            if (team.Order.TeamId != order.TeamId || team.WaveSpawner.Dungeon.DungeonsID != order.DungeonId) return false;
+            if (team.WaveSpawner.Difficulty.DifficultyId != difficulty.Id || team.WaveSpawner.Difficulty.Layer != layer) return false;
+        }
+        else
+        {
+            if (!SceneWaveSpawner.HasSceneResources(LubanMgr.Instance.GetDungeonsTableById(order.DungeonId))) return false;
+            team = new Dungeon { InstanceId = order.InstanceId, WaveSpawner = new SceneWaveSpawner(new DungeonDifficultySettings(order.DungeonId, difficulty.Id, layer)) };
+            team.WaveSpawner.BindInstance(team.InstanceId, team.Members);
+            _instances.Add(order.InstanceId, team);
+            dungeonTeams.Add(team);
+        }
+        team.Order = order;
+        team.EmptyDeadline = DateTime.UtcNow.AddSeconds(SceneLineCode.DungeonEntrySeconds);
+        return true;
+    }
+
+    /// <summary>在角色真正抵达已建世界后，按 MS 已批准的名单为本人完成入场。</summary>
+    /// <param name="role">本 GS 已经接管的在线角色。</param><param name="instanceId">网关传送指定的实例。</param>
+    internal bool EnterPreparedMember(OnlineRole role, ulong instanceId)
+    {
+        // 接收方只能进入仍存活、且本次确实包含该角色的私有实例。
+        Dungeon team;
+        if (!_instances.TryGetValue(instanceId, out team) || !team.Order.MemberIds.Contains(role.GetID())) return false;
+        _visibleTeamRoles.Add(role.GetID());
+        EnterMembers(team, new List<ulong> { role.GetID() });
+        return true;
+    }
+
+    /// <summary>兼容单 GS 开发入口，一次为本地队员建本并入场。</summary>
+    /// <param name="order">MS 批准的队伍、副本和成员。</param>
     public void EnterDungeon(MasterTeamDungeonOrder order)
     {
-        // 难度与实例身份一并验证，拒绝同一实例号被另一难度复用。
-        DungeonDifficultyTable difficulty;
-        // GS与MS采用同一表格规范，规范值写入实例并回传给客户端。
-        int layer;
-        if (!LubanMgr.Instance.TryGetDungeonDifficulty(order.DungeonsDegree, order.DungeonLayer, out difficulty, out layer)) return;
-        // 已确认难度表的主键，不借用ChapterId保存层数。
-        int degree = difficulty.Id;
-        // 已存在的实例保留原难度，不因晚加入请求更改怪物数值。
-        Dungeon existing;
-        if (_instances.TryGetValue(order.InstanceId, out existing))
-        {
-            if (existing.WaveSpawner.Dungeon.DungeonsID != order.DungeonId || existing.WaveSpawner.Difficulty.DifficultyId != degree || existing.WaveSpawner.Difficulty.Layer != layer) return;
-        }
         // 保存本机当前在线的获准成员，已下线的角色不占用实例。
         List<ulong> entering = new List<ulong>();
         // 保留 MS 的入场顺序。
@@ -516,14 +580,21 @@ public sealed class TeamManager
             if (role != null && role.State == OnlineRoleState.Online) entering.Add(order.MemberIds[index]);
         }
         if (entering.Count == 0) return;
-        // 尚未迁入的真实场景资源不能创建半成品实例，也不能先改变角色位置。
-        if (!SceneWaveSpawner.HasSceneResources(LubanMgr.Instance.GetDungeonsTableById(order.DungeonId)))
+        if (!PrepareDungeon(order))
         {
-            LogMsg.Info("副本场景资源尚未配置，DungeonId=" + order.DungeonId);
             for (int index = 0; index < entering.Count; index++)
                 RoleManager.Instance.GetOnlineRole((int)entering[index]).SendToClient(NetDefine.CMD_ErrCode, new ErrMsg { CmdCode = CmdCode.ServerError }.ToByteString());
             return;
         }
+        EnterMembers(_instances[order.InstanceId], entering);
+    }
+
+    /// <summary>将这批已在本机的成员加入同一战斗世界，保留已经入场的队友。</summary>
+    /// <param name="team">原宿主已经建好的副本。</param><param name="entering">此次实际接管的成员角色号。</param>
+    private void EnterMembers(Dungeon team, List<ulong> entering)
+    {
+        // 入场通知使用本次真实场景保存的队伍与难度。
+        MasterTeamDungeonOrder order = team.Order;
         // 同队改选其他副本时，成员退出原世界；最后一人转出后按既有生命周期释放。
         for (int index = 0; index < entering.Count; index++)
         {
@@ -537,25 +608,17 @@ public sealed class TeamManager
             if (!_instances.TryGetValue(previousId, out previous)) continue;
             previous.Members.Remove(entering[index]);
             if (previous.Members.Count != 0) continue;
-            previous.WaveSpawner.Clear();
-            _instances.Remove(previousId);
-            dungeonTeams.Remove(previous);
+            ReleaseDungeon(previous);
         }
-        // 重复进本时复用怪物、掉血与实例 ID。
-        Dungeon team;
-        if (!_instances.TryGetValue(order.InstanceId, out team))
+        // 已在本中的成员仍参与怪物 AI，只有新到者需要切换本人场景。
+        for (int index = 0; index < entering.Count; index++)
         {
-            team = new Dungeon { InstanceId = order.InstanceId, WaveSpawner = new SceneWaveSpawner(new DungeonDifficultySettings(order.DungeonId, degree, layer)) };
-            _instances.Add(order.InstanceId, team);
-            dungeonTeams.Add(team);
+            if (!team.Members.Contains(entering[index])) team.Members.Add(entering[index]);
         }
-        team.Members.Clear();
-        team.Members.AddRange(entering);
-        team.WaveSpawner.BindInstance(team.InstanceId, team.Members);
-        for (int index = 0; index < team.Members.Count; index++)
+        for (int index = 0; index < entering.Count; index++)
         {
             // 当前成员在"改写位置之前"的在线角色对象，为空说明该成员已掉线，跳过。
-            OnlineRole leavingRole = RoleManager.Instance.GetOnlineRole((int)team.Members[index]);
+            OnlineRole leavingRole = RoleManager.Instance.GetOnlineRole((int)entering[index]);
             if (leavingRole == null)
             {
                 continue;
@@ -565,10 +628,10 @@ public sealed class TeamManager
 
         // 先写服务器权威位置，再通知客户端加载，保证进入后过滤条件已生效。
         // index 是队伍成员表的零基下标，范围 [0, team.Members.Count)，本循环负责写权威位置。
-        for (int index = 0; index < team.Members.Count; index++)
+        for (int index = 0; index < entering.Count; index++)
         {
             // 当前成员的权威角色ID，先取出再查在线对象，避免下标表达式重复求值。
-            ulong memberId = team.Members[index];
+            ulong memberId = entering[index];
             // 当前成员的在线角色对象，用于写入 MapId/InstanceId/出生点；为空说明已掉线，跳过。
             OnlineRole memberRole = RoleManager.Instance.GetOnlineRole((int)memberId);
             if (memberRole == null || memberRole.mainRoleInfo == null ||
@@ -587,10 +650,10 @@ public sealed class TeamManager
 
         // 新实例内互相可见：先把本人补发给同实例其他成员，再把同实例其他成员补发给本人。
         // 第一轮：index 为成员表零基下标，逐个把"本人"广播给同实例其他成员。
-        for (int index = 0; index < team.Members.Count; index++)
+        for (int index = 0; index < entering.Count; index++)
         {
             // 当前成员的在线角色对象；为空说明已掉线，无需广播。
-            OnlineRole memberRole = RoleManager.Instance.GetOnlineRole((int)team.Members[index]);
+            OnlineRole memberRole = RoleManager.Instance.GetOnlineRole((int)entering[index]);
             if (memberRole == null)
             {
                 continue;
@@ -598,10 +661,10 @@ public sealed class TeamManager
             RoleManager.Instance.BroadcastRoleEnterWorldByRole(memberRole);
         }
         // 第二轮：index 同上，逐个把"同实例其他成员"补发给本人，使双向可见。
-        for (int index = 0; index < team.Members.Count; index++)
+        for (int index = 0; index < entering.Count; index++)
         {
             // 当前成员的在线角色对象，作为接收方；为空说明已掉线，跳过补发。
-            OnlineRole memberRole = RoleManager.Instance.GetOnlineRole((int)team.Members[index]);
+            OnlineRole memberRole = RoleManager.Instance.GetOnlineRole((int)entering[index]);
             if (memberRole == null)
             {
                 continue;
@@ -623,10 +686,10 @@ public sealed class TeamManager
         // 已序列化的入场通知字节，全队复用同一份，保证各成员收到的场景与实例完全一致。
         ByteString payload = notice.ToByteString();
         // index 为成员表零基下标，逐个下发同一份 payload。
-        for (int index = 0; index < team.Members.Count; index++)
+        for (int index = 0; index < entering.Count; index++)
         {
             // 当前成员的在线角色对象，作为接收方；为空说明已掉线，跳过下发。
-            OnlineRole memberRole = RoleManager.Instance.GetOnlineRole((int)team.Members[index]);
+            OnlineRole memberRole = RoleManager.Instance.GetOnlineRole((int)entering[index]);
             if (memberRole == null)
             {
                 continue;
@@ -637,6 +700,17 @@ public sealed class TeamManager
         }
         // 队伍状态变化后同步成员实例信息。
 
+    }
+
+    /// <summary>销毁战斗世界并通知区服解除已失效的实例绑定。</summary><param name="team">本机已无人占用的副本。</param>
+    private void ReleaseDungeon(Dungeon team)
+    {
+        team.WaveSpawner.Clear();
+        _instances.Remove(team.InstanceId);
+        dungeonTeams.Remove(team);
+        if (MasterTeamLink.Instance.RealmNode != null)
+            MasterTeamLink.Instance.SendToMaster(new BasePackage { ProtoCode = SceneLineCode.DungeonClosed,
+                Data = new MasterDungeonHostResult { TeamId = team.Order.TeamId, InstanceId = team.InstanceId }.ToByteString() });
     }
 
     /// <summary>
@@ -672,11 +746,11 @@ public sealed class TeamManager
         if (_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out instance))
         {
             instance.Members.Remove(roleId);
-            if (instance.Members.Count == 0)
+            instance.Order.MemberIds.Remove(roleId);
+            // 首位玩家可能比另一名跨线队友更早离开；在途成员仍可抵达已建实例。
+            if (instance.Members.Count == 0 && (instance.Order.MemberIds.Count == 0 || DateTime.UtcNow >= instance.EmptyDeadline))
             {
-                instance.WaveSpawner.Clear();
-                _instances.Remove(instance.InstanceId);
-                dungeonTeams.Remove(instance);
+                ReleaseDungeon(instance);
             }
         }
         RoleManager.Instance.BroadcastRoleLeave(role);

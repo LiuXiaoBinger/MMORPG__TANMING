@@ -18,3 +18,11 @@ message MasterTeamDungeonOrder {
   int32 dungeons_degree = 5; // MS确认的难度配置ID，旧指令0兼容1。
   int32 dungeon_layer = 6; // MS确认的层数；非分层为0，分层从1开始。
 }
+
+// 区内选服与建本回执；只有所选 GS 完成建本后，MS 才会向队员发传送指令。
+message MasterDungeonHostResult {
+  uint64 instance_id = 1; // 对应本次建本请求的区内实例号。
+  int32 game_id = 2; // 调度选中的物理节点，零也是合法编号。
+  bool success = 3; // 选服回执表示有可用节点，建本回执表示场景已可进入。
+  uint64 team_id = 4; // 发起本次请求的队伍，供 MS 找到仍在等待的入场名单。
+}

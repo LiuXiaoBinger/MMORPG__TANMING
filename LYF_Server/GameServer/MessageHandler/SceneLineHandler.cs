@@ -162,9 +162,13 @@ public sealed class SceneLineHandler : IGameMessageHandler, IContainer
         { role.SendToClient(SceneLineCode.Depart, ByteString.Empty); return; }
         if (role.mainRoleInfo.BaseInfo.InstanceId != 0 || !role.IsRoleDataReady())
         { role.SendToClient(SceneLineCode.Depart, ByteString.Empty); return; }
-        if (role.GetComponent<StateMachineComponent>().GetCurrentState() != StateDefine.kStateDefault ||
-            role.ShieldRemaining > 0 || role.mainRoleInfo.BaseInfo.CurrHp <= 0)
-        { role.SendToClient(SceneLineCode.Depart, ByteString.Empty); return; }
+        // 玩家手动换公共线路沿用战斗限制，服务端已批准的副本入场及退本直接交接。
+        if (target.LineId != 0 && role.PublicScene.LineId != 0)
+        {
+            if (role.GetComponent<StateMachineComponent>().GetCurrentState() != StateDefine.kStateDefault ||
+                role.ShieldRemaining > 0 || role.mainRoleInfo.BaseInfo.CurrHp <= 0)
+            { role.SendToClient(SceneLineCode.Depart, ByteString.Empty); return; }
+        }
         if (target.GameId == node.GameId)
         {
             RoleManager.Instance.LeavePublicScene(role);
@@ -225,6 +229,18 @@ public sealed class SceneLineHandler : IGameMessageHandler, IContainer
     {
         role.IncomingScene = null;
         role.SendToClient(SceneLineCode.Arrive, ByteString.Empty);
+        if (role.PublicScene.LineId == 0)
+        {
+            // 网关已先切到本机，入本通知及初始怪物快照现在才会到达正确的客户端。
+            if (!TeamManager.Instance.EnterPreparedMember(role, (ulong)-role.PublicScene.SceneUid))
+            {
+                // 交接完成前实例已回收，沿正常退本路由返回原公共地图。
+                role.SendToClient(NetDefine.CMD_ErrCode, new ErrMsg { CmdCode = CmdCode.ServerError }.ToByteString());
+                role.SendToClient(NetDefine.CMD_TeamEnterDungeonCode, new TeamEnterDungeonNtf { SceneId = TeamManager.MainCitySceneId,
+                    MapId = role.PublicScene.MapId, Pos = role.mainRoleInfo.BaseInfo.Pos }.ToByteString());
+            }
+            return;
+        }
         RoleManager.Instance.BroadcastRoleEnterWorldByRole(role);
         RoleManager.Instance.ResendNearbyRoles(role);
     }
@@ -246,6 +262,7 @@ public sealed class SceneLineHandler : IGameMessageHandler, IContainer
     /// <param name="role">刚进入该场景的真实角色。</param>
     private void JoinScene(OnlineRole role)
     {
+        if (role.PublicScene.LineId == 0) return;
         scenes[role.PublicScene.SceneUid].Add(role);
         trade?.SetRole(role, true);
     }

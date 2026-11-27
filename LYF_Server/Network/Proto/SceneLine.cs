@@ -179,7 +179,7 @@ public sealed partial class PublicSceneLine : pb::IMessage<PublicSceneLine>
   public const int SceneUidFieldNumber = 4;
   private long sceneUid_;
   /// <summary>
-  /// 区服内的运行时场景编号。
+  /// 公共场景取正编号；服务端传送到私有副本时取负的副本实例号，此时 line_id 为零。
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1688,7 +1688,7 @@ public sealed partial class SceneRouteRequest : pb::IMessage<SceneRouteRequest>
   public const int SceneUidFieldNumber = 6;
   private long sceneUid_;
   /// <summary>
-  /// 离线落库确认只释放旧宿主实际持有的场景。
+  /// 私有副本入场指定负路由号；离线落库确认使用实际持有的场景编号。
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]

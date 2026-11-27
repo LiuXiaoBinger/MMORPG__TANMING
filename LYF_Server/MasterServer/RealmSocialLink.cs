@@ -11,14 +11,29 @@ internal sealed class RealmSocialLink : BaseLink
     internal readonly Dictionary<ulong, Session> Owners = new Dictionary<ulong, Session>();
     /// <summary>每个角色最近一次由宿主提交的队伍展示信息。</summary>
     private readonly Dictionary<ulong, TeamMemberInfo> profiles = new Dictionary<ulong, TeamMemberInfo>();
-    /// <summary>按队伍保存尚在跨 GS 集结的入本命令。</summary>
-    private readonly Dictionary<ulong, MasterTeamDungeonOrder> gathering = new Dictionary<ulong, MasterTeamDungeonOrder>();
-    /// <summary>集结等待截止时间，失联或无法切线时给全队明确结果。</summary>
-    private readonly Dictionary<ulong, DateTime> deadlines = new Dictionary<ulong, DateTime>();
+    /// <summary>本区控制服连接，用于按区服配置为新副本选服。</summary>
+    private readonly BaseLink control;
+    /// <summary>当前还没有收到建本结果的队伍。</summary>
+    private readonly Dictionary<ulong, Opening> opening = new Dictionary<ulong, Opening>();
+    /// <summary>选服到 GS 回报之间保留的一次真实建本请求。</summary>
+    private sealed class Opening
+    {
+        /// <summary>队员确认的实例及有资格传送的名单。</summary>
+        internal MasterTeamDungeonOrder Order;
+        /// <summary>调度已选定的 GS 会话，选服回执到达前为空。</summary>
+        internal Session Host;
+        /// <summary>等待选服与建本结果的 UTC 截止时间。</summary>
+        internal DateTime Deadline;
+    }
+    /// <summary>本区权威队伍，在宿主确认后更新实例号。</summary>
+    internal TeamManager Teams;
     /// <summary>已经创建的副本实例始终由同一台 GS 运行。</summary>
-    private readonly Dictionary<ulong, Session> dungeonHosts = new Dictionary<ulong, Session>();
+    private readonly Dictionary<ulong, Opening> dungeonHosts = new Dictionary<ulong, Opening>();
     /// <summary>同步处理中的原始请求连接，供聊天和语音按原会话回包。</summary>
     internal Session Sender;
+
+    /// <summary>沿当前区服的调度链路申请副本宿主。</summary><param name="scheduler">本区控制服连接。</param>
+    internal RealmSocialLink(BaseLink scheduler) { control = scheduler; }
 
     /// <summary>角色首次上线或迁移完成后更新实际宿主。</summary>
     /// <param name="session">持有角色的 GS 连接。</param><param name="info">来自该 GS 的角色展示数据。</param>
@@ -26,10 +41,6 @@ internal sealed class RealmSocialLink : BaseLink
     {
         Owners[info.RoleId] = session;
         profiles[info.RoleId] = info;
-        // 成员已抵达，检查队伍是否已全部进入同一宿主。
-        List<MasterTeamDungeonOrder> orders = new List<MasterTeamDungeonOrder>(gathering.Values);
-        for (int index = 0; index < orders.Count; index++)
-            if (orders[index].MemberIds.Contains(info.RoleId)) TryEnter(orders[index], false);
     }
 
     /// <summary>移除仍属于此连接的角色，迟到的旧宿主下线不能删除新归属。</summary>
@@ -57,7 +68,7 @@ internal sealed class RealmSocialLink : BaseLink
             case NetDefine.CMD_MasterTeamExit:
                 return ToRole(LeaveTeamArg.Parser.ParseFrom(packet.Data).RoleId, packet);
             case NetDefine.CMD_MasterTeamEnter:
-                return TryEnter(MasterTeamDungeonOrder.Parser.ParseFrom(packet.Data), true);
+                return Open(MasterTeamDungeonOrder.Parser.ParseFrom(packet.Data));
             case NetDefine.CMD_MasterTeamRoster:
                 // 本区只有一份成员顺序和身份信息，跨宿主成员也有昵称、职业和血量。
                 TeamInfoNtf roster = TeamInfoNtf.Parser.ParseFrom(packet.Data);
@@ -75,10 +86,6 @@ internal sealed class RealmSocialLink : BaseLink
                     member.SceneId = profile.SceneId;
                 }
                 packet.Data = roster.ToByteString();
-                // 集结期间名单可能因离队改变，此时不执行旧名单下的入本命令。
-                MasterTeamDungeonOrder pending;
-                if (gathering.TryGetValue(roster.TeamId, out pending) && pending.MemberIds.Count != roster.Members.Count)
-                    Finish(pending, true);
                 return Broadcast(packet);
             case NetDefine.PtcM2T_ChatBroadCastM2T:
                 return Broadcast(packet);
@@ -105,66 +112,107 @@ internal sealed class RealmSocialLink : BaseLink
         return true;
     }
 
-    /// <summary>只有全体成员已在目标 GS 时才向该宿主下发一次建本命令。</summary>
-    /// <param name="order">MS 已确认的副本和成员列表。</param><param name="requestMove">首次集结时通知异服成员迁移。</param>
-    private bool TryEnter(MasterTeamDungeonOrder order, bool requestMove)
+    /// <summary>队伍确认后开始选服；只有已建实例才直接沿用先前宿主。</summary>
+    /// <param name="order">MS 分配的实例号及同意进本的成员。</param>
+    private bool Open(MasterTeamDungeonOrder order)
     {
-        if (order.MemberIds.Count == 0) return false;
-        // 已有实例复用原宿主，新实例以第一名成员的当前 GS 为宿主。
-        Session host;
-        if (!dungeonHosts.TryGetValue(order.InstanceId, out host))
+        if (opening.ContainsKey(order.TeamId)) return false;
+        // 一次入场申请共用同一个选服和建本截止时间。
+        Opening entry = new Opening { Order = order, Deadline = DateTime.UtcNow.AddSeconds(SceneLineCode.DungeonEntrySeconds) };
+        opening.Add(order.TeamId, entry);
+        // 可重入的实例必须回到创建它的 GS。
+        Opening previous;
+        if (dungeonHosts.TryGetValue(order.InstanceId, out previous))
         {
-            if (!Owners.TryGetValue(order.MemberIds[0], out host)) return false;
-            dungeonHosts.Add(order.InstanceId, host);
+            entry.Host = previous.Host;
+            if (entry.Host.Send(SceneLineCode.PrepareDungeon, order.ToByteString())) return true;
         }
-        // 收齐已确认名单后才能创建战斗世界。
-        bool together = true;
-        for (int index = 0; index < order.MemberIds.Count; index++)
-        {
-            // 已由网关登记的成员真实宿主。
-            Session owner;
-            if (!Owners.TryGetValue(order.MemberIds[index], out owner)) { Finish(order, true); return false; }
-            if (owner == host) continue;
-            together = false;
-            if (requestMove) owner.Send(SceneLineCode.Gather, new SceneRouteRequest {
-                RoleId = (int)order.MemberIds[index], RequireGame = true, GameId = Nodes[host.SessionID] }.ToByteString());
-        }
-        if (together)
-        {
-            Finish(order, false);
-            return host.Send(NetDefine.CMD_MasterTeamEnter, order.ToByteString());
-        }
-        if (requestMove)
-        {
-            gathering[order.TeamId] = order;
-            deadlines[order.TeamId] = DateTime.UtcNow.AddSeconds(20);
-        }
-        return true;
+        else if (control.Send(SceneLineCode.ChooseDungeonHost, order.ToByteString())) return true;
+        Cancel(order.TeamId);
+        return false;
     }
 
-    /// <summary>结束集结并按需通知所有仍在线的成员。</summary><param name="order">待执行入本命令。</param><param name="failed">是否提示失败。</param>
-    private void Finish(MasterTeamDungeonOrder order, bool failed)
+    /// <summary>根据控制服返回的物理编号向对应的注册连接建本。</summary>
+    /// <param name="result">控制服针对一次建本请求给出的宿主。</param>
+    internal void Selected(MasterDungeonHostResult result)
     {
-        gathering.Remove(order.TeamId);
-        deadlines.Remove(order.TeamId);
-        if (!failed) return;
+        // 名单变更或超时后，原选服回执无需再创建场景。
+        Opening entry;
+        if (!opening.TryGetValue(result.TeamId, out entry) || entry.Order.InstanceId != result.InstanceId) return;
+        if (result.Success)
+        {
+            // 取出注册了所选物理编号的真实 GS 会话。
+            List<int> connections = new List<int>(Nodes.Keys);
+            for (int index = 0; index < connections.Count; index++)
+            {
+                if (Nodes[connections[index]] != result.GameId) continue;
+                entry.Host = SessionMgr.Instance.GetSession(connections[index]);
+                if (entry.Host != null && entry.Host.Send(SceneLineCode.PrepareDungeon, entry.Order.ToByteString())) return;
+            }
+        }
+        Cancel(result.TeamId);
+    }
+
+    /// <summary>收到所选 GS 的真实建本结果后才向全部成员发出私有实例传送。</summary>
+    /// <param name="host">发送结果的 GS 连接。</param><param name="result">已建实例及是否成功。</param>
+    internal void Prepared(Session host, MasterDungeonHostResult result)
+    {
+        // 实例号和会话都须与正在创建的队伍副本对应。
+        Opening entry;
+        if (!opening.TryGetValue(result.TeamId, out entry) || entry.Order.InstanceId != result.InstanceId) return;
+        if (entry.Host != host) return;
+        // 全员都有有效路由时才开始发出第一条传送。
+        MasterTeamDungeonOrder order = entry.Order;
+        if (!result.Success) { Cancel(order.TeamId); return; }
+        for (int index = 0; index < order.MemberIds.Count; index++)
+            if (!Owners.ContainsKey(order.MemberIds[index])) { Cancel(order.TeamId); return; }
+        opening.Remove(order.TeamId);
+        dungeonHosts[order.InstanceId] = entry;
+        Teams.DungeonReady(order);
         for (int index = 0; index < order.MemberIds.Count; index++)
         {
-            // 发给本成员的普通组队错误由其当前 GS 交付。
-            MasterTeamRolePacket error = new MasterTeamRolePacket { RoleId = order.MemberIds[index],
+            // 独立副本用负路由号，与公共场景 UID 分开；物理宿主取自回执来源。
+            ulong member = order.MemberIds[index];
+            Owners[member].Send(SceneLineCode.Gather, new SceneRouteRequest { RoleId = (int)member,
+                GameId = Nodes[host.SessionID], RequireGame = true, SceneUid = -(long)order.InstanceId }.ToByteString());
+        }
+    }
+
+    /// <summary>GS 已释放最后一人离开的实例或无人进入的预建实例。</summary>
+    /// <param name="host">实际销毁实例的 GS。</param><param name="result">释放的队伍和实例号。</param>
+    internal void Closed(Session host, MasterDungeonHostResult result)
+    {
+        // 只清掉这个实例的原宿主登记。
+        Opening previous;
+        if (!dungeonHosts.TryGetValue(result.InstanceId, out previous) || previous.Host != host) return;
+        dungeonHosts.Remove(result.InstanceId);
+        Teams.DungeonClosed(result.TeamId, result.InstanceId);
+    }
+
+    /// <summary>名单变动或建本失败时停止传送并通知仍在线的成员。</summary><param name="teamId">发起入场的队伍。</param>
+    internal void Cancel(ulong teamId)
+    {
+        // 实际正在等建本结果的成员才需要收到失败提示。
+        Opening entry;
+        if (!opening.TryGetValue(teamId, out entry)) return;
+        opening.Remove(teamId);
+        for (int index = 0; index < entry.Order.MemberIds.Count; index++)
+        {
+            // 通知经成员当前持有的 GS 投递给客户端。
+            MasterTeamRolePacket error = new MasterTeamRolePacket { RoleId = entry.Order.MemberIds[index],
                 Packet = new BasePackage { ProtoCode = NetDefine.CMD_ErrCode, Data = new ErrMsg { CmdCode = CmdCode.ServerError }.ToByteString() } };
             ToRole(error.RoleId, new BasePackage { ProtoCode = NetDefine.CMD_MasterTeamDelivery, Data = error.ToByteString() });
         }
     }
 
-    /// <summary>清理等待失联队员或无法切线队员的集结请求。</summary>
+    /// <summary>清理失联导致没有返回建本结果的请求。</summary>
     internal void Update()
     {
-        if (deadlines.Count == 0) return;
-        // 失败收尾会修改字典，先取队伍号快照。
-        List<ulong> ids = new List<ulong>(deadlines.Keys);
-        for (int index = 0; index < ids.Count; index++)
-            if (deadlines[ids[index]] <= DateTime.UtcNow) Finish(gathering[ids[index]], true);
+        if (opening.Count == 0) return;
+        // 取消会修改字典，按本轮待开队伍的快照遍历。
+        List<Opening> entries = new List<Opening>(opening.Values);
+        for (int index = 0; index < entries.Count; index++)
+            if (entries[index].Deadline <= DateTime.UtcNow) Cancel(entries[index].Order.TeamId);
     }
 
     /// <summary>宿主断开时释放该机登记的副本宿主地址。</summary><param name="sessionId">本次失效的连接号。</param>
@@ -174,6 +222,11 @@ internal sealed class RealmSocialLink : BaseLink
         // 游戏服重启后先前内存中的副本实体已经释放。
         List<ulong> ids = new List<ulong>(dungeonHosts.Keys);
         for (int index = 0; index < ids.Count; index++)
-            if (dungeonHosts[ids[index]].SessionID == sessionId) dungeonHosts.Remove(ids[index]);
+        {
+            // 该 GS 内存里已消失的世界不能再被队伍当作可重入实例。
+            Opening entry = dungeonHosts[ids[index]];
+            if (entry.Host.SessionID == sessionId)
+                Closed(entry.Host, new MasterDungeonHostResult { TeamId = entry.Order.TeamId, InstanceId = ids[index] });
+        }
     }
 }

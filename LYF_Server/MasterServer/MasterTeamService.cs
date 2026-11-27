@@ -17,8 +17,12 @@ internal sealed class MasterTeamService : IContainer
     {
         realm = config;
         if (realm == null) return;
-        cluster = new RealmSocialLink();
+        // 本区控制服已经维护在线 GS 及负载；MS 只提交已通过队伍确认的实例。
+        NetClient control = new NetClient(realm.Host, realm.ControlPort, ClientType.MasterServer);
+        cluster = new RealmSocialLink(control);
         _games.Add(0, new GamePartition(cluster));
+        control.RegistCommand(SceneLineCode.ChooseDungeonHost, this);
+        control.StartConnect();
     }
 
     /// <summary>同一个 GS 连接共享队伍权威与聊天频道，不跨游戏分区广播。</summary>
@@ -65,6 +69,16 @@ internal sealed class MasterTeamService : IContainer
                 }
                 if (!cluster.Nodes.ContainsKey(session.SessionID)) return;
                 cluster.Sender = session;
+                if (basePackage.ProtoCode == SceneLineCode.DungeonPrepared)
+                {
+                    cluster.Prepared(session, MasterDungeonHostResult.Parser.ParseFrom(basePackage.Data));
+                    return;
+                }
+                if (basePackage.ProtoCode == SceneLineCode.DungeonClosed)
+                {
+                    cluster.Closed(session, MasterDungeonHostResult.Parser.ParseFrom(basePackage.Data));
+                    return;
+                }
                 if (basePackage.ProtoCode == SceneLineCode.Presence)
                 {
                     cluster.Present(session, TeamMemberInfo.Parser.ParseFrom(basePackage.Data));
@@ -164,8 +178,11 @@ internal sealed class MasterTeamService : IContainer
         }
     }
 
-    /// <summary>监听端没有主动连接回包。</summary>
+    /// <summary>控制服选出宿主后沿该 GS 的内网连接发起建本。</summary>
     /// <param name="serverBase">框架回调保留的主动连接。</param>
     /// <param name="basePackage">框架回调保留的消息包。</param>
-    public void OnClientCommand(BaseLink serverBase, BasePackage basePackage) { }
+    public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
+    {
+        lock (_games) cluster.Selected(MasterDungeonHostResult.Parser.ParseFrom(basePackage.Data));
+    }
 }

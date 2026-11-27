@@ -28,12 +28,15 @@ public static partial class MasterTeamReflection {
           "c3RlclRlYW1EdW5nZW9uT3JkZXISDwoHdGVhbV9pZBgBIAEoBBITCgtpbnN0",
           "YW5jZV9pZBgCIAEoBBISCgpkdW5nZW9uX2lkGAMgASgFEhIKCm1lbWJlcl9p",
           "ZHMYBCADKAQSFwoPZHVuZ2VvbnNfZGVncmVlGAUgASgFEhUKDWR1bmdlb25f",
-          "bGF5ZXIYBiABKAViBnByb3RvMw=="));
+          "bGF5ZXIYBiABKAUiYQoXTWFzdGVyRHVuZ2Vvbkhvc3RSZXN1bHQSEwoLaW5z",
+          "dGFuY2VfaWQYASABKAQSDwoHZ2FtZV9pZBgCIAEoBRIPCgdzdWNjZXNzGAMg",
+          "ASgIEg8KB3RlYW1faWQYBCABKARiBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::RequestEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::MasterTeamRolePacket), global::MasterTeamRolePacket.Parser, new[]{ "RoleId", "Nickname", "Packet" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::MasterTeamDungeonOrder), global::MasterTeamDungeonOrder.Parser, new[]{ "TeamId", "InstanceId", "DungeonId", "MemberIds", "DungeonsDegree", "DungeonLayer" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::MasterTeamDungeonOrder), global::MasterTeamDungeonOrder.Parser, new[]{ "TeamId", "InstanceId", "DungeonId", "MemberIds", "DungeonsDegree", "DungeonLayer" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::MasterDungeonHostResult), global::MasterDungeonHostResult.Parser, new[]{ "InstanceId", "GameId", "Success", "TeamId" }, null, null, null, null)
         }));
   }
   #endregion
@@ -719,6 +722,330 @@ public sealed partial class MasterTeamDungeonOrder : pb::IMessage<MasterTeamDung
         }
         case 48: {
           DungeonLayer = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 区内选服与建本回执；只有所选 GS 完成建本后，MS 才会向队员发传送指令。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class MasterDungeonHostResult : pb::IMessage<MasterDungeonHostResult>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<MasterDungeonHostResult> _parser = new pb::MessageParser<MasterDungeonHostResult>(() => new MasterDungeonHostResult());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<MasterDungeonHostResult> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::MasterTeamReflection.Descriptor.MessageTypes[2]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public MasterDungeonHostResult() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public MasterDungeonHostResult(MasterDungeonHostResult other) : this() {
+    instanceId_ = other.instanceId_;
+    gameId_ = other.gameId_;
+    success_ = other.success_;
+    teamId_ = other.teamId_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public MasterDungeonHostResult Clone() {
+    return new MasterDungeonHostResult(this);
+  }
+
+  /// <summary>Field number for the "instance_id" field.</summary>
+  public const int InstanceIdFieldNumber = 1;
+  private ulong instanceId_;
+  /// <summary>
+  /// 对应本次建本请求的区内实例号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong InstanceId {
+    get { return instanceId_; }
+    set {
+      instanceId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "game_id" field.</summary>
+  public const int GameIdFieldNumber = 2;
+  private int gameId_;
+  /// <summary>
+  /// 调度选中的物理节点，零也是合法编号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GameId {
+    get { return gameId_; }
+    set {
+      gameId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "success" field.</summary>
+  public const int SuccessFieldNumber = 3;
+  private bool success_;
+  /// <summary>
+  /// 选服回执表示有可用节点，建本回执表示场景已可进入。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Success {
+    get { return success_; }
+    set {
+      success_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "team_id" field.</summary>
+  public const int TeamIdFieldNumber = 4;
+  private ulong teamId_;
+  /// <summary>
+  /// 发起本次请求的队伍，供 MS 找到仍在等待的入场名单。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong TeamId {
+    get { return teamId_; }
+    set {
+      teamId_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as MasterDungeonHostResult);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(MasterDungeonHostResult other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (InstanceId != other.InstanceId) return false;
+    if (GameId != other.GameId) return false;
+    if (Success != other.Success) return false;
+    if (TeamId != other.TeamId) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (InstanceId != 0UL) hash ^= InstanceId.GetHashCode();
+    if (GameId != 0) hash ^= GameId.GetHashCode();
+    if (Success != false) hash ^= Success.GetHashCode();
+    if (TeamId != 0UL) hash ^= TeamId.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (InstanceId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(InstanceId);
+    }
+    if (GameId != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(GameId);
+    }
+    if (Success != false) {
+      output.WriteRawTag(24);
+      output.WriteBool(Success);
+    }
+    if (TeamId != 0UL) {
+      output.WriteRawTag(32);
+      output.WriteUInt64(TeamId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (InstanceId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(InstanceId);
+    }
+    if (GameId != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(GameId);
+    }
+    if (Success != false) {
+      output.WriteRawTag(24);
+      output.WriteBool(Success);
+    }
+    if (TeamId != 0UL) {
+      output.WriteRawTag(32);
+      output.WriteUInt64(TeamId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (InstanceId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(InstanceId);
+    }
+    if (GameId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GameId);
+    }
+    if (Success != false) {
+      size += 1 + 1;
+    }
+    if (TeamId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(TeamId);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(MasterDungeonHostResult other) {
+    if (other == null) {
+      return;
+    }
+    if (other.InstanceId != 0UL) {
+      InstanceId = other.InstanceId;
+    }
+    if (other.GameId != 0) {
+      GameId = other.GameId;
+    }
+    if (other.Success != false) {
+      Success = other.Success;
+    }
+    if (other.TeamId != 0UL) {
+      TeamId = other.TeamId;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          InstanceId = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          GameId = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          Success = input.ReadBool();
+          break;
+        }
+        case 32: {
+          TeamId = input.ReadUInt64();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          InstanceId = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          GameId = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          Success = input.ReadBool();
+          break;
+        }
+        case 32: {
+          TeamId = input.ReadUInt64();
           break;
         }
       }

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `8d3cf86955452b00af26049c9a7c71f68769598f628d1e3ee22ff0f55d869afb`
+Source normalized SHA256: `06309f6bfe467146f46c45715a7736829847cd45853cb4a0cb45e9406bab160c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -169,11 +169,12 @@ Source normalized SHA256: `8d3cf86955452b00af26049c9a7c71f68769598f628d1e3ee22ff
 | [CODE][FILES][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] RO names for workshop materials and Magic Swordsman upgrade patterns | 1106-1109 |
 | [CODE][FILES][HANDOFF][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1110-1113 |
 | [CODE][FILES][HANDOFF][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD function menu icons and fold animation | 1114-1117 |
-| [CODE][FILES][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Visible-player friend discovery and two-column mailbox | 1118-1121 |
+| [CODE][FILES][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Visible-player friend discovery and two-column mailbox | 1118-1122 |
+| [CODE][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Create a party dungeon before admitting its members | 1123-1126 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `24ed71783d893ab5f8a5e4391b8551041de8ebb27c696d0aa5e5fb27015c3366`
+Source normalized SHA256: `edc63298ff04d22410d61597b86f29889a6473be5e15be10292aeb4c67ea1c7f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -337,7 +338,8 @@ Source normalized SHA256: `24ed71783d893ab5f8a5e4391b8551041de8ebb27c696d0aa5e5f
 | [VERIFY][数据库][LOCAL-DB-CLEANUP-20261127] Local mailbox and chat test database cleanup | 1154-1160 |
 | [VERIFY][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1161-1164 |
 | [VERIFY][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD menu pointer and animation checks | 1165-1168 |
-| [VERIFY][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Friend discovery and mailbox layout checks | 1169-1172 |
+| [VERIFY][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Friend discovery and mailbox layout checks | 1169-1173 |
+| [VERIFY][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Verify creation, party transfer and return across GameServers | 1174-1177 |
 
 ## Docs/AI/DECISIONS.en.md
 
@@ -351,7 +353,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `238d262e0530ab680191b53fea6dc04b39e140e59e86d7ddd19a2ce69a77ae11`
+Source normalized SHA256: `202d9f7423720d803f64536e8d4194911739627a8fb440508f1bdbbd868ad0d6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -375,7 +377,8 @@ Source normalized SHA256: `238d262e0530ab680191b53fea6dc04b39e140e59e86d7ddd19a2
 | [QUERY][受击][动画][NONCONTROL-HIT-FEEDBACK-20261108] Non-control damage feedback during locomotion | 152-160 |
 | [QUERY][装备][基因][EQUIP-GENE-FLOW-20261108] Equipment attachment and removal flow | 161-168 |
 | [QUERY][基因][属性][RO-CLIENT-BUFF-UPDATE-20261108] RO client effect ticks and attribute UI refresh | 169-177 |
-| [QUERY][RO][区服][分线][交易][RO-REALM-SCENE-LINES-20261125] Login realms, static-map lines and stall scope | 178-186 |
+| [QUERY][RO][区服][分线][交易][RO-REALM-SCENE-LINES-20261125] Login realms, static-map lines and stall scope | 178-187 |
+| [QUERY][区服][分线][副本][DUNGEON-INSTANCE-HOST-20261127] Which GameServer hosts a party dungeon | 188-194 |
 
 ## Older records
 

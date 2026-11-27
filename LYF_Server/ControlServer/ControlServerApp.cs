@@ -16,7 +16,7 @@ internal static class ControlServerApp
         // 监听前完整注册所有允许的内部操作。
         ushort[] codes = { SceneLineCode.Register, SceneLineCode.Allocate, SceneLineCode.List,
             SceneLineCode.Commit, SceneLineCode.Cancel, SceneLineCode.Disconnect, SceneLineCode.Saved,
-            SceneLineCode.CreateStaticScene, SceneLineCode.HostLoad };
+            SceneLineCode.CreateStaticScene, SceneLineCode.HostLoad, SceneLineCode.ChooseDungeonHost };
         for (int index = 0; index < codes.Length; index++) server.RegistCommand(codes[index], directory);
         server.OnSessionDisconnected = directory.Disconnected;
         server.StartServer(realm.Host, realm.ControlPort);

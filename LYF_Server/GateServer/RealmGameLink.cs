@@ -38,6 +38,8 @@ internal sealed class RealmGameLink : NetClient
         internal bool Switching;
         /// <summary>由已确认的副本请求引发的迁移，不占用玩家手动切线的应答。</summary>
         internal bool Gathering;
+        /// <summary>退本通知在公共场景接管后才交给玩家，期间沿原连接完成角色保存。</summary>
+        internal BasePackage DungeonReturn;
         /// <summary>本次过门的来源；目标场景报告进入世界后即可恢复位置同步。</summary>
         internal PublicCityPortal Portal;
         /// <summary>登录、建角和开始游戏的中心服在途请求号。</summary>
@@ -287,7 +289,13 @@ internal sealed class RealmGameLink : NetClient
                 }
                 else
                 {
-                    if (player.Portal != null)
+                    if (player.DungeonReturn != null)
+                    {
+                        player.Dungeon = 0;
+                        base.HandleCommand(player.DungeonReturn);
+                        player.DungeonReturn = null;
+                    }
+                    else if (player.Portal != null)
                     {
                         // 正式接管后才通知客户端加载目的城市。
                         SceneLineResult arrived = new SceneLineResult { CurrentLine = player.Current.LineId,
@@ -308,10 +316,10 @@ internal sealed class RealmGameLink : NetClient
             if (player.Current == null || games[player.Current.GameId] != peer) return;
             if (packet.ProtoCode == SceneLineCode.Gather)
             {
-                // 已确认的队伍需要全员到同一 GS，再由该机创建唯一的战斗世界。
+                // 目标 GS 已确认建本，直接申请私有实例，不要求其拥有出发地图的公共线。
                 SceneRouteRequest gather = SceneRouteRequest.Parser.ParseFrom(packet.Data);
                 if (gather.RoleId != player.Role || player.Switching || player.Dungeon != 0) return;
-                player.Switching = Control(id, player, SceneLineCode.Allocate, 0, gather.GameId);
+                player.Switching = Control(id, player, SceneLineCode.Allocate, 0, gather.GameId, sceneUid: gather.SceneUid);
                 player.Gathering = player.Switching;
                 return;
             }
@@ -326,7 +334,18 @@ internal sealed class RealmGameLink : NetClient
                 return;
             }
             if (packet.ProtoCode == NetDefine.CMD_TeamEnterDungeonCode)
-                player.Dungeon = TeamEnterDungeonNtf.Parser.ParseFrom(packet.Data).InstanceId;
+            {
+                // 私有实例不占公共线，退本时为出发地图重新分配实际可用的线路。
+                TeamEnterDungeonNtf change = TeamEnterDungeonNtf.Parser.ParseFrom(packet.Data);
+                if (change.InstanceId == 0 && player.Current.LineId == 0)
+                {
+                    player.DungeonReturn = packet;
+                    player.Switching = Control(id, player, SceneLineCode.Allocate, 0);
+                    if (!player.Switching) Recover(id);
+                    return;
+                }
+                player.Dungeon = change.InstanceId;
+            }
             base.HandleCommand(packet);
             if (packet.ProtoCode == NetDefine.CMD_TeamEnterDungeonCode || packet.ProtoCode == NetDefine.CMD_RoleKnapsackInfoCode)
             {
@@ -411,7 +430,8 @@ internal sealed class RealmGameLink : NetClient
     /// <param name="code">调度命令。</param><param name="line">申请的线路，零表示自动。</param>
     /// <param name="host">组队集结要求的目标 GS，负数表示自动分配。</param>
     /// <param name="destinationMap">城际预留的目标地图，负数时沿用当前地图。</param>
-    private bool Control(int id, Player player, int code, int line, int host = -1, int destinationMap = -1)
+    /// <param name="sceneUid">已建副本的负路由号，零表示按公共线路分配。</param>
+    private bool Control(int id, Player player, int code, int line, int host = -1, int destinationMap = -1, long sceneUid = 0)
     {
         // 初次选用存档中的地图，以后依据当前宿主确认的场景。
         int map = 0;
@@ -419,7 +439,7 @@ internal sealed class RealmGameLink : NetClient
         else if (player.Current != null) map = player.Current.MapId;
         if (destinationMap >= 0) map = destinationMap;
         if (control.Ready && control.Send(id, code, new SceneRouteRequest { RoleId = player.Role,
-            MapId = map, LineId = line, RequireGame = host >= 0, GameId = host }.ToByteString())) return true;
+            MapId = map, LineId = line, RequireGame = host >= 0, GameId = host, SceneUid = sceneUid }.ToByteString())) return true;
         return Error(id);
     }
 
@@ -431,6 +451,7 @@ internal sealed class RealmGameLink : NetClient
         player.Target = null;
         player.Switching = false;
         player.Gathering = false;
+        if (player.DungeonReturn != null) { Recover(id); return; }
         if (player.Login != null) { player.Login = null; Error(id); }
         else if (player.Portal != null)
         {

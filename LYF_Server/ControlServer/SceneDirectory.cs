@@ -60,6 +60,16 @@ internal sealed class SceneDirectory : IContainer
         int connection = session.SessionID;
         lock (hosts)
         {
+            if (packet.ProtoCode == SceneLineCode.ChooseDungeonHost)
+            {
+                // MS 已分配实例号，控制服对副本和公共新线共用同一份在线节点与选服策略。
+                MasterTeamDungeonOrder order = MasterTeamDungeonOrder.Parser.ParseFrom(packet.Data);
+                // 没有宿主时保留失败结果，零号 GS 本身是合法节点。
+                MasterDungeonHostResult choice = new MasterDungeonHostResult { TeamId = order.TeamId, InstanceId = order.InstanceId };
+                if (hosts.Count > 0) { choice.GameId = GetGsLine(); choice.Success = true; }
+                link.Send(SceneLineCode.ChooseDungeonHost, choice.ToByteString());
+                return;
+            }
             if (packet.ProtoCode == SceneLineCode.Register)
             {
                 // 只有当前区服配置中的节点才有承载资格。
@@ -149,7 +159,7 @@ internal sealed class SceneDirectory : IContainer
                 if (role.Current != null) role.Current.Population--;
                 role.Current = role.Pending;
                 role.Current.Population++;
-                Expand(role.Current);
+                if (role.Current.LineId != 0) Expand(role.Current);
             }
             role.Pending = null;
             if (role.Current == null) roles.Remove(request.RoleId);
@@ -168,7 +178,15 @@ internal sealed class SceneDirectory : IContainer
             return result;
         }
         // 初次选角没有当前 GS，跨图则使用已经确认的原宿主作为软偏好。
-        PublicSceneLine target = SelectPrioritySceneLine(request, role?.Current);
+        PublicSceneLine target;
+        if (request.SceneUid < 0 && request.RequireGame)
+        {
+            // 负路由号对应已建好的私有实例。保留出发地图供退本返回，公共线容量不参与进本。
+            target = null;
+            if (role?.Current != null && hosts.ContainsKey(request.GameId))
+                target = new PublicSceneLine { SceneUid = request.SceneUid, GameId = request.GameId, MapId = role.Current.MapId };
+        }
+        else target = SelectPrioritySceneLine(request, role?.Current);
         if (target == null) result.Reason = "目标线路未开放或人数已满。";
         else if (role != null && role.Current == target) result.Reason = "已经在这条线路。";
         else if (role != null && role.Pending != null) result.Reason = "正在切换场景。";
@@ -233,6 +251,8 @@ internal sealed class SceneDirectory : IContainer
     /// <param name="scene">待接管的目标实例。</param><param name="change">预留为 1，提交或取消为 -1。</param>
     private void ChangeReservation(PublicSceneLine scene, int change)
     {
+        // 私有副本由队伍名单准入，不预占任何公共线路的名额。
+        if (scene.LineId == 0) return;
         // 本实例已签发且尚未完成的入场数。
         int count;
         reservations.TryGetValue(scene.SceneUid, out count);
