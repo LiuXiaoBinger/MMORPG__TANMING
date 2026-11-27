@@ -2,13 +2,15 @@
 # Name 为单个服务工程名，BuildDir 为该服务刚刚编译完成的输出目录。
 function Get-RealmRuntimeProgram([string]$ServerRoot, [string]$Configuration, [string]$Name, [string]$BuildDir) {
     # 按相对文件名与内容标识整套程序，配置表或依赖单独变化也会启用新版本。
-    $files = @(Get-ChildItem -LiteralPath $BuildDir -File -Recurse -Force | Sort-Object FullName)
+    $files = [IO.Directory]::GetFiles($BuildDir, '*', [IO.SearchOption]::AllDirectories)
+    # 按 Windows 文件名的序数顺序排序，使两种 PowerShell 生成同一个版本目录。
+    [Array]::Sort($files, [StringComparer]::OrdinalIgnoreCase)
     # 依次追加每个相对路径和 SHA256，用于比较两次构建的所有运行输入。
     $manifest = New-Object System.Text.StringBuilder
     for ($i = 0; $i -lt $files.Count; $i++) {
         # i 是构建文件下标，路径只保留服务目录内的部分，供同版进程复用。
-        $relative = $files[$i].FullName.Substring($BuildDir.Length + 1)
-        [void]$manifest.AppendLine($relative + '|' + (Get-FileHash -LiteralPath $files[$i].FullName -Algorithm SHA256).Hash)
+        $relative = $files[$i].Substring($BuildDir.Length + 1)
+        [void]$manifest.AppendLine($relative + '|' + (Get-FileHash -LiteralPath $files[$i] -Algorithm SHA256).Hash)
     }
     # 将清单摘要用作目录名，各服务只在实际内容变化时生成一份新副本。
     $sha = [Security.Cryptography.SHA256]::Create()
