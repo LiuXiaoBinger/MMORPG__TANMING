@@ -21,7 +21,7 @@ public sealed class MStateMachine : EntityComponentBase
     /// <summary>上一个激活状态；当前 StateChanged 派发代码被注释掉，不会发送通知。</summary>
     private IMStateTransform _previous;
 
-    /// <summary>是否有待刷新的状态动画；LateUpdate 成功播放后清除。</summary>
+    /// <summary>待处理的动画切换标记，播放动作或确认设施无需动画后清除。</summary>
     private bool _isTriggered;
 
     /// <summary>上一次播放的动画状态名，供 <see cref="IMStateTransform.PlayAnim"/> 做去重切换。</summary>
@@ -82,23 +82,25 @@ public sealed class MStateMachine : EntityComponentBase
     }
 
     /// <summary>
-    /// 帧末动画刷新：仅在本帧触发过状态切换且模型 Animator 可用时，
-    /// 调用当前状态的 PlayAnim 播放动画，并把已播放状态名传回状态做下次去重。
+    /// 在模型绑定后播放待处理的状态动画。没有 Animator 的静态场景设施只消费状态切换。
     /// </summary>
     /// <param name="deltaSeconds">距上一帧的秒数（本状态机未使用）。</param>
     public override void LateUpdate(float deltaSeconds)
     {
         base.LateUpdate(deltaSeconds);
-        // 本帧发生过状态切换且当前状态对象存在时，才进入动画刷新。
-        if (_isTriggered && _current != null)
+        if (!_isTriggered || _current == null) return;
+
+        // 模型异步绑定后才有动画包装器，等待期间保留本次状态切换。
+        MAnimator animator = Entity?.Model?.Ator;
+        if (animator == null) return;
+
+        // 告示牌和传送台没有动画器；同属设施的马车有动画器，仍应播放其原生动作。
+        bool isStaticPropWithoutAnimator = Entity is NpcEntity npc && npc.IsSceneObject && animator.UnityAnimator == null;
+        if (!isStaticPropWithoutAnimator)
         {
-            // 实体模型与 Animator 均可用时，调用当前状态播放动画并回传状态名去重。
-            if (Entity != null && Entity.Model != null && Entity.Model.Ator != null)
-            {
-                _preState = _current.PlayAnim(_preState);
-                _isTriggered = false;
-            }
+            _preState = _current.PlayAnim(_preState);
         }
+        _isTriggered = false;
     }
 
     /// <summary>
