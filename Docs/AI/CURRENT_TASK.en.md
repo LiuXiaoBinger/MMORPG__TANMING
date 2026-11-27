@@ -1110,3 +1110,7 @@ The project item table and its Luban binary now display 31 new names. IDs 10701�
 ## [CODE][FILES][HANDOFF][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons
 
 The existing Settings → Hotkeys tab now exposes all 46 reference actions plus four project actions. Of the 50 rows, 29 bind to existing commands and 21 are disabled. The preview keyboard, three independently scrolling columns, draft/save/discard/defaults, persistent movement bindings, HUD skill labels, and seven corrected rail icons are in the production prefab and input paths. `项目修改日志/2026-11-27-热键设置与页签图标.md`
+
+## [CODE][FILES][HANDOFF][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD function menu icons and fold animation
+
+The 12 existing HUD entries in the `FunctionMenu` subtree of `UIRoot.prefab` use the `FunctionMenuIcons` sprite sheet from RO art. Labels use a common 20-point font and transparent buttons keep their 80 × 84 hit areas. The mail and friends badges are separate children. `MainView.ToggleFunctionMenu` and `SetFunctionMenuVisible` update the CanvasGroup input flags and the Animator's `Expanded` parameter. The two clips in `Animas/UI` animate a horizontal RectMask2D reveal, opacity and the toggle arrow. The controller has a 0.26-second open transition and a 0.21-second close transition. See `项目修改日志/2026-11-27-主城功能菜单图标与折叠动画.md` for asset paths, sprite mappings and previews.

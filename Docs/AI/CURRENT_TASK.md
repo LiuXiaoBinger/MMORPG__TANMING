@@ -1105,3 +1105,7 @@ Codex 已接入五条委托、游戏服存档、NPC 办理、公共地图选门�
 ## [CODE][FILES][HANDOFF][界面][设置][HOTKEY-SETTINGS-20261127] 热键设置与页签图标
 
 原设置热键页列出录屏 46 项和项目 4 项。50 行中 29 项接入既有命令、21 项标为不可用。已接入键盘总览、三列独立滚动、改键草稿、保存、放弃与恢复默认，技能栏同步物理键，右侧七个图标换用正确切片。 `项目修改日志/2026-11-27-热键设置与页签图标.md`
+
+## [CODE][FILES][HANDOFF][界面][FUNCTION-MENU-RO-ANIMATION-20261127] 主城 HUD 功能菜单图标与折叠动画
+
+`UIRoot.prefab` 的 `FunctionMenu` 子树中，原有的 12 个 HUD 入口使用取自 RO 美术资源的 `FunctionMenuIcons` 图集。名称统一采用 20 点字号，透明按钮保留 80 × 84 的点击区域。邮件和好友角标分别使用独立的子节点。`MainView.ToggleFunctionMenu` 和 `SetFunctionMenuVisible` 更新 `CanvasGroup` 的输入标志和 `Animator` 的 `Expanded` 参数。`Animas/UI` 下的两个动画片段控制 `RectMask2D` 的水平显隐、菜单透明度和开关箭头。动画控制器的展开过渡为 0.26 秒，收起过渡为 0.21 秒。资源路径、精灵映射和预览见 `项目修改日志/2026-11-27-主城功能菜单图标与折叠动画.md`。

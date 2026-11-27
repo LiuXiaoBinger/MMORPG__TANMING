@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `01f0e0b4d374fcf0861646d8a9abe47b72a156760fec36a18ff1e960aa2df748`
+Source normalized SHA256: `34e3b28bc8cf8553c5be1b117a82c7dc29b67bc182cc48acc0a9caf08f615ad9`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -167,11 +167,12 @@ Source normalized SHA256: `01f0e0b4d374fcf0861646d8a9abe47b72a156760fec36a18ff1e
 | [CODE][FILES][HANDOFF][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Playable Moshenta stairs and boss conversation | 1098-1101 |
 | [CODE][FILES][HANDOFF][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals | 1102-1105 |
 | [CODE][FILES][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] RO names for workshop materials and Magic Swordsman upgrade patterns | 1106-1109 |
-| [CODE][FILES][HANDOFF][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1110-1112 |
+| [CODE][FILES][HANDOFF][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1110-1113 |
+| [CODE][FILES][HANDOFF][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD function menu icons and fold animation | 1114-1116 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `6dd26303839a6e5ee770da916497a5f4c0d0ef938a6f6b80582f52a9bbc0f013`
+Source normalized SHA256: `3dad0acb1aa6ee4983177e046b6cc5438656540554dd4b12ec3b090b98a7d513`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -333,7 +334,8 @@ Source normalized SHA256: `6dd26303839a6e5ee770da916497a5f4c0d0ef938a6f6b80582f5
 | [VERIFY][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals | 1146-1149 |
 | [VERIFY][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] Renamed materials in workshop, inventory and market search | 1150-1153 |
 | [VERIFY][数据库][LOCAL-DB-CLEANUP-20261127] Local mailbox and chat test database cleanup | 1154-1159 |
-| [VERIFY][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1160-1162 |
+| [VERIFY][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1160-1163 |
+| [VERIFY][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD menu pointer and animation checks | 1164-1166 |
 
 ## Docs/AI/DECISIONS.en.md
 

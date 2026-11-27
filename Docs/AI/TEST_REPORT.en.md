@@ -1160,3 +1160,7 @@ Luban reproduced the baseline binary. Comparison of all 460 item rows identified
 ## [VERIFY][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons
 
 The Editor and Windows Player LYF_Game assemblies compiled with the current source list. Isolated Unity Play Mode passed 38 checks using the production prefab, Common SDF and physical Input System events. Checks cover conflict reporting, draft lifecycle, default restore, preference reload, HUD key lookup, movement, jump, skill/target/window dispatch and rail sprites. Live account gameplay and a complete player build were not verified. `项目修改日志/2026-11-27-热键设置与页签图标.md`
+
+## [VERIFY][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD menu pointer and animation checks
+
+The working client and the isolated branch sources both compiled for Editor and Player. The isolated Unity 2023.2.20f1c1 Play Mode run used the serialized menu subtree and 17 bindings from the official prefab, the compiled MainView and the existing MainCtrl toggle handler. At 1920 × 1080 and 1366 × 768, 61 combined assertions passed including 12 sprite and pointer targets, the two unread badges, partial reveal, interrupted close and reopen, HUD hide/show, and input release through the external close method. Play Mode used a paused game clock. The 23-frame preview and captures are under `_temp/menu-icons-motion-20261127/`. Live account login and a published client build were not tested. See `项目修改日志/2026-11-27-主城功能菜单图标与折叠动画.md`.
