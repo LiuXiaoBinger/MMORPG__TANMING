@@ -9,9 +9,11 @@ public sealed class GoldWorkshopWindow : WindowBase
 {
     /// <summary>与背包和交易界面共用的物品插画目录。</summary>
     [SerializeField] private TradeMarketCatalog _art;
+    /// <summary>RO 作坊的设计画布，按短边等比缩放以保留原版控件比例。</summary>
+    [SerializeField] private RectTransform _layout;
     /// <summary>右上关闭作坊的按钮。</summary>
     [SerializeField] private Button _close;
-    /// <summary>右栏依次为合成、进阶、升级。</summary>
+    /// <summary>工作区顶部依次为合成、进阶、升级页签。</summary>
     [SerializeField] private Button[] _tabs;
     /// <summary>三页各自的选中色条。</summary>
     [SerializeField] private GameObject[] _tabHighlights;
@@ -27,9 +29,9 @@ public sealed class GoldWorkshopWindow : WindowBase
     [SerializeField] private GoldWorkshopRow _template;
     /// <summary>穿戴栏或背包没有金装时的提示。</summary>
     [SerializeField] private Text _empty;
-    /// <summary>铁砧上显示的当前成品图标及边框。</summary>
+    /// <summary>锻造纹章上当前成品的显示节点。</summary>
     [SerializeField] private GameObject _hero;
-    /// <summary>铁砧中央的金装原画。</summary>
+    /// <summary>显示在锻造纹章中央的金装原画。</summary>
     [SerializeField] private Image _heroIcon;
     /// <summary>选中成品或实例的配置名称。</summary>
     [SerializeField] private Text _title;
@@ -37,13 +39,13 @@ public sealed class GoldWorkshopWindow : WindowBase
     [SerializeField] private Text _progress;
     /// <summary>切换成品属性面板的预览按钮。</summary>
     [SerializeField] private Button _preview;
-    /// <summary>盖在铁砧上的基础属性预览卡。</summary>
+    /// <summary>覆盖作坊的成品基础属性详情。</summary>
     [SerializeField] private GameObject _previewCard;
     /// <summary>收起属性预览的按钮。</summary>
     [SerializeField] private Button _closePreview;
     /// <summary>预览卡使用真实配置基础属性及单位。</summary>
     [SerializeField] private Text _attributes;
-    /// <summary>进阶和升级时列在铁砧两侧的当前、目标属性卡。</summary>
+    /// <summary>装备右侧的基础属性和成长目标属性两列。</summary>
     [SerializeField] private GameObject[] _comparison;
     /// <summary>使用同一份真实基础属性，等待策划提供成长表。</summary>
     [SerializeField] private Text[] _comparisonValues;
@@ -71,9 +73,9 @@ public sealed class GoldWorkshopWindow : WindowBase
     public Func<int, long> Owned;
     /// <summary>经现有装备协议发送本次选择，断线返回假。</summary>
     public Func<EquipOperationReq, bool> Submit;
-    /// <summary>按右栏顺序选择的作坊操作。</summary>
+    /// <summary>三个作坊页签对应的装备操作。</summary>
     private static readonly EquipOperation[] Operations = { EquipOperation.ForgeGold, EquipOperation.AdvanceGold, EquipOperation.UpgradeGold };
-    /// <summary>与右栏顺序相同的按钮文案。</summary>
+    /// <summary>与作坊页签顺序相同的按钮文案。</summary>
     private static readonly string[] Captions = { "合成", "进阶", "升级" };
     /// <summary>连续八件金装的部位分类名。</summary>
     private static readonly string[] Parts = { "主武器", "副武器", "头部", "上衣", "腰带", "下装", "护腕", "鞋履" };
@@ -105,7 +107,7 @@ public sealed class GoldWorkshopWindow : WindowBase
         _preview.onClick.AddListener(() => _previewCard.SetActive(!_previewCard.activeSelf));
         _closePreview.onClick.AddListener(() => _previewCard.SetActive(false));
         _confirm.onClick.AddListener(Confirm);
-        // index 是右侧按钮在三个操作中的固定位置。
+        // index 是顶部页签在三个操作中的固定位置。
         for (int index = 0; index < _tabs.Length; index++)
         {
             // 捕获独立的页签序号。
@@ -122,6 +124,7 @@ public sealed class GoldWorkshopWindow : WindowBase
     /// <param name="uid">需要预选的实例 UID，零时选列表第一件。</param>
     public void Open(int page, bool bag, long uid)
     {
+        FitWorkshop();
         _page = page;
         _secondFilter = bag;
         _uid = uid;
@@ -130,6 +133,22 @@ public sealed class GoldWorkshopWindow : WindowBase
         _previewCard.SetActive(false);
         _scroll.verticalNormalizedPosition = 1;
         Refresh(true);
+    }
+
+    /// <summary>横屏尺寸变化时，同步调整居中窗口及其中的文字、物品和九宫格边框。</summary>
+    private void OnRectTransformDimensionsChange()
+    {
+        if (_layout != null) FitWorkshop();
+    }
+
+    /// <summary>使用预制体保存的 RO 设计分辨率，将整座作坊等比放入当前功能层。</summary>
+    private void FitWorkshop()
+    {
+        // 可用宽高由主界面的画布和安全区决定，单位为画布局部像素。
+        Rect available = ((RectTransform)transform).rect;
+        // 取两个方向中较小的倍率，在超宽和较方的横屏上完整显示边框。
+        float scale = Mathf.Min(available.width / _layout.sizeDelta.x, available.height / _layout.sizeDelta.y);
+        _layout.localScale = Vector3.one * scale;
     }
 
     /// <summary>切换套装或部位分类，或切换已装备与背包来源。</summary>
@@ -194,10 +213,7 @@ public sealed class GoldWorkshopWindow : WindowBase
     /// <param name="caption">套装或装备部位名。</param>
     private void Header(int index, string caption)
     {
-        // 向下、向右的标志跟随分类展开状态。
-        string mark = "▸  ";
-        if (_group == index) mark = "▾  ";
-        Row().Bind(mark + caption, "", null, false, () =>
+        Row().BindCategory(caption, _group == index, () =>
         {
             if (_group == index) _group = -1;
             else _group = index;
@@ -258,7 +274,7 @@ public sealed class GoldWorkshopWindow : WindowBase
         _confirmLabel.text = Captions[_page];
         _confirm.interactable = false;
         _notice.text = "";
-        _comparison[0].SetActive(selected && _page != 0);
+        _comparison[0].SetActive(selected);
         _comparison[1].SetActive(false);
         if (!selected)
         {
@@ -280,9 +296,9 @@ public sealed class GoldWorkshopWindow : WindowBase
             if (_recipe.Unavailable.Length == 0 && _page == 1) _progress.text = (tiers + 1) + " 阶   →   " + _recipe.Target + " 阶";
             if (_recipe.Unavailable.Length == 0 && _page == 2) _progress.text = GoldWorkshopRecipe.Level(levels) + " 级   →   " + _recipe.Target + " 级";
             _attributes.text = Attributes(_id);
+            _comparisonValues[0].text = _attributes.text;
             if (_page != 0)
             {
-                _comparisonValues[0].text = _attributes.text;
                 _comparisonValues[1].text = _attributes.text;
                 _comparison[1].SetActive(_recipe.Unavailable.Length == 0);
                 if (_page == 1) _targetTitle.text = _recipe.Target + "阶属性";
@@ -338,7 +354,7 @@ public sealed class GoldWorkshopWindow : WindowBase
             // 当前槽位的名称、单位等基础数据。
             cfg.Gene gene = LubanMgr.Instance.GetGeneInfoById(ids[index]);
             if (gene == null) continue;
-            lines.Append(KnapsackCtrl.ShortGeneName(gene.EffectDesc)).Append("    ").Append(values[index]);
+            lines.Append(KnapsackCtrl.ShortGeneName(gene.EffectDesc)).Append("  ").Append(values[index]);
             if (gene.ValueType == 1) lines.Append('%');
             lines.AppendLine();
         }
