@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `e0c074084175e9fa558603388d849a26937c2939de40747e35d86bc2da18d98f`
+Source normalized SHA256: `77f18578c2a005a2591c94047aaffd11329535756c04d3ff52f632b42c9a0095`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -181,11 +181,12 @@ Source normalized SHA256: `e0c074084175e9fa558603388d849a26937c2939de40747e35d86
 | [CODE][FILES][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Publish the shader variant JSON while its old file is mapped | 1157-1162 |
 | [CODE][FILES][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Personal boss drops by dungeon and difficulty | 1163-1168 |
 | [CODE][FILES][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] Author multi-item boss drops inside the RO dungeon editor | 1169-1175 |
-| [CODE][FILES][副本][UI][DUNGEON-JOURNAL-UI-20261127] Dungeon journal, individual boss marks and Friday Final chests | 1176-1180 |
+| [CODE][FILES][副本][UI][DUNGEON-JOURNAL-UI-20261127] Dungeon journal, individual boss marks and Friday Final chests | 1176-1181 |
+| [CODE][FILES][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 | 1182-1186 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `d3f40631da1249b2ce6c21569dbc5b180863e45f85404bd5659b9253245cdaa0`
+Source normalized SHA256: `5c73be2765e9d7b4d1fcad76c91212d9745042bb60201f8a5125ed01e42fc1a0`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -361,7 +362,8 @@ Source normalized SHA256: `d3f40631da1249b2ce6c21569dbc5b180863e45f85404bd5659b9
 | [VERIFY][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Reproduce mapped-file contention and verify the saved collection in Unity | 1208-1214 |
 | [VERIFY][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Multi-boss drops, period boundaries and re-entry | 1215-1220 |
 | [VERIFY][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] RO editor rendering, export and multi-item settlement | 1221-1226 |
-| [VERIFY][副本][UI][DUNGEON-JOURNAL-UI-20261127] Journal rendering, personal progress and weekly claim | 1227-1230 |
+| [VERIFY][副本][UI][DUNGEON-JOURNAL-UI-20261127] Journal rendering, personal progress and weekly claim | 1227-1231 |
+| [VERIFY][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 | 1232-1236 |
 
 ## Docs/AI/DECISIONS.en.md
 

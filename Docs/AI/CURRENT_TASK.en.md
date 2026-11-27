@@ -1178,3 +1178,9 @@ The Windows realm launcher builds into `_temp/realm-build`. Each service runs it
 - The existing dungeon window lists nine stories and six difficulties. A server count delta identifies the defeated boss by its stable reward-row ID. Only that portrait darkens and receives the red slash. The Native UGUI prefab uses the original RO portraits, Adventure Diary cards, Tower tabs, Tower Defense art, buttons and closed/open chests.
 - Final difficulty opens floors 1–24. Full instance victory records the character's highest floor and number of different base dungeons. Killing a Final boss records the boss without immediate loot. At Friday 00:00 Beijing time the previous period becomes claimable. Its one chest uses the highest floor at thresholds 1/5/10/15/18/21/24. Earlier unclaimed periods remain available after offline gaps. The new commands 11218/11219 carry the period and the authoritative opened chest result.
 - The XML shared by the Unity journal and GameServer defines the guaranteed items and random pool for each tier. The two Luban workbooks and their deployed bytes cover the new cap and 490 monster overrides. See [the change record](../../项目修改日志/2026-11-27-副本纪事界面与逐首领击杀标记.md).
+
+## [CODE][FILES][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1
+
+Magic Swordsmen receive level-one Moon Chase on login. When available, logical slot 7 defaults to keyboard 8. The fixed-origin sword streak and afterimage precede an up-to-8 m forward dash and two opposite crescents. Skill, effect and presentation IDs are 10140 / 2014001 / 3014001. The local first development realm is running the update.
+
+See [逐月突进双斩与一区接入](../../项目修改日志/2026-11-27-逐月突进双斩与一区接入.md).

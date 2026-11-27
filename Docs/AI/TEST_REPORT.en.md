@@ -1228,3 +1228,9 @@ The original Windows PowerShell 5.1 entry failed with MSB3027/MSB3021 after ten 
 
 - Isolated Unity rendered the production prefab, exercised one of three boss marks, hit testing, difficulty/role changes, highest-tier selection, current/previous tabs, tier contents, claim dispatch and claimed state. Server/Gate loopback passed 16 boss-drop regressions and 13 Final weekly checks on both the working inputs and the isolated release inputs.
 - Friday boundary, distinct-dungeon deduplication, floor-only completion, no instant Final drops, offline recovery, full-bag retry, duplicate/unknown-period requests, persisted bag/count snapshot and real Gate forwarding were exercised. The offline test reloaded a role snapshot and advanced a supplied server clock by 15 days. No production account login, database deployment, device run or real Friday rollover was exercised. Evidence paths and the final render count are in [the change record](../../项目修改日志/2026-11-27-副本纪事界面与逐首领击杀标记.md).
+
+## [VERIFY][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1
+
+Ten server checks and 15 Unity assertions passed. Each of two views recorded 87 frames. Isolated login and a real game input event on keyboard 8 produced two independent crescents and cleanup. The game server returned success, 1300 ms cast, 8000 ms cooldown and normal completion. In the isolated dungeon the key cast moved the character 8 m. The level-one client character died during the melee retest, so its run did not establish damage. A separate fixture used the actual GameServer assembly, a vulnerable Moshenta monster and a caster positioned at the landing point. At 50 ms steps the monster HP went from 1,827,954 to 1,827,863 at 650 ms and to 1,827,772 at 1000 ms, with no additional loss between windows or after the second hit. The original account, twin-client rendering and a Player build were not tested.
+
+See [逐月突进双斩与一区接入](../../项目修改日志/2026-11-27-逐月突进双斩与一区接入.md).
