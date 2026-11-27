@@ -1145,3 +1145,7 @@ Equipment UID owns six integer base rolls in the equip table. New drops and refo
 ## [CODE][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Independent manual and gem bags
 
 The RO inventory has two additional tabs. Pack 6 holds 32 complete manuals and 32 matching fragment types. Pack 7 holds 230 socket gems across 23 families and ten grades. ItemInfo.PackType routes grants. The training pill and enhancement stones retain their previous bags. New roles get 81 slots per inventory bag. On loading an old save, CenterServer preserves stack UID, count and binding, fills free slots and keeps existing destination positions. At the 255-slot limit overflow stays in its original bag until space is available on a later login. Cross-server caches from before the split fall back to CenterServer. The item card closes on an outside press and another stack opens on release. See 项目修改日志/2026-11-27-秘籍宝石独立背包与点空白关闭.md.
+
+## [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing and jade locks
+
+Each equipment UID owns up to five active affixes and a separately persisted candidate. A roll or reroll costs three stones and 5,000 / 10,000 / 20,000 copper for up to 3 / 4 / 5 affixes. Four jade grades preserve up to 1 / 2 / 3 / 4 active affixes at their original values. One jade is consumed per roll with at least one lock. Confirmation replaces all active slots without a second fee and refreshes worn genes. Equipment details show the expandable active scheme. Business commit ff6c97f was pushed to codex/feature-development. See 项目修改日志/2026-11-27-装备洗练与萃玉锁词条.md.

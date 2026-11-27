@@ -1195,3 +1195,7 @@ LYF_Game 的 Editor 和 Windows Player 目标编译通过。正式 HUD 子预制
 ## [VERIFY][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] 背包分包、存档迁移与点击详情卡外关闭验证
 
 已比对全部 460 行物品数据，294 个 `PackType` 单元格发生变化。Unity Play Mode 使用真实 UI 射线检测、鼠标和模拟触摸，通过 33 项隔离检查。`GameServer` 和 `CenterServer` 合计通过 22 项隔离检查，覆盖 SQLite 存档迁移及再次登录、格位冲突、背包溢出、快照保存与恢复、拒绝分包前的跨服缓存、秘籍合成与学习，以及宝石购买与合成。包含同期装备改动的工作区中，客户端、`GameServer` 和 `CenterServer` 均编译通过。1 区和手机真机安装包未测。验收证据见 `_temp/bag-types-20261127/unity-proof.txt` 和 `_temp/bag-types-20261127/server-proof.txt`，完整记录见 `项目修改日志/2026-11-27-秘籍宝石独立背包与点空白关闭.md`。
+
+## [VERIFY][装备][数据库][界面][EQUIP-WASH-20261127] 装备洗练、实例存档与客户端交互验收
+
+本次暂存版本的 Unity 客户端、GameServer 和 CenterServer 均编译通过。游戏服及隔离 MySQL 通过 45 项检查，覆盖 384 组随机洗练样本、锁位上限、扣费失败、过期候选、旧三槽数据迁移、已穿戴装备的基因刷新及读档还原。隔离 Unity Play 通过 22 项检查，使用 UI 射线验证操作按钮，并截取萃玉选择、候选对比及装备详情画面。客户端验收使用协议样本模拟回包。运行中的区服、端到端联机和独立 Player 尚未验收。证据位于 `_temp/equip-wash-20261127`。见 `项目修改日志/2026-11-27-装备洗练与萃玉锁词条.md`。

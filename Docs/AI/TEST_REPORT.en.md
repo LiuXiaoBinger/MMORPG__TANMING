@@ -1196,3 +1196,7 @@ The staged Unity client, GameServer and CenterServer built. The server and isola
 ## [VERIFY][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Inventory routing, persistence and outside-click verification
 
 All 460 item rows were compared, with 294 PackType cells changed. Unity Play Mode passed 33 isolated checks using real UI raycasts, mouse and simulated touch. GameServer and CenterServer passed 22 isolated checks covering SQLite migration and another login, slot collisions, overflow, snapshot save and restore, legacy cross-server cache rejection, manual crafting and learning, gem purchase and crafting. The client, GameServer and CenterServer compiled alongside the concurrent equipment changes. Realm 1 and a physical mobile build were not tested. Evidence in _temp/bag-types-20261127/unity-proof.txt and server-proof.txt. See 项目修改日志/2026-11-27-秘籍宝石独立背包与点空白关闭.md.
+
+## [VERIFY][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing, persistence and client interaction
+
+The staged Unity client, GameServer and CenterServer built. The game server and isolated MySQL passed 45 checks, including 384 sampled rolls, lock limits, debit failures, stale candidates, legacy three-slot migration, worn genes and reload. Isolated Unity Play passed 22 checks with UI raycasts and captured jade selection, candidate comparison and equipment details. The client fixture used protocol fixtures. The running realm, end-to-end network play and a standalone Player remain unverified. Evidence under _temp/equip-wash-20261127. See 项目修改日志/2026-11-27-装备洗练与萃玉锁词条.md.
