@@ -243,9 +243,9 @@ public static class SkillEditorAudioMotionTools
             {
                 throw new InvalidOperationException("程序位移尚未同步：" + binding.name + "/" + index);
             }
-            // 横向曲线与包络同为可选项，两侧同为空引用视为一致。
-            bool lateralEqual = actual.CurveX == null && expected.CurveX == null;
-            if (actual.CurveX != null && expected.CurveX != null)
+            // 直线突进在磁盘上可能重载为空曲线，与未设置横移的作者稿等价。
+            bool lateralEqual = !actual.HasLateralCurve && !expected.HasLateralCurve;
+            if (actual.HasLateralCurve && expected.HasLateralCurve)
             {
                 lateralEqual = CurvesEqual(actual.CurveX, expected.CurveX);
             }

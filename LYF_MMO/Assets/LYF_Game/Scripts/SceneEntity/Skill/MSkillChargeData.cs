@@ -53,7 +53,7 @@ public sealed class MSkillChargeData
         {
             return false;
         }
-        if (CurveX != null && !IsCurveKeyValid(CurveX))
+        if (HasLateralCurve && !IsCurveKeyValid(CurveX))
         {
             return false;
         }
@@ -92,13 +92,16 @@ public sealed class MSkillChargeData
     /// <returns>无曲线时距离必须为零；有曲线时距离必须有限且曲线非空。</returns>
     private bool IsLateralValid()
     {
-        if (CurveX == null)
+        if (!HasLateralCurve)
         {
             return DistanceX == 0f;
         }
         // 曲线存在时包络允许为零，运行期按包络零值自然不产生横移。
-        return Finite(DistanceX) && CurveX.keys.Length > 0;
+        return Finite(DistanceX);
     }
+
+    /// <summary>Unity 重载资源时会把未设置的横向曲线还原为空曲线，只有包含关键帧才表示有横移。</summary>
+    public bool HasLateralCurve => CurveX != null && CurveX.length > 0;
 
     /// <summary>按既有累计曲线规则核验关键帧时间、值、切线与权重，前向与横向共用。</summary>
     /// <param name="curve">待核验的累计比例曲线，调用前保证非空。</param>
@@ -150,7 +153,7 @@ public sealed class MSkillChargeData
             return false;
         }
         // 横向曲线可选；存在时两端评价结果同样必须有限。
-        if (CurveX == null)
+        if (!HasLateralCurve)
         {
             return true;
         }

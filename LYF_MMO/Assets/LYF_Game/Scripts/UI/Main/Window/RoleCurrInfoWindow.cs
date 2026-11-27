@@ -40,8 +40,8 @@ public class RoleCurrInfoWindow : WindowBase
     /// <summary>技能槽父节点。</summary>
     [SerializeField, Header("技能槽父组件")] private Transform _skillSlotParent;
 
-    /// <summary>技能槽固定快捷键顺序。</summary>
-    private readonly string[] _skilKkey = { "Q", "E", "R", "F", "1", "2", "3", "4", "5", "6" };
+    /// <summary>主界面技能槽的逻辑键；技七承载逐月，显示的物理键由玩家快捷键设置决定。</summary>
+    private readonly string[] _skilKkey = { "Q", "E", "R", "F", "1", "2", "3", "4", "5", "6", "7" };
 
     /// <summary>按快捷键索引的技能槽视图。</summary>
     private readonly Dictionary<string, SkillSlotWidget> _slots =

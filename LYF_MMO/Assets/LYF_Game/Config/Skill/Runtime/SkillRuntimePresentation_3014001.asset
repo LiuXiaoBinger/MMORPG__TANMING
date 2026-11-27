@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8e1014802217754caf00538866b10a2, type: 3}
+  m_Name: SkillRuntimePresentation_3014001
+  m_EditorClassIdentifier:
+  PresentationId: 3014001
+  SkillId: 10140
+  AnimationLocation: Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Skill/Anim_MJS_MoonChase.anim
+  DurationSeconds: 1.3
+  TimelineDurationSeconds: 1.3
+  CastShakeTimeSeconds: 0
+  CastShakeOffset: {x: 0, y: 0}
+  FxEvents:
+  - SourceEventIndex: 0
+    Frame: 1
+    TimeSeconds: 0.016666668
+    Particle: {fileID: 2410439962923258391, guid: 389ee32f121e975458f25e8d75dad74c, type: 3}
+    PlacementKind: 3
+    SocketPath:
+    LocalPosition: {x: 0, y: 0, z: 0}
+    LocalEulerAngles: {x: 0, y: 0, z: 0}
+    LocalScale: {x: 1, y: 1, z: 1}
+    ForwardDistance: 0
+  - SourceEventIndex: 1
+    Frame: 37
+    TimeSeconds: 0.6166667
+    Particle: {fileID: 5810301611930917441, guid: 4f8570b7b9beacf4a9e0026adfc0b70d, type: 3}
+    PlacementKind: 0
+    SocketPath:
+    LocalPosition: {x: 0, y: 0.055, z: 0}
+    LocalEulerAngles: {x: -9, y: 14, z: -16}
+    LocalScale: {x: 1, y: 1, z: 1}
+    ForwardDistance: 0
+  - SourceEventIndex: 2
+    Frame: 60
+    TimeSeconds: 1
+    Particle: {fileID: 5810301611930917441, guid: 4f8570b7b9beacf4a9e0026adfc0b70d, type: 3}
+    PlacementKind: 0
+    SocketPath:
+    LocalPosition: {x: 0, y: 0.18, z: 0}
+    LocalEulerAngles: {x: 9, y: 178, z: 12}
+    LocalScale: {x: 1.04, y: 0.9, z: 1.04}
+    ForwardDistance: 0
+  AudioEvents:
+  - SourceEventIndex: 3
+    Frame: 1
+    TimeSeconds: 0.016666668
+    Clip: {fileID: 8300000, guid: a54c365ca3a94624fa605c1eb9fd56cb, type: 3}
+    Volume: 0.68
+  - SourceEventIndex: 4
+    Frame: 37
+    TimeSeconds: 0.6166667
+    Clip: {fileID: 8300000, guid: 590384e82dc51ba4490cce70b75f0dc1, type: 3}
+    Volume: 0.84
+  - SourceEventIndex: 5
+    Frame: 60
+    TimeSeconds: 1
+    Clip: {fileID: 8300000, guid: b6ecbbaf3e445b346862c58ca57db223, type: 3}
+    Volume: 0.77
+  ChargeList:
+  - At: 0.083333336
+    End: 0.4
+    CurveX:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    CurveZ:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    DistanceX: 0
+    DistanceZ: 8
+    AimTarget: 0
+    AllowReverse: 0
+    StopAtDistanceLimit: 0
+  Collisions:
+  - StartFrame: 37
+    EndFrame: 37
+    FrameRate: 60
+    Shape: 1
+    Radius: 4
+    BoxSize: {x: 4, y: 2.5, z: 4}
+    Rotation: {x: 0, y: 0, z: 0}
+    Offsets:
+    - {x: 0, y: 1.25, z: 1.7}
+    RepeatFrames: 0
+    AtTarget: 0
+    ForwardDistance: 0
+  - StartFrame: 60
+    EndFrame: 60
+    FrameRate: 60
+    Shape: 1
+    Radius: 4
+    BoxSize: {x: 4, y: 2.5, z: 4}
+    Rotation: {x: 0, y: 0, z: 0}
+    Offsets:
+    - {x: 0, y: 1.25, z: 1.7}
+    RepeatFrames: 0
+    AtTarget: 0
+    ForwardDistance: 0

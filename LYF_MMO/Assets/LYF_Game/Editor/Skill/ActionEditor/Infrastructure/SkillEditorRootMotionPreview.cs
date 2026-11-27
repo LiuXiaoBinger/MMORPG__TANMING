@@ -4,11 +4,11 @@ using UnityEngine;
 using Ethan.ActionEditor;
 using ActionData = global::Global;
 
-/// <summary>根据动画根节点的位置曲线，计算模型从起点到指定帧应移动多远；拖回时间轴时也从起点重新计算。</summary>
+/// <summary>按动画根曲线和无目标前冲段还原预览角色的位移，拖回时间轴时从起点重新采样。</summary>
 public static class SkillEditorRootMotionPreview
 {
-    /// <summary>计算作者动作从零帧到目标帧期间声明的动画根位移。</summary>
-    /// <param name="config">当前作者资产，只处理 Move 轨道 Animation 模式。</param>
+    /// <summary>计算作者动作从零帧到目标帧期间的水平位移。</summary>
+    /// <param name="config">含动画根运动或自身前向无目标程序位移的作者资产。</param>
     /// <param name="animator">隔离预览模型的实际动画组件，用人体缩放还原 Humanoid 根平移。</param>
     /// <param name="frame">本次目标时间轴帧，零起始，支持向后拖动。</param>
     /// <returns>模型初始局部朝向中的水平累计米数；Y 分量固定为零。</returns>
@@ -23,7 +23,7 @@ public static class SkillEditorRootMotionPreview
         List<ActionData.AnimClipSegment> animations = new List<ActionData.AnimClipSegment>(config.animSegments);
         animations.Sort(CompareAnimations);
         // 目标帧的累计水平位移，所有段从同一零帧原点积分。
-        Vector3 displacement = Vector3.zero;
+        Vector3 displacement = EvaluateForwardMoves(config.moveSegmentList, frame);
         // 依序读取原动画段，用后一段起始时刻截断前一段。
         for (int animationIndex = 0; animationIndex < animations.Count; animationIndex++)
         {
@@ -70,6 +70,34 @@ public static class SkillEditorRootMotionPreview
             }
         }
         return displacement;
+    }
+
+    /// <summary>按原位移解算器累计无目标直线前冲，使独立世界特效留在其发射位置。</summary>
+    /// <param name="moves">作者时间轴上的位移段，距离单位为米。</param>
+    /// <param name="frame">从零起算的当前预览帧。</param>
+    /// <returns>相对于施法者初始朝向的前向距离向量。</returns>
+    private static Vector3 EvaluateForwardMoves(List<ActionData.MoveSegment> moves, int frame)
+    {
+        // 从静止的局部坐标系采样；窗口稍后统一应用角色的世界朝向。
+        MoveSolveContext context = new MoveSolveContext { selfRotation = Quaternion.identity };
+        // 多段前冲的累计前向米数，暂停及倒拖时不复用上一轮状态。
+        float distance = 0f;
+        // 当前制作轨道中的段序号。
+        for (int index = 0; index < moves.Count; index++)
+        {
+            // 仅复现从自身出发的无目标前冲，动画段由根曲线采样。
+            ActionData.MoveSegment move = moves[index];
+            if (move == null || move.driveMode != ActionData.MoveDriveMode.Program) continue;
+            if (move.space != ActionData.MoveSpace.Forward || move.target != ActionData.MoveTargetKind.None || move.origin != ActionData.MoveOrigin.Self) continue;
+            // 复用逐帧超界与回拉规则，快进时保留已经走完的位移。
+            MoveSegmentState state = new MoveSegmentState();
+            // 最后一个实际解算帧，越过段尾时保留最终位置。
+            int end = Mathf.Min(frame, move.SegmentEndFrame);
+            // 当前段从起始帧到播放头之间的帧号。
+            for (int step = move.keyNumber; step <= end; step++)
+                distance += MoveSolver.Solve(move, context, step, state).delta.z;
+        }
+        return Vector3.forward * distance;
     }
 
     /// <summary>取得原动画根轴曲线，Humanoid 优先 RootT，Generic 只读取空路径根 Transform。</summary>

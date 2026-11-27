@@ -41,6 +41,8 @@ public sealed class SkillCtrl : CtrlBase
 
     /// <summary>龙卷斩的稳定主表编号，施法沿角色当前水平朝向放出特效。</summary>
     internal const int TornadoSlashSkillId = 10130;
+    /// <summary>逐月的主表编号，突进始终沿施法者当前面向。</summary>
+    private const int MoonChaseSkillId = 10140;
     #endregion
 
     #region 构造、初始化与事件注册
@@ -477,8 +479,8 @@ public sealed class SkillCtrl : CtrlBase
         {
             return null;
         }
-        // 龙卷斩按当前朝向放出，不由当前目标改变方向或启动追敌。
-        if (skillCore.SkillId == TornadoSlashSkillId)
+        // 龙卷斩和逐月沿角色当前朝向释放，选中的远处目标不会改变突进方向。
+        if (skillCore.SkillId == TornadoSlashSkillId || skillCore.SkillId == MoonChaseSkillId)
         {
             return null;
         }
@@ -566,6 +568,8 @@ public sealed class SkillCtrl : CtrlBase
                 return "护盾";
             case TornadoSlashSkillId:
                 return "真气";
+            case MoonChaseSkillId:
+                return "突进";
         }
         // 未收录技能按主表类型回退，保证任何职业都不会出现空标签。
         if (skillConfig.Type == 3)

@@ -333,6 +333,8 @@ public class CentRoleModel
     {
         // 龙卷斩的稳定主表编号，已有技能保存记录继续按此编号读取。
         const int tornadoSlashSkillId = 10130;
+        // 逐月的主表编号，用于魔剑士登录回包的一级招式和技七槽位。
+        const int moonChaseSkillId = 10140;
         // 两个组成技能均已学会时才提供组合入口。
         bool hasFirst = false;
         // 斩天剑学习标记，与清风剑法共同决定示例是否可用。
@@ -345,6 +347,8 @@ public class CentRoleModel
         RoleSkillInfo barrier = null;
         // 已存在的龙卷斩记录，优先保留玩家先前为它设置的键位。
         RoleSkillInfo tornadoSlash = null;
+        // 已持有的逐月记录，保留玩家已学等级与自定义绑定。
+        RoleSkillInfo moonChase = null;
         // 占用三号键的其它技能，键位让给刀刃风暴后只清空它的快捷键，技能本身仍留在列表。
         RoleSkillInfo thirdHolder = null;
         // 占用四号键的技能，仅用于判断屏障能否默认绑定，不用于抢占。
@@ -353,6 +357,8 @@ public class CentRoleModel
         RoleSkillInfo fifthHolder = null;
         // 登录快照中数字 6 是否已被某条技能占用，空闲才提供默认绑定。
         bool sixthSlotOccupied = false;
+        // 技七逻辑槽是否已有技能；默认键盘映射由客户端设置决定。
+        bool seventhSlotOccupied = false;
         // 原技能列表的零起始索引，新技能在遍历完成后追加，一次扫描完成全部占用判定。
         for (int index = 0; index < response.RoleSkillInfoList.Count; index++)
         {
@@ -364,10 +370,12 @@ public class CentRoleModel
             if (skill.SkillId == 10110) bladeStorm = skill;
             if (skill.SkillId == 10120) barrier = skill;
             if (skill.SkillId == tornadoSlashSkillId) tornadoSlash = skill;
+            if (skill.SkillId == moonChaseSkillId) moonChase = skill;
             if (skill.BindKey == "3") thirdHolder = skill;
             if (skill.BindKey == "4") fourthHolder = skill;
             if (skill.BindKey == "5") fifthHolder = skill;
             if (skill.BindKey == "6") sixthSlotOccupied = true;
+            if (skill.BindKey == "7") seventhSlotOccupied = true;
         }
         // 组合学习条件与键位无关，只要 E 与 2 都学会就给组合技能记录。
         if (hasFirst && hasSecond && combination == null)
@@ -406,6 +414,14 @@ public class CentRoleModel
         }
         else if (tornadoSlash.Level <= 0) tornadoSlash.Level = 1;
         if (!sixthSlotOccupied && string.IsNullOrEmpty(tornadoSlash.BindKey)) tornadoSlash.BindKey = "6";
+        // 初建角色可能已有零级行，旧角色也能直接从登录回包获得一级逐月。
+        if (moonChase == null)
+        {
+            moonChase = new RoleSkillInfo { SkillId = moonChaseSkillId, Level = 1 };
+            response.RoleSkillInfoList.Add(moonChase);
+        }
+        else if (moonChase.Level <= 0) moonChase.Level = 1;
+        if (!seventhSlotOccupied && string.IsNullOrEmpty(moonChase.BindKey)) moonChase.BindKey = "7";
         // 组合技能始终以 E 与 2 都学会为学习条件：登录时会为所有主动技能建等级 0 行，
         // 缺少该判定就会让尚未学清风剑法与斩天剑的新角色提前拿到组合技能。
         if (hasFirst && hasSecond && combination != null)
