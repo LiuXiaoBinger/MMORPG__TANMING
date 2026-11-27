@@ -62,6 +62,10 @@ public sealed class EquipmentWorkshopWindow : WindowBase
     [SerializeField] private GameObject[] _sockets;
     /// <summary>一级强化石的物品 ID，后四级按等级顺序相邻。</summary>
     [SerializeField] private int _firstStoneId;
+    /// <summary>强化页已有的确认强化按钮。</summary>
+    [SerializeField] private Button _confirmStrength;
+    /// <summary>携带当前装备实例请求强化。</summary>
+    public event Action<long> StrengthRequested;
     /// <summary>强化材料栏从一级到五级的持有数量。</summary>
     [SerializeField] private Text[] _stoneCounts;
     /// <summary>同一养成窗口内的选孔、便捷购买和合成控件。</summary>
@@ -106,6 +110,7 @@ public sealed class EquipmentWorkshopWindow : WindowBase
     public override void InitWindow()
     {
         _close.onClick.AddListener(CloseWindow);
+        _confirmStrength.onClick.AddListener(() => StrengthRequested?.Invoke(SelectedItemUid));
         _filter.onClick.AddListener(() => _filterMenu.SetActive(!_filterMenu.activeSelf));
         _worn.onClick.AddListener(() => SourceSelected?.Invoke(true));
         _bag.onClick.AddListener(() => SourceSelected?.Invoke(false));
@@ -319,12 +324,19 @@ public sealed class EquipmentWorkshopWindow : WindowBase
         if (limit > 0) fraction = Mathf.Clamp01((float)level / limit);
         _progress.rectTransform.anchorMax = new Vector2(fraction, 1f);
         _progressLabel.text = level + " / " + limit;
+        _confirmStrength.interactable = level < limit;
         // index 对应强化、镶嵌两页需要显示的强化等级标题。
         for (int index = 0; index < _strengthLabels.Length; index++)
             _strengthLabels[index].text = "强化 " + level + "/" + limit;
         // index 对应需要重复显示同一装备基础属性的页面。
         for (int index = 0; index < _attributeLists.Length; index++)
             _attributeLists[index].text = detail.BaseAttributeText;
+        if (level < limit)
+        {
+            // 强化材料栏有五档石头，本行明确当前档实际消耗。
+            int target = level + 1;
+            _attributeLists[0].text += "\n强化消耗：" + (1 + level / 10) + "级强化石 ×1、" + EquipmentGrowth.Cost(EquipOperation.Strengthen, target) + " 铜币";
+        }
         // index 对应从左到右的宝石孔，展示数量由装备配置决定。
         for (int index = 0; index < _sockets.Length; index++)
             _sockets[index].SetActive(index < detail.GemSlotCount);

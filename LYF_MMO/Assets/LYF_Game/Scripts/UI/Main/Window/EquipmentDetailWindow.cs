@@ -148,6 +148,8 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private Button _cardRemoveButton;
     /// <summary>基础属性分区行末的查看按钮，打开属性说明卡。</summary>
     [SerializeField] private Button _attrViewButton;
+    /// <summary>位于装备图标右下角的极品标记，由实例重铸评级控制。</summary>
+    [SerializeField] private TMP_Text _extremeBadge;
     /// <summary>图标外框的蓝青展示光效，不代表未知的装备品质。</summary>
     [SerializeField] private Image _iconGlow;
     #endregion
@@ -235,6 +237,12 @@ public sealed class EquipmentDetailWindow : WindowBase
     private string _specialSkillOpenCostText = string.Empty;
     /// <summary>当前特技侧卡对应的保存槽下标，范围0至2，仅用于原有选择事件。</summary>
     private int _currentCardSkillSlot;
+    /// <summary>点击确认时交给控制器的养成动作，零表示当前为只读或特技卡。</summary>
+    private EquipOperation _growthAction;
+    /// <summary>当前装备重铸前的满值对照与价格。</summary>
+    private string _reforgeText;
+    /// <summary>向控制器提交当前详情装备上的养成操作。</summary>
+    public event Action<EquipOperation> GrowthRequested;
     /// <summary>当前开窗的光效起点，使用不受游戏暂停影响的秒数。</summary>
     private float _glowStartedAt;
 
@@ -319,6 +327,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         _equipmentInfoText = data.InfoLayerText;
         // 属性卡正文由控制器按真实属性生成，窗口只负责换文本。
         _attributeCardText = data.AttributeCardText;
+        _reforgeText = data.ReforgeText;
         _enhanceRowText.text = data.EnhanceRowText;
         _forgeRowText.text = data.ForgeRowText;
         _appearanceRowText.text = data.AppearanceRowText;
@@ -327,6 +336,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         // 角标只由服务器穿戴状态派生；右上部位品质与绑定各自独立，避免挤在已改窄的元信息行。
         _wornBadgeText.text = data.WornBadgeText;
         _headerPartText.text = data.HeaderPartText;
+        _extremeBadge.gameObject.SetActive(data.IsExtreme);
         _headerBindText.text = data.HeaderBindText;
         // 右列名称与数值独立赋值，行序与左列基础属性保持一致。
         _attrRightNamesText.text = data.AttributeRightNames;
@@ -483,7 +493,32 @@ public sealed class EquipmentDetailWindow : WindowBase
     /// <summary>转交卸下按钮事件。</summary>
     private void OnTakeOffRequested() { TakeOffRequested?.Invoke(); }
     /// <summary>侧卡的使用按钮沿用原事件，交给控制器选择当前阅读的特技槽。</summary>
-    private void OnCardUseClicked() { SpecialSkillRequested?.Invoke(_currentCardSkillSlot); }
+    private void OnCardUseClicked()
+    {
+        if (_growthAction != 0)
+        {
+            GrowthRequested?.Invoke(_growthAction);
+            OnInfoLayerClosed();
+            return;
+        }
+        SpecialSkillRequested?.Invoke(_currentCardSkillSlot);
+    }
+
+    /// <summary>沿用侧卡的正文、确认按钮和外部点击关闭规则。</summary>
+    /// <param name="action">普通进阶或重铸。</param>
+    /// <param name="title">侧卡标题与确认按钮文案。</param>
+    /// <param name="body">本次操作的预览与花费。</param>
+    public void ShowGrowth(EquipOperation action, string title, string body)
+    {
+        ApplyCardSkillButtons(false);
+        _growthAction = action;
+        _infoLayerTitleText.text = title;
+        _infoLayerText.text = body;
+        _cardUseButton.gameObject.SetActive(true);
+        SetButtonLabel(_cardUseButton, title);
+        _infoLayer.gameObject.SetActive(true);
+        ApplyCardLayout(true);
+    }
     #endregion
 
     #region 新增界面的可见反馈
@@ -566,6 +601,7 @@ public sealed class EquipmentDetailWindow : WindowBase
     /// <param name="visible">true 表示当前是特技卡，显示兑换、拓源与特技卸下。</param>
     private void ApplyCardSkillButtons(bool visible)
     {
+        _growthAction = 0;
         _cardDeductButton.gameObject.SetActive(visible);
         _cardSourceButton.gameObject.SetActive(visible);
         _cardRemoveButton.gameObject.SetActive(visible);
@@ -842,6 +878,7 @@ public sealed class EquipmentDetailWindow : WindowBase
     private void OnMoreMenuClicked(int index)
     {
         if (index == 1) { AdvanceRequested?.Invoke(); return; }
+        if (index == 2) { ShowGrowth(EquipOperation.Reforge, "重铸", _reforgeText); return; }
         TipsMgr.Instance.ShowSystemTips(MoreMenuNames[index] + "：暂未开放");
     }
 

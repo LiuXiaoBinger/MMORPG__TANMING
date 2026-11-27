@@ -264,6 +264,7 @@ public class RoItemComponent : RoleComponentBase
                 {
                     EquipType = equipConfig.Config.EquipType
                 };
+                EquipmentGrowth.Roll((EquipBase)item, equipConfig.Config);
                 item.SetItemID(itemId);
                 item.SetItemCount(count);
                 item.SetItemSign((int)itemSign);
@@ -307,7 +308,7 @@ public class RoItemComponent : RoleComponentBase
             // 从存档恢复装备原 UID，特技与词条使用实例保存值，不覆盖为配置默认值。
             EquipBase equip = EquipBase.CreateEquipForRestore();
             equip.EquipType = itemInfo.EquipInfo.EquipType;
-            equip.StrengthenLevel = itemInfo.EquipInfo.StrengthenLevel;
+            equip.StrengthenLevel = System.Math.Min(EquipmentGrowth.MaxStrength, itemInfo.EquipInfo.StrengthenLevel);
             equip.GoldLevelSteps = itemInfo.EquipInfo.GoldLevelSteps;
             equip.GoldTierSteps = itemInfo.EquipInfo.GoldTierSteps;
             equip.SpecialSkillId0 = itemInfo.EquipInfo.SpecialSkillId0;
@@ -317,6 +318,14 @@ public class RoItemComponent : RoleComponentBase
             // 已开孔数是实例玩法状态，读档时必须沿用存档值，不能按槽位内容重新推导。
             equip.OpenedSpecialSkillCount = itemInfo.EquipInfo.OpenedSpecialSkillCount;
             equip.RestoreGems(itemInfo.EquipInfo.GemItemIds);
+            equip.BaseRolls.Clear();
+            equip.BaseRolls.AddRange(itemInfo.EquipInfo.BaseRolls);
+            if (equip.BaseRolls.Count == 0)
+            {
+                // 老区服缓存可能早于数据库补列，恢复时保留旧装备原有的模板属性。
+                cfg.EquipInfo definition = LubanMgr.Instance.GetEquipInfoById(itemInfo.ItemTypeId);
+                if (definition != null) equip.BaseRolls.AddRange(EquipmentGrowth.Templates(definition));
+            }
             // 词条信息可能为空，按存在性恢复三个词条槽位。
             if (itemInfo.EquipGeneInfo != null)
             {
@@ -1176,6 +1185,7 @@ public class RoItemComponent : RoleComponentBase
                 OpenedSpecialSkillCount = equip.OpenedSpecialSkillCount
             };
             info.EquipInfo.GemItemIds.Add(equip.GemItemIds);
+            info.EquipInfo.BaseRolls.Add(equip.BaseRolls);
             info.EquipGeneInfo = new RoleEquipGeneInfo
             {
                 ItemUid = equip.GetItemUID(), RoleId = equip.GetRoleID(),

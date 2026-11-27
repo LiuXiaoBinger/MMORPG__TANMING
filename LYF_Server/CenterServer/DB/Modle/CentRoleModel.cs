@@ -526,11 +526,29 @@ public class CentRoleModel
                 {
                     ItemUid = equip.ItemUID,
                     RoleId = equip.RoleID,
-                    StrengthenLevel = equip.StrengthenLevel,
+                    StrengthenLevel = System.Math.Min(EquipmentGrowth.MaxStrength, equip.StrengthenLevel),
                     GoldLevelSteps = equip.GoldLevelSteps, GoldTierSteps = equip.GoldTierSteps,
                     EquipType = equip.EquipType
                 };
                 equip.WriteGemSlots(itemInfo.EquipInfo);
+                if (string.IsNullOrEmpty(equip.BaseRolls))
+                {
+                    // 旧装备首次读取时固化原有模板值，避免因重新登录或配置调整而重新摇点。
+                    cfg.EquipInfo definition = LubanMgr.Instance.GetEquipInfoById(item.ItemTypeID);
+                    if (definition != null)
+                    {
+                        equip.BaseRolls = string.Join(",", EquipmentGrowth.Templates(definition));
+                        _db.Updateable<EquipTable>().SetColumns(row => row.BaseRolls == equip.BaseRolls)
+                            .Where(row => row.RoleID == item.RoleID && row.ItemUID == item.ItemUID)
+                            .Where(row => row.BaseRolls == null || row.BaseRolls == "").ExecuteCommand();
+                    }
+                }
+                if (!string.IsNullOrEmpty(equip.BaseRolls))
+                {
+                    // 六个基础槽使用固定顺序还原；旧装备留空，继续按创建时的旧配置结算。
+                    string[] rolls = equip.BaseRolls.Split(',');
+                    for (int slot = 0; slot < rolls.Length; slot++) itemInfo.EquipInfo.BaseRolls.Add(int.Parse(rolls[slot], System.Globalization.CultureInfo.InvariantCulture));
+                }
                 // 三个特技槽和启用槽来自独立特技表；没有记录时保持协议默认值 0，表示槽位全空。
                 EquipSpecialSkillTable specialSkill;
                 if (specialSkillByItemUid.TryGetValue(equip.ItemUID, out specialSkill))

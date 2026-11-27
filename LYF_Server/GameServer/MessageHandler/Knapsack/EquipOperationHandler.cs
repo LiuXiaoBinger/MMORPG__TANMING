@@ -48,6 +48,9 @@ public sealed class EquipOperationHandler : IGameMessageHandler
                     // 开孔复用同一请求结构，槽下标表示本次要开启的那一孔。
                     operationResult = transition.OpenSpecialSkillSlot(request.ItemUid, request.SpecialSkillIndex);
                     break;
+                case EquipOperation.Strengthen:
+                case EquipOperation.Advance:
+                case EquipOperation.Reforge:
                 case EquipOperation.ForgeGold:
                 case EquipOperation.AdvanceGold:
                 case EquipOperation.UpgradeGold:

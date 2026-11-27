@@ -426,6 +426,7 @@ message RoleEquipItemInfo
 	repeated int32 gem_item_ids = 10;//按六个孔位保存的宝石物品编号，0 为空孔；旧装备可以不传
 	int32 gold_level_steps = 11;//已升的十级档数，旧金装默认60级
 	int32 gold_tier_steps = 12;//已进的阶数，旧金装默认一阶
+	repeated int32 base_rolls = 13;//六个实例基础值，空数组沿用旧装备配置值
 }
 
 // 同一装备的三个词条槽位：每槽保存配置ID与实际数值。
@@ -623,6 +624,9 @@ enum EquipOperation {
 	ForgeGold = 9;//消耗材料合成一件60级金装
 	AdvanceGold = 10;//指定装备实例提升一阶
 	UpgradeGold = 11;//指定装备实例提升十级
+	Strengthen = 12;//提升一级强化
+	Advance = 13;//非金装提升一阶
+	Reforge = 14;//按配置区间重新生成六槽基础值
 }
 
 // 装备操作结果；成功后的完整物品位置和装备字段沿用 UpdateItemRet 下发。

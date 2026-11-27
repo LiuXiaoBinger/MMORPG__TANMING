@@ -50,6 +50,10 @@ public sealed class EquipmentDetailViewData
     public string ForgeExpandText;
     /// <summary>属性说明卡正文：逐行写当前属性名与数值，末行标注基础/强化/进阶贡献来源。</summary>
     public string AttributeCardText;
+    /// <summary>重铸前六槽的当前值、满值和满属性标记。</summary>
+    public string ReforgeText;
+    /// <summary>全部有效基础属性达到九成时点亮装备图标的极标记。</summary>
+    public bool IsExtreme;
     /// <summary>强化和升级页共用的基础属性正文，只含有效属性的名称和数值。</summary>
     public string BaseAttributeText;
     /// <summary>底栏展开后的单行短说明，只放交易与耐久的中性占位，不重复说明层正文。</summary>

@@ -321,7 +321,7 @@ public class RoItemComponent : RoleComponentBase
         {
             EquipBase equip = EquipBase.CreateEquipForRestore();
             equip.EquipType = itemInfo.EquipInfo.EquipType;
-            equip.StrengthenLevel = itemInfo.EquipInfo.StrengthenLevel;
+            equip.StrengthenLevel = System.Math.Min(EquipmentGrowth.MaxStrength, itemInfo.EquipInfo.StrengthenLevel);
             equip.GoldLevelSteps = itemInfo.EquipInfo.GoldLevelSteps;
             equip.GoldTierSteps = itemInfo.EquipInfo.GoldTierSteps;
             equip.SpecialSkillId0 = itemInfo.EquipInfo.SpecialSkillId0;
@@ -331,6 +331,8 @@ public class RoItemComponent : RoleComponentBase
             // 已开孔数是服务端权威状态，客户端只按下发值展示，不自行推导。
             equip.OpenedSpecialSkillCount = itemInfo.EquipInfo.OpenedSpecialSkillCount;
             equip.RestoreGems(itemInfo.EquipInfo.GemItemIds);
+            equip.BaseRolls.Clear();
+            equip.BaseRolls.AddRange(itemInfo.EquipInfo.BaseRolls);
             // 词条信息可能为空，按存在性恢复三个词条槽位。
             if (itemInfo.EquipGeneInfo != null)
             {

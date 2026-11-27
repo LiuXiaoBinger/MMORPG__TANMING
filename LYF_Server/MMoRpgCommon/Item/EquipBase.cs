@@ -31,6 +31,9 @@ public class EquipBase : ItemBase
     /// </summary>
     public int StrengthenLevel { get; set; }
 
+    /// <summary>按装备配置槽序保存的六个基础基因数值；空列表表示沿用历史模板值。</summary>
+    public System.Collections.Generic.List<int> BaseRolls { get; } = new System.Collections.Generic.List<int>();
+
     /// <summary>金装已升的十级档数，零对应原有的60级。</summary>
     public int GoldLevelSteps { get; set; }
 

@@ -41,6 +41,10 @@ internal class EquipTable
     [SugarColumn(DefaultValue = "0")]
     public int GoldTierSteps { get; set; }
 
+    /// <summary>按配置槽顺序存放六个实例整数；NULL 表示旧版按固定模板结算的装备。</summary>
+    [SugarColumn(IsNullable = true, Length = 96)]
+    public string BaseRolls { get; set; }
+
     /// <summary>该装备第一个孔的宝石物品编号，零表示空孔。</summary>
     [SugarColumn(DefaultValue = "0")]
     public int Gem0 { get; set; }

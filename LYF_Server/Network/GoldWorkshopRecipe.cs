@@ -67,12 +67,15 @@ public sealed class GoldWorkshopRecipe
             if (slot == 5 || slot == 6) recipe.Unavailable = "首次合成工费待核";
             else recipe.Copper = 100000;
         }
-        else if (slot == 1) recipe.Unavailable = "副手成长配方待补";
+        else if (slot == 1 && operation == EquipOperation.UpgradeGold) recipe.Unavailable = "副手成长配方待补";
         else if (operation == EquipOperation.AdvanceGold)
         {
             if (tierSteps < 0 || tierSteps >= Multipliers.Length) { recipe.Unavailable = "已达最高十阶"; return recipe; }
             recipe.Target = tierSteps + 2;
-            recipe.Materials.Add(new ItemDesc(primary, Bases[slot] * Multipliers[tierSteps]));
+            // 副手逐阶主材以主手的二阶基数 20 为项目定值。
+            int baseCost = Bases[slot];
+            if (slot == 1) baseCost = Bases[0];
+            recipe.Materials.Add(new ItemDesc(primary, baseCost * Multipliers[tierSteps]));
             recipe.Materials.Add(new ItemDesc(Parts[slot], 5 * Multipliers[tierSteps]));
             recipe.Materials.Add(new ItemDesc(10703, Glazes[tierSteps]));
             recipe.Copper = Fees[tierSteps] * 10000;

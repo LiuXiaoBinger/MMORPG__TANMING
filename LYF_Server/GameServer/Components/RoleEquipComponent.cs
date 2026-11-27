@@ -21,6 +21,23 @@ public class RoleEquipComponent : RoleComponentBase
     /// <returns>装备模块的稳定编号。</returns>
     public override RoleModuleType GetModuleId() { return RoleModuleType.kRoleModuleTypeEquip; }
 
+    /// <summary>已穿装备养成时，仅替换该实例的六个基础槽，并同步角色面板。</summary>
+    /// <param name="equipment">已完成扣费与属性更新的装备实例。</param>
+    public void RefreshBaseAttributes(EquipBase equipment)
+    {
+        if (!attachedEquipment.Contains(equipment.GetItemUID())) return;
+        // 倒序移除旧槽，避免改变其他装备及特技效果的生命周期。
+        for (int index = Runtime.ActiveGenes.Count - 1; index >= 0; index--)
+        {
+            // 同实例的基础槽使用 1 至 6，洗练和特技使用各自的其他槽位。
+            GeneBase gene = Runtime.ActiveGenes[index];
+            if (gene.SourceId != (ulong)equipment.GetItemUID()) continue;
+            if (gene.SourceSlot >= 1 && gene.SourceSlot <= EquipmentGrowth.Slots) Runtime.RemoveGene(gene);
+        }
+        AddEquipGenes(equipment, true);
+        NotifyAttributeUpdate();
+    }
+
     /// <summary>装载、穿脱或启用特技变更后，按当前穿戴容器更新来源及同名特技等级。</summary>
     public virtual void OnEquipChange()
     {
@@ -105,7 +122,8 @@ public class RoleEquipComponent : RoleComponentBase
 
     /// <summary>按六个配置槽与三个实例词条挂载，重复编号使用独立槽累计。</summary>
     /// <param name="equipment">已经进入穿戴容器的原装备实例。</param>
-    private void AddEquipGenes(EquipBase equipment)
+    /// <param name="baseOnly">养成变化只更新前六个基础槽，保留特技与洗练的运行状态。</param>
+    private void AddEquipGenes(EquipBase equipment, bool baseOnly = false)
     {
         // 装备基础值只从正式配置读取，不修改实例词条或裸角色属性。
         cfg.EquipInfo config = LubanMgr.Instance.GetEquipInfoById(equipment.GetItemID());
@@ -117,6 +135,8 @@ public class RoleEquipComponent : RoleComponentBase
             equipment.GeneValue0, equipment.GeneValue1, equipment.GeneValue2 };
         for (int i = 0; i < ids.Length; i++)
         {
+            if (i < EquipmentGrowth.Slots) values[i] = EquipmentGrowth.Total(equipment, values[i], i);
+            else if (baseOnly) break;
             if (ids[i] != 0) Runtime.AddGene(ids[i], (ulong)equipment.GetItemUID(), values[i], i + 1, Owner.GetID());
         }
     }

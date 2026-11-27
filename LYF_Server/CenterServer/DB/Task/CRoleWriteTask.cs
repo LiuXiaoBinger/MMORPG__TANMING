@@ -145,9 +145,10 @@ public sealed class CRoleWriteTask
                     RoleID = item.RoleId,
                     EquipType = item.EquipInfo.EquipType,
                     GoldLevelSteps = item.EquipInfo.GoldLevelSteps, GoldTierSteps = item.EquipInfo.GoldTierSteps,
-                    StrengthenLevel = item.EquipInfo.StrengthenLevel
+                    StrengthenLevel = System.Math.Min(EquipmentGrowth.MaxStrength, item.EquipInfo.StrengthenLevel)
                 };
                 equipRow.ReadGemSlots(item.EquipInfo);
+                equipRow.BaseRolls = string.Join(",", item.EquipInfo.BaseRolls);
                 equips.Add(equipRow);
                 // 特技实例单独成行：三个槽位和启用槽位全部来自协议快照，不再回填配置默认值。
                 specialSkills.Add(new EquipSpecialSkillTable
@@ -634,13 +635,26 @@ public sealed class CRoleWriteTask
             {
                 if (!equipByUid.TryGetValue(requested.ItemUid, out storedEquip) ||
                     storedEquip.EquipType != requested.EquipInfo.EquipType ||
-                    storedEquip.StrengthenLevel != requested.EquipInfo.StrengthenLevel)
+                    System.Math.Min(EquipmentGrowth.MaxStrength, storedEquip.StrengthenLevel) != System.Math.Min(EquipmentGrowth.MaxStrength, requested.EquipInfo.StrengthenLevel))
                 {
                     return false;
                 }
                 if (storedEquip.GoldLevelSteps != requested.EquipInfo.GoldLevelSteps ||
                     storedEquip.GoldTierSteps != requested.EquipInfo.GoldTierSteps) return false;
                 if (!storedEquip.HasSameGemSlots(requested.EquipInfo)) return false;
+                // 兼容旧版区服发出的同版本快照，两端的空值都按历史装备模板解释。
+                string storedRolls = storedEquip.BaseRolls;
+                string requestedRolls = string.Join(",", requested.EquipInfo.BaseRolls);
+                if (string.IsNullOrEmpty(storedRolls) || requestedRolls.Length == 0)
+                {
+                    // 老装备从未随机，只有精确匹配原模板才可视为同一份快照。
+                    cfg.EquipInfo definition = LubanMgr.Instance.GetEquipInfoById(requested.ItemTypeId);
+                    string legacy = string.Empty;
+                    if (definition != null) legacy = string.Join(",", EquipmentGrowth.Templates(definition));
+                    if (string.IsNullOrEmpty(storedRolls)) storedRolls = legacy;
+                    if (requestedRolls.Length == 0) requestedRolls = legacy;
+                }
+                if (storedRolls != requestedRolls) return false;
                 // 特技三个槽位与启用下标存放在独立特技表，重复保存必须与数据库完全一致。
                 // 旧装备可能根本没有特技行（三个槽都是空），缺失行等价于全 0，不能判定为内容冲突。
                 EquipSpecialSkillTable storedSpecialSkill;

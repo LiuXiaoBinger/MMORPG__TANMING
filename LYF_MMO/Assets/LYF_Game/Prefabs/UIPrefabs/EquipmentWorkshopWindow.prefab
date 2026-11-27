@@ -6755,6 +6755,7 @@ MonoBehaviour:
   - {fileID: 2746445138574470913}
   - {fileID: 3404909521321689725}
   _firstStoneId: 8101
+  _confirmStrength: {fileID: 2029671912247961375}
   _stoneCounts:
   - {fileID: 2172534750514299545}
   - {fileID: 8556673256445151540}

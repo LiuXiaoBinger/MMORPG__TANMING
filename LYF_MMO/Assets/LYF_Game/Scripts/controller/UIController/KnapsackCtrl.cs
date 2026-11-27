@@ -160,12 +160,14 @@ public sealed class KnapsackCtrl : IDisposable
             _detailWindow.SpecialSkillRequested += SwitchSelectedSpecialSkill;
             _detailWindow.StrengthenRequested += OpenEquipmentWorkshop;
             _detailWindow.AdvanceRequested += OpenGoldAdvance;
+            _detailWindow.GrowthRequested += SubmitDetailGrowth;
         }
         if (_workshopWindow != null)
         {
             _workshopWindow.SourceSelected += ChangeWorkshopSource;
             _workshopWindow.EquipmentSelected += RenderWorkshopEquipment;
             _workshopWindow.GoldUpgradeRequested += OpenGoldUpgrade;
+            _workshopWindow.StrengthRequested += StrengthenEquipment;
             _workshopWindow.StockRequested += RenderWorkshopStock;
             _workshopWindow.SocketRequested += SocketWorkshopGem;
             _workshopWindow.Owned = OwnedGem;
@@ -211,12 +213,14 @@ public sealed class KnapsackCtrl : IDisposable
             _detailWindow.SpecialSkillRequested -= SwitchSelectedSpecialSkill;
             _detailWindow.StrengthenRequested -= OpenEquipmentWorkshop;
             _detailWindow.AdvanceRequested -= OpenGoldAdvance;
+            _detailWindow.GrowthRequested -= SubmitDetailGrowth;
         }
         if (_workshopWindow != null)
         {
             _workshopWindow.SourceSelected -= ChangeWorkshopSource;
             _workshopWindow.EquipmentSelected -= RenderWorkshopEquipment;
             _workshopWindow.GoldUpgradeRequested -= OpenGoldUpgrade;
+            _workshopWindow.StrengthRequested -= StrengthenEquipment;
             _workshopWindow.StockRequested -= RenderWorkshopStock;
             _workshopWindow.SocketRequested -= SocketWorkshopGem;
             _workshopWindow.Owned = null;
@@ -994,7 +998,40 @@ public sealed class KnapsackCtrl : IDisposable
     }
 
     /// <summary>从装备详情进入当前实例的进阶页。</summary>
-    private void OpenGoldAdvance() { OpenGoldInstance(1, _selectedEquipmentUid); }
+    private void OpenGoldAdvance()
+    {
+        // 现有金装使用逐阶材料配方，普通装备按当前实例阶数支付铜币。
+        EquipBase equip = _itemComponent.GetItemByUID(_selectedEquipmentUid) as EquipBase;
+        if (equip == null) return;
+        if (GoldWorkshopRecipe.IsGold(equip.GetItemID())) { OpenGoldInstance(1, _selectedEquipmentUid); return; }
+        // 初始为一阶，下一目标是已进阶次数加二。
+        int target = equip.GoldTierSteps + 2;
+        if (target > EquipmentGrowth.MaxTier) { TipsMgr.Instance.ShowSystemTips("已达十阶"); return; }
+        _detailWindow.ShowGrowth(EquipOperation.Advance, "进阶", "提升至 " + target + " 阶，消耗 " + EquipmentGrowth.Cost(EquipOperation.Advance, target) + " 铜币");
+    }
+
+    /// <summary>提交小窗里确认的普通装备进阶或重铸。</summary>
+    /// <param name="operation">详情页选择的服务器操作。</param>
+    private void SubmitDetailGrowth(EquipOperation operation) { SubmitGrowth(_selectedEquipmentUid, operation); }
+
+    /// <summary>按工坊列表当前选中的真实实例提交一级强化。</summary>
+    /// <param name="uid">工坊选中装备的唯一编号。</param>
+    private void StrengthenEquipment(long uid) { SubmitGrowth(uid, EquipOperation.Strengthen); }
+
+    /// <summary>只发送实例编号与当前看到的目标档，数值和价格由服务器计算。</summary>
+    /// <param name="uid">从详情或养成列表选中的实例。</param>
+    /// <param name="operation">一次普通进阶、强化或重铸。</param>
+    private void SubmitGrowth(long uid, EquipOperation operation)
+    {
+        // 物品通知可能替换实例引用，提交时按唯一编号读取。
+        EquipBase equip = _itemComponent.GetItemByUID(uid) as EquipBase;
+        if (equip == null) return;
+        // 重铸没有目标档，强化和进阶分别提交所见下一档。
+        int target = 0;
+        if (operation == EquipOperation.Strengthen) target = equip.StrengthenLevel + 1;
+        if (operation == EquipOperation.Advance) target = equip.GoldTierSteps + 2;
+        SendGemTrade(new EquipOperationReq { ItemUid = uid, GoldItemId = equip.GetItemID(), GoldTarget = target, Operation = operation });
+    }
 
     /// <summary>从现有养成窗口的升级页签进入当前金装的升级页。</summary>
     /// <param name="uid">养成左栏当前选中的实例。</param>
@@ -1160,7 +1197,6 @@ public sealed class KnapsackCtrl : IDisposable
         result.Name = config.EquipName;
         result.IconPath = config.Icon;
         result.PartName = EquipmentPartName((EquipType)config.EquipType);
-        if (equip.StrengthenLevel > 0) result.Name += " +" + equip.StrengthenLevel;
         result.IsWorn = equip.GetBagType() == (int)KnapsackType.RoleCurrtEquipPack;
         // 属性按录屏改成双列：左列三行先填满，剩余行落到右列，名称与数值行号一一对应。
         StringBuilder leftNames = new StringBuilder();
@@ -1171,9 +1207,14 @@ public sealed class KnapsackCtrl : IDisposable
         // 右列数值，与右列名称同序。
         StringBuilder rightValues = new StringBuilder();
         // 静态装备配置中的六个基因编号及对应覆盖值。
-        int[] baseIds = { config.GeneId0, config.GeneId1, config.GeneId2, config.GeneId3, config.GeneId4, config.GeneId5 };
+        int[] baseIds = EquipmentGrowth.Genes(config);
         // 六个静态基因的策划值，与基础编号保持同序。
-        int[] baseValues = { config.GeneValue0, config.GeneValue1, config.GeneValue2, config.GeneValue3, config.GeneValue4, config.GeneValue5 };
+        int[] baseValues = EquipmentGrowth.Templates(config);
+        // 属性眼显示当前这件装备的进度及逐槽拆分。
+        StringBuilder breakdown = new StringBuilder();
+        breakdown.Append("强化 ").Append(equip.StrengthenLevel).Append("/50 · ").Append(equip.GoldTierSteps + 1).Append("阶\n基础值（+强化 +进阶）\n");
+        // 重铸卡显示达到极所用的原始值，不含强化或进阶。
+        StringBuilder reforge = new StringBuilder("各项达到满值的 90% 即为「极」\n");
         // visible 是已配置基因在双列中的实际填写行数，0~2 落左列，3 起落右列。
         int visible = 0;
         for (int index = 0; index < baseIds.Length; index++)
@@ -1192,7 +1233,20 @@ public sealed class KnapsackCtrl : IDisposable
                 valueTarget = rightValues;
             }
             nameTarget.Append(ShortGeneName(gene.EffectDesc)).Append('\n');
-            valueTarget.Append(baseValues[index]);
+            // 本槽两项养成贡献分别取整，与服务器挂载的基因值一致。
+            int value = EquipmentGrowth.Base(equip, baseValues[index], index);
+            // 百分比词条的三个数值均以百分点表示。
+            string unit = string.Empty;
+            if (gene.ValueType == 1) unit = "%";
+            // 单条满值用于重铸进度与满属性标记。
+            int cap = EquipmentGrowth.Maximum(baseValues[index]);
+            breakdown.Append(ShortGeneName(gene.EffectDesc)).Append("　").Append(value).Append(unit)
+                .Append("（<color=#267D68>+").Append(EquipmentGrowth.Strength(value, equip.StrengthenLevel)).Append(unit)
+                .Append("</color> <color=#936323>+").Append(EquipmentGrowth.Tier(value, equip.GoldTierSteps)).Append(unit).Append("</color>）\n");
+            reforge.Append(ShortGeneName(gene.EffectDesc)).Append("　").Append(value).Append(unit).Append(" / ").Append(cap).Append(unit);
+            if (value == cap && cap > 0) reforge.Append("　<color=#267D68>满</color>");
+            reforge.Append('\n');
+            valueTarget.Append(EquipmentGrowth.Total(equip, baseValues[index], index));
             if (gene.ValueType == 1) valueTarget.Append('%');
             valueTarget.Append('\n');
             visible++;
@@ -1223,8 +1277,8 @@ public sealed class KnapsackCtrl : IDisposable
         }
         if (cardAttr.Length == 0) cardAttr.Append("暂无信息\n");
         result.BaseAttributeText = cardAttr.ToString().TrimEnd('\n');
-        cardAttr.Append("<color=#4E7E9C>基础贡献：—　强化贡献：—　进阶贡献：—</color>");
-        result.AttributeCardText = cardAttr.ToString();
+        result.AttributeCardText = breakdown.ToString().TrimEnd('\n');
+        result.ReforgeText = reforge.Append("重铸将替换现有基础值，消耗 ").Append(EquipmentGrowth.ReforgeCost).Append(" 铜币").ToString();
         // 铭缀与洗练暂无实例数据，写中性空态，不推算任何数值。
         result.InscribeRowText = "暂无信息";
         result.WashRowText = "暂无信息";
@@ -1349,7 +1403,12 @@ public sealed class KnapsackCtrl : IDisposable
         {
             qualityName = EquipmentQualityNames[config.Quality];
         }
-        result.HeaderPartText = result.PartName + " · 品质 " + qualityName;
+        // 重铸评级独立于白、绿、蓝、紫、金的装备颜色。
+        string grade = "珍品";
+        result.IsExtreme = EquipmentGrowth.IsExtreme(equip, config);
+        if (result.IsExtreme) grade = "极";
+        result.HeaderPartText = result.PartName + " · " + grade;
+        if (config.Quality > 0) result.HeaderPartText = result.PartName + " · " + qualityName + " · " + grade;
         result.HeaderBindText = "绑定 —";
         // 原元信息行改承担评分与需求，两行都在窄区内。
         result.MetaText = BuildMetaText(config);
@@ -1359,7 +1418,7 @@ public sealed class KnapsackCtrl : IDisposable
         result.InfoLayerText = BuildInfoText(config);
         result.FooterExtraText = result.InfoLayerText;
         // 独立行控件的数据：强化取真实配置，其余保持中性占位；宝石孔数已在前文写入。
-        result.EnhanceRowText = "强化 " + equip.StrengthenLevel + "/" + config.MaxStrengthenLevel + "  ·  阶位 —";
+        result.EnhanceRowText = "强化 " + equip.StrengthenLevel + "/" + config.MaxStrengthenLevel + "  ·  " + (equip.GoldTierSteps + 1) + "阶";
         if (GoldWorkshopRecipe.IsGold(equip.GetItemID()))
             result.EnhanceRowText = "强化 " + equip.StrengthenLevel + "/" + config.MaxStrengthenLevel +
                 "  ·  " + GoldWorkshopRecipe.Level(equip.GoldLevelSteps) + "级  ·  " + (equip.GoldTierSteps + 1) + "阶";

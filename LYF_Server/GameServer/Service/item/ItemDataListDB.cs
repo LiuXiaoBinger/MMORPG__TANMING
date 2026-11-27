@@ -175,6 +175,7 @@ public sealed class ItemDataListDB
                     OpenedSpecialSkillCount = equip.OpenedSpecialSkillCount
                 };
                 itemInfo.EquipInfo.GemItemIds.Add(equip.GemItemIds);
+                itemInfo.EquipInfo.BaseRolls.Add(equip.BaseRolls);
                 itemInfo.EquipGeneInfo = new RoleEquipGeneInfo
                 {
                     ItemUid = item.GetItemUID(),
