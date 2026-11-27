@@ -182,7 +182,7 @@ Source normalized SHA256: `db69da9a1a233ab579d4502d394d4afba17d178b4465f9d02c579
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `4f430b632a379e7c368166ee461ab3403598092aedd589cf4c69da57fe600702`
+Source normalized SHA256: `f5374fbda2b4755577df2dfb6b2a8527e175f161fb4b8c5b69e9b1c18825595d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -355,7 +355,7 @@ Source normalized SHA256: `4f430b632a379e7c368166ee461ab3403598092aedd589cf4c69d
 | [VERIFY][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Inventory routing, persistence and outside-click verification | 1196-1199 |
 | [VERIFY][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing, persistence and client interaction | 1200-1203 |
 | [VERIFY][网络][区服][REALM-START-LOCK-20261127] Reproduce the startup failure and verify the live first realm | 1204-1207 |
-| [VERIFY][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Reproduce mapped-file contention and verify the saved collection in Unity | 1208-1212 |
+| [VERIFY][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Reproduce mapped-file contention and verify the saved collection in Unity | 1208-1213 |
 
 ## Docs/AI/DECISIONS.en.md
 
