@@ -190,6 +190,7 @@
         <Compile Include="MessageHandler\Skill\SkillCastHandler.cs" />
         <Compile Include="MessageHandler\Skill\SkillUpgradeHandler.cs" />
         <Compile Include="MessageHandler\Skill\MartialManualHandler.cs" />
+        <Compile Include="MessageHandler\Knapsack\UsePotionHandler.cs" />
         <Compile Include="Components\MartialManualSystem.cs" />
         <Compile Include="Components\WorldQuestSystem.cs" />
         <Compile Include="MessageHandler\Role\WorldQuestHandler.cs" />

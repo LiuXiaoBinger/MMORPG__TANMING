@@ -43,6 +43,10 @@ public sealed partial class ItemInfo : Luban.BeanBase
         GeneValue2 = _buf.ReadInt();
         GeneValue3 = _buf.ReadInt();
         GeneValue4 = _buf.ReadInt();
+        DetailCategory = _buf.ReadString();
+        DetailActions = _buf.ReadString();
+        RestoreHp = _buf.ReadInt();
+        RestoreMp = _buf.ReadInt();
     }
 
     public static ItemInfo DeserializeItemInfo(ByteBuf _buf)
@@ -158,6 +162,22 @@ public sealed partial class ItemInfo : Luban.BeanBase
     /// 词条4数值
     /// </summary>
     public readonly int GeneValue4;
+    /// <summary>
+    /// 背包详情显示的具体物品类别
+    /// </summary>
+    public readonly string DetailCategory;
+    /// <summary>
+    /// 背包按钮按从上到下排列，用 | 分隔，空白仅展示介绍
+    /// </summary>
+    public readonly string DetailActions;
+    /// <summary>
+    /// 每瓶即时恢复的生命点数
+    /// </summary>
+    public readonly int RestoreHp;
+    /// <summary>
+    /// 每瓶即时恢复的法力点数
+    /// </summary>
+    public readonly int RestoreMp;
    
     public const int __ID__ = 1241839233;
     public override int GetTypeId() => __ID__;
@@ -196,6 +216,10 @@ public sealed partial class ItemInfo : Luban.BeanBase
         + "GeneValue2:" + GeneValue2 + ","
         + "GeneValue3:" + GeneValue3 + ","
         + "GeneValue4:" + GeneValue4 + ","
+        + "DetailCategory:" + DetailCategory + ","
+        + "DetailActions:" + DetailActions + ","
+        + "RestoreHp:" + RestoreHp + ","
+        + "RestoreMp:" + RestoreMp + ","
         + "}";
     }
 }

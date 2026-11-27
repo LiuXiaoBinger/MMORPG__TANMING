@@ -435,6 +435,7 @@ public class PlayerInputCtr : MonoBehaviour
             {
                 case GameHotkeys.Kind.Skill: SkillKeyEvent?.Invoke(row.Command); break;
                 case GameHotkeys.Kind.Target: MSkillTargetMgr.singleton.FindEnemyByAimBtn(); break;
+                case GameHotkeys.Kind.Potion:
                 case GameHotkeys.Kind.Window: MainUIKeyHandler?.Invoke(row.Command); break;
             }
             if (row.Command == "Settings") return;

@@ -188,6 +188,7 @@ public class MainCtrl : CtrlBase
             CountUpdateSyncInfoHandle);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_EquipOperationCode,
             EquipOperationHandle);
+        SocketDispatcher.Instance.AddEventHandler(RecoveryPotion.UseCommand, OnPotionUsed);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_RoleAttributeUpdateCode,
             RoleAttributeUpdateHandle);
     }
@@ -327,6 +328,7 @@ public class MainCtrl : CtrlBase
             NetDefine.CMD_CountUpdateSyncInfoCode, CountUpdateSyncInfoHandle);
         SocketDispatcher.Instance.RemoveEventHandler(
             NetDefine.CMD_EquipOperationCode, EquipOperationHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(RecoveryPotion.UseCommand, OnPotionUsed);
         SocketDispatcher.Instance.RemoveEventHandler(
             NetDefine.CMD_RoleAttributeUpdateCode, RoleAttributeUpdateHandle);
         _mainView.RoleShieldWidget?.Clear();
@@ -563,6 +565,15 @@ public class MainCtrl : CtrlBase
         {
             TipsMgr.Instance.ShowSystemTips("装备操作失败：" + result.CmdCode);
         }
+    }
+
+    /// <summary>显示服务器的用药失败原因；成功后的数量和资源由已有增量通知刷新。</summary>
+    /// <param name="data">一次背包或快捷栏用药的服务器结果。</param>
+    private void OnPotionUsed(ByteString data)
+    {
+        // 满血、满蓝、缺药和等级不足由游戏服按实际角色返回。
+        UsePotionReply reply = UsePotionReply.Parser.ParseFrom(data);
+        if (!string.IsNullOrEmpty(reply.Message)) TipsMgr.Instance.ShowSystemTips(reply.Message);
     }
 
     /// <summary>应用服务器最终属性，同时刷新实体资源和现有角色窗口。</summary>
@@ -1200,6 +1211,8 @@ public class MainCtrl : CtrlBase
         if (_currentTalkNpc != null) return;
         switch (key)
         {
+            case GameHotkeys.ManaPotion: _knapsackCtrl.UseEquippedPotion(true); break;
+            case GameHotkeys.HealthPotion: _knapsackCtrl.UseEquippedPotion(false); break;
             case "H": OpenFriends(); break;
             case "T": _themeDungeonTeamCtrl.OpenTeamWindow(); break;
             case "Settings":

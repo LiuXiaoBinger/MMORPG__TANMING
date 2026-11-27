@@ -69,6 +69,10 @@ public static class GateClientResponseForwarder
                 // RO 的拒绝和成功均通过同一个文字结果返回面板。
                 GSLocalGMCmdRes.Parser.ParseFrom(package.Data);
                 return true;
+            case RecoveryPotion.UseCommand:
+                // 收到回包后保留游戏服按实际库存和资源返回的拒绝原因。
+                UsePotionReply.Parser.ParseFrom(package.Data);
+                return true;
             case NetDefine.CMD_EquipOperationCode:
                 // 装备失败也要保留实例 UID 与操作类型，供原界面结束本次交互。
                 resultCode = EquipOperationRet.Parser.ParseFrom(package.Data).CmdCode;

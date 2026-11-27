@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Google.Protobuf;
+using UnityEngine;
 
 /// <summary>
 /// 背包界面控制器，负责将角色物品组件转换成窗口展示数据。
@@ -22,6 +23,12 @@ public sealed class KnapsackCtrl : IDisposable
 
     /// <summary>背包窗口，只负责渲染和派发页签事件。</summary>
     private readonly KnapsackWindow _window;
+    /// <summary>主界面两个可点击的药品位，背包关闭时也接收库存变化。</summary>
+    private readonly PotionBarWidget _potionBar;
+    /// <summary>本机当前角色装备的生命药配置编号，零表示还未装备。</summary>
+    private int _healthPotionId;
+    /// <summary>本机当前角色装备的法力药配置编号，零表示还未装备。</summary>
+    private int _manaPotionId;
 
     // 四格货币对应的虚拟物品配置编号，与服务器 ItemEnum 现有取值一致：
     // 铜币 101、银子 102、元宝 103、银票 106。这里只用于读取余额，不改任何消费映射。
@@ -75,6 +82,7 @@ public sealed class KnapsackCtrl : IDisposable
         if (mainView != null)
         {
             _window = mainView.KnapsackWindow;
+            _potionBar = mainView.GetComponentInChildren<PotionBarWidget>(true);
             _mainView = mainView;
             _detailWindow = mainView.EquipmentDetailWindow;
             _workshopWindow = mainView.EquipmentWorkshopWindow;
@@ -133,6 +141,7 @@ public sealed class KnapsackCtrl : IDisposable
     /// <summary>注册窗口事件并绑定当前本地角色。</summary>
     private void Initialize()
     {
+        if (_potionBar != null) _potionBar.UseRequested += UseEquippedPotion;
         if (_window != null)
         {
             _window.CategorySelected += OnCategorySelected;
@@ -182,6 +191,8 @@ public sealed class KnapsackCtrl : IDisposable
     /// <summary>解除窗口和材料库存事件，清空角色引用与格子缓存。</summary>
     public void Dispose()
     {
+        if (_potionBar != null) _potionBar.UseRequested -= UseEquippedPotion;
+        if (_itemComponent != null) _itemComponent.KnapsackChangedDetailed -= OnPotionStockChanged;
         if (_window != null)
         {
             _window.CategorySelected -= OnCategorySelected;
@@ -430,9 +441,12 @@ public sealed class KnapsackCtrl : IDisposable
         if (_itemComponent != null)
         {
             _itemComponent.KnapsackChangedDetailed -= OnWorkshopStockChanged;
+            _itemComponent.KnapsackChangedDetailed -= OnPotionStockChanged;
         }
 
         _role = role;
+        _healthPotionId = 0;
+        _manaPotionId = 0;
         _itemComponent = null;
         _lastRenderedItemCount = -1;
         _slotDataByIndex.Clear();
@@ -440,6 +454,12 @@ public sealed class KnapsackCtrl : IDisposable
         if (role != null)
         {
             role.TryGetComponent(out _itemComponent);
+            if (_potionBar != null && _itemComponent != null)
+            {
+                _healthPotionId = PlayerPrefs.GetInt(PotionPreference(false));
+                _manaPotionId = PlayerPrefs.GetInt(PotionPreference(true));
+                _itemComponent.KnapsackChangedDetailed += OnPotionStockChanged;
+            }
             // 只有持有工坊或商会窗口的控制器订阅库存变动。
             bool hasWorkshop = _workshopWindow != null || _goldWorkshop != null || _pavilionWindow != null;
             if (_itemComponent != null && hasWorkshop)
@@ -457,6 +477,8 @@ public sealed class KnapsackCtrl : IDisposable
         }
         RefreshCurrentCategory(false);
         RefreshMoney();
+        RenderPotionSlot(false);
+        RenderPotionSlot(true);
     }
 
     /// <summary>读取虚拟物品背包中的四种货币余额交给窗口，未绑定角色时四格清零。</summary>
@@ -645,32 +667,203 @@ public sealed class KnapsackCtrl : IDisposable
         return MNetClient.Instance.Send(NetDefine.CMD_EquipOperationCode, request.ToByteString());
     }
 
-    /// <summary>将背包格对应的整本或碎片交给秘笈物品详情；装备沿用原有入口。</summary>
-    /// <param name="itemUid">当前格子里被点击的实例编号。</param>
+    /// <summary>装备读取实例属性，其余格子按物品表的类别和按钮顺序打开背包详情。</summary>
+    /// <param name="itemUid">被点击堆叠的实例编号。</param>
     private void OpenBagItem(long itemUid)
     {
-        if (_itemComponent == null) return;
-        // 从实例反查当前配置，兼容已有角色持有的旧物品号。
-        ItemBase item = _itemComponent.GetItemByUID(itemUid);
-        if (item == null) return;
-        if (item is EquipBase) { OpenEquipmentDetail(itemUid); return; }
-        // 物品、书目和合成数量均来自同一份客户端 Luban 数据。
-        cfg.Tables tables = LubanMgr.Instance.ConfigTables;
-        for (int index = 0; index < tables.TbMartialManualInfo.DataList.Count; index++)
+        // 绑定、限时及实际数量属于实例，同名的两叠物品可以有不同的操作。
+        ItemBase stack = _itemComponent?.GetItemByUID(itemUid);
+        if (stack == null) return;
+        if (stack is EquipBase)
         {
-            // 每本书的碎片与整本分别有独立的背包物品号。
-            cfg.MartialManualInfo book = tables.TbMartialManualInfo.DataList[index];
-            bool fragment = item.GetItemID() == book.FragmentId;
-            if (!fragment && item.GetItemID() != book.VolumeItem) continue;
-            // 当次操作引用的是目录书号，扣发数量始终由服务端计算。
-            ManualAction action = ManualAction.ManualLearn;
-            if (fragment) action = ManualAction.ManualCompose;
-            _window.ShowManualItem(tables.TbItemInfo.Get(item.GetItemID()), book, fragment,
-                _itemComponent.GetItemNum(item.GetItemID()), () => OpenManualTraining(book.Id),
-                () => MNetClient.Instance.Send(NetDefine.CMD_MartialManual,
-                    new ManualRequest { Book = book.Id, Action = action }.ToByteString()));
+            _window.CloseManualItem();
+            OpenEquipmentDetail(itemUid);
             return;
         }
+        // 介绍、来源和动作顺序使用同一物品行，装备仍沿用独立属性表。
+        cfg.ItemInfo item = LubanMgr.Instance.GetItemInfoById(stack.GetItemID());
+        if (item == null) return;
+        // 总数含该角色不同格位持有的绑定和未绑定物品。
+        int held = _itemComponent.GetItemNum(item.ItemTypeId, ItemBind.kItemBindIs, true);
+        // 碎片沿用原有的合成进度展示；整本及其他物品显示持有量。
+        string owned = "持有数量  " + held;
+        // 详情按钮按表中顺序在卡片右侧排列。
+        List<KeyValuePair<string, Action>> actions = new List<KeyValuePair<string, Action>>();
+        // 只有书类物品才需要配套书目中的书号及合成份数。
+        cfg.MartialManualInfo book = null;
+        if (item.DetailActions.Contains("培养") || item.DetailActions.Contains("合成秘笈") || item.DetailActions.Contains("领悟"))
+        {
+            // 书目键是书号，同一本的碎片与成书在背包各有独立物品编号。
+            List<cfg.MartialManualInfo> books = LubanMgr.Instance.ConfigTables.TbMartialManualInfo.DataList;
+            for (int index = 0; index < books.Count; index++)
+            {
+                if (books[index].VolumeItem != item.ItemTypeId && books[index].FragmentId != item.ItemTypeId) continue;
+                book = books[index];
+                if (book.FragmentId == item.ItemTypeId) owned = "合成进度  " + held + " / " + book.FragmentCount;
+                break;
+            }
+        }
+        // 稳定的动作键在物品表配置；只有当前实例能使用的入口进入按钮列表。
+        string[] keys = item.DetailActions.Split('|');
+        for (int index = 0; index < keys.Length; index++)
+        {
+            // 按钮文字默认与表中动作键一致，具体操作可共用游戏内惯用的短标题。
+            string label = keys[index];
+            // 每次点击重新绑定，只捕获当前格子的 UID、表行或书目。
+            Action run = null;
+            switch (label)
+            {
+                case "饮用":
+                    if (RecoveryPotion.TryRead(item, out _, out _)) { label = "使用"; run = () => UsePotion(itemUid); }
+                    break;
+                case "装备药品":
+                    if (RecoveryPotion.TryRead(item, out bool mana, out _)) { label = "装备"; run = () => EquipPotion(item, mana); }
+                    break;
+                case "合成秘笈":
+                case "领悟":
+                    if (book == null) break;
+                    // 碎片合成与整本领悟都由原秘笈协议确认和扣发。
+                    ManualAction operation = ManualAction.ManualLearn;
+                    if (label == "合成秘笈") { operation = ManualAction.ManualCompose; label = "合成"; }
+                    run = () => MNetClient.Instance.Send(NetDefine.CMD_MartialManual,
+                        new ManualRequest { Book = book.Id, Action = operation }.ToByteString());
+                    break;
+                case "培养":
+                    if (book != null) run = () => OpenManualTraining(book.Id);
+                    break;
+                case "摆摊出售":
+                case "集市出售":
+                    // 当前堆叠的标志与市场交易规则还会在出售窗口和服务端检查。
+                    bool local = label == "集市出售";
+                    if (TradeMarketWindow.CanSellStack(stack, local)) run = () => OpenBagSale(itemUid, local);
+                    break;
+                case "强化":
+                    run = () => OpenBagWorkshop(EquipmentWorkshopWindow.Page.Strengthen);
+                    break;
+                case "镶嵌":
+                    run = () => OpenBagWorkshop(EquipmentWorkshopWindow.Page.Socket);
+                    break;
+                case "合成宝石":
+                    if (EquipmentGemRules.TryRead(item.ItemTypeId, out int family, out int grade) && grade < EquipmentGemRules.ComposeCap)
+                    {
+                        label = "合成";
+                        run = () => { OpenBagWorkshop(EquipmentWorkshopWindow.Page.Socket); _workshopWindow.OpenSynthesis(family, grade + 1); };
+                    }
+                    break;
+                case "金装作坊":
+                case "金装进阶":
+                    // 进阶石定位到成长页，其他材料打开既有金装配方目录。
+                    bool advance = label == "金装进阶";
+                    run = () =>
+                    {
+                        _window.CloseWindow();
+                        if (!_goldWorkshop.gameObject.activeSelf) _mainView.ShowMainWindow(WindowType.GoldWorkshopWindow);
+                        if (advance) _goldWorkshop.Open(1, GoldEquipment(true).Count == 0, 0);
+                        else _goldWorkshop.Open(0, false, 0);
+                    };
+                    break;
+            }
+            if (run != null) actions.Add(new KeyValuePair<string, Action>(label, run));
+        }
+        // 绑定优先显示在当前堆叠上；宝石、强化石和禁交易铁牌也显示其限制。
+        string restriction = string.Empty;
+        if (stack.IsBind() == ItemBind.kItemBindIs) restriction = "已绑定 · 不可交易";
+        else if (StallCode.TradeRestriction(item.ItemTypeId, false).Length > 0 && StallCode.TradeRestriction(item.ItemTypeId, true).Length > 0)
+            restriction = "不可交易";
+        _window.ShowBagItem(item, owned, restriction, actions);
+    }
+
+    /// <summary>从物品卡进入出售页，并把被点击的原堆叠带入上架表单。</summary>
+    /// <param name="uid">待出售堆叠的实例编号。</param><param name="local">金特技所用的本服集市为真。</param>
+    private void OpenBagSale(long uid, bool local)
+    {
+        // 按点击时的最新背包状态取堆叠，售罄或绑定后不能打开出售表单。
+        ItemBase stack = _itemComponent.GetItemByUID(uid);
+        if (!TradeMarketWindow.CanSellStack(stack, local)) return;
+        _window.CloseWindow();
+        if (!_mainView.TradeMarketWindow.gameObject.activeSelf) _mainView.ShowMainWindow(WindowType.TradeMarketWindow);
+        _mainView.TradeMarketWindow.OpenBagSale(stack, local);
+    }
+
+    /// <summary>从强化石或宝石详情进入现有强化、镶嵌或合成页面。</summary>
+    /// <param name="page">物品配置动作所对应的装备养成页。</param>
+    private void OpenBagWorkshop(EquipmentWorkshopWindow.Page page)
+    {
+        _window.CloseWindow();
+        if (!_workshopWindow.gameObject.activeSelf) _mainView.ShowMainWindow(WindowType.EquipmentWorkshopWindow);
+        _workshopWindow.SelectPage(page);
+        _workshopWindow.RenderMoney(_itemComponent.GetVirtualItemCount(CopperItemId),
+            _itemComponent.GetVirtualItemCount(SilverItemId), _itemComponent.GetVirtualItemCount(TicketItemId),
+            _itemComponent.GetVirtualItemCount(YuanbaoItemId));
+        FillWorkshopSource(_itemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack).GetItemMap().Count > 0, 0);
+    }
+
+    /// <summary>按角色编号分开保存两个药位，换角色后从该角色自己的配置恢复。</summary>
+    /// <param name="mana">真为法力药位，假为生命药位。</param>
+    private string PotionPreference(bool mana)
+    {
+        // 药位是偏好设置，物品堆叠和数量仍在服务器背包里。
+        string slot = GameHotkeys.HealthPotion;
+        if (mana) slot = GameHotkeys.ManaPotion;
+        return "LYF.Potion." + _role.BaseInfo.RoleId + "." + slot;
+    }
+
+    /// <summary>把药品类型记入对应的快捷位，更换同类药不消耗库存。</summary>
+    /// <param name="item">背包点击的药品配置。</param><param name="mana">该药是否恢复法力。</param>
+    private void EquipPotion(cfg.ItemInfo item, bool mana)
+    {
+        // 快捷栏保留物品编号，堆叠耗尽后补货也能继续使用。
+        string command = GameHotkeys.HealthPotion;
+        if (mana) { _manaPotionId = item.ItemTypeId; command = GameHotkeys.ManaPotion; }
+        else _healthPotionId = item.ItemTypeId;
+        PlayerPrefs.SetInt(PotionPreference(mana), item.ItemTypeId);
+        PlayerPrefs.Save();
+        RenderPotionSlot(mana);
+        TipsMgr.Instance.ShowSystemTips(item.Name + "已装备到 " + GameHotkeys.CommandLabel(GameHotkeys.Kind.Potion, command));
+    }
+
+    /// <summary>从实际拥有的堆叠中取一瓶，鼠标点击和设置中的物理按键共用入口。</summary>
+    /// <param name="mana">真表示点击或按下法力药位。</param>
+    public void UseEquippedPotion(bool mana)
+    {
+        if (_itemComponent == null) return;
+        // 同种药可能分属多个格子，按原背包扣料顺序优先选择绑定堆叠。
+        int id = _healthPotionId;
+        if (mana) id = _manaPotionId;
+        if (id == 0) { TipsMgr.Instance.ShowSystemTips("请先在背包中装备药品"); return; }
+        List<ItemBase> stacks = _itemComponent.GetItemForReduce(id, ItemBind.kItemBindIs, -2);
+        if (stacks.Count == 0) { TipsMgr.Instance.ShowSystemTips("药品已用完"); return; }
+        UsePotion(stacks[0].GetItemUID());
+    }
+
+    /// <summary>两种入口都只提交当前堆叠，由游戏服检查资源、扣药并广播变化。</summary>
+    /// <param name="uid">当前角色背包中的物品堆叠实例编号。</param>
+    private void UsePotion(long uid)
+    {
+        if (!MNetClient.Instance.Send(RecoveryPotion.UseCommand, new UsePotionRequest { ItemUid = uid }.ToByteString()))
+            TipsMgr.Instance.ShowSystemTips("连接未就绪，请稍后再试");
+    }
+
+    /// <summary>背包增删及完整快照到达后刷新受影响的快捷位，即使背包窗口已关闭。</summary>
+    /// <param name="change">已经写入本地库存的变化，零物品号表示完整刷新。</param>
+    private void OnPotionStockChanged(KnapsackChangedEventArgs change)
+    {
+        if (change.ItemTypeId == 0 || change.ItemTypeId == _healthPotionId) RenderPotionSlot(false);
+        if (change.ItemTypeId == 0 || change.ItemTypeId == _manaPotionId) RenderPotionSlot(true);
+    }
+
+    /// <summary>按当前角色装备的配置号查询真实合计，空位不展示装饰药瓶。</summary>
+    /// <param name="mana">要刷新的快捷位，真为法力药。</param>
+    private void RenderPotionSlot(bool mana)
+    {
+        if (_potionBar == null) return;
+        // 角色解绑会令物品编号归零，并把原角色药瓶从 HUD 清掉。
+        int id = _healthPotionId;
+        if (mana) id = _manaPotionId;
+        cfg.ItemInfo item = LubanMgr.Instance.GetItemInfoById(id);
+        if (item == null) { _potionBar.Render(mana, string.Empty, 0); return; }
+        int count = _itemComponent.GetItemNum(id, ItemBind.kItemBindIs, true);
+        _potionBar.Render(mana, item.Icon, Math.Max(0, count));
     }
 
     /// <summary>关闭背包镜头并沿主视图窗口入口进入所点书籍的培养页。</summary>

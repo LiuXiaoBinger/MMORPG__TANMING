@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+// 背包与快捷栏都提交自家背包里的一瓶药，只传当前堆叠实例编号。
+message UsePotionRequest {
+  int64 item_uid = 1;
+}
+
+// 失败原因直接供系统提示使用。成功时留空，由现有背包和属性通知刷新界面。
+message UsePotionReply {
+  string message = 1;
+}

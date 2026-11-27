@@ -215,6 +215,10 @@ public sealed class EquipmentWorkshopWindow : WindowBase
         RefreshStock();
     }
 
+    /// <summary>背包宝石直接预选同品种的下一级合成配方。</summary>
+    /// <param name="family">宝石配置的零基品种序号。</param><param name="grade">已有合成配方的目标等级。</param>
+    public void OpenSynthesis(int family, int grade) { _gems.OpenSynthesis(family, grade); }
+
     /// <summary>物品变动后刷新当前可见材料，强化页仍读取原有五种强化石。</summary>
     /// <param name="changedItemId">变化的配置编号，零为整包同步。</param>
     public void RefreshStock(int changedItemId = 0)

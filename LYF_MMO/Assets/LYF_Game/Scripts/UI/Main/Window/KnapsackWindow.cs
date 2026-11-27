@@ -166,21 +166,26 @@ public class KnapsackWindow : WindowBase
     // ============================================================
 
     #region 生命周期
-    /// <summary>当前背包显示的秘笈物品详情模板。</summary>
-    [SerializeField, Tooltip("背包内秘笈整本和碎片共用的物品详情预制体")]
+    /// <summary>普通物品、药品与秘笈共用背包详情预制体。</summary>
+    [SerializeField, Tooltip("背包物品详情卡模板")]
     private MartialManualItemPopup manualItemPrefab;
     /// <summary>当前窗口打开的物品弹层，随背包关闭。</summary>
     private MartialManualItemPopup manualItem;
 
-    /// <summary>打开所点秘笈的物品卡，并绑定本次点击的两项业务。</summary>
-    /// <param name="item">物品文本、使用等级和图标。</param><param name="book">所属秘笈及配方。</param>
-    /// <param name="fragment">当前实例是否为碎片。</param><param name="held">本物品的背包合计。</param>
-    /// <param name="train">进入该书培养页。</param><param name="use">合成或使用整本领悟。</param>
-    public void ShowManualItem(cfg.ItemInfo item, cfg.MartialManualInfo book, bool fragment, int held, System.Action train, System.Action use)
+    /// <summary>在背包格旁边打开当前物品的表格配置，保持格子可继续点击或拖动。</summary>
+    /// <param name="item">背包格对应的物品行。</param><param name="owned">库存或秘笈合成进度。</param>
+    /// <param name="restriction">当前堆叠的绑定或交易限制。</param><param name="actions">已按实例过滤的有序操作。</param>
+    public void ShowBagItem(cfg.ItemInfo item, string owned, string restriction, List<KeyValuePair<string, Action>> actions)
+    {
+        GetItemPopup().ShowDetails(item, owned, restriction, actions, _scrollRect.viewport);
+    }
+
+    /// <summary>复用归属当前背包的弹层，并放到本窗口最上层。</summary>
+    private MartialManualItemPopup GetItemPopup()
     {
         if (manualItem == null) manualItem = Instantiate(manualItemPrefab, transform, false);
         manualItem.transform.SetAsLastSibling();
-        manualItem.Show(item, book, fragment, held, train, use);
+        return manualItem;
     }
 
     /// <summary>收起随背包和当前角色复用的秘笈详情。</summary>
@@ -844,6 +849,7 @@ public class KnapsackWindow : WindowBase
             return;
         }
 
+        CloseManualItem();
         _currtType = type;
         SetTabVisuals();       // 更新按钮选中/未选中图片
         // 分类变化的控制器订阅快照。

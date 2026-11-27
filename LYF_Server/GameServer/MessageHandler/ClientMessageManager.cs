@@ -406,6 +406,7 @@ public static class GameMessageProtocolRegister
         server.RegistCommand(NetDefine.CMD_EnterWroldCode, messageManager);
         server.RegistCommand(NetDefine.CMD_OpenKnapsackGridCode, messageManager);
         server.RegistCommand(NetDefine.CMD_EquipOperationCode, messageManager);
+        server.RegistCommand(RecoveryPotion.UseCommand, messageManager);
         server.RegistCommand(NetDefine.CMD_BuyShopItemCode, messageManager);
         server.RegistCommand(NetDefine.CMD_SkillCastCode, messageManager);
         server.RegistCommand(NetDefine.CMD_SkillUpgradeCode, messageManager);
@@ -452,6 +453,8 @@ public static class GameMessageProtocolRegister
             NetDefine.CMD_OpenKnapsackGridCode, new OpenKnapsackGridHandler(), CenterMessageRoute.Internal);
         RegisterHandler(messageManager, GameCommandSource.GateServer,
             NetDefine.CMD_EquipOperationCode, new EquipOperationHandler(), CenterMessageRoute.Internal);
+        RegisterHandler(messageManager, GameCommandSource.GateServer,
+            RecoveryPotion.UseCommand, new UsePotionHandler(), CenterMessageRoute.Internal);
         RegisterHandler(messageManager, GameCommandSource.CenterServer,
             NetDefine.CMD_SyncKnapsackGridCountCode, new SyncKnapsackGridCountHandler(), CenterMessageRoute.Internal);
         RegisterHandler(messageManager, GameCommandSource.GateServer,

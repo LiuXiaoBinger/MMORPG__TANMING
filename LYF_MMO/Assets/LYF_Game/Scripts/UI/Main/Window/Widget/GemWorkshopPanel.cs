@@ -154,14 +154,15 @@ public sealed class GemWorkshopPanel : MonoBehaviour
 
     /// <summary>打开空目标，或从已展开的品种直接预览二级合成。</summary>
     /// <param name="family">来自选择宝石行的品种；从装备页进入传负一。</param>
-    public void OpenSynthesis(int family)
+    /// <param name="targetGrade">默认预览二级，从背包进入时预览所点宝石的下一级。</param>
+    public void OpenSynthesis(int family, int targetGrade = 2)
     {
         _family = family;
         _grade = 0;
         _quoted = -1;
         _targets.SetActive(false);
         _synthesis.SetActive(true);
-        if (family >= 0) SetTarget(family, 2);
+        if (family >= 0) SetTarget(family, targetGrade);
         else DrawRecipe();
     }
 

@@ -123,6 +123,8 @@
     <Compile Include="LubanManage\Parse\EquipItemConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proto\WorldQuest.cs" />
+    <Compile Include="Proto\PotionUse.cs" />
+    <Compile Include="RecoveryPotion.cs" />
     <Compile Include="Proto\MartialManual.cs" />
     <Compile Include="GoldWorkshopRecipe.cs" />
     <Compile Include="Proto\RequestEntity.cs" />

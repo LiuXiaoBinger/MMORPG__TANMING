@@ -941,6 +941,42 @@ public sealed class TradeMarketWindow : WindowBase
         RefreshGoods();
     }
 
+    /// <summary>用同一套标志和市场规则决定背包详情及出售页能否上架当前材料。</summary>
+    /// <param name="stack">当前角色持有的具体堆叠。</param><param name="local">是否使用本服集市。</param>
+    public static bool CanSellStack(ItemBase stack, bool local)
+    {
+        if (stack == null || stack.GetItemCount() <= 0 || stack.IsBind() == ItemBind.kItemBindIs) return false;
+        if (StallCode.TradeRestriction(stack.GetItemID(), local).Length != 0) return false;
+        if (local) return true;
+        // 摆摊服务只受理普通、无期限及额外标志的材料。
+        ItemConfigBase config = LubanMgr.Instance.GetItemConfigById(stack.GetItemID());
+        if (config == null || config.ItemMainType != ItemMainType.ItemType_Material) return false;
+        return stack.GetItemSign() == 0 && stack.GetExpireTime() == DateTime.MinValue;
+    }
+
+    /// <summary>从背包详情直接打开当前堆叠的摆摊挂牌或集市草稿。</summary>
+    /// <param name="stack">本次选中的实例，数量和挂牌 UID 均取自该堆叠。</param><param name="local">金特技使用集市。</param>
+    public void OpenBagSale(ItemBase stack, bool local)
+    {
+        if (!CanSellStack(stack, local)) return;
+        // 频道变化沿用原有出售页刷新、网络查询及表单。
+        Market channel = Market.Stall;
+        if (local) channel = Market.Local;
+        if (_market != channel) SelectMarket((int)channel);
+        SelectTab(1);
+        ShowStackSale(stack, LubanMgr.Instance.GetItemConfigById(stack.GetItemID()));
+    }
+
+    /// <summary>由出售列表或物品卡打开同一张表单，实际提交仍走原有确认按钮。</summary>
+    /// <param name="stack">原始物品实例。</param><param name="item">提供图标及名称的基础配置。</param>
+    private void ShowStackSale(ItemBase stack, ItemConfigBase item)
+    {
+        // 上架数量不能超过这一叠的持有量。
+        int amount = (int)Math.Min(int.MaxValue, stack.GetItemCount());
+        if (_market == Market.Stall) OpenDeal(StallAction.StallSellItem, item.ItemId, amount, stack.GetItemUID(), null);
+        else OpenForm(TradeMarketDialog.Form.Sell, item, amount);
+    }
+
     /// <summary>显示当前角色可见的背包内容，保留每一堆的真实数量。</summary>
     private void RefreshBag()
     {
@@ -965,19 +1001,14 @@ public sealed class TradeMarketWindow : WindowBase
                 // 用该堆叠的配置查找实际图标和名称。
                 ItemConfigBase item = LubanMgr.Instance.GetItemConfigById(stack.GetItemID());
                 if (item == null || StallCode.TradeRestriction(item.ItemId, _market == Market.Local).Length != 0) continue;
-                if (_market == Market.Stall && item.ItemMainType != ItemMainType.ItemType_Material) continue;
-                if (_market == Market.Stall && (stack.GetItemSign() != 0 || stack.GetExpireTime() != DateTime.MinValue)) continue;
+                if ((_market == Market.Stall || _market == Market.Local) && !CanSellStack(stack, _market == Market.Local)) continue;
                 if (count == _bagCards.Count) _bagCards.Add(Instantiate(_bagTemplate, _bag.content));
                 // 当前堆叠占用的可复用展示格。
                 TradeMarketCard card = _bagCards[count++];
                 // 草稿允许的份数取当前这一堆，在界面整数范围内显示。
                 int amount = (int)Math.Min(int.MaxValue, stack.GetItemCount());
                 card.gameObject.SetActive(true);
-                card.Bind(item, _catalog.GetIcon(item.ItemId), amount.ToString(), () =>
-                {
-                    if (_market == Market.Stall) OpenDeal(StallAction.StallSellItem, item.ItemId, amount, stack.GetItemUID(), null);
-                    else OpenForm(TradeMarketDialog.Form.Sell, item, amount);
-                }, false, null, "", null);
+                card.Bind(item, _catalog.GetIcon(item.ItemId), amount.ToString(), () => ShowStackSale(stack, item), false, null, "", null);
             }
         }
         // i 从首个未用格起收起上一次筛选的多余包裹格。

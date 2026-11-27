@@ -6,7 +6,12 @@ using UnityEngine.InputSystem;
 public static class GameHotkeys
 {
     /// <summary>区分未开放条目、技能槽、移动动作、选敌和窗口入口。</summary>
-    public enum Kind { Unavailable, Skill, Motion, Target, Window }
+    public enum Kind { Unavailable, Skill, Motion, Target, Window, Potion }
+
+    /// <summary>法力药位的稳定命令，独立于玩家绑定的物理键。</summary>
+    public const string ManaPotion = "ManaPotion";
+    /// <summary>生命药位的稳定命令，独立于玩家绑定的物理键。</summary>
+    public const string HealthPotion = "HealthPotion";
 
     /// <summary>录屏动作的一行，保存草稿前始终按已应用的键响应。</summary>
     public sealed class Entry
@@ -61,8 +66,8 @@ public static class GameHotkeys
         new Entry("后退", Key.S, Kind.Motion, "down"),
         new Entry("左移", Key.A, Kind.Motion, "left"),
         new Entry("右移", Key.D, Kind.Motion, "right"),
-        new Entry("加蓝", Key.F1),
-        new Entry("加血", Key.F2),
+        new Entry("加蓝", Key.F1, Kind.Potion, ManaPotion),
+        new Entry("加血", Key.F2, Kind.Potion, HealthPotion),
         new Entry("暗器/嘲讽", Key.F5),
         new Entry("阵法", Key.N),
         new Entry("铭兵", Key.P),
@@ -144,12 +149,19 @@ public static class GameHotkeys
     /// <param name="slot">服务端和点击施法共用的原始槽号。</param>
     public static string SkillLabel(string slot)
     {
-        // 相同命令字符串可用于不同类别，只匹配技能行。
+        return CommandLabel(Kind.Skill, slot);
+    }
+
+    /// <summary>返回技能栏或药栏命令当前生效的物理键名。</summary>
+    /// <param name="kind">快捷位所属的动作类别。</param><param name="command">稳定槽号或药品命令。</param>
+    public static string CommandLabel(Kind kind, string command)
+    {
+        // 相同命令字符串可用于不同类别，只匹配指定类别。
         for (int index = 0; index < Rows.Length; index++)
         {
-            if (Rows[index].Type == Kind.Skill && Rows[index].Command == slot) return Label(Rows[index].Bound);
+            if (Rows[index].Type == kind && Rows[index].Command == command) return Label(Rows[index].Bound);
         }
-        return slot;
+        return command;
     }
 
     /// <summary>统一显示数字、符号和常用组合键的简短键帽名称。</summary>

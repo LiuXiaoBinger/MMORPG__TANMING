@@ -31,6 +31,7 @@ public class GateRoleCtrl:IContainer
                 OnBuyShopItemHandle(serverBase, basePackage);
                 break;
             case NetDefine.CMD_EquipOperationCode:
+            case RecoveryPotion.UseCommand:
                 // 装备实例操作交给游戏服按原会话校验，网关不修改请求字段。
                 serverBase._client.Send(basePackage);
                 break;
