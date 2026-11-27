@@ -35,47 +35,48 @@ public static partial class RequestEntityReflection {
           "b3VudF9pZBgBIAEoBRIWCg5nYW1lX3NlcnZlcl9pZBgCIAEoBRIQCghuaWNr",
           "bmFtZRgDIAEoCRIOCgZqb2JfaWQYBCABKAUiHwoMU3RhcnRHYW1lUmVxEg8K",
           "B3JvbGVfaWQYASABKAUiLQoNRW50ZXJXcm9sZFJlcRIPCgdyb2xlX2lkGAEg",
-          "ASgFEgsKA3BvcxgCIAEoCSJbCgxTa2lsbENhc3RSZXESEgoKc2tpbGxfdXVp",
+          "ASgFEgsKA3BvcxgCIAEoCSJ0CgxTa2lsbENhc3RSZXESEgoKc2tpbGxfdXVp",
           "ZBgBIAEoBBIQCghza2lsbF9pZBgCIAEoBRIlCgpjYXN0X3BvaW50GAMgASgL",
-          "MhEuRHVuZ2VvbkNhc3RQb2ludCI6Cg9Ta2lsbFVwZ3JhZGVSZXESEAoIc2tp",
-          "bGxfaWQYASABKAUSFQoNY3VycmVudF9sZXZlbBgCIAEoBSIoChBEdW5nZW9u",
-          "Q2FzdFBvaW50EgkKAXgYASABKAISCQoBehgCIAEoAiJWChNPcGVuS25hcHNh",
-          "Y2tHcmlkUmVxEg8KB3JvbGVfaWQYASABKAUSFwoPb3Blbl9ncmlkX2NvdW50",
-          "GAIgASgFEhUKDWtuYXBzYWNrX3R5cGUYAyABKAUiXQoYU3luY0tuYXBzYWNr",
-          "R3JpZENvdW50UmVxEg8KB3JvbGVfaWQYASABKAUSGQoRb3BlbmVkX2dyaWRf",
-          "Y291bnQYAiABKAUSFQoNa25hcHNhY2tfdHlwZRgDIAEoBSI+CgxJdGVtRGF0",
-          "YUxpc3QSEAoIYmFnX3R5cGUYASABKAUSHAoFaXRlbXMYAiADKAsyDS5Sb2xl",
-          "SXRlbUluZm8i9QIKD1NhdmVSb2xlRGF0YVJlcRIUCgxncm93dGhfbGV2ZWwY",
-          "CyABKAUSEgoKZ3Jvd3RoX2V4cBgMIAEoBRIUCgxzdGFsbF90aWNrZXQYCCAB",
-          "KAMSIwoMc3RhbGxfZXNjcm93GAkgASgLMg0uUm9sZUl0ZW1JbmZvEiEKCmdp",
-          "ZnRfcG9zdHMYDSADKAsyDS5HaWZ0TWFpbFBvc3QSGQoRY2xhaW1lZF9tYWls",
-          "X3VpZHMYCiADKAMSDwoHcm9sZV9pZBgBIAEoBRIPCgd2ZXJzaW9uGAIgASgD",
-          "EiYKD2l0ZW1fZGF0YV9saXN0cxgDIAMoCzINLkl0ZW1EYXRhTGlzdBIsChRy",
-          "b2xlX2NvdW50X2luZm9fbGlzdBgFIAMoCzIOLlJvbGVDb3VudEluZm8SGwoT",
-          "cm9sZV9jb3VudF9zbmFwc2hvdBgGIAEoCBIkCgxza2lsbF9sZXZlbHMYByAD",
-          "KAsyDi5Sb2xlU2tpbGxJbmZvSgQIBBAFIjIKC0J1eVNob3BJdGVtEhAKCGdv",
-          "b2RzX2lkGAEgASgNEhEKCWJ1eV9jb3VudBgCIAEoDSJPCg5CdXlTaG9wSXRl",
-          "bVJlcRIPCgdzaG9wX2lkGAEgASgNEhsKBWl0ZW1zGAIgAygLMgwuQnV5U2hv",
-          "cEl0ZW0SDwoHcm9sZV9pZBgFIAEoDSKLAQoQTW92ZU9wZXJhdGlvblJlcRIK",
-          "CgJkeBgBIAEoAhIKCgJkeRgCIAEoAhIKCgJkehgDIAEoAhIMCgRmYWNlGAQg",
-          "ASgCEgwKBHRpbWUYBSABKAISEQoJaXNfbW92aW5nGAYgASgIEhAKCGlzX21v",
-          "dmVkGAcgASgIEhIKCmp1bXBfY291bnQYCCABKAUiIgoNQ3JlYXRlVGVhbUFy",
-          "ZxIRCgl0YXJnZXRfaWQYASABKAUiJAoRSW52aXRlSm9pblRlYW1BcmcSDwoH",
-          "dXNlcl9pZBgBIAEoBCJNChdBY2NlcHRUZWFtSW52YXRhdGlvbkFyZxIPCgd0",
-          "ZWFtX2lkGAEgASgEEhIKCmludml0ZXJfaWQYAiABKAQSDQoFYWdyZWUYAyAB",
-          "KAgiHwoMTGVhdmVUZWFtQXJnEg8KB3JvbGVfaWQYASABKAQiJwoUQmVnSW5U",
-          "ZWFtQnlUZWFtSWRBcmcSDwoHdGVhbV9pZBgBIAEoBCJyChhDYXB0YWluUmVx",
-          "dWVzdEVudGVyRkJBcmcSEgoKZHVuZ2Vvbl9pZBgBIAEoBRISCgpjaGFwdGVy",
-          "X2lkGAIgASgFEhcKD2R1bmdlb25zX2RlZ3JlZRgDIAEoBRIVCg1kdW5nZW9u",
-          "X2xheWVyGAQgASgFIvECChFFcXVpcE9wZXJhdGlvblJlcRIQCghpdGVtX3Vp",
-          "ZBgBIAEoAxIiCglvcGVyYXRpb24YAiABKA4yDy5FcXVpcE9wZXJhdGlvbhIb",
-          "ChNzcGVjaWFsX3NraWxsX2luZGV4GAMgASgFEhgKEGdlbV9zb2NrZXRfaW5k",
-          "ZXgYBCABKAUSEwoLZ2VtX2l0ZW1faWQYBSABKAUSFgoOYmFnX2dlbV9jb3Vu",
-          "dHMYBiADKAUSGQoRbWFya2V0X2dlbV9jb3VudHMYByADKAUSGQoMYnV5X3F1",
-          "YW50aXR5GAggASgFSACIAQESFAoMZ29sZF9pdGVtX2lkGAkgASgFEhMKC2dv",
-          "bGRfdGFyZ2V0GAogASgFEhIKCndhc2hfc3RvbmUYCyABKAUSFQoNd2FzaF9y",
-          "ZXZpc2lvbhgMIAEoAxIRCgl3YXNoX2phZGUYDSABKAUSEgoKd2FzaF9sb2Nr",
-          "cxgOIAEoBUIPCg1fYnV5X3F1YW50aXR5YgZwcm90bzM="));
+          "MhEuRHVuZ2VvbkNhc3RQb2ludBIXCg90YXJnZXRfc3Bhd25faWQYBCABKAQi",
+          "OgoPU2tpbGxVcGdyYWRlUmVxEhAKCHNraWxsX2lkGAEgASgFEhUKDWN1cnJl",
+          "bnRfbGV2ZWwYAiABKAUiKAoQRHVuZ2VvbkNhc3RQb2ludBIJCgF4GAEgASgC",
+          "EgkKAXoYAiABKAIiVgoTT3BlbktuYXBzYWNrR3JpZFJlcRIPCgdyb2xlX2lk",
+          "GAEgASgFEhcKD29wZW5fZ3JpZF9jb3VudBgCIAEoBRIVCg1rbmFwc2Fja190",
+          "eXBlGAMgASgFIl0KGFN5bmNLbmFwc2Fja0dyaWRDb3VudFJlcRIPCgdyb2xl",
+          "X2lkGAEgASgFEhkKEW9wZW5lZF9ncmlkX2NvdW50GAIgASgFEhUKDWtuYXBz",
+          "YWNrX3R5cGUYAyABKAUiPgoMSXRlbURhdGFMaXN0EhAKCGJhZ190eXBlGAEg",
+          "ASgFEhwKBWl0ZW1zGAIgAygLMg0uUm9sZUl0ZW1JbmZvIvUCCg9TYXZlUm9s",
+          "ZURhdGFSZXESFAoMZ3Jvd3RoX2xldmVsGAsgASgFEhIKCmdyb3d0aF9leHAY",
+          "DCABKAUSFAoMc3RhbGxfdGlja2V0GAggASgDEiMKDHN0YWxsX2VzY3JvdxgJ",
+          "IAEoCzINLlJvbGVJdGVtSW5mbxIhCgpnaWZ0X3Bvc3RzGA0gAygLMg0uR2lm",
+          "dE1haWxQb3N0EhkKEWNsYWltZWRfbWFpbF91aWRzGAogAygDEg8KB3JvbGVf",
+          "aWQYASABKAUSDwoHdmVyc2lvbhgCIAEoAxImCg9pdGVtX2RhdGFfbGlzdHMY",
+          "AyADKAsyDS5JdGVtRGF0YUxpc3QSLAoUcm9sZV9jb3VudF9pbmZvX2xpc3QY",
+          "BSADKAsyDi5Sb2xlQ291bnRJbmZvEhsKE3JvbGVfY291bnRfc25hcHNob3QY",
+          "BiABKAgSJAoMc2tpbGxfbGV2ZWxzGAcgAygLMg4uUm9sZVNraWxsSW5mb0oE",
+          "CAQQBSIyCgtCdXlTaG9wSXRlbRIQCghnb29kc19pZBgBIAEoDRIRCglidXlf",
+          "Y291bnQYAiABKA0iTwoOQnV5U2hvcEl0ZW1SZXESDwoHc2hvcF9pZBgBIAEo",
+          "DRIbCgVpdGVtcxgCIAMoCzIMLkJ1eVNob3BJdGVtEg8KB3JvbGVfaWQYBSAB",
+          "KA0iiwEKEE1vdmVPcGVyYXRpb25SZXESCgoCZHgYASABKAISCgoCZHkYAiAB",
+          "KAISCgoCZHoYAyABKAISDAoEZmFjZRgEIAEoAhIMCgR0aW1lGAUgASgCEhEK",
+          "CWlzX21vdmluZxgGIAEoCBIQCghpc19tb3ZlZBgHIAEoCBISCgpqdW1wX2Nv",
+          "dW50GAggASgFIiIKDUNyZWF0ZVRlYW1BcmcSEQoJdGFyZ2V0X2lkGAEgASgF",
+          "IiQKEUludml0ZUpvaW5UZWFtQXJnEg8KB3VzZXJfaWQYASABKAQiTQoXQWNj",
+          "ZXB0VGVhbUludmF0YXRpb25BcmcSDwoHdGVhbV9pZBgBIAEoBBISCgppbnZp",
+          "dGVyX2lkGAIgASgEEg0KBWFncmVlGAMgASgIIh8KDExlYXZlVGVhbUFyZxIP",
+          "Cgdyb2xlX2lkGAEgASgEIicKFEJlZ0luVGVhbUJ5VGVhbUlkQXJnEg8KB3Rl",
+          "YW1faWQYASABKAQicgoYQ2FwdGFpblJlcXVlc3RFbnRlckZCQXJnEhIKCmR1",
+          "bmdlb25faWQYASABKAUSEgoKY2hhcHRlcl9pZBgCIAEoBRIXCg9kdW5nZW9u",
+          "c19kZWdyZWUYAyABKAUSFQoNZHVuZ2Vvbl9sYXllchgEIAEoBSLxAgoRRXF1",
+          "aXBPcGVyYXRpb25SZXESEAoIaXRlbV91aWQYASABKAMSIgoJb3BlcmF0aW9u",
+          "GAIgASgOMg8uRXF1aXBPcGVyYXRpb24SGwoTc3BlY2lhbF9za2lsbF9pbmRl",
+          "eBgDIAEoBRIYChBnZW1fc29ja2V0X2luZGV4GAQgASgFEhMKC2dlbV9pdGVt",
+          "X2lkGAUgASgFEhYKDmJhZ19nZW1fY291bnRzGAYgAygFEhkKEW1hcmtldF9n",
+          "ZW1fY291bnRzGAcgAygFEhkKDGJ1eV9xdWFudGl0eRgIIAEoBUgAiAEBEhQK",
+          "DGdvbGRfaXRlbV9pZBgJIAEoBRITCgtnb2xkX3RhcmdldBgKIAEoBRISCgp3",
+          "YXNoX3N0b25lGAsgASgFEhUKDXdhc2hfcmV2aXNpb24YDCABKAMSEQoJd2Fz",
+          "aF9qYWRlGA0gASgFEhIKCndhc2hfbG9ja3MYDiABKAVCDwoNX2J1eV9xdWFu",
+          "dGl0eWIGcHJvdG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, global::PbcMailReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -88,7 +89,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::CreateRoleReq), global::CreateRoleReq.Parser, new[]{ "AccountId", "GameServerId", "Nickname", "JobId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StartGameReq), global::StartGameReq.Parser, new[]{ "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::EnterWroldReq), global::EnterWroldReq.Parser, new[]{ "RoleId", "Pos" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SkillCastReq), global::SkillCastReq.Parser, new[]{ "SkillUuid", "SkillId", "CastPoint" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SkillCastReq), global::SkillCastReq.Parser, new[]{ "SkillUuid", "SkillId", "CastPoint", "TargetSpawnId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SkillUpgradeReq), global::SkillUpgradeReq.Parser, new[]{ "SkillId", "CurrentLevel" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::DungeonCastPoint), global::DungeonCastPoint.Parser, new[]{ "X", "Z" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::OpenKnapsackGridReq), global::OpenKnapsackGridReq.Parser, new[]{ "RoleId", "OpenGridCount", "KnapsackType" }, null, null, null, null),
@@ -2469,6 +2470,7 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
     skillUuid_ = other.skillUuid_;
     skillId_ = other.skillId_;
     castPoint_ = other.castPoint_ != null ? other.castPoint_.Clone() : null;
+    targetSpawnId_ = other.targetSpawnId_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -2523,6 +2525,21 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
     }
   }
 
+  /// <summary>Field number for the "target_spawn_id" field.</summary>
+  public const int TargetSpawnIdFieldNumber = 4;
+  private ulong targetSpawnId_;
+  /// <summary>
+  ///逐月锁定的副本出生标识，零表示空放，仅供表现同步
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong TargetSpawnId {
+    get { return targetSpawnId_; }
+    set {
+      targetSpawnId_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -2541,6 +2558,7 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
     if (SkillUuid != other.SkillUuid) return false;
     if (SkillId != other.SkillId) return false;
     if (!object.Equals(CastPoint, other.CastPoint)) return false;
+    if (TargetSpawnId != other.TargetSpawnId) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -2551,6 +2569,7 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
     if (SkillUuid != 0UL) hash ^= SkillUuid.GetHashCode();
     if (SkillId != 0) hash ^= SkillId.GetHashCode();
     if (castPoint_ != null) hash ^= CastPoint.GetHashCode();
+    if (TargetSpawnId != 0UL) hash ^= TargetSpawnId.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -2581,6 +2600,10 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
       output.WriteRawTag(26);
       output.WriteMessage(CastPoint);
     }
+    if (TargetSpawnId != 0UL) {
+      output.WriteRawTag(32);
+      output.WriteUInt64(TargetSpawnId);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -2603,6 +2626,10 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
       output.WriteRawTag(26);
       output.WriteMessage(CastPoint);
     }
+    if (TargetSpawnId != 0UL) {
+      output.WriteRawTag(32);
+      output.WriteUInt64(TargetSpawnId);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -2621,6 +2648,9 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
     }
     if (castPoint_ != null) {
       size += 1 + pb::CodedOutputStream.ComputeMessageSize(CastPoint);
+    }
+    if (TargetSpawnId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(TargetSpawnId);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -2645,6 +2675,9 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
         CastPoint = new global::DungeonCastPoint();
       }
       CastPoint.MergeFrom(other.CastPoint);
+    }
+    if (other.TargetSpawnId != 0UL) {
+      TargetSpawnId = other.TargetSpawnId;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -2680,6 +2713,10 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
           input.ReadMessage(CastPoint);
           break;
         }
+        case 32: {
+          TargetSpawnId = input.ReadUInt64();
+          break;
+        }
       }
     }
   #endif
@@ -2712,6 +2749,10 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
             CastPoint = new global::DungeonCastPoint();
           }
           input.ReadMessage(CastPoint);
+          break;
+        }
+        case 32: {
+          TargetSpawnId = input.ReadUInt64();
           break;
         }
       }

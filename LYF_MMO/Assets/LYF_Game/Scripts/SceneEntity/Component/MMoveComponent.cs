@@ -315,7 +315,7 @@ public sealed class MMoveComponent : EntityComponentBase
                 Entity.MoveCharacter(frameMovement);
                 if (Entity.Model.HasSideCollision && displacementComp != null)
                 {
-                    displacementComp.StopDisplacement();
+                    displacementComp.OnSideCollision();
                 }
                 // 技能已改变实体位置，旧影子段只能追剩余差量，不能继续按施法前的方向和路程推进。
                 _startPos = Entity.Position;
@@ -731,14 +731,15 @@ public sealed class MMoveComponent : EntityComponentBase
             horizontalVelocity = UVEC3.zero;
         }
 
-        UpdateVerticalMovement(deltaSeconds);
+        // 空中逐月由技能给出本帧高度，收招后从当前高度恢复原重力。
+        MDisplacementComponent displacementComp = Entity.DisplacementComp;
+        if (displacementComp != null && displacementComp.DrivesHeight) _verticalVelocity = 0f;
+        else UpdateVerticalMovement(deltaSeconds);
 
         // 本帧完整运动位移，水平与垂直只由移动组件合并并提交一次。
         UVEC3 frameMovement = horizontalVelocity * deltaSeconds;
         frameMovement.y = _verticalVelocity * deltaSeconds;
         // 输入、程序位移和重力只提交一次碰撞移动；不会放开MoveCasting。
-        // 从实体读取当前普通组件，允许未装配位移的实体仍执行原输入移动。
-        MDisplacementComponent displacementComp = Entity.DisplacementComp;
         if (displacementComp != null)
         {
             frameMovement += displacementComp.ConsumeDelta();
@@ -748,7 +749,7 @@ public sealed class MMoveComponent : EntityComponentBase
             Entity.MoveCharacter(frameMovement);
             if (Entity.Model.HasSideCollision && displacementComp != null)
             {
-                displacementComp.StopDisplacement();
+                displacementComp.OnSideCollision();
             }
         }
 

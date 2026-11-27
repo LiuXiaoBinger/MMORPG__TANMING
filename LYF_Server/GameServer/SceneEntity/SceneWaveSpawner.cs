@@ -321,6 +321,12 @@ public sealed partial class SceneWaveSpawner
             if (point.Creature.nonCombatant) continue;
             // 怪物行走后，命中盒必须与服务端当前实体坐标比较，出生点只提供体积配置。
             Vector3 delta = new Vector3(monster.Transform.X, monster.Transform.Y, monster.Transform.Z) - origin;
+            if (skillId == ROSkillComponent.MoonChaseSkillId)
+            {
+                // 盾爆保留怪物落地坐标，逐月按与客户端同相位的当前腾空高度检查两刀。
+                GeneRuntime genes = monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime;
+                delta.Y += ShieldBurstLiftMeters * MjsSkillGenes.GetBarrierLiftFraction(genes);
+            }
             if (delta.Y > 2.35f || delta.Y + point.Creature.boundHeight < -0.15f) continue;
             // 在盒体局部水平面取离怪物中心最近的点，与怪物圆柱半径比较。
             float side = Math.Abs(delta.X * forward.Y - delta.Z * forward.X);

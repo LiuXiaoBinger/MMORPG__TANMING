@@ -68,6 +68,7 @@ message SkillCastReq
 	uint64 skill_uuid = 1;//客户端生成的单次施法标识，参照 RO 在 1~9999 内循环
 	int32 skill_id = 2;//原 SkillInfo.Id；不能由客户端指定等级、效果或消耗
 	DungeonCastPoint cast_point = 3;//RO 施法点；旧客户端或其他技能可省略
+	uint64 target_spawn_id = 4;//逐月锁定的副本出生标识，零表示空放，仅供表现同步
 }
 
 // 技能提升一级，身份来自网关会话，下一等级和费用只能由服务端读表。

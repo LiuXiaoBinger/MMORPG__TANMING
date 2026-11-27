@@ -324,6 +324,7 @@ message SkillCastStartNtf
 	int64 start_server_time_unix_ms = 5;//服务器确认施法的 UTC Unix 毫秒
 	int32 cast_duration_ms = 6;//服务器权威施法持续毫秒数
 	int32 using_times = 7;//按当前职业模型和武器表现列表取模的零起始段数，供远端选择动作
+	uint64 target_spawn_id = 8;//逐月的目标出生标识，远端据此重放剑光及折返，零表示空放
 }
 
 // 服务器正常结束或中断施法的表现通知；本期没有命中广播。

@@ -906,7 +906,15 @@ public sealed class MSkillComponent : MBasicActionComponent
                 }
             }
         }
-        return ApplyServerStart(core, data.SkillUuid);
+        // 远端实体编号各不相同，只有锁敌逐月才需把副本出生标识换成本地目标。
+        MEntity chaseTarget = null;
+        if (data.SkillId == SkillCtrl.MoonChaseSkillId && data.TargetSpawnId != 0 && !Entity.IsPlayer)
+        {
+            // 当前正式副本负责管理已加载的固定和动态出生实体。
+            MSceneDungeon dungeon = UnityEngine.Object.FindFirstObjectByType<MSceneDungeon>();
+            if (dungeon != null) chaseTarget = dungeon.FindMonster(data.TargetSpawnId);
+        }
+        return ApplyServerStart(core, data.SkillUuid, chaseTarget);
     }
 
     /// <summary>按原 UUID 分发动作或护盾的结束结果，长效护盾有独立的结束时点。</summary>
@@ -931,9 +939,10 @@ public sealed class MSkillComponent : MBasicActionComponent
     /// <param name="skillUuid">客户端生成并由服务器原样回传的非零施法 UUID。</param>
     /// <param name="realtimeSeconds">本次输入发生的本机秒数。</param>
     /// <param name="currentMp">客户端最近一次已知 MP。</param>
+    /// <param name="chaseTarget">逐月本次锁定的敌人，空放时为空。</param>
     /// <returns>成功登记预测时返回 true；缺少表现资源仍可请求服务器。</returns>
     public bool BeginPrediction(int skillId, ulong skillUuid,
-        float realtimeSeconds, int currentMp)
+        float realtimeSeconds, int currentMp, MEntity chaseTarget = null)
     {
         if (skillUuid == 0 || !CanStart(skillId, realtimeSeconds, currentMp))
         {
@@ -954,7 +963,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         // 事件分发同步完成，分发器随后立即回收该强类型载荷。
         SkillStartedEventArgs eventArgs = SkillStartedEventArgs.Create(
             core.SkillId, core.EffectId, core.Level, skillUuid,
-            0, Entity.Position, true);
+            chaseTarget?.UID ?? 0UL, chaseTarget?.Position ?? Entity.Position, true);
         Entity.DispatchEvent(MEventType.SkillStarted, eventArgs);
         // 当前技能实例是否活动且 UUID 与本次请求一致。
         bool skillActive = _skill != null &&
@@ -1055,8 +1064,9 @@ public sealed class MSkillComponent : MBasicActionComponent
     /// <summary>收到开始广播后按同一 UUID 确认本地预表现，远端才启动新表现。</summary>
     /// <param name="core">按服务器效果 ID 与施法者职业解析的技能核心。</param>
     /// <param name="skillUuid">请求与广播共同携带的非零单次施法 UUID。</param>
+    /// <param name="chaseTarget">由副本出生标识解析的逐月目标，只用于本次动作表现。</param>
     /// <returns>广播已匹配或启动新表现时返回 true。</returns>
-    public bool ApplyServerStart(MSkillCore core, ulong skillUuid)
+    public bool ApplyServerStart(MSkillCore core, ulong skillUuid, MEntity chaseTarget = null)
     {
         // 技能核心缺失或单次施法 UUID 无效。
         bool coreOrUuidInvalid = core == null || skillUuid == 0;
@@ -1122,7 +1132,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         // 远端表现使用服务器原样广播的施法 UUID。
         SkillStartedEventArgs eventArgs = SkillStartedEventArgs.Create(
             core.SkillId, core.EffectId, core.Level, skillUuid,
-            0, Entity.Position, false);
+            chaseTarget?.UID ?? 0UL, chaseTarget?.Position ?? Entity.Position, false);
         Entity.DispatchEvent(MEventType.SkillStarted, eventArgs);
         if (_skill != null && _skill.IsActive &&
             _skill.SkillUuid == skillUuid)

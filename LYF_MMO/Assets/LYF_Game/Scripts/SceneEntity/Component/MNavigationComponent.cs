@@ -189,6 +189,9 @@ public class MNavigationComponent : EntityComponentBase
         cfg.SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(skillArgs.Identify);
         // 普攻及主动武功采用水平瞄准点，移动动作不使用该字段。
         bool needsCastDirection = skillInfo.Type == 1 || skillInfo.Type == 2;
+        // 此次逐月锁定的敌人，空放及其他技能沿用各自的表现轨道。
+        MEntity chaseTarget = null;
+        if (skillArgs.Identify == SkillCtrl.MoonChaseSkillId) chaseTarget = skillArgs.Target;
         if (MNetClient.Client != null)
         {
             try
@@ -206,6 +209,8 @@ public class MNavigationComponent : EntityComponentBase
                     Vector3 point = localRole.Position + direction * aimDistance;
                     if (skillArgs.Target != null) point = skillArgs.Target.Position;
                     request.CastPoint = new DungeonCastPoint { X = point.x, Z = point.z };
+                    // 观战端按同一出生标识寻找敌人，命中仍由服务端查询实际位置。
+                    if (chaseTarget is MonsterEntity monster) request.TargetSpawnId = monster.DungeonSpawnId;
                 }
                 MNetClient.Instance.Send(NetDefine.CMD_SkillCastCode, request.ToByteString());
             }
@@ -231,7 +236,7 @@ public class MNavigationComponent : EntityComponentBase
             }
         }
         localRole.Skill.BeginPrediction(skillArgs.Identify, skillUuid,
-            Time.realtimeSinceStartup, localRole.BaseInfo.CurrMp);
+            Time.realtimeSinceStartup, localRole.BaseInfo.CurrMp, chaseTarget);
     }
     #endregion
 

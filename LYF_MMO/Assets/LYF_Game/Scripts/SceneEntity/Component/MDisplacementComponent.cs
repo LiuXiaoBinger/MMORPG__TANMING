@@ -12,6 +12,10 @@ public sealed class MDisplacementComponent : EntityComponentBase
     #region 字段与属性
     /// <summary>当前段及尚未提交差量所属的原技能对象。</summary>
     private MSkill _owner;
+    /// <summary>锁敌逐月的退步、空中追身与双斩高度；结束或被打断时随本次位移释放。</summary>
+    private MjsMoonChasePath _moonPath;
+    /// <summary>带高度差的逐月在追身和双斩期间自行给出垂直位移。</summary>
+    internal bool DrivesHeight { get { return _data != null && _moonPath != null && _moonPath.FollowsHeight; } }
 
     /// <summary>当前持有的原施法 UUID，停止请求必须匹配。</summary>
     private ulong _skillUuid;
@@ -37,7 +41,7 @@ public sealed class MDisplacementComponent : EntityComponentBase
     /// <summary>本段已计算的横向累计距离，单位米，可选横向曲线存在时生效。</summary>
     private float _appliedDistanceX;
 
-    /// <summary>等待移动组件取走的水平世界位移，单位米；同一次更新到期的多段可以累计。</summary>
+    /// <summary>等待移动组件取走的世界位移，单位米；同一次更新到期的多段可以累计。</summary>
     private Vector3 _translation;
 
     /// <summary>是否已取得可用模型并记下当前曲线位置；模型刚加载时不补走此前错过的位移。</summary>
@@ -125,6 +129,11 @@ public sealed class MDisplacementComponent : EntityComponentBase
         if (durationSeconds > 0f)
         {
             progress = Mathf.Clamp01(elapsedSeconds / durationSeconds);
+        }
+        if (_moonPath != null)
+        {
+            _translation += _moonPath.Advance(progress, Entity.Position);
+            return;
         }
         // Y maxDistance 硬上限始终生效，Continue 可回拉但不能继续向前超限。
         float targetDistance = _data.CurveZ.Evaluate(progress) * _data.DistanceZ;
@@ -279,6 +288,7 @@ public sealed class MDisplacementComponent : EntityComponentBase
             Update(0f);
         }
         _owner = args.Source;
+        _moonPath = (args.Source as MArtSkill)?.MoonPath;
         _skillUuid = args.skillUuid;
         _fireGeneration = args.fireGeneration;
         _data = args.Data;
@@ -324,6 +334,12 @@ public sealed class MDisplacementComponent : EntityComponentBase
     {
         // 原段持续秒数，零时长的冷历史事件也不能迟到瞬移。
         float durationSeconds = _data.End - _data.At;
+        if (_moonPath != null)
+        {
+            // 冷加载只从当前相位继续，追身结束后仍在双斩动作内跟随目标高度。
+            _moonPath.SetProgress(Mathf.InverseLerp(0f, durationSeconds, elapsedSeconds));
+            return;
+        }
         if (elapsedSeconds >= durationSeconds)
         {
             _data = null;
@@ -390,11 +406,18 @@ public sealed class MDisplacementComponent : EntityComponentBase
         return delta;
     }
 
-    /// <summary>撞墙、动作离槽、失效或实体组件归还时清除全部运动引用，不硬拉理论终点。</summary>
+    /// <summary>角色控制器已处理本帧侧碰；逐月仍可从撞墙处折返，其他位移立即停止。</summary>
+    public void OnSideCollision()
+    {
+        if (_moonPath == null) StopDisplacement();
+    }
+
+    /// <summary>动作离槽、失效或实体归还时清除整段位移。</summary>
     public void StopDisplacement()
     {
         _data = null;
         _owner = null;
+        _moonPath = null;
         _skillUuid = 0;
         _fireGeneration = 0;
         _translation = Vector3.zero;

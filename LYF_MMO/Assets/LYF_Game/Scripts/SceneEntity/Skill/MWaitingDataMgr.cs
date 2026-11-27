@@ -24,7 +24,7 @@ public sealed class MWaitingDataMgr
         DoCastSkill(castingSkill, castPoint, target);
     }
 
-    /// <summary>常规有目标攻击按射程追近，刀刃风暴直接交接施法并保留锁定朝向。</summary>
+    /// <summary>常规攻击按射程追近，刀刃风暴和逐月从按键时的位置起手。</summary>
     /// <param name="skillCore">本次输入对应的技能核心。</param>
     /// <param name="castPoint">世界空间释放点，单位米。</param>
     /// <param name="target">输入层保留或自动获取的敌人，空值表示沿角色当前朝向释放。</param>
@@ -41,7 +41,9 @@ public sealed class MWaitingDataMgr
         cfg.SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(skillCore.SkillId);
         // 普攻和主动攻击沿用主表分类，其他类型无需按攻击射程追近。
         bool isAttack = skillInfo.Type == 1 || skillInfo.Type == 2;
-        if (isAttack && target != null && skillCore.SkillId != BladeStormSkillId)
+        // 逐月自行追抵锁定目标，导航预先追近会吃掉远程起手的剑光。
+        bool approachBeforeCast = skillCore.SkillId != BladeStormSkillId && skillCore.SkillId != SkillCtrl.MoonChaseSkillId;
+        if (isAttack && target != null && approachBeforeCast)
         {
             navigation.NeedTarget = true;
             navigation.Target = target;

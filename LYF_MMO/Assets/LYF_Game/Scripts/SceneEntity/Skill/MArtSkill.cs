@@ -11,6 +11,9 @@ public class MArtSkill : MSkill
 {
 
     #region 字段与属性
+    /// <summary>锁敌逐月共用的剑光起点、目标及折返轨迹，空放和其他武功不分配。</summary>
+    internal MjsMoonChasePath MoonPath { get; private set; }
+
     /// <summary>本次施法的碰撞记录，跟随技能池生命周期清空。</summary>
     private readonly MSkillCollision _collision = new MSkillCollision();
     /// <summary>本次表现轨道校验失败后为 true，直到归还；阻止每帧重复报错。</summary>
@@ -64,6 +67,15 @@ public class MArtSkill : MSkill
     protected override void Start()
     {
         base.Start();
+        if (SkillId == SkillCtrl.MoonChaseSkillId && TargetUid != 0)
+        {
+            // 施法事件中的 UID 已换成当前客户端实体，可随敌人横移修正折返落点。
+            if (Global.Instance.SceneWorld.TryGetEntity(TargetUid, out ROObject selected) && selected is MEntity target)
+            {
+                MoonPath = new MjsMoonChasePath(_firer, target, SkillTowardsTo);
+                _firer.Model.Rotation = Quaternion.LookRotation(MoonPath.Forward);
+            }
+        }
         FireEvents();
     }
 
@@ -103,6 +115,7 @@ public class MArtSkill : MSkill
     /// <summary>归还时取消位移、等待回调和声音；已经生成的粒子由自身组件持有资源，直到尾迹结束。</summary>
     protected override void OnReset()
     {
+        MoonPath = null;
         _collision.Reset();
         SkillRuntimePresentationCache.RemoveReadyListener(_runtimePresentationId, _presentationReady);
         _presentationReady = null;
@@ -712,6 +725,13 @@ public class MArtSkill : MSkill
             }
         }
         effect.transform.localScale = fxEvent.LocalScale;
+        // 只有逐月起手预制体带剑光锚点，两刀的月牙仍跟随角色根节点。
+        if (MoonPath != null && effect.TryGetComponent(out MjsMoonChaseTrail trail))
+        {
+            // 原粒子启用时会自动播放，先清空首帧再按本次目标重启整组。
+            effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            trail.Aim(MoonPath);
+        }
         effect.Play(true);
         return true;
     }

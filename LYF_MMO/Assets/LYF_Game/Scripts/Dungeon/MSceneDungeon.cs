@@ -100,7 +100,7 @@ public partial class MSceneDungeon : MonoBehaviour
 
     /// <summary>按服务端出生位查找已经绑定好的怪物或NPC实体。</summary>
     /// <param name="spawnId">当前实例中的固定或动态出生身份。</param>
-    private MEntity FindMonster(ulong spawnId)
+    internal MEntity FindMonster(ulong spawnId)
     {
         // 原模型字典中的同一实体引用。
         MEntity entity;
@@ -351,6 +351,7 @@ public partial class MSceneDungeon : MonoBehaviour
                 // 尸体和伤员仍按原点位生成，其能否被攻击由本条实体配置决定。
                 // 已有怪物实体沿用出生身份，只补入原表标记的首领档位。
                 MonsterEntity spawnedMonster = (MonsterEntity)entity;
+                spawnedMonster.DungeonSpawnId = spawnId;
                 spawnedMonster.NonCombatant = creature.nonCombatant;
                 if (creature.isBoss) spawnedMonster.Rank = MonsterRank.Boss;
             }
@@ -416,6 +417,7 @@ public partial class MSceneDungeon : MonoBehaviour
             // 复用SceneWorld中的真实怪物类型，不另建召唤物世界。
             MonsterEntity monster = (MonsterEntity)world.CreateEntity(EntityType.Monster, creature.id);
             entityUids.Add(monster.UID);
+            monster.DungeonSpawnId = spawn.SpawnId;
             monsters.Add(spawn.SpawnId, monster);
             // 原三个召唤物都是IsDummy，无可点击怪物模型。
             monster.NonCombatant = true;

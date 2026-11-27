@@ -34295,6 +34295,7 @@ GameObject:
   - component: {fileID: 2711533716850613042}
   - component: {fileID: 2410439962923258391}
   - component: {fileID: 2418630330907657715}
+  - component: {fileID: 7314550991014040221}
   m_Layer: 0
   m_Name: MjsMoonChaseDash
   m_TagString: Untagged
@@ -58723,3 +58724,28 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &7314550991014040221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4576049519274965691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49a42e533d64c8f968217a7ec8344a1, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  blades:
+  - {fileID: 3562570400375456295}
+  - {fileID: 4763763374482676527}
+  - {fileID: 973914260113529100}
+  sparks:
+  - {fileID: 6042575460433997670}
+  - {fileID: 3318626798278336683}
+  - {fileID: 4302984377649589004}
+  - {fileID: 7825016746486700681}
+  - {fileID: 3907261447996234036}
+  - {fileID: 4008535108070637690}
+  - {fileID: 8722025335371967809}
+  echo: {fileID: 4125185694640660332}

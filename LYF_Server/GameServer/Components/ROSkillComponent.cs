@@ -38,6 +38,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// 保证校验与提交之间不重复读配置、不重复计时。
     /// </summary>
     private PreparedCast prepared_cast_;
+    /// <summary>逐月主表编号，仅此技能广播锁定敌人的出生标识。</summary>
+    internal const int MoonChaseSkillId = 10140;
     /// <summary>
     /// 进入技能态前生成的明确拒绝结果；状态机不接受事件时用它回终态，避免客户端请求悬挂。
     /// </summary>
@@ -56,6 +58,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         public SkillEffectInfo effect_;
         /// <summary>本次输入的水平世界施法点，魔神塔普攻据此定向。</summary>
         public ROVector3 cast_point_;
+        /// <summary>当前逐月的副本目标出生身份，零表示空放。</summary>
+        public ulong target_spawn_id_;
     }
 
     /// <summary>角色扩展确认中心服学习快照已完整装载后才允许施法。</summary>
@@ -162,6 +166,7 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         }
         if (!PrepareCast(args.skill_id_, args.skill_uuid_, out prepared_cast_, out pending_reject_)) return false;
         prepared_cast_.cast_point_ = args.cast_point_;
+        if (args.skill_id_ == MoonChaseSkillId) prepared_cast_.target_spawn_id_ = args.target_;
         return true;
     }
 
@@ -528,6 +533,11 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         if (!PrepareCast(request.SkillId, request.SkillUuid, out prepared, out result))
         {
             return false;
+        }
+        if (request.SkillId == MoonChaseSkillId)
+        {
+            prepared.target_spawn_id_ = request.TargetSpawnId;
+            if (request.CastPoint != null) prepared.cast_point_ = new ROVector3(request.CastPoint.X, 0f, request.CastPoint.Z);
         }
         return CommitCast(prepared, singingCommitted, out result, out startNotice);
     }
@@ -1051,7 +1061,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
             EffectId = prepared.effect_.Id,
             StartServerTimeUnixMs = server_unix_ms,
             CastDurationMs = cast_duration_ms,
-            UsingTimes = using_times
+            UsingTimes = using_times,
+            TargetSpawnId = prepared.target_spawn_id_
         };
         return true;
     }

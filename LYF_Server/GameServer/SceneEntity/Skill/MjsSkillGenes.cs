@@ -29,6 +29,33 @@ internal static class MjsSkillGenes
     /// <summary>护体施放后单独衰减的内防身份。</summary>
     private const int InnerGuard = -1013005;
 
+    /// <summary>还原最近一次盾爆击飞的抛物线高度比例，供逐月空中命中判定使用。</summary>
+    /// <param name="runtime">当前怪物由服务端推进的实际控制效果。</param>
+    /// <returns>地面为零，抛物线顶点为一。</returns>
+    internal static float GetBarrierLiftFraction(GeneRuntime runtime)
+    {
+        // 同一怪物可能被不同队员的盾爆命中，客户端播放最新发生的一次。
+        double newestAge = double.MaxValue;
+        // 当前最新一次击飞的相对高度，与客户端的四倍抛物线一致。
+        float height = 0f;
+        for (int index = 0; index < runtime.ActiveGenes.Count; index++)
+        {
+            // 只取尚在生效的盾爆，不把其他倒地或定身当作腾空。
+            GeneBase gene = runtime.ActiveGenes[index];
+            if (gene.GeneID != BurstControl || gene.RemainingMilliseconds <= 0) continue;
+            // 控制总毫秒来自施加时的已学技能等级。
+            double duration = gene.DurationSeconds * 1000.0;
+            // 从该次击飞开始已经经过的逻辑毫秒。
+            double age = Math.Max(0, duration - gene.RemainingMilliseconds);
+            if (age >= newestAge) continue;
+            newestAge = age;
+            // 抛物线时间进度从零增加至一。
+            float progress = (float)(age / duration);
+            height = 4f * progress * (1f - progress);
+        }
+        return height;
+    }
+
     /// <summary>屏障正式提交时解除控制并登记自己的限时霸体。</summary>
     /// <param name="role">已提交施放的角色。</param>
     /// <param name="effect">当前角色学习等级对应的屏障效果。</param>

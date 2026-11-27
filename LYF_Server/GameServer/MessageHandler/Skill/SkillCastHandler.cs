@@ -136,6 +136,8 @@ public sealed class SkillCastHandler : IGameMessageHandler
             args.skill_uuid_ = request.SkillUuid;
             // RO 的施法点只决定普攻朝向，命中目标由游戏服查询。
             args.target_ = 0UL;
+            // 逐月仅借用目标身份同步表现，命中仍走实际角色位置的双段近战盒。
+            if (request.SkillId == ROSkillComponent.MoonChaseSkillId) args.target_ = request.TargetSpawnId;
             args.cast_point_ = new ROVector3(0f, 0f, 0f);
             if (request.CastPoint != null)
                 args.cast_point_ = new ROVector3(request.CastPoint.X, 0f, request.CastPoint.Z);
