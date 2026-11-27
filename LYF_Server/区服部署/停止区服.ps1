@@ -37,3 +37,6 @@ for ($i = 0; $i -lt $names.Count; $i++) {
         Write-Output ("{0} PID={1}" -f $name, $process.ProcessId)
     }
 }
+if ($IncludeShared -and !$TradeOnly) {
+    & (Join-Path $serverRoot 'Redis/ProjectRedis.ps1') -RealmFile $configPath -Stop
+}

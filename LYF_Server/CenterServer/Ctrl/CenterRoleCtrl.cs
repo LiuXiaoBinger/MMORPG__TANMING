@@ -39,13 +39,14 @@ public class CenterRoleCtrl:IContainer
         EnterWroldReq req = EnterWroldReq.Parser.ParseFrom(basePackage.Data);
         LogMsg.Info("OnEnterWroldHandle::" + req.ToString());
         
-        //返回角色的技能信息
+        // 本次角色的完整技能快照包含客户端需要的快捷键。
         RoleSkillInfoRet ret= _centRoleModel.RoleSkillInfo(req);
         LogMsg.Info("OnEnterWroldHandle=>RoleSkillInfoRet::" + ret.ToString());
         serverBase.Send(basePackage,NetDefine.CMD_RoleSkillInfoCode,ret.ToByteString());
     
-        //返回角色背包数据
+        // 这份权威背包回包带保存版本，连同技能一起填入跨 GS 交接缓存。
         RoleKanpsackInfoRet  kanpsackInfoRet =_centRoleModel.RoleKanpaskInfo(req);
+        RedisMgr.Instance.StoreSceneRole(ret, kanpsackInfoRet);
         LogMsg.Info("OnEnterWroldHandle=>RoleKanpsackInfoRet::" + kanpsackInfoRet.ToString());
         serverBase.Send(basePackage,NetDefine.CMD_RoleKnapsackInfoCode,kanpsackInfoRet.ToByteString());
 

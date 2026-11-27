@@ -71,7 +71,13 @@ if ($TradeOnly) {
     Start-RealmProcess 'TradeServer' @($quotedConfig)
     return
 }
+# 各区即使分别启动，也使用与项目 Redis、验证码服务一致的认证值。
+$verifyConfig = Join-Path $serverRoot 'VarifyCodeServer/config.json'
+if (Test-Path -LiteralPath $verifyConfig) {
+    $env:LYF_REDIS_PASSWORD = [string](Get-Content -Raw -Encoding UTF8 -LiteralPath $verifyConfig | ConvertFrom-Json).redis.passwd
+}
 if ($IncludeShared) {
+    & (Join-Path $serverRoot 'Redis/ProjectRedis.ps1') -RealmFile $configPath
     Start-RealmProcess 'CenterServer' @($quotedConfig)
     Start-RealmProcess 'LoginServer' @($quotedConfig)
 }

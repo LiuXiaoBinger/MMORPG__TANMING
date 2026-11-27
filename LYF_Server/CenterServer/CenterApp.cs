@@ -59,7 +59,8 @@ namespace CenterServer
             server.RegistCommand(StallCode.Prepare, stall);
             server.RegistCommand(StallCode.Resume, stall);
             server.RegistCommand(StallCode.Abort, stall);
-            RedisMgr.Instance.Init();
+            if (realm == null) RedisMgr.Instance.Init();
+            else RedisMgr.Instance.Init(realm.RedisHost, realm.RedisPort);
             
             // 角色模块控制器：处理进入世界回包、背包容量同步、商城购买转发、角色物品快照保存。
             CenterRoleCtrl  RoleCtrl = new CenterRoleCtrl(new CentRoleModel(db));

@@ -29,32 +29,37 @@ public static partial class SceneLineReflection {
           "ZXN0Eg8KB2xpbmVfaWQYASABKAUiJQoSU2NlbmVQb3J0YWxSZXF1ZXN0Eg8K",
           "B2Rvb3JfaWQYASABKAUicgoPU2NlbmVMaW5lUmVzdWx0Eg4KBnJlYXNvbhgB",
           "IAEoCRIUCgxjdXJyZW50X2xpbmUYAiABKAUSHwoFbGluZXMYAyADKAsyEC5Q",
-          "dWJsaWNTY2VuZUxpbmUSGAoQYXJyaXZhbF9wb3NpdGlvbhgEIAEoCSLCAgoR",
+          "dWJsaWNTY2VuZUxpbmUSGAoQYXJyaXZhbF9wb3NpdGlvbhgEIAEoCSKaAwoR",
           "U2NlbmVSb2xlVHJhbnNmZXISGwoEcm9sZRgBIAEoCzINLk1haW5Sb2xlSW5m",
           "bxIfCgVzY2VuZRgCIAEoCzIQLlB1YmxpY1NjZW5lTGluZRI4Cgxza2lsbF9l",
           "bmRfbXMYAyADKAsyIi5TY2VuZVJvbGVUcmFuc2Zlci5Ta2lsbEVuZE1zRW50",
           "cnkSOAoMZ3JvdXBfZW5kX21zGAQgAygLMiIuU2NlbmVSb2xlVHJhbnNmZXIu",
-          "R3JvdXBFbmRNc0VudHJ5EhUKDWNoYW5naW5nX2xpbmUYBSABKAgaMQoPU2tp",
-          "bGxFbmRNc0VudHJ5EgsKA2tleRgBIAEoBRINCgV2YWx1ZRgCIAEoAzoCOAEa",
-          "MQoPR3JvdXBFbmRNc0VudHJ5EgsKA2tleRgBIAEoBRINCgV2YWx1ZRgCIAEo",
-          "AzoCOAEifwoRU2NlbmVSb3V0ZVJlcXVlc3QSDwoHcm9sZV9pZBgBIAEoBRIO",
-          "CgZtYXBfaWQYAiABKAUSDwoHbGluZV9pZBgDIAEoBRIPCgdnYW1lX2lkGAQg",
-          "ASgFEhQKDHJlcXVpcmVfZ2FtZRgFIAEoCBIRCglzY2VuZV91aWQYBiABKAMi",
-          "VgoVU2NlbmVOb2RlUmVnaXN0cmF0aW9uEhAKCHJlYWxtX2lkGAEgASgFEg8K",
-          "B2dhbWVfaWQYAiABKAUSDAoEaG9zdBgDIAEoCRIMCgRwb3J0GAQgASgFIkkK",
-          "DVNjZW5lSG9zdExvYWQSDwoHZ2FtZV9pZBgBIAEoBRIQCghjcHVfcmF0ZRgC",
-          "IAEoBRIVCg1kdW5nZW9uX2NvdW50GAMgASgFIlcKDlNjZW5lRGVwYXJ0dXJl",
-          "EiAKBnRhcmdldBgBIAEoCzIQLlB1YmxpY1NjZW5lTGluZRIjCgZwb3J0YWwY",
-          "AiABKAsyEy5TY2VuZVBvcnRhbFJlcXVlc3QiSwoVU2NlbmVOcGNQYXRyb2xS",
-          "ZXF1ZXN0Eg4KBm5wY19pZBgBIAEoBRIPCgd0YWxraW5nGAIgASgIEhEKCXNj",
-          "ZW5lX3VpZBgDIAEoAyKXAQoSU2NlbmVOcGNQYXRyb2xTdGVwEg4KBm5wY19p",
-          "ZBgBIAEoBRIJCgF4GAIgASgCEgkKAXkYAyABKAISCQoBehgEIAEoAhIQCgh0",
-          "YXJnZXRfeBgFIAEoAhIQCgh0YXJnZXRfeRgGIAEoAhIQCgh0YXJnZXRfehgH",
-          "IAEoAhINCgVzcGVlZBgIIAEoAhILCgN5YXcYCSABKAIicAoTU2NlbmVOcGNQ",
-          "YXRyb2xTdGF0ZRIOCgZtYXBfaWQYASABKAUSEQoJc2NlbmVfdWlkGAIgASgD",
-          "EiIKBXN0ZXBzGAMgAygLMhMuU2NlbmVOcGNQYXRyb2xTdGVwEhIKCnNhbXBs",
-          "ZWRfbXMYBCABKAMiRAoPU2NlbmVOcGNDb250YWN0Eg4KBm5wY19pZBgBIAEo",
-          "BRIOCgZtYXBfaWQYAiABKAUSEQoJc2NlbmVfdWlkGAMgASgDYgZwcm90bzM="));
+          "R3JvdXBFbmRNc0VudHJ5EhUKDWNoYW5naW5nX2xpbmUYBSABKAgSGgoNc2F2",
+          "ZWRfdmVyc2lvbhgGIAEoA0gAiAEBEigKDG9wZW5lZF9ncmlkcxgHIAMoCzIS",
+          "LkthbnBzYWNrdHlwZWNvdW50GjEKD1NraWxsRW5kTXNFbnRyeRILCgNrZXkY",
+          "ASABKAUSDQoFdmFsdWUYAiABKAM6AjgBGjEKD0dyb3VwRW5kTXNFbnRyeRIL",
+          "CgNrZXkYASABKAUSDQoFdmFsdWUYAiABKAM6AjgBQhAKDl9zYXZlZF92ZXJz",
+          "aW9uIl8KEVNjZW5lUm9sZVNuYXBzaG90EiEKBnNraWxscxgBIAEoCzIRLlJv",
+          "bGVTa2lsbEluZm9SZXQSJwoJaW52ZW50b3J5GAIgASgLMhQuUm9sZUthbnBz",
+          "YWNrSW5mb1JldCJ/ChFTY2VuZVJvdXRlUmVxdWVzdBIPCgdyb2xlX2lkGAEg",
+          "ASgFEg4KBm1hcF9pZBgCIAEoBRIPCgdsaW5lX2lkGAMgASgFEg8KB2dhbWVf",
+          "aWQYBCABKAUSFAoMcmVxdWlyZV9nYW1lGAUgASgIEhEKCXNjZW5lX3VpZBgG",
+          "IAEoAyJWChVTY2VuZU5vZGVSZWdpc3RyYXRpb24SEAoIcmVhbG1faWQYASAB",
+          "KAUSDwoHZ2FtZV9pZBgCIAEoBRIMCgRob3N0GAMgASgJEgwKBHBvcnQYBCAB",
+          "KAUiSQoNU2NlbmVIb3N0TG9hZBIPCgdnYW1lX2lkGAEgASgFEhAKCGNwdV9y",
+          "YXRlGAIgASgFEhUKDWR1bmdlb25fY291bnQYAyABKAUiVwoOU2NlbmVEZXBh",
+          "cnR1cmUSIAoGdGFyZ2V0GAEgASgLMhAuUHVibGljU2NlbmVMaW5lEiMKBnBv",
+          "cnRhbBgCIAEoCzITLlNjZW5lUG9ydGFsUmVxdWVzdCJLChVTY2VuZU5wY1Bh",
+          "dHJvbFJlcXVlc3QSDgoGbnBjX2lkGAEgASgFEg8KB3RhbGtpbmcYAiABKAgS",
+          "EQoJc2NlbmVfdWlkGAMgASgDIpcBChJTY2VuZU5wY1BhdHJvbFN0ZXASDgoG",
+          "bnBjX2lkGAEgASgFEgkKAXgYAiABKAISCQoBeRgDIAEoAhIJCgF6GAQgASgC",
+          "EhAKCHRhcmdldF94GAUgASgCEhAKCHRhcmdldF95GAYgASgCEhAKCHRhcmdl",
+          "dF96GAcgASgCEg0KBXNwZWVkGAggASgCEgsKA3lhdxgJIAEoAiJwChNTY2Vu",
+          "ZU5wY1BhdHJvbFN0YXRlEg4KBm1hcF9pZBgBIAEoBRIRCglzY2VuZV91aWQY",
+          "AiABKAMSIgoFc3RlcHMYAyADKAsyEy5TY2VuZU5wY1BhdHJvbFN0ZXASEgoK",
+          "c2FtcGxlZF9tcxgEIAEoAyJECg9TY2VuZU5wY0NvbnRhY3QSDgoGbnBjX2lk",
+          "GAEgASgFEg4KBm1hcF9pZBgCIAEoBRIRCglzY2VuZV91aWQYAyABKANiBnBy",
+          "b3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -62,7 +67,8 @@ public static partial class SceneLineReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneLineRequest), global::SceneLineRequest.Parser, new[]{ "LineId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ScenePortalRequest), global::ScenePortalRequest.Parser, new[]{ "DoorId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneLineResult), global::SceneLineResult.Parser, new[]{ "Reason", "CurrentLine", "Lines", "ArrivalPosition" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SceneRoleTransfer), global::SceneRoleTransfer.Parser, new[]{ "Role", "Scene", "SkillEndMs", "GroupEndMs", "ChangingLine" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, null, }),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SceneRoleTransfer), global::SceneRoleTransfer.Parser, new[]{ "Role", "Scene", "SkillEndMs", "GroupEndMs", "ChangingLine", "SavedVersion", "OpenedGrids" }, new[]{ "SavedVersion" }, null, null, new pbr::GeneratedClrTypeInfo[] { null, null, }),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SceneRoleSnapshot), global::SceneRoleSnapshot.Parser, new[]{ "Skills", "Inventory" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneRouteRequest), global::SceneRouteRequest.Parser, new[]{ "RoleId", "MapId", "LineId", "GameId", "RequireGame", "SceneUid" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneNodeRegistration), global::SceneNodeRegistration.Parser, new[]{ "RealmId", "GameId", "Host", "Port" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SceneHostLoad), global::SceneHostLoad.Parser, new[]{ "GameId", "CpuRate", "DungeonCount" }, null, null, null, null),
@@ -1207,6 +1213,7 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
 {
   private static readonly pb::MessageParser<SceneRoleTransfer> _parser = new pb::MessageParser<SceneRoleTransfer>(() => new SceneRoleTransfer());
   private pb::UnknownFieldSet _unknownFields;
+  private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pb::MessageParser<SceneRoleTransfer> Parser { get { return _parser; } }
@@ -1234,11 +1241,14 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public SceneRoleTransfer(SceneRoleTransfer other) : this() {
+    _hasBits0 = other._hasBits0;
     role_ = other.role_ != null ? other.role_.Clone() : null;
     scene_ = other.scene_ != null ? other.scene_.Clone() : null;
     skillEndMs_ = other.skillEndMs_.Clone();
     groupEndMs_ = other.groupEndMs_.Clone();
     changingLine_ = other.changingLine_;
+    savedVersion_ = other.savedVersion_;
+    openedGrids_ = other.openedGrids_.Clone();
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -1321,6 +1331,50 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
     }
   }
 
+  /// <summary>Field number for the "saved_version" field.</summary>
+  public const int SavedVersionFieldNumber = 6;
+  private readonly static long SavedVersionDefaultValue = 0L;
+
+  private long savedVersion_;
+  /// <summary>
+  /// 原 GS 已获中心服确认的存档版本，零也是有效值；旧 GS 缺失此字段时直接查中心服。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long SavedVersion {
+    get { if ((_hasBits0 & 1) != 0) { return savedVersion_; } else { return SavedVersionDefaultValue; } }
+    set {
+      _hasBits0 |= 1;
+      savedVersion_ = value;
+    }
+  }
+  /// <summary>Gets whether the "saved_version" field is set</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool HasSavedVersion {
+    get { return (_hasBits0 & 1) != 0; }
+  }
+  /// <summary>Clears the value of the "saved_version" field</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void ClearSavedVersion() {
+    _hasBits0 &= ~1;
+  }
+
+  /// <summary>Field number for the "opened_grids" field.</summary>
+  public const int OpenedGridsFieldNumber = 7;
+  private static readonly pb::FieldCodec<global::Kanpsacktypecount> _repeated_openedGrids_codec
+      = pb::FieldCodec.ForMessage(58, global::Kanpsacktypecount.Parser);
+  private readonly pbc::RepeatedField<global::Kanpsacktypecount> openedGrids_ = new pbc::RepeatedField<global::Kanpsacktypecount>();
+  /// <summary>
+  /// 背包扩容单独写库、不递增上述版本，按各类实际格数判定缓存是否仍可用。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::Kanpsacktypecount> OpenedGrids {
+    get { return openedGrids_; }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -1341,6 +1395,8 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
     if (!SkillEndMs.Equals(other.SkillEndMs)) return false;
     if (!GroupEndMs.Equals(other.GroupEndMs)) return false;
     if (ChangingLine != other.ChangingLine) return false;
+    if (SavedVersion != other.SavedVersion) return false;
+    if(!openedGrids_.Equals(other.openedGrids_)) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -1353,6 +1409,8 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
     hash ^= SkillEndMs.GetHashCode();
     hash ^= GroupEndMs.GetHashCode();
     if (ChangingLine != false) hash ^= ChangingLine.GetHashCode();
+    if (HasSavedVersion) hash ^= SavedVersion.GetHashCode();
+    hash ^= openedGrids_.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -1385,6 +1443,11 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
       output.WriteRawTag(40);
       output.WriteBool(ChangingLine);
     }
+    if (HasSavedVersion) {
+      output.WriteRawTag(48);
+      output.WriteInt64(SavedVersion);
+    }
+    openedGrids_.WriteTo(output, _repeated_openedGrids_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -1409,6 +1472,11 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
       output.WriteRawTag(40);
       output.WriteBool(ChangingLine);
     }
+    if (HasSavedVersion) {
+      output.WriteRawTag(48);
+      output.WriteInt64(SavedVersion);
+    }
+    openedGrids_.WriteTo(ref output, _repeated_openedGrids_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -1430,6 +1498,10 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
     if (ChangingLine != false) {
       size += 1 + 1;
     }
+    if (HasSavedVersion) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(SavedVersion);
+    }
+    size += openedGrids_.CalculateSize(_repeated_openedGrids_codec);
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
     }
@@ -1459,6 +1531,10 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
     if (other.ChangingLine != false) {
       ChangingLine = other.ChangingLine;
     }
+    if (other.HasSavedVersion) {
+      SavedVersion = other.SavedVersion;
+    }
+    openedGrids_.Add(other.openedGrids_);
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
 
@@ -1502,6 +1578,14 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
         }
         case 40: {
           ChangingLine = input.ReadBool();
+          break;
+        }
+        case 48: {
+          SavedVersion = input.ReadInt64();
+          break;
+        }
+        case 58: {
+          openedGrids_.AddEntriesFrom(input, _repeated_openedGrids_codec);
           break;
         }
       }
@@ -1549,6 +1633,276 @@ public sealed partial class SceneRoleTransfer : pb::IMessage<SceneRoleTransfer>
           ChangingLine = input.ReadBool();
           break;
         }
+        case 48: {
+          SavedVersion = input.ReadInt64();
+          break;
+        }
+        case 58: {
+          openedGrids_.AddEntriesFrom(ref input, _repeated_openedGrids_codec);
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 中心服一次成功查档返回的完整技能和背包数据，一起写入项目 Redis。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class SceneRoleSnapshot : pb::IMessage<SceneRoleSnapshot>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<SceneRoleSnapshot> _parser = new pb::MessageParser<SceneRoleSnapshot>(() => new SceneRoleSnapshot());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<SceneRoleSnapshot> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[5]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneRoleSnapshot() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneRoleSnapshot(SceneRoleSnapshot other) : this() {
+    skills_ = other.skills_ != null ? other.skills_.Clone() : null;
+    inventory_ = other.inventory_ != null ? other.inventory_.Clone() : null;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SceneRoleSnapshot Clone() {
+    return new SceneRoleSnapshot(this);
+  }
+
+  /// <summary>Field number for the "skills" field.</summary>
+  public const int SkillsFieldNumber = 1;
+  private global::RoleSkillInfoRet skills_;
+  /// <summary>
+  /// 已学等级、技能键位和持久角色编号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::RoleSkillInfoRet Skills {
+    get { return skills_; }
+    set {
+      skills_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "inventory" field.</summary>
+  public const int InventoryFieldNumber = 2;
+  private global::RoleKanpsackInfoRet inventory_;
+  /// <summary>
+  /// 同一角色的物品、装备、货币、次数和已落库版本。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::RoleKanpsackInfoRet Inventory {
+    get { return inventory_; }
+    set {
+      inventory_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as SceneRoleSnapshot);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(SceneRoleSnapshot other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (!object.Equals(Skills, other.Skills)) return false;
+    if (!object.Equals(Inventory, other.Inventory)) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (skills_ != null) hash ^= Skills.GetHashCode();
+    if (inventory_ != null) hash ^= Inventory.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (skills_ != null) {
+      output.WriteRawTag(10);
+      output.WriteMessage(Skills);
+    }
+    if (inventory_ != null) {
+      output.WriteRawTag(18);
+      output.WriteMessage(Inventory);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (skills_ != null) {
+      output.WriteRawTag(10);
+      output.WriteMessage(Skills);
+    }
+    if (inventory_ != null) {
+      output.WriteRawTag(18);
+      output.WriteMessage(Inventory);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (skills_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(Skills);
+    }
+    if (inventory_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(Inventory);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(SceneRoleSnapshot other) {
+    if (other == null) {
+      return;
+    }
+    if (other.skills_ != null) {
+      if (skills_ == null) {
+        Skills = new global::RoleSkillInfoRet();
+      }
+      Skills.MergeFrom(other.Skills);
+    }
+    if (other.inventory_ != null) {
+      if (inventory_ == null) {
+        Inventory = new global::RoleKanpsackInfoRet();
+      }
+      Inventory.MergeFrom(other.Inventory);
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          if (skills_ == null) {
+            Skills = new global::RoleSkillInfoRet();
+          }
+          input.ReadMessage(Skills);
+          break;
+        }
+        case 18: {
+          if (inventory_ == null) {
+            Inventory = new global::RoleKanpsackInfoRet();
+          }
+          input.ReadMessage(Inventory);
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 10: {
+          if (skills_ == null) {
+            Skills = new global::RoleSkillInfoRet();
+          }
+          input.ReadMessage(Skills);
+          break;
+        }
+        case 18: {
+          if (inventory_ == null) {
+            Inventory = new global::RoleKanpsackInfoRet();
+          }
+          input.ReadMessage(Inventory);
+          break;
+        }
       }
     }
   }
@@ -1574,7 +1928,7 @@ public sealed partial class SceneRouteRequest : pb::IMessage<SceneRouteRequest>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[5]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[6]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1978,7 +2332,7 @@ public sealed partial class SceneNodeRegistration : pb::IMessage<SceneNodeRegist
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[6]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[7]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2302,7 +2656,7 @@ public sealed partial class SceneHostLoad : pb::IMessage<SceneHostLoad>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[7]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[8]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2586,7 +2940,7 @@ public sealed partial class SceneDeparture : pb::IMessage<SceneDeparture>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[8]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[9]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2848,7 +3202,7 @@ public sealed partial class SceneNpcPatrolRequest : pb::IMessage<SceneNpcPatrolR
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[9]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[10]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3132,7 +3486,7 @@ public sealed partial class SceneNpcPatrolStep : pb::IMessage<SceneNpcPatrolStep
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[10]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[11]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3656,7 +4010,7 @@ public sealed partial class SceneNpcPatrolState : pb::IMessage<SceneNpcPatrolSta
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[11]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[12]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3969,7 +4323,7 @@ public sealed partial class SceneNpcContact : pb::IMessage<SceneNpcContact>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::SceneLineReflection.Descriptor.MessageTypes[12]; }
+    get { return global::SceneLineReflection.Descriptor.MessageTypes[13]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

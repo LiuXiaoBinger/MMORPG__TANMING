@@ -32,6 +32,14 @@ message SceneRoleTransfer {
   map<int32,int64> skill_end_ms = 3; // 各技能冷却结束的 Unix 毫秒。
   map<int32,int64> group_end_ms = 4; // 各公共冷却结束的 Unix 毫秒。
   bool changing_line = 5; // 同一角色在线切线时恢复即时资源和冷却。
+  optional int64 saved_version = 6; // 原 GS 已获中心服确认的存档版本，零也是有效值；旧 GS 缺失此字段时直接查中心服。
+  repeated Kanpsacktypecount opened_grids = 7; // 背包扩容单独写库、不递增上述版本，按各类实际格数判定缓存是否仍可用。
+}
+
+// 中心服一次成功查档返回的完整技能和背包数据，一起写入项目 Redis。
+message SceneRoleSnapshot {
+  RoleSkillInfoRet skills = 1; // 已学等级、技能键位和持久角色编号。
+  RoleKanpsackInfoRet inventory = 2; // 同一角色的物品、装备、货币、次数和已落库版本。
 }
 
 // 网关与调度服间的一次场景选择，玩家身份来自网关绑定的角色。

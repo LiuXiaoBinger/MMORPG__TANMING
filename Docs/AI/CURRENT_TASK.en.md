@@ -1132,3 +1132,8 @@ Clicking the combat HUD run icon or pressing the default F4 key toggles the loca
 ## [CODE][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag item details and recovery shortcuts
 
 All 460 ItemInfo rows specify a detail category. Ordered actions and per-bottle HP/MP recovery are configured in the same workbook. The RO bag card stays beside the grid and fits its contents. Actions use the selected stack and existing manual, gem, workshop and market routes. Bound stacks cannot be offered. White/green technique badges have no sale action, gold uses the local market draft. Actions without economic recipes are hidden. F1 equips mana and F2 health by default. Equipment uses the existing instance detail window. Full file inventory and handoff in 项目修改日志/2026-11-27-背包分类详情与药品快捷位.md.
+
+## [CODE][网络][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Read cross-GS player archives from the project Redis
+
+- The Windows Redis 5.0.14.1 server and CLI from the developer’s E: drive are in `LYF_Server/Redis/`. Shared realm startup and shutdown own the project process on loopback port 6380. Runtime authentication reuses the existing verification-service setting.
+- On a cross-GS dungeon entry or line change, the destination reads the source’s confirmed version of skills and inventory from Redis. Missing, unavailable, damaged or outdated entries use the existing CenterServer request and are refilled from MySQL. Count-only saves can reuse unchanged skills and items after SQL commit. Bag capacity is checked independently because expanding a bag does not increment the item save version. HP, MP and active cooldowns still travel with the gate handoff. Same-GS moves reuse their online role. See `项目修改日志/2026-11-27-跨GS玩家Redis缓存与中心服回源.md`.

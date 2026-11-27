@@ -56,6 +56,7 @@ public sealed class SceneLineHandler : IGameMessageHandler, IContainer
     internal static void Start(NetServer server, RealmTopology realm, int gameId)
     {
         active = new SceneLineHandler(realm, gameId);
+        RedisManager.Instance.Start(realm);
         MasterTeamLink.Instance.RealmNode = active.node;
         // 源节点离场、目标节点接管和单玩家断线都通过相同的可信复合会话处理。
         ushort[] codes = { SceneLineCode.Depart, SceneLineCode.Arrive, SceneLineCode.Disconnect };
@@ -124,7 +125,7 @@ public sealed class SceneLineHandler : IGameMessageHandler, IContainer
             // 角色身份来自中心服查档或原 GS 交接，只通过内部网关链路传递。
             SceneRoleTransfer transfer = SceneRoleTransfer.Parser.ParseFrom(packet.Data);
             if (transfer.Scene.GameId != node.GameId || transfer.Role.ServerId != node.RealmId) return;
-            // 恢复基础数据后，持久模块仍经 CenterServer 的正式 EnterWorld 路径加载。
+            // 角色基础数据来自网关交接，跨 GS 的持久模块优先读取同版缓存。
             OnlineRole arrival = new OnlineRole { GateSessionId = packet.GateSessionId, UnitySessionId = packet.UnitySessionId,
                 mainRoleInfo = transfer.Role.Clone(), PublicScene = transfer.Scene };
             RoleManager.Instance.AddOnlineRole(transfer.Role.BaseInfo.RoleId, arrival);
@@ -132,9 +133,7 @@ public sealed class SceneLineHandler : IGameMessageHandler, IContainer
             if (!transfer.ChangingLine) { arrival.SendToClient(SceneLineCode.Arrive, ByteString.Empty); return; }
             arrival.IncomingScene = transfer;
             arrival.GetComponent<RoleSkillComponent>().ImportSceneCooldowns(transfer);
-            packet.ProtoCode = NetDefine.CMD_EnterWroldCode;
-            packet.Data = new EnterWroldReq { RoleId = transfer.Role.BaseInfo.RoleId }.ToByteString();
-            context.Transport._client.Send(packet);
+            RedisManager.Instance.Load(arrival, context.Transport._client);
             return;
         }
         // 本 GS 只能操作真实会话当前绑定的角色。
@@ -209,12 +208,13 @@ public sealed class SceneLineHandler : IGameMessageHandler, IContainer
             if (!role.CanDispose()) { role.FlushForSceneChange(); continue; }
             // 此时背包、技能与次数版本均已获得现有中心服写入确认。
             SceneRoleTransfer transfer = new SceneRoleTransfer { Role = role.mainRoleInfo.Clone(),
-                Scene = active.leaving[role].Target, ChangingLine = true };
+                Scene = active.leaving[role].Target, ChangingLine = true, SavedVersion = role.GetSaveVersion() };
             // 跨宿主也使用离场时核准的门；普通换线保留原坐标。
             ScenePortalRequest source = active.leaving[role].Portal;
             if (source != null) CityPortalHandler.PlaceArrival(transfer.Role.BaseInfo,
                 PublicCityPortal.Find(transfer.Role.BaseInfo.MapId, source.DoorId));
             role.GetComponent<RoleSkillComponent>().ExportSceneCooldowns(transfer);
+            role.GetComponent<RoItemComponent>().ExportSceneGridCounts(transfer);
             RoleManager.Instance.LeavePublicScene(role);
             LeaveScene(role);
             role.SendToClient(SceneLineCode.Depart, transfer.ToByteString());

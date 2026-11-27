@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `9774924629ea0aec89101623357261e30b51ee1e7431bbfb588146e5786ae222`
+Source normalized SHA256: `401cfc12b089900e289670999b1127fff68479d35aa084fcc886d6edc119985b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -172,11 +172,12 @@ Source normalized SHA256: `9774924629ea0aec89101623357261e30b51ee1e7431bbfb58814
 | [CODE][FILES][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Visible-player friend discovery and two-column mailbox | 1118-1122 |
 | [CODE][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Create a party dungeon before admitting its members | 1123-1127 |
 | [CODE][FILES][HANDOFF][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1128-1131 |
-| [CODE][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag item details and recovery shortcuts | 1132-1134 |
+| [CODE][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag item details and recovery shortcuts | 1132-1135 |
+| [CODE][网络][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Read cross-GS player archives from the project Redis | 1136-1139 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `1c2efcb78d0f4f7f8ab8e7647fbbc0f18820ac6726ec73198d743795d7b1a2a0`
+Source normalized SHA256: `642af8ad0516321bc01667cef56a83818abda2c38ea2eddd7ff7c2c809709c07`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -343,7 +344,8 @@ Source normalized SHA256: `1c2efcb78d0f4f7f8ab8e7647fbbc0f18820ac6726ec73198d743
 | [VERIFY][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Friend discovery and mailbox layout checks | 1169-1173 |
 | [VERIFY][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Verify creation, party transfer and return across GameServers | 1174-1178 |
 | [VERIFY][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1179-1182 |
-| [VERIFY][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag card, shortcuts and server potion settlement | 1183-1185 |
+| [VERIFY][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag card, shortcuts and server potion settlement | 1183-1186 |
+| [VERIFY][网络][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Project Redis and real two-GS player handoff | 1187-1190 |
 
 ## Docs/AI/DECISIONS.en.md
 
@@ -357,7 +359,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `202d9f7423720d803f64536e8d4194911739627a8fb440508f1bdbbd868ad0d6`
+Source normalized SHA256: `02e7b6479bd292a52d0689f838c24185d3f653dffa30d297dd7e3ec98bc0fb36`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -382,7 +384,8 @@ Source normalized SHA256: `202d9f7423720d803f64536e8d4194911739627a8fb440508f1bd
 | [QUERY][装备][基因][EQUIP-GENE-FLOW-20261108] Equipment attachment and removal flow | 161-168 |
 | [QUERY][基因][属性][RO-CLIENT-BUFF-UPDATE-20261108] RO client effect ticks and attribute UI refresh | 169-177 |
 | [QUERY][RO][区服][分线][交易][RO-REALM-SCENE-LINES-20261125] Login realms, static-map lines and stall scope | 178-187 |
-| [QUERY][区服][分线][副本][DUNGEON-INSTANCE-HOST-20261127] Which GameServer hosts a party dungeon | 188-194 |
+| [QUERY][区服][分线][副本][DUNGEON-INSTANCE-HOST-20261127] Which GameServer hosts a party dungeon | 188-195 |
+| [QUERY][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Which service supplies player data after the Redis change | 196-198 |
 
 ## Older records
 

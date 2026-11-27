@@ -539,6 +539,20 @@ public class RoItemComponent : RoleComponentBase
         };
     }
 
+    /// <summary>记录离场角色的实际格数。独立扩容协议不会提高统一存档版本。</summary>
+    /// <param name="transfer">网关即将转交给目标游戏服的角色数据。</param>
+    internal void ExportSceneGridCounts(SceneRoleTransfer transfer)
+    {
+        // 容量表已由本角色的加载和扩容流程维护，按实际存在的包裹分类交接。
+        List<KeyValuePair<KnapsackType, int>> capacities = new List<KeyValuePair<KnapsackType, int>>(_openedGridCounts);
+        for (int index = 0; index < capacities.Count; index++)
+        {
+            // 本次写出一个包裹类型及它实际可用的格子数。
+            KeyValuePair<KnapsackType, int> capacity = capacities[index];
+            transfer.OpenedGrids.Add(new Kanpsacktypecount { Type = (int)capacity.Key, Count = capacity.Value });
+        }
+    }
+
     /// <summary>返回容器只读视图，供服务层查询而不替换组件内部字典。</summary>
     /// <returns>背包类型到容器的只读字典。</returns>
     public IReadOnlyDictionary<KnapsackType, RoItemContainer> GetContainers()

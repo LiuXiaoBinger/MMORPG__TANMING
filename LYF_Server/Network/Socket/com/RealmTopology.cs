@@ -18,6 +18,10 @@ public sealed class RealmTopology
     public readonly int CenterPort;
     /// <summary>各区 GS 和网关连接同一存档中心的内网地址。</summary>
     public readonly string CenterHost;
+    /// <summary>同一存档中心和各游戏节点读写角色缓存的 Redis 地址。</summary>
+    public readonly string RedisHost;
+    /// <summary>项目 Redis 的 TCP 端口；旧区服配置沿用本项目原端口 6380。</summary>
+    public readonly int RedisPort = 6380;
     /// <summary>账号登录入口的监听地址，所有逻辑区共用。</summary>
     public readonly string LoginHost;
     /// <summary>客户端进入选服流程前使用的登录端口。</summary>
@@ -108,6 +112,9 @@ public sealed class RealmTopology
             }
         }
         CenterPort = Number(shared, "centerPort", 1, 65535);
+        RedisHost = CenterHost;
+        if (shared.HasAttribute("redisHost")) RedisHost = shared.GetAttribute("redisHost");
+        if (shared.HasAttribute("redisPort")) RedisPort = Number(shared, "redisPort", 1, 65535);
         MasterPort = Number(root, "masterPort", 1, 65535);
         ControlPort = Number(root, "controlPort", 1, 65535);
         // GS 先登记，让后面每个场景都能检查实际宿主。

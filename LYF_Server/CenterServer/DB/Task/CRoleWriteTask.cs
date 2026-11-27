@@ -255,6 +255,8 @@ public sealed class CRoleWriteTask
         // 构造默认失败回包，成功路径会覆盖 CmdCode。
         int roleId = 0;
         long version = 0L;
+        // 事务读到的上一版本，用于复用尚有效的背包和技能缓存。
+        long previousVersion = 0L;
         if (_request != null)
         {
             roleId = _request.RoleId;
@@ -339,6 +341,7 @@ public sealed class CRoleWriteTask
                 role.Level = _request.GrowthLevel;
                 role.Exp = _request.GrowthExp;
             }
+            previousVersion = role.ItemSaveVersion;
             role.ItemSaveVersion = _request.Version;
             role.UpdateDate = DateTime.Now;
             if (db.Updateable(role).ExecuteCommand() <= 0)
@@ -368,7 +371,11 @@ public sealed class CRoleWriteTask
                 result.Version + ": " + ex, LogMsgType.Error);
         }
 
-        if (result.CmdCode == CmdCode.Succeed) StallSettlement.Publish(deal);
+        if (result.CmdCode == CmdCode.Succeed)
+        {
+            RedisMgr.Instance.StoreConfirmedSceneCounts(previousVersion, _request);
+            StallSettlement.Publish(deal);
+        }
         // 无论成功或失败，最终都向 GameServer 回包。
         Reply(result);
     }

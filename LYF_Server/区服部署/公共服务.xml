@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 登录和存档中心由各区共用。centerHost 是内网地址，loginHost 是登录服监听地址。 -->
-<services centerHost="127.0.0.1" centerPort="10110" loginHost="127.0.0.1" loginPort="10120">
+<services centerHost="127.0.0.1" centerPort="10110" loginHost="127.0.0.1" loginPort="10120" redisHost="127.0.0.1" redisPort="6380">
   <!-- 只有已列入目录且网关实际登记的区服才显示在选服页。 -->
   <realm file="配置/1区.xml" />
   <realm file="配置/2区.xml" />

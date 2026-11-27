@@ -45,6 +45,14 @@ public sealed class RoleKnapsackInfoHandler : IGameMessageHandler
             return;
         }
 
+        Apply(role, result);
+    }
+
+    /// <summary>从中心服回包或相同版本的 Redis 快照装载角色，并完成网关接管。</summary>
+    /// <param name="role">当前会话正在加载的在线角色。</param>
+    /// <param name="result">已确认成功且包含完整背包和次数的存档结果。</param>
+    internal static void Apply(OnlineRole role, RoleKanpsackInfoRet result)
+    {
         // 登录回包携带中心服权威角色版本，先建立本地保存版本基线。
         if (!role.InitializeSaveVersion(result.RoleKanpsackInfo.SaveVersion))
         {

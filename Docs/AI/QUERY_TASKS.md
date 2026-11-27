@@ -187,3 +187,7 @@
 - 2026-11-27 仅静态核对了源码和区服配置，未运行双客户端跨线入本。
 - 本地 RO 参考项目（`F:/UnityPro/ro/Ro_cs422nb/roserver`）的普通组队副本调用省略目标 GS 参数（`masterserver/dungeons/enter_fb_tool.cpp:491`、`masterserver/scene/scenecreate.h:171`）。ControlServer 为这类请求选择 GS。若调用显式指定了目标 GS，ControlServer 就采用指定的 GS。默认按轮询选服，也可以通过配置改为选择负载最低的 GS（`controlserver/protocol/scene/rpcm2n_createbattlescene.cpp:17`、`controlserver/config.cpp:632`、`controlserver/scene/gsmanager.cpp:131`）。选中的 GS 创建动态场景，随后队伍按返回的实例 ID 和 GS 将在线队员送入副本（`gameserver/protocol/scene/rpcn2g_createbattle.cpp:22`、`masterserver/team/team.cpp:1502`）。因此，即使队长在 GS2，RO 也可能把副本建在 GS1。本次 RO 对照仅静态核对源码。
 - 上述由队长所在 GS 承载副本的规则是 LYF 在 `DUNGEON-GS-CREATE-FIRST-20261127` 之前的行为。现在多 GS 区服由 ControlServer 选择宿主，等宿主创建副本后才传送队伍。LYF 和本次查阅的 RO 普通副本流程都根据控制进程内存中的 GS 状态选服，选服时不查询 Redis。RO 在 `roserver/controlserver/protocol/scene/ptcg2n_cpurate.cpp:10` 接收 CPU 上报，在 `roserver/controlserver/scene/gsmanager.cpp:128` 选服。详见 `项目修改日志/2026-11-27-副本选服与建成后传送.md`。
+
+## [QUERY][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] 接入 Redis 后由哪个服务提供玩家数据
+
+- 此前 `SCENE-ROLE-HANDOFF-20261127` 中由 CenterServer 单独提供角色存档的结论，描述的是 LYF 修改前的行为。现在目标 GS 按已确认的存档版本，优先从项目 Redis 读取已持久化的技能、物品、货币和使用次数，未命中时向 CenterServer 获取最新存档数据。HP、MP 和仍在计时的冷却继续通过网关交接。副本宿主仍由 ControlServer 根据内存中的节点状态选择。见 `项目修改日志/2026-11-27-跨GS玩家Redis缓存与中心服回源.md`。
