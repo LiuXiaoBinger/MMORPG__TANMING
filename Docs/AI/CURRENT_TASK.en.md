@@ -1184,3 +1184,10 @@ The Windows realm launcher builds into `_temp/realm-build`. Each service runs it
 Magic Swordsmen receive level-one Moon Chase on login. When available, logical slot 7 defaults to keyboard 8. The fixed-origin sword streak and afterimage precede an up-to-8 m forward dash and two opposite crescents. Skill, effect and presentation IDs are 10140 / 2014001 / 3014001. The local first development realm is running the update.
 
 See [逐月突进双斩与一区接入](../../项目修改日志/2026-11-27-逐月突进双斩与一区接入.md).
+
+## [CODE][FILES][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Start the Moshenta arena on damage and reset only the encounter on a wipe
+
+Dungeon 4060 spawns its three bosses in place. The first positive HP loss closes wall 23 and enables combat. A member outside can use portal 36 to enter. A full party wipe during combat removes the wall, restores the encounter actors at their original positions with full HP and no threat, and preserves earlier waves and objectives. Killing all three closes the arena entrance and retains the regular victory exit 35.
+The shared scene graph, GS actor/instance flow and Unity scene renderer carry these changes. The original realm was left running. File manifest and verification boundaries are in `项目修改日志/2026-11-27-魔神塔首领受击开战与团灭重置.md`.
+
+Dungeon checkpoints persist per member and instance through a party wipe. Tower bosses 5501, 5502 and 5503 each have a separate safe spot outside wall 23 near portal 36. Beisen 4050 and 4051 configure their own checkpoint for boss 9751 or 9801. With no personal checkpoint the server uses the party’s last engaged boss, then the starting entrance if no boss has been reached. Entering a fresh dungeon still uses its original entrance. The existing 11243/11244 revive protocol moves each character on confirmation.

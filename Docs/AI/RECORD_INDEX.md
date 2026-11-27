@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `77f18578c2a005a2591c94047aaffd11329535756c04d3ff52f632b42c9a0095`
+Source normalized SHA256: `540f2e737aaa8bd339e867f88842fc5c4620bf842d35f040388cd364ce1f245a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -182,11 +182,12 @@ Source normalized SHA256: `77f18578c2a005a2591c94047aaffd11329535756c04d3ff52f63
 | [CODE][FILES][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Personal boss drops by dungeon and difficulty | 1163-1168 |
 | [CODE][FILES][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] Author multi-item boss drops inside the RO dungeon editor | 1169-1175 |
 | [CODE][FILES][副本][UI][DUNGEON-JOURNAL-UI-20261127] Dungeon journal, individual boss marks and Friday Final chests | 1176-1181 |
-| [CODE][FILES][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 | 1182-1186 |
+| [CODE][FILES][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 | 1182-1187 |
+| [CODE][FILES][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Start the Moshenta arena on damage and reset only the encounter on a wipe | 1188-1193 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `5c73be2765e9d7b4d1fcad76c91212d9745042bb60201f8a5125ed01e42fc1a0`
+Source normalized SHA256: `8bca1f508f0e5600b2cac66241aff655f8edc2665e9927e96e19fb6219cf70b2`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -363,7 +364,8 @@ Source normalized SHA256: `5c73be2765e9d7b4d1fcad76c91212d9745042bb60201f8a5125e
 | [VERIFY][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Multi-boss drops, period boundaries and re-entry | 1215-1220 |
 | [VERIFY][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] RO editor rendering, export and multi-item settlement | 1221-1226 |
 | [VERIFY][副本][UI][DUNGEON-JOURNAL-UI-20261127] Journal rendering, personal progress and weekly claim | 1227-1231 |
-| [VERIFY][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 | 1232-1236 |
+| [VERIFY][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 | 1232-1237 |
+| [VERIFY][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Replay first damage, a party wipe, re-entry and victory | 1238-1244 |
 
 ## Docs/AI/DECISIONS.en.md
 
