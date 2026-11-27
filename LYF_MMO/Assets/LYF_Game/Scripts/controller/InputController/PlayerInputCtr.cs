@@ -155,17 +155,10 @@ public class PlayerInputCtr : MonoBehaviour
         }
     }
 
-    /// <summary>注册 Shift、Jump、Movement 和文本输入回调。</summary>
+    /// <summary>注册快慢跑切换、跳跃、方向和文本输入；快慢跑只响应一次按下。</summary>
     private void RegisterInputEvents()
     {
-        playerInput.player.Shift.started += context =>
-        {
-            ApplyRunningState(context.ReadValueAsButton());
-        };
-        playerInput.player.Shift.canceled += context =>
-        {
-            ApplyRunningState(context.ReadValueAsButton());
-        };
+        playerInput.player.ToggleRun.performed += _ => ToggleRunMode();
         playerInput.player.Jump.started += OnJumpStarted;
         playerInput.player.Movement.started += OnMovementChanged;
         playerInput.player.Movement.performed += OnMovementChanged;
@@ -404,7 +397,7 @@ public class PlayerInputCtr : MonoBehaviour
             // Input System 路径从键码构造，无键盘连接时也可加载。
             string path = GameHotkeys.ControlPath(row.Bound);
             if (row.Command == "jump") playerInput.player.Jump.ApplyBindingOverride(0, path);
-            else if (row.Command == "run") playerInput.player.Shift.ApplyBindingOverride(0, path);
+            else if (row == GameHotkeys.RunMode) playerInput.player.ToggleRun.ApplyBindingOverride(0, path);
             else
             {
                 // 仅覆盖组合中对应方向的部件，不改动组合根。
@@ -448,10 +441,10 @@ public class PlayerInputCtr : MonoBehaviour
         }
     }
 
-    /// <summary>把 Shift 的按住状态交给本地玩家移动组件，切换普通移动与跑步。</summary>
-    /// <param name="isRunning">true 表示 Shift 正在按住并使用跑步；false 表示恢复普通移动。</param>
-    private void ApplyRunningState(bool isRunning)
+    /// <summary>HUD 点击和快捷键按下共用此入口；切换本地角色的速度模式，松开按键时保留选择。</summary>
+    public void ToggleRunMode()
     {
+        if (GameHotkeys.SettingsVisible) return;
         // 当前本地玩家实体；输入层只读取本次引用，不保存角色生命周期。
         PlayerEntity localRole = GetLocalRole();
         if (localRole == null || localRole.MoveComp == null)
@@ -459,7 +452,7 @@ public class PlayerInputCtr : MonoBehaviour
             return;
         }
 
-        localRole.MoveComp.SetRunning(isRunning && !GameHotkeys.SettingsVisible);
+        localRole.MoveComp.SetRunning(!localRole.MoveComp.IsRunning);
     }
 
     /// <summary>根据当前相机朝向把移动输入封装为池化移动事件并发送给本地玩家实体。</summary>

@@ -46,7 +46,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Shift"",
+                    ""name"": ""ToggleRun"",
                     ""type"": ""Button"",
                     ""id"": ""1fc4bead-6dee-4dc6-8681-7aa0612da560"",
                     ""expectedControlType"": ""Button"",
@@ -134,11 +134,11 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""251c32a6-b17a-42f4-9d6e-fff4815a6c8d"",
-                    ""path"": ""<Keyboard>/shift"",
+                    ""path"": ""<Keyboard>/f4"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Shift"",
+                    ""action"": ""ToggleRun"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -162,7 +162,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_player = asset.FindActionMap("player", throwIfNotFound: true);
         m_player_Movement = m_player.FindAction("Movement", throwIfNotFound: true);
         m_player_Jump = m_player.FindAction("Jump", throwIfNotFound: true);
-        m_player_Shift = m_player.FindAction("Shift", throwIfNotFound: true);
+        m_player_ToggleRun = m_player.FindAction("ToggleRun", throwIfNotFound: true);
         m_player_ww = m_player.FindAction("ww", throwIfNotFound: true);
     }
 
@@ -227,7 +227,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_player_Movement;
     private readonly InputAction m_player_Jump;
-    private readonly InputAction m_player_Shift;
+    private readonly InputAction m_player_ToggleRun;
     private readonly InputAction m_player_ww;
     public struct PlayerActions
     {
@@ -235,7 +235,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public PlayerActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_player_Movement;
         public InputAction @Jump => m_Wrapper.m_player_Jump;
-        public InputAction @Shift => m_Wrapper.m_player_Shift;
+        public InputAction @ToggleRun => m_Wrapper.m_player_ToggleRun;
         public InputAction @ww => m_Wrapper.m_player_ww;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
@@ -252,9 +252,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @Shift.started += instance.OnShift;
-            @Shift.performed += instance.OnShift;
-            @Shift.canceled += instance.OnShift;
+            @ToggleRun.started += instance.OnToggleRun;
+            @ToggleRun.performed += instance.OnToggleRun;
+            @ToggleRun.canceled += instance.OnToggleRun;
             @ww.started += instance.OnWw;
             @ww.performed += instance.OnWw;
             @ww.canceled += instance.OnWw;
@@ -268,9 +268,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @Shift.started -= instance.OnShift;
-            @Shift.performed -= instance.OnShift;
-            @Shift.canceled -= instance.OnShift;
+            @ToggleRun.started -= instance.OnToggleRun;
+            @ToggleRun.performed -= instance.OnToggleRun;
+            @ToggleRun.canceled -= instance.OnToggleRun;
             @ww.started -= instance.OnWw;
             @ww.performed -= instance.OnWw;
             @ww.canceled -= instance.OnWw;
@@ -295,7 +295,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnShift(InputAction.CallbackContext context);
+        void OnToggleRun(InputAction.CallbackContext context);
         void OnWw(InputAction.CallbackContext context);
     }
 }

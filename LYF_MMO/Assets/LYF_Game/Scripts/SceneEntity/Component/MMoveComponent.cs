@@ -94,7 +94,7 @@ public sealed class MMoveComponent : EntityComponentBase
         get { return _groundedStateInitialized && Entity.Model.HasCharacterController && !Entity.Model.IsGrounded; }
     }
 
-    /// <summary>当前是否按住 Shift 使用跑步模式；false 表示使用普通移动速度。</summary>
+    /// <summary>本地角色选定的快慢跑模式，默认慢跑，直到下一次切换。</summary>
     private bool _isRunning;
 
     /// <summary>本地玩家当前是否仍保持非零方向输入；按下方向时设为 true，松开方向时清除。</summary>
@@ -464,8 +464,8 @@ public sealed class MMoveComponent : EntityComponentBase
         return BeginJump(nextJumpCount);
     }
 
-    /// <summary>根据 Shift 跑步状态读取当前水平移动速度。</summary>
-    /// <returns>当前移动速度，单位为米/秒；未按 Shift 时为普通移动速度。</returns>
+    /// <summary>根据当前快慢跑模式读取水平移动速度。</summary>
+    /// <returns>所选模式的移动顶速，单位为米/秒。</returns>
     private float GetCurrentMoveSpeed()
     {
         if (_isRunning)
@@ -478,7 +478,7 @@ public sealed class MMoveComponent : EntityComponentBase
     #endregion
 
     #region 核心逻辑
-    /// <summary>应用 Shift 走跑模式；地面默认动作会重评估动画，空中保留模式供落地恢复。</summary>
+    /// <summary>应用选定的快慢跑模式；地面默认动作会重评估动画，空中保留模式供落地恢复。</summary>
     /// <param name="isRunning">true 表示使用跑步速度和跑步动画；false 表示使用普通移动。</param>
     public void SetRunning(bool isRunning)
     {
@@ -709,7 +709,7 @@ public sealed class MMoveComponent : EntityComponentBase
             // 当前输入模式对应的水平移动速度，单位为米/秒。
             float speed = GetCurrentMoveSpeed();
             MEntity.Accelerate(Entity, _targetDir, speed);
-            // 当前水平速度平方，用于 Shift 松开时立即限制到普通移动上限。
+            // 当前水平速度平方，用于切回慢跑时立即限制到普通移动上限。
             float horizontalSpeedSquared = Entity.Model.lastVelocity.sqrMagnitude;
             // 当前移动速度上限平方，避免只为比较大小执行平方根计算。
             float maximumSpeedSquared = speed * speed;

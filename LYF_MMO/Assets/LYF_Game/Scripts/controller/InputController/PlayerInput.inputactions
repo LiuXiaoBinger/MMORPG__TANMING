@@ -24,7 +24,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Shift",
+                    "name": "ToggleRun",
                     "type": "Button",
                     "id": "1fc4bead-6dee-4dc6-8681-7aa0612da560",
                     "expectedControlType": "Button",
@@ -112,11 +112,11 @@
                 {
                     "name": "",
                     "id": "251c32a6-b17a-42f4-9d6e-fff4815a6c8d",
-                    "path": "<Keyboard>/shift",
+                    "path": "<Keyboard>/f4",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Shift",
+                    "action": "ToggleRun",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

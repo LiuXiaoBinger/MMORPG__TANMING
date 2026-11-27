@@ -40,6 +40,9 @@ public static class GameHotkeys
         }
     }
 
+    /// <summary>快慢跑按钮和设置页共用的绑定，沿用已有的本机改键存档。</summary>
+    public static readonly Entry RunMode = new Entry("快/慢跑", Key.F4, Kind.Motion, "run");
+
     /// <summary>与预制体三列从上到下的行对应，项目补充动作排在各列末尾。</summary>
     public static readonly Entry[] Rows =
     {
@@ -87,7 +90,7 @@ public static class GameHotkeys
         new Entry("帮派", Key.O),
         new Entry("任务", Key.Y, Kind.Window, "Y"),
         new Entry("地图", Key.M, Kind.Window, "M"),
-        new Entry("快/慢跑", Key.LeftShift, Kind.Motion, "run"),
+        RunMode,
         new Entry("观光/上浮", Key.F7),
         new Entry("起飞/下潜", Key.F6),
         new Entry("使用", Key.G),
@@ -95,7 +98,24 @@ public static class GameHotkeys
         new Entry("角色", Key.I, Kind.Window, "I"),
     };
 
-    /// <summary>保存或恢复默认后通知输入动作和技能栏重读物理键。</summary>
+    /// <summary>旧布局允许其他动作独占 F4；这类存档沿用原按键，快慢跑仍可点击。</summary>
+    static GameHotkeys()
+    {
+        if (RunMode.Bound != Key.F4) return;
+        // 只检查有游戏入口的行，未开放行不占用快捷键。
+        for (int index = 0; index < Rows.Length; index++)
+        {
+            // 已读取本机存档的动作，和快慢跑共用同一份目录。
+            Entry row = Rows[index];
+            if (row != RunMode && row.Type != Kind.Unavailable && row.Bound == Key.F4)
+            {
+                RunMode.Bound = Key.None;
+                break;
+            }
+        }
+    }
+
+    /// <summary>保存或恢复默认后通知输入动作和快捷栏重读物理键。</summary>
     public static event Action Changed;
     /// <summary>全屏设置打开期间屏蔽世界输入。</summary>
     public static bool SettingsVisible { get; internal set; }
@@ -136,6 +156,7 @@ public static class GameHotkeys
     /// <param name="key">Input System 物理键码。</param>
     public static string Label(Key key)
     {
+        if (key == Key.None) return "—";
         if (key >= Key.Digit1 && key <= Key.Digit0) return key.ToString().Substring(5);
         switch (key)
         {
@@ -166,6 +187,7 @@ public static class GameHotkeys
     /// <param name="key">用户选定的物理键。</param>
     public static string ControlPath(Key key)
     {
+        if (key == Key.None) return string.Empty;
         if (key >= Key.Digit1 && key <= Key.Digit0) return "<Keyboard>/" + Label(key);
         if (key == Key.LeftShift) return "<Keyboard>/shift";
         if (key == Key.LeftCtrl) return "<Keyboard>/ctrl";

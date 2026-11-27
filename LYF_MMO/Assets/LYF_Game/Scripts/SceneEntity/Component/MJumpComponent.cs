@@ -156,7 +156,7 @@ public sealed class MJumpComponent : EntityComponentBase
                 _isEnding = false;
                 _phaseElapsedSeconds = 0f;
                 _pendingStateName = string.Empty;
-                // 落地阶段结束后交还默认状态机；它会按当前方向输入和 Shift 状态恢复待机、行走或跑步。
+                // 落地阶段结束后交还默认状态机；它会按当前方向输入和选定的快慢跑模式恢复待机、行走或跑步。
                 if (Entity.Machine != null)
                 {
                     Entity.Machine.ForceToDefault();

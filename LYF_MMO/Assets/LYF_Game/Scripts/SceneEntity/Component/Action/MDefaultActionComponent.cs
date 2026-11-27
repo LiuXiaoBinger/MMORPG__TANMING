@@ -49,7 +49,7 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
     public bool MoveAudioLoop { get; set; } = false;
 
     /// <summary>
-    /// 根据战斗状态、移动状态和 Shift 走跑输入选择 Animator 槽位；静止时返回对应待机槽位。
+    /// 根据战斗状态、移动状态和选定的快慢跑模式选择 Animator 槽位；静止时返回对应待机槽位。
     /// </summary>
     public override string StateName
     {

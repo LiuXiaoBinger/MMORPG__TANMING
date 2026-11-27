@@ -905,6 +905,7 @@ GameObject:
   - component: {fileID: 6668543469825987893}
   - component: {fileID: 9089742750308626844}
   - component: {fileID: 3762994840106663761}
+  - component: {fileID: 3149674207853051642}
   m_Layer: 5
   m_Name: F4_Movement
   m_TagString: Untagged
@@ -954,7 +955,7 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   m_Material: {fileID: 2100000, guid: aede7ec59feb3944caba711289a9d7ba, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -986,7 +987,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1006,11 +1007,36 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 9089742750308626844}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3149674207853051642}
+        m_TargetAssemblyTypeName: RunModeButton, LYF_Game
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument:
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &3149674207853051642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3135704590562211615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 814c19be07004434b50dcf65efa0c153, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _keyLabel: {fileID: 382780984461839446}
 --- !u!1 &3525336206815390801
 GameObject:
   m_ObjectHideFlags: 0
