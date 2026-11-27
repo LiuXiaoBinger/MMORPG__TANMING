@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `778ddcf194d5efbab26aef855b59fe76cd6c83c7f0d5b245e1da1f0bc057affa`
+Source normalized SHA256: `c02b4a7e9fff80c82e12d78cb57ec03ef4bf785fcaa9a1a760cf09ae488c34c3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -163,11 +163,12 @@ Source normalized SHA256: `778ddcf194d5efbab26aef855b59fe76cd6c83c7f0d5b245e1da1
 | [CODE][FILES][邮箱][MAIL-GIFT-20261126] RO friend gift mail from the bag | 1075-1079 |
 | [CODE][FILES][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Resident idle, contact reactions and local walking routes | 1080-1086 |
 | [CODE][FILES][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Magic Swordsman silver knight gold equipment and materials | 1087-1091 |
-| [CODE][FILES][HANDOFF][好友聊天][SOCIAL-CHAT-20261127] RO friend conversations and persistent friend groups | 1092-1095 |
+| [CODE][FILES][HANDOFF][好友聊天][SOCIAL-CHAT-20261127] RO friend conversations and persistent friend groups | 1092-1096 |
+| [CODE][FILES][HANDOFF][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Playable Moshenta stairs and boss conversation | 1097-1099 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `6f29073f68e7d4bc265fc50945e896005bec9b4f6f23517eb3010c7026eb44cc`
+Source normalized SHA256: `df1ec5f25addea906a1763874cfd7aad4ff2dd62b0f46ce7ff43916787828f0b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -324,7 +325,8 @@ Source normalized SHA256: `6f29073f68e7d4bc265fc50945e896005bec9b4f6f23517eb3010
 | [VERIFY][邮箱][MAIL-GIFT-20261126] Two-character gift delivery and claim | 1120-1124 |
 | [VERIFY][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Actual bones, physical contact and line-authoritative residents | 1125-1130 |
 | [VERIFY][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Gold item data, sprite references and eight-slot wear | 1131-1135 |
-| [VERIFY][好友聊天][SOCIAL-CHAT-20261127] Private delivery, group persistence and Unity input | 1136-1139 |
+| [VERIFY][好友聊天][SOCIAL-CHAT-20261127] Private delivery, group persistence and Unity input | 1136-1140 |
+| [VERIFY][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Full graphical client clear of Moshenta 4060 | 1141-1143 |
 
 ## Docs/AI/DECISIONS.en.md
 

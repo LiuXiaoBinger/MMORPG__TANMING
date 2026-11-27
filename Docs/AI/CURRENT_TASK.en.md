@@ -1093,3 +1093,7 @@ Codex completed five configured quests, GS persistence and NPC options, public p
 
 - The main menu and the Jianghu chat toolbar open FriendsPanel. FriendMgr, FriendsHandler and ChatDataMgr manage friend relationships, conversations and offline catch-up. Private chat and gifts share the same role_friend records. ChatRoomMgr and ChatRoomPanel provide groups of 5, 10, 15 or 20, invitations and owner transfer. Players can send text, 13 RO Poring expressions and press-to-talk audio in both conversations.
 - The user chose persistent groups. Membership, invitations, read positions and group messages survive logout in the realm database. Members can read messages after their own join position in pages of 30. Preserve the MasterServer SocialChatAudio directory across deployments to keep audio referenced by chat history. Full file list, RO sources and Git receipt are in `项目修改日志/RO好友私聊与长期群聊-2026-11-27.md`.
+
+## [CODE][FILES][HANDOFF][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Playable Moshenta stairs and boss conversation
+
+Quest navigation preserves the selected stage across combat-locked portals, stops at the basic attack range for enemies, and follows the original NPC 20186 dialogue before combat object 17 appears, then targets boss waves 34/35/46. The center server persists initial skill levels and reads legacy level-zero basic attacks as level one. Explicit same-position basic attacks use server-confirmed facing. See the file list and proof in `项目修改日志/2026-11-26-角色委托与跨场景任务寻路.md`.
