@@ -293,6 +293,13 @@ public class CentRoleModel
                     Level =  roleSkillList[i].SkillLevel,
                     BindKey = roleSkillList[i].Bindkey
                 };
+                // 旧存档建角时可能只写入了普攻键位，读取时恢复建角应有的一级普攻。
+                if (roleSkillInfo.Level == 0)
+                {
+                    // 技能类型取自建角所用的职业技能表，其中类型一是角色自带的普通攻击。
+                    cfg.SkillInfo definition = LubanMgr.Instance.GetSkillInfoById(roleSkillInfo.SkillId);
+                    if (definition != null && definition.Type == 1) roleSkillInfo.Level = 1;
+                }
                 // F 固定使用已接入的滑行，旧 F 斩天剑移至 2；只规范回包，不覆盖数据库键位。
                 if (roleSkillInfo.SkillId == 10080)
                 {

@@ -14,6 +14,8 @@ public partial class TaskCtrl
     private Coroutine _walk;
     /// <summary>正在等待权威跨层结果的阶段，零表示本次点击只需步行。</summary>
     private int _dungeonTransferTask;
+    /// <summary>角色最近一次自动用门的服务端结果，换任务时清空。</summary>
+    private DungeonInteractRet _dungeonTransferReply;
 
     /// <summary>从任务列表、快捷追踪和详情按钮进入同一条寻路流程。</summary>
     /// <param name="data">玩家点击时显示的角色委托或副本条目。</param>
@@ -38,7 +40,7 @@ public partial class TaskCtrl
             if (!dungeon.NavigateQuest(role, data, out MSceneInteraction via))
                 TipsMgr.Instance.ShowSystemTips("当前目标尚未出现或没有可达路线");
             else if (via != null)
-                _walk = _mainView.StartCoroutine(UseDungeonPortal(role, data.TaskId, via));
+                _walk = _mainView.StartCoroutine(UseDungeonPortal(dungeon, role, data.TaskId, via));
             return;
         }
         if (data.Quest == null) return;
@@ -54,20 +56,51 @@ public partial class TaskCtrl
         _routeDoor = null;
         _routeQuestId = 0;
         _dungeonTransferTask = 0;
+        _dungeonTransferReply = null;
     }
 
     /// <summary>走到已开放的副本门后复用原交互，阶段由服务器继续推进。</summary>
+    /// <param name="dungeon">提供当前实例的追击者和门口可行走路径。</param>
     /// <param name="role">本地角色。</param><param name="taskId">需要跨层的任务条目。</param>
     /// <param name="portal">本场景配置的实际前进传送门。</param>
-    private IEnumerator UseDungeonPortal(PlayerEntity role, int taskId, MSceneInteraction portal)
+    private IEnumerator UseDungeonPortal(MSceneDungeon dungeon, PlayerEntity role, int taskId, MSceneInteraction portal)
     {
-        while (!portal.Contains(role.Position))
+        // 服务端明确要求脱战后才保持这一段返程，允许玩家为清怪走离门口。
+        bool returningFromCombat = false;
+        // 战斗期间只查看同步的目标和血量，不发送交互请求。
+        WaitForSeconds combatUpdate = new WaitForSeconds(0.25f);
+        while (dungeon != null && !role.IsDead)
         {
-            if (!role.NavComp.IsNavigation || (role.NavComp.Destination - portal.Position).sqrMagnitude > 9f) yield break;
-            yield return null;
+            if (returningFromCombat && dungeon.IsQuestPortalInCombat(role))
+            {
+                yield return combatUpdate;
+                continue;
+            }
+            if (!portal.Contains(role.Position))
+            {
+                // 打远程敌人或技能追击会临时替换导航。再次脱战后仍回到同一扇门。
+                bool walkingToDoor = role.NavComp.IsNavigation && (role.NavComp.Destination - portal.Position).sqrMagnitude <= 9f;
+                if (!walkingToDoor)
+                {
+                    if (!returningFromCombat || !MSceneDungeon.NavigatePoint(role, portal.Position)) yield break;
+                }
+                yield return null;
+                continue;
+            }
+            _dungeonTransferTask = taskId;
+            _dungeonTransferReply = null;
+            TeamCtrl.RequestDungeonInteraction(portal);
+            while (_dungeonTransferTask != 0 && dungeon != null) yield return null;
+            if (dungeon == null || _dungeonTransferReply == null) yield break;
+            if (_dungeonTransferReply.Success)
+            {
+                RequestNavigate(TaskMgr.Instance.GetTaskById(taskId));
+                yield break;
+            }
+            if (_dungeonTransferReply.Reason != "战斗中无法传送，请先脱离战斗") yield break;
+            returningFromCombat = true;
+            yield return combatUpdate;
         }
-        _dungeonTransferTask = taskId;
-        TeamCtrl.RequestDungeonInteraction(portal);
     }
 
     /// <summary>副本门使用成功并应用服务器落点后，重新定位本次点击的阶段。</summary>
@@ -75,10 +108,9 @@ public partial class TaskCtrl
     internal void OnDungeonQuestTransfer(DungeonInteractRet notice)
     {
         if (_dungeonTransferTask == 0) return;
-        // 服务端拒绝或阶段已替换时，保留原交互提示，不重发传送。
-        int id = _dungeonTransferTask;
+        // 落点已由队伍控制器应用，本次寻路协程随后按结果继续走或等待脱战。
+        _dungeonTransferReply = notice;
         _dungeonTransferTask = 0;
-        if (notice.Success) RequestNavigate(TaskMgr.Instance.GetTaskById(id));
     }
 
     /// <summary>公共地图加载、导航网和 NPC 管理器就绪后续走刚才的任务。</summary>

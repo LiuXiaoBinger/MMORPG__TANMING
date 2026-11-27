@@ -177,6 +177,8 @@ public partial class MSceneDungeon : MonoBehaviour
             int id = ROSceneXml.Int(data, "id");
             bool wall = data.Descendants("SceneTriggerObjectOpType").Any(option => option.Value == "StoOpTypeAirWall");
             bool button = data.Descendants("SceneTriggerObjectOpType").Any(option => option.Value == "StoOpTypePlayerButton");
+            // 原交谈机关已有对应 NPC 的正式交谈按钮，不在同一位置再创建一个无传送结果的门户。
+            if (data.Descendants("title").Any(title => title.Value == "DUNGEONS_JIAOTAN_BUTTON")) continue;
             bool active = flow.ActiveObjectIds.Contains(id);
             if (wall) active = flow.ActiveWallIds.Contains(id);
             if (!wall && !button) continue;

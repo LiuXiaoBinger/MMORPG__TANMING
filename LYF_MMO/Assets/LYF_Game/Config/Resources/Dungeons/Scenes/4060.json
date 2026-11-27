@@ -18,6 +18,6 @@
     { "targetId": 140, "area": 8, "portals": [34, 4, 1] },
     { "targetId": 141, "area": -1, "waves": [42, 41], "portals": [34, 4, 1] },
     { "targetId": 142, "area": 21, "portals": [5, 10, 34, 4, 1] },
-    { "targetId": 143, "area": -1, "waves": [34, 35, 46, 47], "portals": [5, 10, 34, 4, 1] }
+    { "targetId": 143, "area": -1, "talkWave": 47, "combatObject": 17, "waves": [34, 35, 46], "portals": [5, 10, 34, 4, 1] }
   ]
 }

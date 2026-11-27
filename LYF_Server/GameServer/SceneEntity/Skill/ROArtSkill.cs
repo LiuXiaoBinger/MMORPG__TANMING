@@ -38,8 +38,15 @@ public sealed class ROArtSkill : ROSkill
         // 坐标只提供方向，查询中心始终使用角色的服务端位置。
         Vector3 position = caster.mainRoleInfo.BaseInfo.Pos.ToVector3();
         Vector2 delta = new Vector2(cast_point.x_ - position.X, cast_point.z_ - position.Z);
+        // 有效施法点与脚下重合时，水平向量长度为零，不能从两点反推方向。
         float length = delta.Length();
         if (length > 0f && !float.IsInfinity(length)) forward_ = delta / length;
+        else if (length == 0f)
+        {
+            // 与其他近战武功相同，使用移动组件已确认的角色面向。缺省施法点仍由前置判断处理。
+            double radians = caster.GetComponent<ROMoveComponent>().Facing * System.Math.PI / 180d;
+            forward_ = new Vector2((float)System.Math.Sin(radians), (float)System.Math.Cos(radians));
+        }
     }
 
     /// <summary>在 120 FPS 的原动作时间轴上推进窗口，复用基础动作寿命。</summary>

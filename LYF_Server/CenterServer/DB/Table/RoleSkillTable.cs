@@ -31,9 +31,9 @@ internal class RoleSkillTable
     public int SkillID { get; set; }
 
     /// <summary>
-    /// 当前技能等级。
+    /// 建角时保存职业初始等级。未学习的技能为零，普攻等初始技能为一级。
     /// </summary>
-    [SugarColumn(DefaultValue = "0", IsOnlyIgnoreInsert = true)]
+    [SugarColumn(DefaultValue = "0")]
     public int SkillLevel { get; set; }
 
     /// <summary>

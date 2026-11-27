@@ -413,7 +413,12 @@ public sealed class MoshentaSceneFlow
                 // 原时机连接的单条条件定义。
                 XElement condition = NodeData(conditions[item]);
                 if ((string)condition.Element("condition_type") != "SSTConditionTypeIsInFight") allowed = false;
-                else if (inFight) allowed = false;
+                else if (inFight)
+                {
+                    allowed = false;
+                    // 门已解锁且角色在原交互范围内，此时拒绝的是战斗状态。
+                    if (reply != null) reply.Reason = "战斗中无法传送，请先脱离战斗";
+                }
             }
             if (!allowed) continue;
             // 匹配时机连接的触发器节点列表。
@@ -480,6 +485,8 @@ public sealed class MoshentaSceneFlow
             Vector3 delta = Local(row, end) - from;
             // 墙盒半尺寸加角色半径，单位米。
             Vector3 half = Position(row.Element("box").Element("scale")) / 2f + new Vector3(0.3f);
+            // 进入塔顶会立即升墙，触发者的脚底可能仍在膨胀盒内。允许向自己一侧退出。
+            if (MovesOutOfWall(from, delta, half)) continue;
             // slab交集参数限制于[0,1]，按三个轴逐一裁切。
             float lower = 0f;
             // 线段离开盒体的最大参数，初值为终点。
@@ -489,6 +496,21 @@ public sealed class MoshentaSceneFlow
             if (Slab(from.Z, delta.Z, half.Z, ref lower, ref upper)) return true;
         }
         return false;
+    }
+
+    /// <summary>只允许已与新墙重叠的角色沿最近墙面向外走，穿向对面仍交由线段判定阻止。</summary>
+    /// <param name="from">移动前角色相对墙心的局部位置，单位米。</param>
+    /// <param name="delta">本次移动在墙局部坐标中的位移，单位米。</param>
+    /// <param name="half">计入角色半径的墙盒半尺寸，单位米。</param>
+    private static bool MovesOutOfWall(Vector3 from, Vector3 delta, Vector3 half)
+    {
+        // 三轴距最近表面的剩余距离，任一负数即表示角色原本在墙外。
+        Vector3 clearance = half - Vector3.Abs(from);
+        if (clearance.X < 0f || clearance.Y < 0f || clearance.Z < 0f) return false;
+        if (clearance.X <= clearance.Y && clearance.X <= clearance.Z)
+            return delta.X != 0f && from.X * delta.X >= 0f;
+        if (clearance.Y <= clearance.Z) return delta.Y != 0f && from.Y * delta.Y >= 0f;
+        return delta.Z != 0f && from.Z * delta.Z >= 0f;
     }
 
     /// <summary>裁切线段在单轴盒体内的参数区间。</summary>

@@ -5,6 +5,27 @@ using UnityEngine;
 /// <summary>从当前实例的活动实体和场景配置定位任务，不在客户端推进目标次数。</summary>
 public partial class MSceneDungeon
 {
+    /// <summary>检查游戏服已同步的存活敌人是否仍追击本地角色，以及角色是否仍在施法。</summary>
+    /// <param name="role">尝试通过受战斗限制的跨层门的角色。</param>
+    internal bool IsQuestPortalInCombat(PlayerEntity role)
+    {
+        if (role.CurrentState == StateDefine.kStateSkill) return true;
+        // 当前实例的出生标识快照，怪物模型可能随着死亡或新波次发生变化。
+        List<ulong> actors = new List<ulong>(monsters.Keys);
+        // 同一服务端快照同时提供目标角色编号和怪物的剩余生命。
+        TeamData team = TeamData.Instance;
+        // 出生标识的索引，每个怪物按自己最近一次收到的动作检查。
+        for (int i = 0; i < actors.Count; i++)
+        {
+            // 当前怪物的服务端血量，已死亡者的最后一个追击动作不阻挡过门。
+            if (!team.GetMonsterAttr(actors[i], out MonsterHpData health) || health.Hp <= 0) continue;
+            // 最近一次由游戏服广播的移动或攻击动作携带真实目标角色编号。
+            if (team.GetMonsterMotion(actors[i], out MSceneMonsterMotion motion) &&
+                motion.Action.TargetRoleId == role.GetID()) return true;
+        }
+        return false;
+    }
+
     /// <summary>查询点击目标的真实位置并派发现有角色导航，跨层时返回要使用的门户。</summary>
     /// <param name="role">本副本的本地角色。</param><param name="task">所点委托或当前服务端阶段。</param>
     /// <param name="via">无法直达时的可用跨层门；直接到目标时为空。</param>
@@ -49,7 +70,12 @@ public partial class MSceneDungeon
             // 当前点击的目标独立选择目标点，绝不取阶段中的第一条代替。
             DungeonQuestGuide guide = Resource.questGuides[i];
             if (guide.targetId != target.ID) continue;
-            if (guide.waves != null)
+            // 首领出现早于对话机关。用开战后才创建的物件判断，玩家立即点击也会先找达纳托斯。
+            if (guide.talkWave > 0 && !flow.ActiveObjectIds.Contains(guide.combatObject))
+            {
+                if (NavigateWave(role, guide.talkWave, flow)) return true;
+            }
+            else if (guide.waves != null)
             {
                 // 采集已完成后同一目标可继续引到尚存活的召唤怪物。
                 for (int j = 0; j < guide.waves.Length; j++)
@@ -107,7 +133,10 @@ public partial class MSceneDungeon
         {
             // 对话 NPC 复用已有走近交谈，怪物只指引位置，战斗仍由玩家操作。
             MEntity entity = candidates[i];
-            if (!NavigatePoint(role, entity.Position)) continue;
+            // 怪物前按职业普攻射程停步，避免与法阵召唤物重叠导致瞄准方向消失。
+            float range = 0f;
+            if (entity is MonsterEntity) range = LubanMgr.Instance.GetSkillInfoById(BasicAttackId).AtkDistance;
+            if (!NavigatePoint(role, entity.Position, range)) continue;
             if (entity is NpcEntity npc) TouchObject.singleton.ClickNpc(npc);
             return true;
         }
@@ -129,7 +158,8 @@ public partial class MSceneDungeon
 
     /// <summary>预查本层完整路径，确保导航吸附的终点仍在目标附近。</summary>
     /// <param name="role">本地角色。</param><param name="point">目标脚下或机关盒心，单位米。</param>
-    private static bool NavigatePoint(PlayerEntity role, Vector3 point)
+    /// <param name="range">水平停步距离，单位米。机关和传送门取零，怪物取普攻射程。</param>
+    internal static bool NavigatePoint(PlayerEntity role, Vector3 point, float range = 0f)
     {
         // 当前场景共享导航器返回的完整路径，失败时继续尝试配置的跨层入口。
         List<Vector3> path = new List<Vector3>();
@@ -137,7 +167,10 @@ public partial class MSceneDungeon
         // 过滤吸附到另一层或相邻不连通平台的末点。
         Vector3 end = path[path.Count - 1];
         if ((end - point).sqrMagnitude > 9f) return false;
-        role.DispatchEvent(MEventType.MEvent_Navigation, MNavigationEventArgs.Create(end));
+        // 导航组件按射程选择接近点，到达后保留玩家自己的攻击输入。
+        MNavigationEventArgs movement = MNavigationEventArgs.Create(end);
+        movement.UpperRange = range;
+        role.DispatchEvent(MEventType.MEvent_Navigation, movement);
         return true;
     }
 }
