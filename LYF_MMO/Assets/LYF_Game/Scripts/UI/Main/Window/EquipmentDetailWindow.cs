@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 /// <summary>装备详情子窗口，只展示数据并通知控制器提交穿脱和特技选择。</summary>
 public sealed class EquipmentDetailWindow : WindowBase
@@ -132,8 +133,8 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private TMP_Text _infoLayerText;
     /// <summary>说明卡正文滚动区，卡高按内容收紧时它同步缩短，底部按钮跟随卡底。</summary>
     [SerializeField] private RectTransform _infoLayerScroll;
-    /// <summary>说明层关闭按钮。</summary>
-    [SerializeField] private Button _infoLayerCloseButton;
+    /// <summary>说明卡下方的透明按钮，接收卡外的第一次点击。</summary>
+    [SerializeField] private Button _cardBackdrop;
     /// <summary>说明卡标题，打开属性卡或特技卡时按内容改写。</summary>
     [SerializeField] private TMP_Text _infoLayerTitleText;
     /// <summary>特技侧卡右上角的使用入口，提交当前正在阅读的槽位。</summary>
@@ -284,7 +285,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         _forgeButton.onClick.AddListener(OnMainButtonThird);
         _moreButton.onClick.AddListener(OnMoreClicked);
         _footerExpandButton.onClick.AddListener(OnFooterExpandClicked);
-        _infoLayerCloseButton.onClick.AddListener(OnInfoLayerClosed);
+        _cardBackdrop.onClick.AddListener(OnInfoLayerClosed);
         _cardDeductButton.onClick.AddListener(OnCardDeductClicked);
         _cardSourceButton.onClick.AddListener(OnCardSourceClicked);
         _cardRemoveButton.onClick.AddListener(OnCardRemoveClicked);
@@ -384,7 +385,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         // 附加分区默认收起，底栏只保留固定一行交易与耐久，不开窗就重复显示说明正文。
         _footerExtra.gameObject.SetActive(false);
         SetButtonLabel(_footerExpandButton, FoldExpandText);
-        _infoLayer.gameObject.SetActive(false);
+        SetInfoLayerVisible(false);
         // 每次打开从蓝色起点开始，在预制体内的外框上做实际颜色变化。
         _glowStartedAt = Time.unscaledTime;
         ApplyGlowColor(0f);
@@ -393,12 +394,14 @@ public sealed class EquipmentDetailWindow : WindowBase
         ApplyDisplayScale();
     }
 
-    /// <summary>窗口启用时检测左键外部点击并更新外框颜色，隐藏后不再执行。</summary>
+    /// <summary>使用与背包一致的主指针检测详情或菜单外的按下，并更新外框颜色。</summary>
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        // 说明卡由自己的透明点击区域收起；父窗口只在上方没有说明卡时处理按下。
+        Pointer pointer = Pointer.current;
+        if (!_infoLayer.activeSelf && pointer != null && pointer.press.wasPressedThisFrame)
         {
-            if (CloseOnOutsideClick(Input.mousePosition))
+            if (CloseOnOutsideClick(pointer.position.ReadValue()))
             {
                 return;
             }
@@ -412,8 +415,8 @@ public sealed class EquipmentDetailWindow : WindowBase
         ApplyGlowColor(phase);
     }
 
-    /// <summary>外部点击按说明卡、更多菜单、主详情的显示层级，每次只收起最上层。</summary>
-    /// <param name="screenPosition">左键按下的屏幕像素坐标，原点位于屏幕左下角。</param>
+    /// <summary>说明卡已收起时，按更多菜单、主详情的顺序处理外部点击。</summary>
+    /// <param name="screenPosition">鼠标或主触点按下的屏幕像素坐标，原点位于屏幕左下角。</param>
     /// <returns>只有主详情已关闭时为true；收起小窗后保留主详情并继续更新光效。</returns>
     private bool CloseOnOutsideClick(Vector2 screenPosition)
     {
@@ -424,18 +427,6 @@ public sealed class EquipmentDetailWindow : WindowBase
         if (canvas.renderMode != RenderMode.ScreenSpaceOverlay)
         {
             eventCamera = canvas.worldCamera;
-        }
-        if (_infoLayer.activeSelf)
-        {
-            // insideCard 表示点击仍在最上层说明卡内，卡内交互不收起任何窗口。
-            bool insideCard = RectTransformUtility.RectangleContainsScreenPoint(
-                _infoLayer.transform as RectTransform, screenPosition, eventCamera);
-            if (insideCard)
-            {
-                return false;
-            }
-            OnInfoLayerClosed();
-            return false;
         }
         if (_moreMenu.activeSelf)
         {
@@ -516,7 +507,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         _infoLayerText.text = body;
         _cardUseButton.gameObject.SetActive(true);
         SetButtonLabel(_cardUseButton, title);
-        _infoLayer.gameObject.SetActive(true);
+        SetInfoLayerVisible(true);
         ApplyCardLayout(true);
     }
     #endregion
@@ -534,7 +525,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         _infoLayerTitleText.text = "装备说明";
         _infoLayerText.text = _equipmentInfoText;
         ApplyCardSkillButtons(false);
-        _infoLayer.gameObject.SetActive(true);
+        SetInfoLayerVisible(true);
         // 普通信息卡没有底部三按钮，按正文高度收紧到卡底只留一条内边距。
         ApplyCardLayout(false);
         LayoutRebuilder.ForceRebuildLayoutImmediate(_infoLayer.transform as RectTransform);
@@ -547,7 +538,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         _infoLayerText.text = _attributeCardText;
         // 属性卡不提供特技相关入口，底部三个按钮整体隐藏。
         ApplyCardSkillButtons(false);
-        _infoLayer.gameObject.SetActive(true);
+        SetInfoLayerVisible(true);
         // 属性条目少时卡高收到最小高度，不再固定 452 留出大片空白。
         ApplyCardLayout(false);
         LayoutRebuilder.ForceRebuildLayoutImmediate(_infoLayer.transform as RectTransform);
@@ -568,7 +559,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         float bodyHeight = preferred;
         if (bodyHeight > bodyMax) bodyHeight = bodyMax;
         if (bodyHeight < 0f) bodyHeight = 0f;
-        // cardHeight 是收紧后的卡高，下限保证标题、正文与关闭按钮三块不重叠。
+        // cardHeight 是收紧后的卡高，下限保证标题及正文保留阅读间距。
         float cardHeight = CardTopArea + bodyHeight + bottomArea;
         if (cardHeight < CardMinHeight) cardHeight = CardMinHeight;
         if (cardHeight > CardMaxHeight) cardHeight = CardMaxHeight;
@@ -659,7 +650,7 @@ public sealed class EquipmentDetailWindow : WindowBase
             _cardStateText.text = _specialSkillCardStates[index] + "　" + _specialSkillOpenCostText;
         }
         _cardStateText.gameObject.SetActive(!canUseSlot);
-        _infoLayer.gameObject.SetActive(true);
+        SetInfoLayerVisible(true);
         // 特技卡正文按内容撑高到 452 上限，超出部分在卡内滚动，三按钮固定贴卡底。
         ApplyCardLayout(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(_infoLayer.transform as RectTransform);
@@ -898,10 +889,41 @@ public sealed class EquipmentDetailWindow : WindowBase
         }
     }
 
-    /// <summary>说明层关闭按钮隐藏本层，不关闭整个详情窗口。</summary>
+    /// <summary>同时切换说明卡和它下面的透明按钮，卡内滚动和确认按钮保持在上层。</summary>
+    /// <param name="visible">打开任一种说明卡时为 true，刷新或收起时为 false。</param>
+    private void SetInfoLayerVisible(bool visible)
+    {
+        _infoLayer.SetActive(visible);
+        _cardBackdrop.gameObject.SetActive(visible);
+        if (visible) FitBackdropToCanvas();
+    }
+
+    /// <summary>画布尺寸变化时使卡外点击区域继续覆盖可见的整个界面。</summary>
+    private void OnRectTransformDimensionsChange()
+    {
+        if (_cardBackdrop != null && _cardBackdrop.gameObject.activeInHierarchy) FitBackdropToCanvas();
+    }
+
+    /// <summary>把根画布的两个对角转换为详情窗口本地坐标，适配画布缩放与窗口位置。</summary>
+    private void FitBackdropToCanvas()
+    {
+        // 根画布使用自己的局部矩形，覆盖屏幕边缘以及装备详情之外的区域。
+        RectTransform canvasRect = (RectTransform)GetComponentInParent<Canvas>().rootCanvas.transform;
+        // 窗口是透明按钮的直接父节点；所有坐标按它的比例换算。
+        RectTransform panelRect = (RectTransform)transform;
+        // 左下、右上边界均在透明按钮的父节点坐标系中。
+        Vector2 low = panelRect.InverseTransformPoint(canvasRect.TransformPoint(canvasRect.rect.min));
+        Vector2 high = panelRect.InverseTransformPoint(canvasRect.TransformPoint(canvasRect.rect.max));
+        // 预制体将按钮的锚点与轴心设在中心，本地中心和尺寸即可描述完整覆盖区。
+        RectTransform backdropRect = (RectTransform)_cardBackdrop.transform;
+        backdropRect.localPosition = (low + high) * 0.5f;
+        backdropRect.sizeDelta = high - low;
+    }
+
+    /// <summary>点击卡外或提交卡内操作后，只收起当前说明卡。</summary>
     private void OnInfoLayerClosed()
     {
-        _infoLayer.gameObject.SetActive(false);
+        SetInfoLayerVisible(false);
     }
     #endregion
 }
