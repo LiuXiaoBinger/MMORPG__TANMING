@@ -36,7 +36,7 @@ MonoBehaviour:
   slopeUpwardForce: 25
   slopeDownwardForce: 28
   runningAcceleration: 16
-  runningTopSpeed: 7.5
+  runningTopSpeed: 10
   runningTurningDrag: 14
   multiJumps: 1
   coyoteJumpThreshold: 0.15
