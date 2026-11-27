@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `401cfc12b089900e289670999b1127fff68479d35aa084fcc886d6edc119985b`
+Source normalized SHA256: `55b69fee66a8d1ead612031d7e4294a9b94ceb84bd5c182d30419ccaf6d35b9f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -173,11 +173,12 @@ Source normalized SHA256: `401cfc12b089900e289670999b1127fff68479d35aa084fcc886d
 | [CODE][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Create a party dungeon before admitting its members | 1123-1127 |
 | [CODE][FILES][HANDOFF][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1128-1131 |
 | [CODE][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag item details and recovery shortcuts | 1132-1135 |
-| [CODE][网络][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Read cross-GS player archives from the project Redis | 1136-1139 |
+| [CODE][网络][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Read cross-GS player archives from the project Redis | 1136-1140 |
+| [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-ROLL-20261127] Per-instance equipment attributes and growth | 1141-1143 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `642af8ad0516321bc01667cef56a83818abda2c38ea2eddd7ff7c2c809709c07`
+Source normalized SHA256: `e9b13eefff627dcab2b3aedcb2d91f7498e5f93cb23e9b351a4833c1edeb3b68`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -345,7 +346,8 @@ Source normalized SHA256: `642af8ad0516321bc01667cef56a83818abda2c38ea2eddd7ff7c
 | [VERIFY][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Verify creation, party transfer and return across GameServers | 1174-1178 |
 | [VERIFY][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1179-1182 |
 | [VERIFY][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag card, shortcuts and server potion settlement | 1183-1186 |
-| [VERIFY][网络][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Project Redis and real two-GS player handoff | 1187-1190 |
+| [VERIFY][网络][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Project Redis and real two-GS player handoff | 1187-1191 |
+| [VERIFY][装备][数据库][界面][EQUIP-ROLL-20261127] Equipment rolls, database reload and eye interaction | 1192-1194 |
 
 ## Docs/AI/DECISIONS.en.md
 

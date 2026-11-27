@@ -1137,3 +1137,7 @@ All 460 ItemInfo rows specify a detail category. Ordered actions and per-bottle 
 
 - The Windows Redis 5.0.14.1 server and CLI from the developer’s E: drive are in `LYF_Server/Redis/`. Shared realm startup and shutdown own the project process on loopback port 6380. Runtime authentication reuses the existing verification-service setting.
 - On a cross-GS dungeon entry or line change, the destination reads the source’s confirmed version of skills and inventory from Redis. Missing, unavailable, damaged or outdated entries use the existing CenterServer request and are refilled from MySQL. Count-only saves can reuse unchanged skills and items after SQL commit. Bag capacity is checked independently because expanding a bag does not increment the item save version. HP, MP and active cooldowns still travel with the gate handoff. Same-GS moves reuse their online role. See `项目修改日志/2026-11-27-跨GS玩家Redis缓存与中心服回源.md`.
+
+## [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-ROLL-20261127] Per-instance equipment attributes and growth
+
+Equipment UID owns six integer base rolls in the equip table. New drops and reforging use 80–120% of each template, with ordered attack endpoints. Existing fixed gear keeps its original template values. Strengthening caps at 50 and adds 1.5% per level. Tiers run from 1 to 10 and add 7.5% per completed step. Each contribution rounds separately. All positive slots reaching 90% of their own maximum earn 极. Use the attribute eye for the breakdown. Feature commit b0ecd74, pushed to codex/feature-development. See 项目修改日志/2026-11-27-装备实例重铸与强化进阶.md.
