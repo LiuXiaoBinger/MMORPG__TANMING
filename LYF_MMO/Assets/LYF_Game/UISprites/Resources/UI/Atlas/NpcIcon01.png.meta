@@ -1,0 +1,3397 @@
+fileFormatVersion: 2
+guid: 2862851717567a846871c4e96dfbb3c6
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: NPC_Ailiusi.png
+    21300002: NPC_Ailunsidi01.png
+    21300004: NPC_Ailunsidi02.png
+    21300006: NPC_Aimiliwan.png
+    21300008: NPC_Andelu.png
+    21300010: NPC_Chaomodaoshi.png
+    21300012: NPC_Chengniannvxing.png
+    21300014: NPC_Dakongshi.png
+    21300016: NPC_Daojushangren.png
+    21300018: NPC_Dashu.png
+    21300020: NPC_doujishangren.png
+    21300022: NPC_F_AiSheng.png
+    21300024: NPC_F_GuiNv.png
+    21300026: NPC_F_MiShuZhuShou.png
+    21300028: NPC_F_QinQieDeAYi.png
+    21300030: NPC_F_TouShiShangRen01.png
+    21300032: NPC_F_TouShiShangRen02.png
+    21300034: NPC_F_XiuNv.png
+    21300036: NPC_F_YongBingWuPinShangRen.png
+    21300038: NPC_Feisheer.png
+    21300040: NPC_Fumomao.png
+    21300042: NPC_Gejier.png
+    21300044: NPC_Geleisi.png
+    21300046: NPC_Guna.png
+    21300048: NPC_Heiban.png
+    21300050: NPC_Henglike.png
+    21300052: NPC_Hukelian.png
+    21300054: NPC_Jiehunfuwurenyuan.png
+    21300056: NPC_Jierui.png
+    21300058: NPC_Jifenweibing.png
+    21300060: NPC_Kapula01.png
+    21300062: NPC_Keaidehaizi.png
+    21300064: NPC_Kedisi.png
+    21300066: NPC_Kelisiting.png
+    21300068: NPC_Kuisite.png
+    21300070: NPC_Labisi.png
+    21300072: NPC_LaoNianTieJiang.png
+    21300074: NPC_Liumanggonghuichengyuan.png
+    21300076: NPC_M_CangKuGuanLiYuan.png
+    21300078: NPC_M_HuangShiGuanJia.png
+    21300080: NPC_M_JiSi.png
+    21300082: NPC_M_JiYiMiGongDaRen.png
+    21300084: NPC_M_KaoGuXueZhe.png
+    21300086: NPC_M_LiaoLiShangRen02.png
+    21300088: NPC_M_QiShi01.png
+    21300090: NPC_M_ShaoNian.png
+    21300092: NPC_M_Varmunt(1).png
+    21300094: NPC_M_YinYouShiRen.png
+    21300096: NPC_Mofashigonghuichengyuan.png
+    21300098: NPC_Molikapianji.png
+    21300100: NPC_Molitoushiji.png
+    21300102: NPC_Mowuxuezhe.png
+    21300104: NPC_Nami.png
+    21300106: NPC_Niya.png
+    21300108: NPC_Qishilingzhu.png
+    21300110: NPC_Qishituantuanzhang.png
+    21300112: NPC_Sexilisi.png
+    21300114: NPC_Shansi.png
+    21300116: NPC_Shenggejiaohui.png
+    21300118: NPC_Shenguan.png
+    21300120: NPC_Shensheshou.png
+    21300122: NPC_Shibei.png
+    21300124: NPC_Shizicike.png
+    21300126: NPC_Shizijunduizhang.png
+    21300128: NPC_Shizijunlingxiu.png
+    21300130: NPC_Tuowade.png
+    21300132: NPC_weibing.png
+    21300134: NPC_Weiweika.png
+    21300136: NPC_Xianzhemande.png
+    21300138: NPC_Xiaodianshangren.png
+    21300140: NPC_Xiaodianshangren01.png
+    21300142: NPC_Xiaomao.png
+    21300144: NPC_Ximeng.png
+    21300146: NPC_Ximeng02.png
+    21300148: NPC_Yanjiuxuezhe.png
+    21300150: NPC_Yaoshushigonghuichengyuan.png
+    21300152: NPC_Yisa.png
+    21300154: NPC_Youluo.png
+    21300156: NPC_Yuenasi.png
+    21300158: NPC_Yushenduizhang(1).png
+    21300160: NPC_Zhuangbeishangren.png
+    21300162: NPC_Zhuanzhiyuan.png
+    21300164: NPC_Chongwuyanjiuyuan.png
+    21300166: NPC_Gaoshiban.png
+    21300168: NPC_Huangchong.png
+    21300170: NPC_M_YaoShiGongJiang.png
+    21300172: NPC_Maihuashaonv.png
+    21300174: NPC_Huaping.png
+    21300176: NPC_F_BaiNvWu.png
+    21300178: NPC_F_BaoNi.png
+    21300180: NPC_F_PangMei.png
+    21300182: NPC_M_ChengGongShangRen.png
+    21300184: NPC_M_JiuBao.png
+    21300186: NPC_M_MiZiShangRen01.png
+    21300188: NPC_M_MiZiShangRen02.png
+    21300190: NPC_Boli.png
+    21300192: NPC_ChaiQuan_1.png
+    21300194: NPC_ChaiQuan_2.png
+    21300196: NPC_ChaiQuan_3.png
+    21300198: NPC_F_WaErJiLi.png
+    21300200: NPC_FengJingLing.png
+    21300202: NPC_HuoJingLing.png
+    21300204: NPC_ShuiJingLing.png
+    21300206: NPC_TuJingLing.png
+    21300208: NPC_GeBuLinShouLing.png
+    21300210: NPC_ShouRenQiuZhang.png
+    21300212: NPC_ELing.png
+    21300214: NPC_GeBuLin_05.png
+    21300216: NPC_LiMao.png
+    21300218: NPC_NvShouRenZhanShi.png
+    21300220: NPC_Renyu.png
+    21300222: NPC_RenYuGongZhu.png
+    21300224: NPC_ShouRenYingEr.png
+    21300226: NPC_ShouRenYingXiong.png
+    21300228: NPC_ShouRenZhanShi.png
+    21300230: NPC_M_LaoNianTieJiang.png
+    21300232: NPC_M_LeYuanTuanJiaoGuanWuLe.png
+    21300234: NPC_Dianchangji.png
+    21300236: NPC_Dazuiniao.png
+    21300238: NPC_Miaomiao01.png
+    21300240: NPC_Miaomiao02.png
+    21300242: NPC_Miaomiao03.png
+    21300244: NPC_LiuMang.png
+    21300246: NPC_M_HuangChongBeiSi.png
+    21300248: NPC_M_HuangChongGuShou.png
+    21300250: NPC_M_HuangChongJingJiRen.png
+    21300252: NPC_M_HuangChongXiaoTiQin.png
+    21300254: NPC_M_JianPanShou.png
+    21300256: NPC_Miaomiao04.png
+    21300258: NPC_AnBiSi.png
+    21300260: NPC_Yingling_01.png
+    21300262: NPC_Yingling_02.png
+    21300264: NPC_Yingling_03.png
+    21300266: NPC_M_YouDiTong.png
+    21300268: NPC_Chuansongmen_01.png
+    21300270: NPC_Chuansongmen_02.png
+    21300272: NPC_Chuansongmen_03.png
+    21300274: NPC_F_YanHua03.png
+    21300276: NPC_F_YanHua04.png
+    21300278: NPC_F_YanHua05.png
+    21300280: NPC_M_BanBo.png
+    21300282: NPC_M_JiaoGuan.png
+    21300284: NPC_M_KaiSiLiYaSi.png
+    21300286: NPC_M_MoHuaBaLeiMengDe.png
+    21300288: NPC_M_YanHua01.png
+    21300290: NPC_M_YanHua02.png
+    21300292: NPC_M_YanHua06.png
+    21300294: NPC_Molizhuangbeiji.png
+    21300296: NPC_M_ChuanZhang.png
+    21300298: NPC_F_LingZhuNvEr.png
+    21300300: NPC_M_DaNaTuoSi.png
+    21300302: NPC_M_MengLuoKeLingZhu.png
+    21300304: NPC_M_QiShiTuanTuanZhang.png
+    21300306: NPC_F_LaoNaiNai.png
+    21300308: NPC_M_HuaHuaDeRen.png
+    21300310: NPC_FanMaiJi.png
+  externalObjects: {}
+  serializedVersion: 9
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: 4
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 2
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 54
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    androidETC2FallbackOverride: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: NPC_Ailiusi.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9db4c847b6dd6af40ae2d3a7f67b59b8
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Ailunsidi01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2986bca7d09773941a834f88f0e8a92d
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Ailunsidi02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2c722bad29cb994cbf001d51e923862
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Aimiliwan.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77ae1d73bc851fd4b9a0263701d8d364
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_AnBiSi.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1ea47728770d8b4eb759e3ec8b3bd58
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Andelu.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29af4ef90daf6744d92c36c285e4fdbc
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Boli.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b27ef1596468384988bc2c54f141e3c
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_ChaiQuan_1.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 511
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdee7be3e5b5394488259fdc2792183b
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_ChaiQuan_2.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 584
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f77f80a9f2b53743b31e86b086a830a
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_ChaiQuan_3.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 657
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8e6e2ccf823e534e85b4157a12704cc
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Chaomodaoshi.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 730
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a76fb8ccebf90149add782a3d6f2dce
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Chengniannvxing.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 803
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1970bd0b514aa194ba348297c4bc4fa6
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Chongwuyanjiuyuan.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 876
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f801949b3599dc4c8f6bd519661afd5
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Chuansongmen_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 949
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21e1954ca0dbea6458724fcbfa4e7c3c
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Chuansongmen_02.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7faa9811ab0a7b74eb7779720cde4b20
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Chuansongmen_03.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48880a3ff27f72b4e824add39a5e8dda
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Dakongshi.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09be28887810ffb4eb58f4cea787bafa
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Daojushangren.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59212dd568dc77c47919f44dfb24c66e
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Dashu.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83b94a93f006da44babe8eeef21f48b3
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Dazuiniao.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 908f9f48f1011ee4ab85da2893847533
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Dianchangji.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3700aa9f0398e541a9ebbe322cdff88
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_doujishangren.png
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4558d632799c44347b223b9f7e214948
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_ELing.png
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 616023bfa49f247428be3eb8356756c5
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_FanMaiJi.png
+      rect:
+        serializedVersion: 2
+        x: 730
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6503b8c6943123b4dbcb252c82c31409
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Feisheer.png
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a119f9f8033e1a749b80264cb5274bbb
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_FengJingLing.png
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bde2fec6e548b84080bed9a3bc126b1
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Fumomao.png
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63ed4c3c25d4d60418867e69a1a8e85f
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_AiSheng.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fda06b51a5ee45e42938016f895f4056
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_BaiNvWu.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcf2e7138b704aa4c8a782e66712cc1b
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_BaoNi.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f6bdb43f07d07743884aae8a4c4f6c2
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_GuiNv.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe5c83c6bb773da4481d8e2618f45cac
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_LaoNaiNai.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c3651b217ea31c4fa843fb947899687
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_LingZhuNvEr.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5522c4429a825b14c82b31dd6f6838d2
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_MiShuZhuShou.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 511
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d92c06796d734064199978a580f55ad8
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_PangMei.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 584
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bbf6ca91c2ace749bd40c20280d5082
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_QinQieDeAYi.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 657
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bea67ff2f19b054f98e35afe522d78d
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_TouShiShangRen01.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 730
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 484601eb3c1f2c1499cf4dabdb875dbb
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_TouShiShangRen02.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 803
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04ea0773230b7ab478483a4c24176ad7
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_WaErJiLi.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 876
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0d1999902f39104c8986954ca57f568
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_XiuNv.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 949
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec9036d1a68720f4881467297b32a91e
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_YanHua03.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99a1916b030b8ee4985e32ebf48b8a66
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_YanHua04.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d58e8d6bf0bc4d488b34087a8d55fb3
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_YanHua05.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4eec7e0c8deff0d42b894517429bf28a
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_F_YongBingWuPinShangRen.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1f88f07b0125fe48882992192f6fc1a
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Gaoshiban.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f26ceba7a70195a4bb76ac40b8922585
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_GeBuLinShouLing.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67f294436b459be499e673290fb06916
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_GeBuLin_05.png
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df9784a1522bf224389b813e82ebbc8d
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Gejier.png
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b277b536b3cb926419c7c90be91677f6
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Geleisi.png
+      rect:
+        serializedVersion: 2
+        x: 730
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e63a3d1186e542c4ba9ae9ba6c6917a7
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Guna.png
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 027f9a365caa4f041a2f2cbbf01335d8
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Heiban.png
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af440815a505ad04780ae2c5a10ba3b8
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Henglike.png
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 73
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d0a71b56c719ca4387ab6411c638bab
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Huangchong.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3080bd50b40051d4ea0bf9247693256b
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Huaping.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 194e5df02dd2d5e43b896cb5d6f4a350
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Hukelian.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18b13decfc7d41f49a0e5175704c81fd
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_HuoJingLing.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e354b243e715ac34893a42796d785d68
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Jiehunfuwurenyuan.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9be95c30921d07c4ca8a65da226b7c84
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Jierui.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 511
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82384a1f0ebe9b94a812ec7df59f4da1
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Jifenweibing.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 584
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89c66ba7fad8d504ea09a4238c2ae181
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Kapula01.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 657
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aea939603952c7142ba5f8110614165e
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Keaidehaizi.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 730
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cf858ed269f87e4ead8e22a55d76cca
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Kedisi.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 803
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62307fcb5c685ed46bf96675297d3e70
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Kelisiting.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 876
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 358fd7097f9540f40aa7d80e2c6c82d7
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Kuisite.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 949
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2729a95f6120006488cc5b6603312917
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Labisi.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03dfab925d641cf48869c63239000fac
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_LaoNianTieJiang.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccdb4f7c7675b1c4b8979f31376a5a8e
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_LiMao.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cefec1afd1712d046b6cb8ac3a3311d1
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_LiuMang.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf190ad856f7f34468a49d628de0e8e1
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Liumanggonghuichengyuan.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6d4f99d8fb0f0a4b8c2d4f3092546eb
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Maihuashaonv.png
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0727dca812ad7e488d192c844600abd
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Miaomiao01.png
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d256b9d80b2e4e44cbb753c3a96d5034
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Miaomiao02.png
+      rect:
+        serializedVersion: 2
+        x: 730
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af9ef7eca0fb7a54ebe7fff3ba9f50f5
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Miaomiao03.png
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fb178f9fc22e5b45817b09bb37a57a9
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Miaomiao04.png
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8740da98cd4f41c44a97a802d7787cc1
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Mofashigonghuichengyuan.png
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 146
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b94905864d4a499488f24677b798f1cf
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Molikapianji.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09b53276aa61aa9408577d07c0cd4a3a
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Molitoushiji.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0a6e9ba111a0684f923fd17eab5aa9f
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Molizhuangbeiji.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0a19a39a3ac700479f4e431c7b3d243
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Mowuxuezhe.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e03b5cd068da6fc41b4de8dda2cac90f
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_BanBo.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 511
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3e480950c69a1543b83b52c907952c3
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_CangKuGuanLiYuan.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 584
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bfe08e68dc932f409bd8e76cb4ad2b3
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_ChengGongShangRen.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 657
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86500569b196a7d4ebc6ef236a837eda
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_ChuanZhang.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 730
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76d565f8e7c60bb4ab33b5a9b85a524f
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_DaNaTuoSi.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 803
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8e2500e6f146b044bfdfb4a48efdc79
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_HuaHuaDeRen.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 876
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f466291f5b24254c89577e1e831a238
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_HuangChongBeiSi.png
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 949
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 000584206ec880947b7b6cbcc175a685
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_HuangChongGuShou.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 757fc8d35ee0d584d921211deacd9d42
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_HuangChongJingJiRen.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80e26676c35cb264aada5e23b48c121f
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_HuangChongXiaoTiQin.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d4a64cdc0b36a44da24778879c3679f
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_HuangShiGuanJia.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82a7eb1316d5e6a43aae6b2b82ac68ef
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_JianPanShou.png
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99093c2b53300ac4bba1e79bc7dd605f
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_JiaoGuan.png
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3827fcf995b6c5642b134c48a407d37f
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_JiSi.png
+      rect:
+        serializedVersion: 2
+        x: 730
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b39af84d3f54c34a8d68d4ed7da4bea
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_JiuBao.png
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c791461d9043149449a229c999137da5
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_JiYiMiGongDaRen.png
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0def801c479aec64c8a2cfdb086e4f0f
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_KaiSiLiYaSi.png
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 219
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7893d2aeb2a651e4c948a00e366aee5b
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_KaoGuXueZhe.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55968a160cbb566458548bc12be5de72
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_LaoNianTieJiang.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4796eade3cac49c4eb60804ac868923b
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_LeYuanTuanJiaoGuanWuLe.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39c9a7abdc42ae345a33b4d990ebba49
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_LiaoLiShangRen02.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 511
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d93cfc6c5a8239488ff421c833d2885
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_MengLuoKeLingZhu.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 584
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e47f8210835ed7242a6ab6e8c9a89bcf
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_MiZiShangRen01.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 657
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d11e4a0ec131cc247a7de27b530db1a5
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_MiZiShangRen02.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 730
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7ba05ba2909e474c8133e2c5379ef99
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_MoHuaBaLeiMengDe.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 803
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e368a31e41a447e40a9f706d411ea7b4
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_QiShi01.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 876
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a90dca9b4139ca747875efa2c5d88a1c
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_QiShiTuanTuanZhang.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 949
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fadbc4f56537e64c8be844d21e2343a
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_ShaoNian.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d3717a465914c8418f8cce5928786f6
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_Varmunt(1).png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 804c8d5d07eec0b408a766e127ebdeef
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_YanHua01.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21be990966a5e8842bce484bf4c38749
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_YanHua02.png
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60f46f8ab531ae04f88a4d2aff66f048
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_YanHua06.png
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f90232db7379944584a1426ec74dd09
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_YaoShiGongJiang.png
+      rect:
+        serializedVersion: 2
+        x: 730
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a840341a32e19c347838a66ab67fc32e
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_YinYouShiRen.png
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4ec1b28747df6e45a6364a971583c93
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_M_YouDiTong.png
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b2ba5d9eae1de24cbeaf6e14f0d98f6
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Nami.png
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 292
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 639eb55605c957f4487e09bbe7014ae1
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Niya.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bc6e7e19d8920e4c957e085f743e00b
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_NvShouRenZhanShi.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54dd45597bc5b8040b40ba5c01836747
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Qishilingzhu.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 511
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47a0dba45e01eaa4a88dd362dbf5c54b
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Qishituantuanzhang.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 584
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e5ff02f8c80ec9439e5a14de5d7c810
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Renyu.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 657
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1792c3877350ad4eabaf8fb44e81faa
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_RenYuGongZhu.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 730
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 286dfa7de9655f94783506a702c6beb2
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Sexilisi.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 803
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c1e137f7bc04cd40af45c95fd5b446c
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Shansi.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 876
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 097842451104b7842819a16220b43f43
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Shenggejiaohui.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 949
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0431b63125e1244e81dd0e70a359e4a
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Shenguan.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77920eeb8d88af743819ee4a8004acde
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Shensheshou.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39de6b34a86ff5143a681858ca486a43
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Shibei.png
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78da2a194512b6044b51c319ec0897d4
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Shizicike.png
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 065fa6a839085cd4db427886641cd9e6
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Shizijunduizhang.png
+      rect:
+        serializedVersion: 2
+        x: 730
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6be9b3725e9669c41adadd13c488436d
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Shizijunlingxiu.png
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c153e1ce96f9ee46b73d855ed98f454
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_ShouRenQiuZhang.png
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b0ac982de91e2e4a8161c7820c305bd
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_ShouRenYingEr.png
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 365
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a42f129894f7de54aa779082fa88d730
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_ShouRenYingXiong.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdcc138ac63c16547aee7d9703c45e2d
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_ShouRenZhanShi.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 511
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 738503830fdd94c48959d5ebb4dfff7b
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_ShuiJingLing.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 584
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 590bc5b0b7a82cd439af866856f4efdc
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_TuJingLing.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 657
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e9e25c099ea84449bdba1dce957b18d
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Tuowade.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 730
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fac4d79e98aa496468a25a4ddeb8badd
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_weibing.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 803
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96742d20352eb6643a5656c443aec3a9
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Weiweika.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 876
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3abaa9790e1c1c4bbcf7de4f0a14b26
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Xianzhemande.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 949
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6eca97d374f71ad459e4b447e39dd887
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Xiaodianshangren.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ec07938ab55ab748b7ff96626348ec0
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Xiaodianshangren01.png
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c1b00250a09b6c4b9c9ae3f4a7785f2
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Xiaomao.png
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bceb6e3c16fb92e41ad14f856c77ff21
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Ximeng.png
+      rect:
+        serializedVersion: 2
+        x: 730
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52a34ac833850a74e85d87dd9ce83f5b
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Ximeng02.png
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d2be68d1b2b85f48aa338326f971bd6
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Yanjiuxuezhe.png
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48c94f8fa8fd81d46ae35c5d0385a9e3
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Yaoshushigonghuichengyuan.png
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 438
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc18a3845a83996498c0ee210750f495
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Yingling_01.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 511
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2034c85d192a2614eb0704ba91d39616
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Yingling_02.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 584
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58cf4209ea5fddf43bafdb1807c4b92b
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Yingling_03.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 657
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff2266db49c39fc49a3f183e551151a9
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Yisa.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 730
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d91471e98a944fc4dadfb815ce795022
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Youluo.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 803
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0903935381646e4d8cba0207b8c6194
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Yuenasi.png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 876
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34b4bc958b709e64eab28ebeeb3b75b5
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Yushenduizhang(1).png
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 949
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b015a004773c3148a51fd2802b8f6fd
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Zhuangbeishangren.png
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 511
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9ad6a8f0f8d9054590bcb7169f80cf4
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NPC_Zhuanzhiyuan.png
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 511
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fca589b6f351fcc4ea453a1eb4788760
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID:
+    vertices: []
+    indices:
+    edges: []
+    weights: []
+  spritePackingTag:
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData:
+  assetBundleName:
+  assetBundleVariant:

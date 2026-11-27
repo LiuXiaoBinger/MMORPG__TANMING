@@ -66,8 +66,6 @@ public sealed class FriendChatTemplate : MonoBehaviour
         box.localScale = new Vector3(facing, 1, 1);
         body.rectTransform.localScale = new Vector3(facing, 1, 1);
         expression.rectTransform.localScale = body.rectTransform.localScale;
-        if (side == 1) bubble.color = new Color32(190, 214, 201, 255);
-        else bubble.color = Color.white;
         time.alignment = TextAnchor.MiddleLeft;
         if (side == 1) time.alignment = TextAnchor.MiddleRight;
         layout.preferredHeight = height + 28;

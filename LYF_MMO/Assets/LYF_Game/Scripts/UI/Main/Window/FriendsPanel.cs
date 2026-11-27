@@ -100,11 +100,20 @@ public sealed class FriendsPanel : WindowBase
     {
         selectedTabs[0].SetActive(recentOnly);
         selectedTabs[1].SetActive(!recentOnly);
-        // 纸色选中底上的字使用深墨，暗底则显示浅灰。
-        Color ink = new Color32(26, 34, 36, 255);
-        Color light = new Color32(202, 213, 211, 255);
-        if (recentOnly) { tabLabels[0].color = ink; tabLabels[1].color = light; }
-        else { tabLabels[0].color = light; tabLabels[1].color = ink; }
+        // RO 蓝色高亮页签使用白字，浅色页签沿用好友姓名的蓝色。
+        Color selectedColor = Color.white;
+        // 未选页签的文字颜色，和群聊预制体中相同状态一致。
+        Color normalColor = new Color32(79, 107, 182, 255);
+        if (recentOnly)
+        {
+            tabLabels[0].color = selectedColor;
+            tabLabels[1].color = normalColor;
+        }
+        else
+        {
+            tabLabels[0].color = normalColor;
+            tabLabels[1].color = selectedColor;
+        }
     }
     /// <summary>复用右侧消息行，打开新会话时定位到最新消息。</summary><param name="history">当前联系人的有序本机记录。</param><param name="onPlay">播放该行语音。</param><param name="jump">选择新联系人时为真。</param>
     internal void ShowChat(ReadPrivateMessageRes history, Action<AudioChat> onPlay, bool jump)
