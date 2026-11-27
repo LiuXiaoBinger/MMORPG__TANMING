@@ -139,6 +139,8 @@ public class NetDefine
     public const ushort CMD_TeamInvatationCode = 11211;
     /// <summary>服务端下发副本入场通知，携带实例ID、场景与出生点。</summary>
     public const ushort CMD_TeamEnterDungeonCode = 11212;
+    /// <summary>GS 单播个人首领击杀进度及本次自动入包内容。</summary>
+    public const ushort CMD_DungeonBossProgress = 11217;
     /// <summary>服务端下发角色离开视野通知，客户端据此删除远端角色。</summary>
     public const ushort CMD_RoleLeaveCode = 11213;
 }

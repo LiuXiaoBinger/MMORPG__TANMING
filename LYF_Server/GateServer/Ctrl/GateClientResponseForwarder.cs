@@ -235,6 +235,11 @@ public static class GateClientResponseForwarder
                 TeamEnterDungeonNtf.Parser.ParseFrom(package.Data);
                 resultCode = CmdCode.Succeed;
                 return true;
+            case NetDefine.CMD_DungeonBossProgress:
+                // 游戏服已按角色结算，此处仅校验并转发该成员的个人进度。
+                DungeonBossProgressNtf.Parser.ParseFrom(package.Data);
+                resultCode = CmdCode.Succeed;
+                return true;
             case NetDefine.CMD_RoleLeaveCode:
                 // 角色离开视野通知用于删除远端模型，无错误码，验证协议后原样转发。
                 RoleLeaveNtf.Parser.ParseFrom(package.Data);

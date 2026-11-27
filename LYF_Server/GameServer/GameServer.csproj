@@ -363,6 +363,7 @@
         <Compile Include="SceneEntity\MoshentaCodeTimeline.cs" />
         <Compile Include="SceneEntity\MoshentaLuaTimeline.cs" />
         <Compile Include="SceneEntity\SceneWaveSpawner.AI.cs" />
+        <Compile Include="SceneEntity\SceneWaveSpawner.BossAwards.cs" />
         <Compile Include="SceneEntity\Skill\MoshentaBuffInstance.cs" />
         <Compile Include="SceneEntity\Skill\MoshentaGeneBridge.cs" />
         <Compile Include="SceneEntity\Skill\MoshentaBuffRuntime.cs" />

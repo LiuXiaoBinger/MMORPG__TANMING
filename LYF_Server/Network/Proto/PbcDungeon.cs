@@ -29,18 +29,23 @@ public static partial class PbcDungeonReflection {
           "cGx5VHlwZSJDChpTeW5jTWVtYmVyUmVwbHlFbnRlckZCRGF0YRILCgN1aWQY",
           "ASABKAQSGAoEdHlwZRgCIAEoDjIKLlJlcGx5VHlwZSJCCg9GYWlsRW50ZXJG",
           "QkRhdGESCwoDdWlkGAEgASgEEiIKBnJlYXNvbhgCIAEoDjISLkZhaWxFbnRl",
-          "ckZCUmVhc29uKjgKCVJlcGx5VHlwZRIVChFSRVBMWV9UWVBFX1JFRlVTRRAA",
-          "EhQKEFJFUExZX1RZUEVfQUdSRUUQASp3ChFGYWlsRW50ZXJGQlJlYXNvbhIY",
-          "ChRGQUlMX0VOVEVSX0ZCX1NVQ0VTUxAAEhkKFUZBSUxfRU5URVJfRk5fVElN",
-          "RU9VVBALEi0KKUZBSUxfRU5URVJfRkJfU09NRU9ORV9MRUFWRV9XQUlUSU5H",
-          "X1NDRU5FEA1iBnByb3RvMw=="));
+          "ckZCUmVhc29uIqIBChZEdW5nZW9uQm9zc1Byb2dyZXNzTnRmEhMKC2luc3Rh",
+          "bmNlX2lkGAEgASgEEhUKDWtpbGxlZF9ib3NzZXMYAiADKAkSEgoKYm9zc190",
+          "b3RhbBgDIAEoBRIRCglib3NzX25hbWUYBCABKAkSDwoHaXRlbV9pZBgFIAEo",
+          "BRISCgppdGVtX2NvdW50GAYgASgFEhAKCGJhZ19mdWxsGAcgASgIKjgKCVJl",
+          "cGx5VHlwZRIVChFSRVBMWV9UWVBFX1JFRlVTRRAAEhQKEFJFUExZX1RZUEVf",
+          "QUdSRUUQASp3ChFGYWlsRW50ZXJGQlJlYXNvbhIYChRGQUlMX0VOVEVSX0ZC",
+          "X1NVQ0VTUxAAEhkKFUZBSUxfRU5URVJfRk5fVElNRU9VVBALEi0KKUZBSUxf",
+          "RU5URVJfRkJfU09NRU9ORV9MRUFWRV9XQUlUSU5HX1NDRU5FEA1iBnByb3Rv",
+          "Mw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::ReplyType), typeof(global::FailEnterFBReason), }, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::AskMemberEnterFBData), global::AskMemberEnterFBData.Parser, new[]{ "DungeonId", "ConfirmSeconds", "DungeonsDegree", "DungeonLayer" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MemberReplyEnterFBData), global::MemberReplyEnterFBData.Parser, new[]{ "Type" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SyncMemberReplyEnterFBData), global::SyncMemberReplyEnterFBData.Parser, new[]{ "Uid", "Type" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::FailEnterFBData), global::FailEnterFBData.Parser, new[]{ "Uid", "Reason" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::FailEnterFBData), global::FailEnterFBData.Parser, new[]{ "Uid", "Reason" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::DungeonBossProgressNtf), global::DungeonBossProgressNtf.Parser, new[]{ "InstanceId", "KilledBosses", "BossTotal", "BossName", "ItemId", "ItemCount", "BagFull" }, null, null, null, null)
         }));
   }
   #endregion
@@ -1089,6 +1094,439 @@ public sealed partial class FailEnterFBData : pb::IMessage<FailEnterFBData>
         }
         case 16: {
           Reason = (global::FailEnterFBReason) input.ReadEnum();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// GS 向单个角色同步当前难度、本周期内的首领进度及本次实际掉落。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossProgressNtf>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<DungeonBossProgressNtf> _parser = new pb::MessageParser<DungeonBossProgressNtf>(() => new DungeonBossProgressNtf());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<DungeonBossProgressNtf> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::PbcDungeonReflection.Descriptor.MessageTypes[4]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public DungeonBossProgressNtf() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public DungeonBossProgressNtf(DungeonBossProgressNtf other) : this() {
+    instanceId_ = other.instanceId_;
+    killedBosses_ = other.killedBosses_.Clone();
+    bossTotal_ = other.bossTotal_;
+    bossName_ = other.bossName_;
+    itemId_ = other.itemId_;
+    itemCount_ = other.itemCount_;
+    bagFull_ = other.bagFull_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public DungeonBossProgressNtf Clone() {
+    return new DungeonBossProgressNtf(this);
+  }
+
+  /// <summary>Field number for the "instance_id" field.</summary>
+  public const int InstanceIdFieldNumber = 1;
+  private ulong instanceId_;
+  /// <summary>
+  /// 归属的战斗实例。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong InstanceId {
+    get { return instanceId_; }
+    set {
+      instanceId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "killed_bosses" field.</summary>
+  public const int KilledBossesFieldNumber = 2;
+  private static readonly pb::FieldCodec<string> _repeated_killedBosses_codec
+      = pb::FieldCodec.ForString(18);
+  private readonly pbc::RepeatedField<string> killedBosses_ = new pbc::RepeatedField<string>();
+  /// <summary>
+  /// 该角色在本周期已经击杀的首领名，按配置表顺序。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<string> KilledBosses {
+    get { return killedBosses_; }
+  }
+
+  /// <summary>Field number for the "boss_total" field.</summary>
+  public const int BossTotalFieldNumber = 3;
+  private int bossTotal_;
+  /// <summary>
+  /// 当前副本和难度登记的首领总数。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int BossTotal {
+    get { return bossTotal_; }
+    set {
+      bossTotal_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "boss_name" field.</summary>
+  public const int BossNameFieldNumber = 4;
+  private string bossName_ = "";
+  /// <summary>
+  /// 触发此次结算的首领，入场进度快照时为空。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string BossName {
+    get { return bossName_; }
+    set {
+      bossName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "item_id" field.</summary>
+  public const int ItemIdFieldNumber = 5;
+  private int itemId_;
+  /// <summary>
+  /// 本次实际入包的物品编号，无掉落时为零。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int ItemId {
+    get { return itemId_; }
+    set {
+      itemId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "item_count" field.</summary>
+  public const int ItemCountFieldNumber = 6;
+  private int itemCount_;
+  /// <summary>
+  /// 本次实际入包数量。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int ItemCount {
+    get { return itemCount_; }
+    set {
+      itemCount_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "bag_full" field.</summary>
+  public const int BagFullFieldNumber = 7;
+  private bool bagFull_;
+  /// <summary>
+  /// 本次背包空间不足，保留此首领在本周期的掉落资格。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool BagFull {
+    get { return bagFull_; }
+    set {
+      bagFull_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as DungeonBossProgressNtf);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(DungeonBossProgressNtf other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (InstanceId != other.InstanceId) return false;
+    if(!killedBosses_.Equals(other.killedBosses_)) return false;
+    if (BossTotal != other.BossTotal) return false;
+    if (BossName != other.BossName) return false;
+    if (ItemId != other.ItemId) return false;
+    if (ItemCount != other.ItemCount) return false;
+    if (BagFull != other.BagFull) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (InstanceId != 0UL) hash ^= InstanceId.GetHashCode();
+    hash ^= killedBosses_.GetHashCode();
+    if (BossTotal != 0) hash ^= BossTotal.GetHashCode();
+    if (BossName.Length != 0) hash ^= BossName.GetHashCode();
+    if (ItemId != 0) hash ^= ItemId.GetHashCode();
+    if (ItemCount != 0) hash ^= ItemCount.GetHashCode();
+    if (BagFull != false) hash ^= BagFull.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (InstanceId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(InstanceId);
+    }
+    killedBosses_.WriteTo(output, _repeated_killedBosses_codec);
+    if (BossTotal != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(BossTotal);
+    }
+    if (BossName.Length != 0) {
+      output.WriteRawTag(34);
+      output.WriteString(BossName);
+    }
+    if (ItemId != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(ItemId);
+    }
+    if (ItemCount != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(ItemCount);
+    }
+    if (BagFull != false) {
+      output.WriteRawTag(56);
+      output.WriteBool(BagFull);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (InstanceId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(InstanceId);
+    }
+    killedBosses_.WriteTo(ref output, _repeated_killedBosses_codec);
+    if (BossTotal != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(BossTotal);
+    }
+    if (BossName.Length != 0) {
+      output.WriteRawTag(34);
+      output.WriteString(BossName);
+    }
+    if (ItemId != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(ItemId);
+    }
+    if (ItemCount != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(ItemCount);
+    }
+    if (BagFull != false) {
+      output.WriteRawTag(56);
+      output.WriteBool(BagFull);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (InstanceId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(InstanceId);
+    }
+    size += killedBosses_.CalculateSize(_repeated_killedBosses_codec);
+    if (BossTotal != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(BossTotal);
+    }
+    if (BossName.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(BossName);
+    }
+    if (ItemId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(ItemId);
+    }
+    if (ItemCount != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(ItemCount);
+    }
+    if (BagFull != false) {
+      size += 1 + 1;
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(DungeonBossProgressNtf other) {
+    if (other == null) {
+      return;
+    }
+    if (other.InstanceId != 0UL) {
+      InstanceId = other.InstanceId;
+    }
+    killedBosses_.Add(other.killedBosses_);
+    if (other.BossTotal != 0) {
+      BossTotal = other.BossTotal;
+    }
+    if (other.BossName.Length != 0) {
+      BossName = other.BossName;
+    }
+    if (other.ItemId != 0) {
+      ItemId = other.ItemId;
+    }
+    if (other.ItemCount != 0) {
+      ItemCount = other.ItemCount;
+    }
+    if (other.BagFull != false) {
+      BagFull = other.BagFull;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          InstanceId = input.ReadUInt64();
+          break;
+        }
+        case 18: {
+          killedBosses_.AddEntriesFrom(input, _repeated_killedBosses_codec);
+          break;
+        }
+        case 24: {
+          BossTotal = input.ReadInt32();
+          break;
+        }
+        case 34: {
+          BossName = input.ReadString();
+          break;
+        }
+        case 40: {
+          ItemId = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          ItemCount = input.ReadInt32();
+          break;
+        }
+        case 56: {
+          BagFull = input.ReadBool();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          InstanceId = input.ReadUInt64();
+          break;
+        }
+        case 18: {
+          killedBosses_.AddEntriesFrom(ref input, _repeated_killedBosses_codec);
+          break;
+        }
+        case 24: {
+          BossTotal = input.ReadInt32();
+          break;
+        }
+        case 34: {
+          BossName = input.ReadString();
+          break;
+        }
+        case 40: {
+          ItemId = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          ItemCount = input.ReadInt32();
+          break;
+        }
+        case 56: {
+          BagFull = input.ReadBool();
           break;
         }
       }

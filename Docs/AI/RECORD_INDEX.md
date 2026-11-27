@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `db69da9a1a233ab579d4502d394d4afba17d178b4465f9d02c5790c71a20196a`
+Source normalized SHA256: `b953f8f1715d8d9e8737e9c6f9e03d153333c243d122b0eec623dc19b4a59586`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -178,11 +178,12 @@ Source normalized SHA256: `db69da9a1a233ab579d4502d394d4afba17d178b4465f9d02c579
 | [CODE][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Independent manual and gem bags | 1145-1148 |
 | [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing and jade locks | 1149-1152 |
 | [CODE][FILES][网络][区服][REALM-START-LOCK-20261127] Start the development realm while old service DLLs are in use | 1153-1156 |
-| [CODE][FILES][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Publish the shader variant JSON while its old file is mapped | 1157-1161 |
+| [CODE][FILES][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Publish the shader variant JSON while its old file is mapped | 1157-1162 |
+| [CODE][FILES][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Personal boss drops by dungeon and difficulty | 1163-1167 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `f5374fbda2b4755577df2dfb6b2a8527e175f161fb4b8c5b69e9b1c18825595d`
+Source normalized SHA256: `1d7558b72fb2a59e4c98ee41e0cb4d088c84c2275c4c0edbd5bcbbe7fe11c430`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -355,7 +356,8 @@ Source normalized SHA256: `f5374fbda2b4755577df2dfb6b2a8527e175f161fb4b8c5b69e9b
 | [VERIFY][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Inventory routing, persistence and outside-click verification | 1196-1199 |
 | [VERIFY][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing, persistence and client interaction | 1200-1203 |
 | [VERIFY][网络][区服][REALM-START-LOCK-20261127] Reproduce the startup failure and verify the live first realm | 1204-1207 |
-| [VERIFY][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Reproduce mapped-file contention and verify the saved collection in Unity | 1208-1213 |
+| [VERIFY][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Reproduce mapped-file contention and verify the saved collection in Unity | 1208-1214 |
+| [VERIFY][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Multi-boss drops, period boundaries and re-entry | 1215-1219 |
 
 ## Docs/AI/DECISIONS.en.md
 

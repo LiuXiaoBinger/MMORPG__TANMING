@@ -14,6 +14,10 @@ namespace cfg
 public partial class Tables
 {
     public TbCountInfo TbCountInfo {get; }
+    /// <summary>各副本、难度和首领对应的个人掉落配置。</summary>
+    public TbAwardTable TbAwardTable {get; }
+    /// <summary>每个首领奖励包实际进入背包的物品与数量。</summary>
+    public TbAwardPackTable TbAwardPackTable {get; }
     /// <summary>四档副本名称与普攻间隔。</summary>
     public TbDungeonDifficultyTable TbDungeonDifficultyTable {get; }
     /// <summary>副本和难度下逐怪Gene与AI覆盖。</summary>
@@ -47,6 +51,8 @@ public partial class Tables
     public Tables(System.Func<string, ByteBuf> loader)
     {
         TbCountInfo = new TbCountInfo(loader("tbcountinfo"));
+        TbAwardTable = new TbAwardTable(loader("tbawardtable"));
+        TbAwardPackTable = new TbAwardPackTable(loader("tbawardpacktable"));
         TbDungeonDifficultyTable = new TbDungeonDifficultyTable(loader("tbdungeondifficultytable"));
         TbDungeonMonsterDifficultyTable = new TbDungeonMonsterDifficultyTable(loader("tbdungeonmonsterdifficultytable"));
         TbDungeonTargetTable = new TbDungeonTargetTable(loader("tbdungeontargettable"));
@@ -77,6 +83,8 @@ public partial class Tables
     private void ResolveRef()
     {
         TbCountInfo.ResolveRef(this);
+        TbAwardTable.ResolveRef(this);
+        TbAwardPackTable.ResolveRef(this);
         TbDungeonDifficultyTable.ResolveRef(this);
         TbDungeonMonsterDifficultyTable.ResolveRef(this);
         TbDungeonTargetTable.ResolveRef(this);

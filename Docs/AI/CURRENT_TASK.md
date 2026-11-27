@@ -1154,3 +1154,9 @@ Windows 区服启动脚本将构建产物输出到 `_temp/realm-build`。各服�
 - 仓库跟踪的 YooAsset 1.5.7 压缩包已更新。编辑器先在项目所在卷写出完整 JSON，再替换目标文件。允许共享删除的读取方仍可读取旧内容。发布时仅对 Windows 错误 32 或 1224 进行重试，编辑器在等待期间交还控制，间隔 200 ms，最多重试 10 次。流程结束时取消订阅编辑器更新事件，发布成功后才调用成功回调。数量取自已保存的变体集合。
 - 更新了累积补丁，将包重命名为 `LYF_MMO/Packages/com.tuyoogame.yooasset-1.5.7-build-filter-atomic-manifest.tgz`，并同步更新 UPM 清单与锁文件。包内仍有 1,424 个条目，仅 `ShaderVariantCollector.cs` 和 `ShaderVariantCollectionManifest.cs` 的内容有变化，既有构建过滤逻辑保留。
 - 经开发者批准，已从本地有改动的现有变体集合重新生成 `LYF_MMO/Assets/LYF_Game/Shaders/MyShaderVariants.json`。变体集合与 JSON 两项生成资源均保留在本地。详见 `项目修改日志/2026-11-27_YooAsset变体清单映射占用修复.md`。
+
+## [CODE][FILES][副本][奖励][DUNGEON-BOSS-DROPS-20261127] 按副本和难度结算个人首领掉落
+
+- GameServer 的死亡计数逻辑按首领配置为每名在场角色结算。RoleCount 以稳定的 AwardTable 行为键，分别记录角色击杀和实际领取奖励所属的周期。角色进入副本时会恢复自己本周期的首领列表。Rookie 难度每天刷新，难度 2–6 的额度相互独立，每周日 UTC 00:00 刷新。Terminal 各层共享同一难度的额度。
+- 两张配置源表为 `Luaban/MiniTemplate/Datas/#AwardTable.xlsx` 和同目录的 `#AwardPackTable.xlsx`，场景编辑器可打开两表。使用 `Luaban/MiniTemplate/gen_dungeon_difficulties.ps1 -BossAwards` 导出。首批 30 行配置覆盖副本 4050、4051、4060 中的 5 个战斗首领绑定，每个绑定含 6 个难度。当前每次符合条件的击杀按难度发放 1–6 枚怪物币（503）。个人奖励通知显示实际发放内容，并更新现有任务追踪。
+- 完整文件清单与 Git 交付情况见 `项目修改日志/2026-11-27-副本逐首领难度掉落.md`。业务实现和验证由 Codex 完成，未使用 WorkBuddy。两条森林副本注册记录的客户端场景位置仍为空。未验证游戏画面中的实际通关流程及线上数据库持久化。

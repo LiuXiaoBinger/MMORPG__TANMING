@@ -1487,7 +1487,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         else GUILayout.Label("选择一个波次、机制节点或区域", EditorStyles.boldLabel);
         DrawPreviewLog();
         EditorGUILayout.Space();
-        showGlobalSettings = EditorGUILayout.Foldout(showGlobalSettings, "全局配置：出生点 / 副本全部目标", true);
+        showGlobalSettings = EditorGUILayout.Foldout(showGlobalSettings, "全局配置：出生点 / 副本全部目标 / 首领奖励", true);
         if (!showGlobalSettings) return;
         GUILayout.Label("正式出生点（客户端与服务端共用）", EditorStyles.boldLabel);
         EditorGUI.BeginChangeCheck();
@@ -1560,6 +1560,12 @@ public sealed class ROSceneEditorWindow : EditorWindow
             EditorUtility.OpenWithDefaultApp(sourcePath);
         }
         if (GUILayout.Button("重新读取")) LoadDungeonTargets();
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("首领难度奖励表"))
+            EditorUtility.OpenWithDefaultApp(Path.GetFullPath(Path.Combine(Application.dataPath, "../../Luaban/MiniTemplate/Datas/#AwardTable.xlsx")));
+        if (GUILayout.Button("首领奖励包表"))
+            EditorUtility.OpenWithDefaultApp(Path.GetFullPath(Path.Combine(Application.dataPath, "../../Luaban/MiniTemplate/Datas/#AwardPackTable.xlsx")));
         EditorGUILayout.EndHorizontal();
         if (dungeonTargetTable == null || dungeonsTable == null)
         {

@@ -64,6 +64,7 @@ public sealed class TeamCtrl : CtrlBase
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamInfoCode, OnTeamInfo);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
+        SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_DungeonBossProgress, OnBossProgress);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_MonsterAttrUpdateCode, OnMonsterAttrUpdate);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_DungeonInteractResultCode, OnDungeonInteractResult);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.PtcM2C_AskMemberEnterFBNtf, OnAskMemberEnterFB);
@@ -87,6 +88,7 @@ public sealed class TeamCtrl : CtrlBase
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamInfoCode, OnTeamInfo);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_DungeonBossProgress, OnBossProgress);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_MonsterAttrUpdateCode, OnMonsterAttrUpdate);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_DungeonInteractResultCode, OnDungeonInteractResult);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.PtcM2C_AskMemberEnterFBNtf, OnAskMemberEnterFB);
@@ -154,6 +156,33 @@ public sealed class TeamCtrl : CtrlBase
         {
             EnterDungeonReceived(notice);
         }
+    }
+
+    /// <summary>更新个人首领进度，显示该次击杀实际进入背包的物品。</summary>
+    /// <param name="data">游戏服单播的个人进度与掉落。</param>
+    private void OnBossProgress(ByteString data)
+    {
+        // 只展示当前副本实例发给本人的结算。
+        DungeonBossProgressNtf notice = DungeonBossProgressNtf.Parser.ParseFrom(data);
+        if (notice.InstanceId != TeamData.Instance.DungeonInstanceId) return;
+        TeamData.Instance.ApplyBossProgress(notice);
+        // 角色已完成的首领数与该难度配置的首领总数。
+        string progress = "首领进度 " + notice.KilledBosses.Count + "/" + notice.BossTotal;
+        if (notice.BossName.Length == 0)
+        {
+            if (notice.KilledBosses.Count > 0)
+                TipsMgr.Instance.ShowSystemTips(progress + " · 已击败" + string.Join("、", notice.KilledBosses));
+            return;
+        }
+        // 文案只使用权威回包中的实际入包数量，背包列表由正常增量同步。
+        string message = "击败" + notice.BossName + " · " + progress;
+        if (notice.ItemCount > 0)
+        {
+            message += "\n获得 " + LubanMgr.Instance.GetItemConfigById(notice.ItemId).ItemName + " ×" + notice.ItemCount;
+        }
+        else if (notice.BagFull) message += "\n背包空间不足，本周期再次击败该首领可获得掉落";
+        else message += "\n本周期已获得该首领掉落";
+        TipsMgr.Instance.ShowSystemTips(message);
     }
 
     /// <summary>将可靠下行的怪物血量交给当前副本状态。</summary>

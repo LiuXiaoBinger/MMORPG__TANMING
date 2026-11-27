@@ -85,6 +85,10 @@ public sealed class TeamData
 
     /// <summary>服务端最近一次完整副本阶段，空值表示没有副本流程。</summary>
     public DungeonFlowState DungeonFlow { get; private set; }
+    /// <summary>本人的当前副本难度与周期内的首领进度，切换场景时重新同步。</summary>
+    public DungeonBossProgressNtf BossProgress { get; private set; }
+    /// <summary>仅刷新个人首领进度的展示，不重新播放场景事件。</summary>
+    public event Action BossProgressUpdated;
     /// <summary>完整阶段更新后通知场景和目标窗口。</summary>
     public event Action DungeonFlowUpdated;
     /// <summary>当前主角附近可交互的正式物件；离开区域时清空。</summary>
@@ -98,6 +102,14 @@ public sealed class TeamData
     {
         DungeonFlow = flow;
         DungeonFlowUpdated?.Invoke();
+    }
+
+    /// <summary>保存服务器发给本人的首领清单，供任务追踪及详情读取。</summary>
+    /// <param name="notice">本实例入场或首领死亡后的个人快照。</param>
+    public void ApplyBossProgress(DungeonBossProgressNtf notice)
+    {
+        BossProgress = notice;
+        BossProgressUpdated?.Invoke();
     }
 
     /// <summary>只更新本地交互候选，业务是否有效仍由服务器校验。</summary>
@@ -114,6 +126,7 @@ public sealed class TeamData
     public void OnEnterScene(TeamEnterDungeonNtf notice)
     {
         DungeonInstanceId = notice.InstanceId;
+        BossProgress = null;
         DungeonId = notice.DungeonId;
         DungeonsDegree = notice.DungeonsDegree;
         DungeonLayer = notice.DungeonLayer;
@@ -476,6 +489,7 @@ public sealed class TeamData
     public void Clear()
     {
         DungeonInstanceId = 0UL;
+        BossProgress = null;
         DungeonId = 0;
         DungeonsDegree = 0;
         DungeonLayer = 0;

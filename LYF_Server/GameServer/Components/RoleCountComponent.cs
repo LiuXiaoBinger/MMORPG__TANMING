@@ -194,17 +194,20 @@ public sealed class RoleCountComponent : RoleComponentBase
     }
 
     /// <summary>按传入时间的日期判断刷新：1 为每日，2 为以周日为起点的每周；运行时传入 UTC 时间。</summary>
+    /// <param name="last">上次刷新时刻。</param><param name="now">本次检查时刻。</param><param name="refreshType">次数表的刷新类型。</param>
     private static bool IsRefreshDue(DateTime last, DateTime now, int refreshType)
     {
         if (last == DateTime.MinValue) return true;
-        if (refreshType == 1) return last.Date != now.Date;
-        if (refreshType == 2)
-        {
-            DateTime lastWeek = last.Date.AddDays(-(int)last.DayOfWeek);
-            DateTime nowWeek = now.Date.AddDays(-(int)now.DayOfWeek);
-            return lastWeek != nowWeek;
-        }
-        return false;
+        if (refreshType != 1 && refreshType != 2) return false;
+        return PeriodStart(last, refreshType) != PeriodStart(now, refreshType);
+    }
+
+    /// <summary>取得日或周的起点，让次数刷新与首领掉落共用同一条周期边界。</summary>
+    /// <param name="time">服务器 UTC 时刻。</param><param name="refreshType">1 为每日，2 为周日开始的每周。</param>
+    internal static DateTime PeriodStart(DateTime time, int refreshType)
+    {
+        if (refreshType == 2) return time.Date.AddDays(-(int)time.DayOfWeek);
+        return time.Date;
     }
 
     // 获取活动额外提供的次数。

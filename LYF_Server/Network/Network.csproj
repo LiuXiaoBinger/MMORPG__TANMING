@@ -66,6 +66,10 @@
     <Compile Include="LubanManage\Codes\TbDungeonTargetTable.cs" />
     <Compile Include="LubanManage\Codes\DungeonsTable.cs" />
     <Compile Include="LubanManage\Codes\DungeonDifficultyTable.cs" />
+    <Compile Include="LubanManage\Codes\AwardTable.cs" />
+    <Compile Include="LubanManage\Codes\TbAwardTable.cs" />
+    <Compile Include="LubanManage\Codes\AwardPackTable.cs" />
+    <Compile Include="LubanManage\Codes\TbAwardPackTable.cs" />
     <Compile Include="LubanManage\Codes\TbDungeonDifficultyTable.cs" />
     <Compile Include="LubanManage\Codes\DungeonMonsterDifficultyTable.cs" />
     <Compile Include="LubanManage\Codes\TbDungeonMonsterDifficultyTable.cs" />
@@ -204,6 +208,8 @@
     <Content Include="LubanManage\Tb\tbpresenttable.bytes" />
     <Content Include="LubanManage\Tb\tbdungeontargettable.bytes" />
     <Content Include="LubanManage\Tb\tbdungeonstable.bytes" />
+    <Content Include="LubanManage\Tb\tbawardtable.bytes" />
+    <Content Include="LubanManage\Tb\tbawardpacktable.bytes" />
     <Content Include="LubanManage\Tb\tbdungeondifficultytable.bytes" />
     <Content Include="LubanManage\Tb\tbdungeonmonsterdifficultytable.bytes" />
     <Content Include="LubanManage\Tb\tbdungeontargetgrouptable.bytes" />

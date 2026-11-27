@@ -24,5 +24,9 @@ public enum RoleCountAction
     /// <summary>按任务编号保存角色的接取、可交付及完成状态。</summary>
     QuestState = 10,
     /// <summary>按任务编号保存真实对话或击杀的累计次数。</summary>
-    QuestProgress = 11
+    QuestProgress = 11,
+    /// <summary>每个首领难度奖励行最近一次击杀所在周期的起始日。</summary>
+    DungeonBossKill = 12,
+    /// <summary>每个首领难度奖励行最近一次实际入包所在周期的起始日。</summary>
+    DungeonBossDrop = 13
 }

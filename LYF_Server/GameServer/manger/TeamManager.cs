@@ -697,6 +697,7 @@ public sealed class TeamManager
             // 本人的权威位置可能与新成员入口不同，流程和怪物快照仍来自同一实例。
             notice.Pos = memberRole.mainRoleInfo.BaseInfo.Pos;
             memberRole.SendToClient(NetDefine.CMD_TeamEnterDungeonCode, notice.ToByteString());
+            team.WaveSpawner.SendBossProgress(memberRole);
         }
         // 队伍状态变化后同步成员实例信息。
 

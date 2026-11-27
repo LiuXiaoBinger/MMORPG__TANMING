@@ -49,7 +49,12 @@ public sealed partial class SceneWaveSpawner
     private uint summonSequence;
 
     /// <summary>绑定真实队伍成员，角色筛选同时核对Map和Instance。</summary><param name="id">副本实例号。</param><param name="roles">原队员列表引用。</param>
-    internal void BindInstance(ulong id, List<ulong> roles) { instanceId = id; members = roles; }
+    internal void BindInstance(ulong id, List<ulong> roles)
+    {
+        instanceId = id;
+        members = roles;
+        LoadBossAwards();
+    }
     /// <summary>取得当前在线且仍位于本实例的玩家快照。</summary>
     internal List<OnlineRole> Players
     {
@@ -353,7 +358,15 @@ public sealed partial class SceneWaveSpawner
         ChangeActorHp(group[0], (int)remaining - group[0].CurrentHp, null);
     }
     /// <summary>原死亡统计同时供目标与DungeonsTable胜利条件使用。</summary><param name="entityId">原模板号。</param>
-    private void CountDeath(int entityId) { int count; corpseCounts.TryGetValue(entityId, out count); corpseCounts[entityId] = count + 1; Flow.CountMonsterDeath(entityId); }
+    private void CountDeath(int entityId)
+    {
+        // 当前实例同一模板此前已确认的死亡数，供波次和场景逻辑读取。
+        int count;
+        corpseCounts.TryGetValue(entityId, out count);
+        corpseCounts[entityId] = count + 1;
+        Flow.CountMonsterDeath(entityId);
+        SettleBossDeath(entityId);
+    }
     /// <summary>原两个胜利条件组之间为OR，组内所有条件为AND。</summary>
     internal bool Victory { get { return CheckVictory(Dungeon.VictoryCondion1) || CheckVictory(Dungeon.VictoryCondion2); } }
     /// <summary>本副本实际需要原击杀条件；时间条件沿相同逻辑时钟。</summary><param name="conditions">原二维条件序列。</param>

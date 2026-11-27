@@ -3,10 +3,12 @@
 隔离导出副本难度、逐怪难度和 Gene，仅同步四个难度类型与三份二进制。
 .PARAMETER WorkDirectory
 保存隔离输入、原始生成物和日志的临时目录；默认使用项目根目录 _temp/luban-dungeon-difficulties。
+.PARAMETER BossAwards
+只导出首领难度奖励和奖励包两张表。
 .EXAMPLE
 powershell -ExecutionPolicy Bypass -File Luaban/MiniTemplate/gen_dungeon_difficulties.ps1
 #>
-param([string]$WorkDirectory)
+param([string]$WorkDirectory, [switch]$BossAwards)
 
 # 源表复制等操作失败时立即终止，禁止使用隔离目录中的旧输入继续导出。
 $ErrorActionPreference = 'Stop'
@@ -16,6 +18,7 @@ $templateRoot = $PSScriptRoot
 $repositoryRoot = [System.IO.Path]::GetFullPath((Join-Path $templateRoot '../..'))
 if ([string]::IsNullOrEmpty($WorkDirectory)) {
     $WorkDirectory = Join-Path $repositoryRoot '_temp/luban-dungeon-difficulties'
+    if ($BossAwards) { $WorkDirectory = Join-Path $repositoryRoot '_temp/luban-dungeon-boss-awards' }
 }
 # 隔离生成配置使用绝对路径，避免从不同工作目录执行时改变输出位置。
 $WorkDirectory = [System.IO.Path]::GetFullPath($WorkDirectory)
@@ -25,6 +28,7 @@ $binaryRoot = Join-Path $WorkDirectory 'Data'
 New-Item -ItemType Directory -Force -Path $dataRoot, $codeRoot, $binaryRoot | Out-Null
 # 此入口只加载三张相关工作簿，# 前缀由 Luban 自动识别，不重复注册 __tables__。
 $workbooks = @('#DungeonDifficultyTable.xlsx', '#DungeonMonsterDifficultyTable.xlsx', '#Gene.xlsx')
+if ($BossAwards) { $workbooks = @('#AwardTable.xlsx', '#AwardPackTable.xlsx') }
 for ($index = 0; $index -lt $workbooks.Length; $index++) {
     Copy-Item -LiteralPath (Join-Path $templateRoot ('Datas/' + $workbooks[$index])) -Destination (Join-Path $dataRoot $workbooks[$index])
 }
@@ -42,6 +46,10 @@ if ($LASTEXITCODE -ne 0) {
 # 仅适配新难度类型的中文说明、数组读取与循环写法，不改生成字段或二进制编码。
 $tableNames = @('DungeonDifficultyTable', 'DungeonMonsterDifficultyTable')
 $tableLabels = @('副本难度', '副本逐怪难度')
+if ($BossAwards) {
+    $tableNames = @('AwardTable', 'AwardPackTable')
+    $tableLabels = @('副本首领奖励', '首领奖励包')
+}
 # 正式生成物位置；不发布隔离目录的 Gene.cs、TbGene.cs 或 Tables.cs。
 $destinationRoot = Join-Path $repositoryRoot 'LYF_Server/Network/LubanManage'
 for ($tableIndex = 0; $tableIndex -lt $tableNames.Length; $tableIndex++) {
@@ -124,7 +132,8 @@ for ($tableIndex = 0; $tableIndex -lt $tableNames.Length; $tableIndex++) {
 
 # 仅同步本次三份原始 Luban 二进制；Gene 类型与共享 Tables、LubanMgr、项目文件不覆盖。
 $binaryNames = @('tbdungeondifficultytable.bytes', 'tbdungeonmonsterdifficultytable.bytes', 'tbgene.bytes')
+if ($BossAwards) { $binaryNames = @('tbawardtable.bytes', 'tbawardpacktable.bytes') }
 for ($binaryIndex = 0; $binaryIndex -lt $binaryNames.Length; $binaryIndex++) {
     Copy-Item -LiteralPath (Join-Path $binaryRoot $binaryNames[$binaryIndex]) -Destination (Join-Path $destinationRoot ('Tb/' + $binaryNames[$binaryIndex]))
 }
-Write-Output '已生成两张副本难度表的四个类型，以及两份难度表和一份 Gene 二进制；其他生成代码与业务接入未覆盖。'
+Write-Output ('已生成 ' + ($tableNames -join '、') + ' 的类型和 ' + ($binaryNames -join '、'))

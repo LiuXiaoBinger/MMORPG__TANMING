@@ -36,6 +36,7 @@ public partial class TaskCtrl : CtrlBase
         _quickPanel = _mainView.QuickTaskPanel;
         RegisterActions();
         TeamData.Instance.DungeonFlowUpdated += RefreshDungeonTasks;
+        TeamData.Instance.BossProgressUpdated += RefreshDungeonTasks;
         RefreshDungeonTasks();
     }
 
@@ -76,6 +77,7 @@ public partial class TaskCtrl : CtrlBase
     public override void Dispose()
     {
         TeamData.Instance.DungeonFlowUpdated -= RefreshDungeonTasks;
+        TeamData.Instance.BossProgressUpdated -= RefreshDungeonTasks;
         if (!_actionsRegistered)
         {
             return;
@@ -261,6 +263,14 @@ public partial class TaskCtrl : CtrlBase
             }
             if (flow.Finished && i == flow.Objectives.Count - 1)
                 task.TargetText = "挑战完成，请前往出口传送";
+            // 个人首领进度附在当前第一个阶段条目上，保留阶段本身的导航目标。
+            DungeonBossProgressNtf bosses = TeamData.Instance.BossProgress;
+            if (i == 0 && bosses != null)
+            {
+                task.TargetText += "\n首领进度 " + bosses.KilledBosses.Count + "/" + bosses.BossTotal;
+                if (bosses.KilledBosses.Count > 0)
+                    task.Description = "本周期已击败：" + string.Join("、", bosses.KilledBosses);
+            }
             tasks[i] = task;
         }
         TaskMgr.Instance.SetDungeonTasks(tasks);

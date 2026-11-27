@@ -37,3 +37,14 @@ message FailEnterFBData {
   uint64 uid = 1; // 触发取消的成员，超时为 0。
   FailEnterFBReason reason = 2; // 本次未入场原因。
 }
+
+// GS 向单个角色同步当前难度、本周期内的首领进度及本次实际掉落。
+message DungeonBossProgressNtf {
+  uint64 instance_id = 1; // 归属的战斗实例。
+  repeated string killed_bosses = 2; // 该角色在本周期已经击杀的首领名，按配置表顺序。
+  int32 boss_total = 3; // 当前副本和难度登记的首领总数。
+  string boss_name = 4; // 触发此次结算的首领，入场进度快照时为空。
+  int32 item_id = 5; // 本次实际入包的物品编号，无掉落时为零。
+  int32 item_count = 6; // 本次实际入包数量。
+  bool bag_full = 7; // 本次背包空间不足，保留此首领在本周期的掉落资格。
+}

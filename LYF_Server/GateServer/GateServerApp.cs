@@ -160,6 +160,7 @@ namespace GateServer
             client.RegistCommand(NetDefine.CMD_TeamInfoCode, gateTeamCtrl);
             client.RegistCommand(NetDefine.CMD_TeamInvatationCode, gateTeamCtrl);
             client.RegistCommand(NetDefine.CMD_TeamEnterDungeonCode, gateTeamCtrl);
+            client.RegistCommand(NetDefine.CMD_DungeonBossProgress, gateTeamCtrl);
             client.RegistCommand(NetDefine.CMD_RoleLeaveCode, gateTeamCtrl);
             // 队伍请求失败时游戏服回的是通用错误协议，必须注册同一入口才能转给客户端提示。
             client.RegistCommand(NetDefine.CMD_ErrCode, gateTeamCtrl);
