@@ -1124,3 +1124,7 @@ The 12 existing HUD entries in the `FunctionMenu` subtree of `UIRoot.prefab` use
 
 - In a multi-GS realm MasterServer asks ControlServer to select a live GS using the realm's existing round-robin or load policy. Only a successful prepare reply from the chosen GS publishes the instance and sends the confirmed party to it. Re-entry targets that active instance's host. A rejected create leaves every player on their original map.
 - The gate transfers each member directly to the private instance, including from maps whose only public line is on another GS. Return allocates a public line on the departure map. A world waits for in-flight members and releases an unused reservation or a world that has finished. Full file list and receipts are in `项目修改日志/2026-11-27-副本选服与建成后传送.md`.
+
+## [CODE][FILES][HANDOFF][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed
+
+Clicking the combat HUD run icon or pressing the default F4 key toggles the local player’s slow/fast mode. Releasing F4 or a movement key preserves the selection. Saved custom keys update the HUD label. A legacy F4 assigned to another action remains available to that action and the run icon stays clickable. The slow and fast speed caps are 6 and 10 m/s. `项目修改日志/2026-11-27-快慢跑按钮切换.md`

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `06309f6bfe467146f46c45715a7736829847cd45853cb4a0cb45e9406bab160c`
+Source normalized SHA256: `904f32eea62d7b7280277d05cf597a84febc88b9a777a13ebcb21b446da8c34a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -170,11 +170,12 @@ Source normalized SHA256: `06309f6bfe467146f46c45715a7736829847cd45853cb4a0cb45e
 | [CODE][FILES][HANDOFF][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1110-1113 |
 | [CODE][FILES][HANDOFF][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD function menu icons and fold animation | 1114-1117 |
 | [CODE][FILES][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Visible-player friend discovery and two-column mailbox | 1118-1122 |
-| [CODE][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Create a party dungeon before admitting its members | 1123-1126 |
+| [CODE][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Create a party dungeon before admitting its members | 1123-1127 |
+| [CODE][FILES][HANDOFF][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1128-1130 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `edc63298ff04d22410d61597b86f29889a6473be5e15be10292aeb4c67ea1c7f`
+Source normalized SHA256: `a39361c09b37d8cecb7b75f08833ae1893791fa10a80740e928f1689c8fc46d9`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -339,7 +340,8 @@ Source normalized SHA256: `edc63298ff04d22410d61597b86f29889a6473be5e15be10292ae
 | [VERIFY][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1161-1164 |
 | [VERIFY][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD menu pointer and animation checks | 1165-1168 |
 | [VERIFY][好友][邮箱][SOCIAL-ADD-MAIL-UI-20261127] Friend discovery and mailbox layout checks | 1169-1173 |
-| [VERIFY][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Verify creation, party transfer and return across GameServers | 1174-1177 |
+| [VERIFY][副本][分线][DUNGEON-GS-CREATE-FIRST-20261127] Verify creation, party transfer and return across GameServers | 1174-1178 |
+| [VERIFY][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1179-1181 |
 
 ## Docs/AI/DECISIONS.en.md
 
