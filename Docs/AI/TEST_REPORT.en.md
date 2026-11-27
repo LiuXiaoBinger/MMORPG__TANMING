@@ -1142,3 +1142,7 @@ Five configuration rows generated. The isolated realm built all six server proje
 ## [VERIFY][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Full graphical client clear of Moshenta 4060
 
 One character entered from the normal challenge UI, clicked stages 137–143, passed doors 1/4 on one 139 click and door 5 on one 142 click, collected wave 41, killed wave 42, selected Help in the original dialogue and cleared boss waves 34/35/46. The game server returned zero HP for all three, Finished=true and exit 35. The completed row led the character to the exit and its button returned them to the city. Level 75 single-player fixture with 3,000,000 base HP and 15,000 MP. New-character and legacy basic attacks verified; standalone build, multiplayer and balance untested. Evidence is in `_temp/moshenta-client-20261127/run-1795741614040284200/evidence.json`. See `项目修改日志/2026-11-26-角色委托与跨场景任务寻路.md`.
+
+## [VERIFY][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals
+
+Luban export succeeded. An isolated copy of the actual game server loaded the four published binaries and passed 18 checks covering real elemental damage, qi damage, shield absorption, reflection, healing windows, stat removal, rank five, item synthesis/learning and catalogue visibility. The developer requested publishing only, so both live game processes kept running. Live account UI, multiplayer balance and packaging were not tested. `项目修改日志/2026-11-27-魔剑士职业秘笈.md`

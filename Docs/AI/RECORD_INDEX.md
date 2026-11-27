@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `5266f616d187c95fafb78888b494edec3a09fb0faaebf7581417fe3bfc4f9f38`
+Source normalized SHA256: `a348ab92e7b7627afdca8f11d787bab222f81aee4cf5fc9d6f21ea4e5de4ebb3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -164,11 +164,12 @@ Source normalized SHA256: `5266f616d187c95fafb78888b494edec3a09fb0faaebf7581417f
 | [CODE][FILES][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Resident idle, contact reactions and local walking routes | 1080-1086 |
 | [CODE][FILES][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Magic Swordsman silver knight gold equipment and materials | 1087-1091 |
 | [CODE][FILES][HANDOFF][好友聊天][SOCIAL-CHAT-20261127] RO friend conversations and persistent friend groups | 1092-1097 |
-| [CODE][FILES][HANDOFF][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Playable Moshenta stairs and boss conversation | 1098-1100 |
+| [CODE][FILES][HANDOFF][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Playable Moshenta stairs and boss conversation | 1098-1101 |
+| [CODE][FILES][HANDOFF][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals | 1102-1104 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `6d9fb0218de52e24dd690c35aac080b32fa68eeca06554113f2067eff8a7968f`
+Source normalized SHA256: `e96be534650b22d146af9ffa33dc3e738b4a60610044955fee860674b5ea5dad`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -326,7 +327,8 @@ Source normalized SHA256: `6d9fb0218de52e24dd690c35aac080b32fa68eeca06554113f206
 | [VERIFY][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Actual bones, physical contact and line-authoritative residents | 1125-1130 |
 | [VERIFY][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Gold item data, sprite references and eight-slot wear | 1131-1135 |
 | [VERIFY][好友聊天][SOCIAL-CHAT-20261127] Private delivery, group persistence and Unity input | 1136-1141 |
-| [VERIFY][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Full graphical client clear of Moshenta 4060 | 1142-1144 |
+| [VERIFY][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Full graphical client clear of Moshenta 4060 | 1142-1145 |
+| [VERIFY][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals | 1146-1148 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -1098,3 +1098,7 @@ Codex completed five configured quests, GS persistence and NPC options, public p
 ## [CODE][FILES][HANDOFF][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Playable Moshenta stairs and boss conversation
 
 Quest navigation preserves the selected stage across combat-locked portals, stops at the basic attack range for enemies, and follows the original NPC 20186 dialogue before combat object 17 appears, then targets boss waves 34/35/46. The center server persists initial skill levels and reads legacy level-zero basic attacks as level one. Explicit same-position basic attacks use server-confirmed facing. See the file list and proof in `项目修改日志/2026-11-26-角色委托与跨场景任务寻路.md`.
+
+## [CODE][FILES][HANDOFF][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals
+
+Renamed only the seven manuals previously tagged Huashan or Great Shaman (IDs 7–13) to Magic Swordsman titles and adapted their rank genes, base passives and both bag items. Common and unclassified entries, IDs, prices and the exact 18 visible catalogue IDs remain intact. ID 12 is still accessible from its item. `项目修改日志/2026-11-27-魔剑士职业秘笈.md`
