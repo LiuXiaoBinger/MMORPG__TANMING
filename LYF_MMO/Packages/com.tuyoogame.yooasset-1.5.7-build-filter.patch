@@ -11,3 +11,110 @@
 +			if (assetPath.StartsWith("Packages/com.unity.ugui/Editor Resources/", StringComparison.Ordinal))
 +				return false;
 +
+--- a/Editor/ShaderVariantCollector/ShaderVariantCollector.cs
++++ b/Editor/ShaderVariantCollector/ShaderVariantCollector.cs
+@@ -5,0 +6 @@
++using System.Threading.Tasks;
+@@ -125,7 +126 @@
+-					_steps = ESteps.None;
+-
+-					// 保存结果并创建清单
+-					ShaderVariantCollectionHelper.SaveCurrentShaderVariantCollection(_savePath);
+-					CreateManifest();
+-
+-					Debug.Log($"搜集SVC完毕！");
++					// 收集已结束，先解除本轮回调，清单写入失败也不会重复订阅。
+@@ -133 +128 @@
+-					_completedCallback?.Invoke();
++					FinishCollection();
+@@ -242 +237,20 @@
+-		private static void CreateManifest()
++		// 等待清单落盘期间维持收集状态，仅在变体和清单均保存后通知调用方。
++		private static async void FinishCollection()
++		{
++			try
++			{
++				ShaderVariantCollectionHelper.SaveCurrentShaderVariantCollection(_savePath);
++				await CreateManifest(_savePath);
++			}
++			finally
++			{
++				_steps = ESteps.None;
++			}
++
++			Debug.Log($"搜集SVC完毕！");
++			_completedCallback?.Invoke();
++		}
++
++		/// <summary>从已保存的着色器变体集合提取 JSON 清单，并在写入完成后刷新资源。</summary>
++		/// <param name="collectionPath">项目内 .shadervariants 资源路径，决定同目录清单的文件名。</param>
++		private static async Task CreateManifest(string collectionPath)
+@@ -246 +260,2 @@
+-			ShaderVariantCollection svc = AssetDatabase.LoadAssetAtPath<ShaderVariantCollection>(_savePath);
++			// 本次写入所依据的已保存集合，在等待文件映射释放前完成读取。
++			ShaderVariantCollection svc = AssetDatabase.LoadAssetAtPath<ShaderVariantCollection>(collectionPath);
+@@ -248,0 +264 @@
++				// 提取一次集合内容，重试时仍写入同一份清单。
+@@ -249,0 +266 @@
++				// 沿用 YooAsset 带缩进的 JSON 格式。
+@@ -251,2 +268,3 @@
+-				string savePath = _savePath.Replace(".shadervariants", ".json");
+-				File.WriteAllText(savePath, jsonData);
++				// 清单与变体集同目录、同基础名，保留已有 JSON 的 .meta。
++				string savePath = Path.ChangeExtension(collectionPath, ".json");
++				await WriteManifestFile(savePath, jsonData);
+@@ -255,0 +274,46 @@
++		}
++
++		/// <summary>先在同卷临时目录写完整 JSON，再发布到资源路径，使已有读取映射可以继续使用旧文件。</summary>
++		/// <param name="savePath">最终清单的路径，仅替换 JSON 文件本身。</param>
++		/// <param name="jsonData">从本轮保存的变体集合生成的完整 JSON 文本。</param>
++		private static async Task WriteManifestFile(string savePath, string jsonData)
++		{
++			// 工程同卷的项目临时目录，不让 Unity 将中间文件作为资源导入。
++			string tempDirectory = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "..", "_temp", "YooAssetShaderManifests"));
++			Directory.CreateDirectory(tempDirectory);
++			// 每次发布独占一个文件名，失败时也只清理本次尚未移走的临时文件。
++			string tempPath = Path.Combine(tempDirectory, Guid.NewGuid().ToString("N") + ".tmp");
++			// 拒绝共享删除的读取句柄可能使 Windows 返回共享冲突或文件映射占用。
++			const int sharingViolation = unchecked((int)0x80070020);
++			// Windows ERROR_USER_MAPPED_FILE 的 HRESULT（1224）。
++			const int userMappedFile = unchecked((int)0x800704C8);
++			// 最多十次延迟重试，持续阻塞后保留最后一次系统异常。
++			const int maxRetries = 10;
++			// 每次等待的毫秒数；编辑器可在这段时间内处理导入与界面更新。
++			const int retryDelayMilliseconds = 200;
++			try
++			{
++				File.WriteAllText(tempPath, jsonData);
++				// 首次发布时为零，同一份临时文件用于后续所有重试。
++				for (int retry = 0; ; retry++)
++				{
++					try
++					{
++						if (File.Exists(savePath))
++							File.Replace(tempPath, savePath, null);
++						else
++							File.Move(tempPath, savePath);
++						return;
++					}
++					// 只等待已验证的 Windows 占用错误，其他 I/O 异常立即上抛。
++					catch (IOException error) when ((error.HResult == sharingViolation || error.HResult == userMappedFile) && retry < maxRetries)
++					{
++						AssetDatabase.ReleaseCachedFileHandles();
++						await Task.Delay(retryDelayMilliseconds);
++					}
++				}
++			}
++			finally
++			{
++				File.Delete(tempPath);
++			}
+--- a/Editor/ShaderVariantCollector/ShaderVariantCollectionManifest.cs
++++ b/Editor/ShaderVariantCollector/ShaderVariantCollectionManifest.cs
+@@ -106,2 +106,3 @@
+-			manifest.ShaderTotalCount = ShaderVariantCollectionHelper.GetCurrentShaderVariantCollectionShaderCount();
+-			manifest.VariantTotalCount = ShaderVariantCollectionHelper.GetCurrentShaderVariantCollectionVariantCount();
++			// 总数取自传入的已保存集合，与下方逐项提取的明细保持一致。
++			manifest.ShaderTotalCount = svc.shaderCount;
++			manifest.VariantTotalCount = svc.variantCount;

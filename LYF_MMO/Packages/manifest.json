@@ -2,7 +2,7 @@
   "dependencies": {
     "com.code-philosophy.hybridclr": "https://gitee.com/focus-creative-games/hybridclr_unity.git",
     "com.coplaydev.unity-mcp": "file:D:/unitypro/Aimcp/unity-mcp/MCPForUnity",
-    "com.tuyoogame.yooasset": "file:com.tuyoogame.yooasset-1.5.7-build-filter.tgz",
+    "com.tuyoogame.yooasset": "file:com.tuyoogame.yooasset-1.5.7-build-filter-atomic-manifest.tgz",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation": "2.0.6",
     "com.unity.cinemachine": "2.10.7",

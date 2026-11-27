@@ -36,7 +36,7 @@
       }
     },
     "com.tuyoogame.yooasset": {
-      "version": "file:com.tuyoogame.yooasset-1.5.7-build-filter.tgz",
+      "version": "file:com.tuyoogame.yooasset-1.5.7-build-filter-atomic-manifest.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
