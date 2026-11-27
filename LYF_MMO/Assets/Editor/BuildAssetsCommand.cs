@@ -100,14 +100,19 @@ namespace HybridCLR.Editor {
 
         // 复制主包裁剪后的 AOT 程序集到 Assets/LYF_Game/Dlls，并加 .bytes 后缀供资源系统加载。
         public static void CopyAOTAssembliesToStreamingAssets() {
+            // 当前编辑器平台决定读取哪一份裁剪后的 AOT 产物。
             var target = EditorUserBuildSettings.activeBuildTarget;
             // 上一次构建主包后产生的裁剪版 AOT DLL 目录。
             string aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
             // 本项目收集 DLL 资源的目录；函数名称中的 StreamingAssets 不是当前实际目标。
             string aotAssembliesDstDir = Application.dataPath + "/LYF_Game/Dlls";
             Debug.Log($"aotAssembliesDstDir::{aotAssembliesDstDir}");
-            // dll 为 HybridCLR 配置中的 AOT 程序集名，不含 .dll 后缀。
-            foreach (var dll in SettingsUtil.AOTAssemblyNames) {
+            // 本次需要补充元数据的程序集名，由 HybridCLR 配置提供。
+            List<string> dllNames = SettingsUtil.AOTAssemblyNames;
+            // i 是当前待复制的 AOT 程序集索引。
+            for (int i = 0; i < dllNames.Count; i++) {
+                // AOT 配置名不带 .dll 后缀，源文件和目标资源共用此名。
+                string dll = dllNames[i];
                 // 当前程序集的裁剪后 DLL 路径；缺失时提示先构建主包。
                 string srcDllPath = $"{aotAssembliesSrcDir}/{dll}.dll";
                 if (!File.Exists(srcDllPath)) {
@@ -116,13 +121,14 @@ namespace HybridCLR.Editor {
                 }
                 // 复制后的资源路径，以 .dll.bytes 结尾，保留 DLL 原始字节。
                 string dllBytesPath = $"{aotAssembliesDstDir}/{dll}.dll.bytes";
-                File.Copy(srcDllPath, dllBytesPath, true);
+                CopyAssemblyBytes(srcDllPath, dllBytesPath);
                 Debug.Log($"[CopyAOTAssembliesToStreamingAssets] copy AOT dll {srcDllPath} -> {dllBytesPath}");
             }
         }
 
         // 把当前平台的热更 DLL 复制到 Assets/LYF_Game/Dlls，作为后续 YooAsset 打包输入。
         public static void CopyHotUpdateAssembliesToStreamingAssets() {
+            // 当前编辑器平台决定读取哪一份热更编译产物。
             var target = EditorUserBuildSettings.activeBuildTarget;
 
             // HybridCLR 编译出的当前平台热更程序集目录。
@@ -130,14 +136,42 @@ namespace HybridCLR.Editor {
 
             // 热更 DLL 对应的 Unity 资源目录。
             string hotfixAssembliesDstDir = Application.dataPath + "/LYF_Game/Dlls";
-            // dll 是排除保留程序集后的热更文件名，已经包含 .dll 后缀。
-            foreach (var dll in SettingsUtil.HotUpdateAssemblyFilesExcludePreserved) {
+            // 本次实际分发的热更 DLL 文件名，已排除保留程序集。
+            List<string> dllFiles = SettingsUtil.HotUpdateAssemblyFilesExcludePreserved;
+            // i 是当前待复制的热更文件索引。
+            for (int i = 0; i < dllFiles.Count; i++) {
+                // 热更文件名自带 .dll 后缀，目标资源只需再追加 .bytes。
+                string dll = dllFiles[i];
                 // 本次需要复制的热更程序集源路径。
                 string dllPath = $"{hotfixDllSrcDir}/{dll}";
                 // 给 DLL 文件名加 .bytes 后缀，使 Unity 将其作为二进制资源导入。
                 string dllBytesPath = $"{hotfixAssembliesDstDir}/{dll}.bytes";
-                File.Copy(dllPath, dllBytesPath, true);
+                CopyAssemblyBytes(dllPath, dllBytesPath);
                 Debug.Log($"[CopyHotUpdateAssembliesToStreamingAssets] copy hotfix dll {dllPath} -> {dllBytesPath}");
+            }
+        }
+
+        /// <summary>复制供 Unity 导入的 DLL，遇到 Windows 文件映射占用时短暂等待读取方释放。</summary>
+        /// <param name="sourcePath">当前平台生成的 AOT 或热更 DLL 路径。</param>
+        /// <param name="destinationPath">保留原有资源 GUID 的 .dll.bytes 文件路径。</param>
+        private static void CopyAssemblyBytes(string sourcePath, string destinationPath) {
+            // Windows ERROR_USER_MAPPED_FILE（1224）在当前 Unity Mono 中对应的 HRESULT。
+            const int mappedFileHResult = unchecked((int)0x800704C8);
+            // 单个文件最多重试五次，耗尽后由 File.Copy 抛出原异常。
+            const int maxRetries = 5;
+            // 映射占用时每次等待的毫秒数，五次合计一秒。
+            const int retryDelayMilliseconds = 200;
+            // 首次复制时为 0，之后记录该文件因映射占用而重试的次数。
+            for (int retry = 0; ; retry++) {
+                try {
+                    File.Copy(sourcePath, destinationPath, true);
+                    return;
+                }
+                // 只有目标仍有打开的映射才等待；其他读写错误直接交给构建入口。
+                catch (IOException error) when (error.HResult == mappedFileHResult && retry < maxRetries) {
+                    AssetDatabase.ReleaseCachedFileHandles();
+                    System.Threading.Thread.Sleep(retryDelayMilliseconds);
+                }
             }
         }
 
