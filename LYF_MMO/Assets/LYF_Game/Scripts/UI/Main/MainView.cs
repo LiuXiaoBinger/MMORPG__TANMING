@@ -168,11 +168,14 @@ public class MainView : UIBase
    /// <summary>左上角始终可见的功能菜单开关，由主控制器接收点击。</summary>
    [SerializeField, Header("功能菜单开关")] private Button _functionMenuButton;
 
-   /// <summary>功能入口按钮组的容器，收起时整组隐藏且不接收点击。</summary>
-   [SerializeField, Header("功能菜单内容")] private GameObject _functionMenuContent;
+   /// <summary>十二个入口共用的交互组，收起时立即释放鼠标命中。</summary>
+   [SerializeField, Header("功能菜单内容")] private CanvasGroup _functionMenuGroup;
 
-   /// <summary>开关内的箭头，收起时朝右提示可向右展开，展开时朝左提示可收回。</summary>
-   [SerializeField, Header("功能菜单箭头")] private RectTransform _functionMenuArrow;
+   /// <summary>驱动菜单裁切宽度、淡入淡出和开关箭头转向的动画组件。</summary>
+   [SerializeField, Header("功能菜单动画")] private Animator _functionMenuAnimator;
+
+   /// <summary>预制体动画控制器用于选择展开或收起的布尔参数。</summary>
+   private static readonly int FunctionMenuExpanded = Animator.StringToHash("Expanded");
 
    /// <summary>功能菜单中的背包入口，复用B键的窗口与镜头流程。</summary>
    [SerializeField, Header("背包入口")] private Button _knapsackButton;
@@ -254,27 +257,19 @@ public class MainView : UIBase
    /// <summary>供主控制器注册与注销副本入口事件。</summary>
    public Button ThemeDungeonButton => _themeDungeonButton;
 
-   /// <summary>切换左上功能菜单，显隐状态直接取正式容器的当前状态。</summary>
+   /// <summary>切换整排入口的目标状态，连点时动画从当前展开位置折返。</summary>
    public void ToggleFunctionMenu()
    {
-      SetFunctionMenuVisible(!_functionMenuContent.activeSelf);
+      SetFunctionMenuVisible(!_functionMenuGroup.interactable);
    }
 
-   /// <summary>控制入口组显隐及箭头朝向，不改变任何业务窗口。</summary>
-   /// <param name="visible">true 展开入口组，false 只保留功能开关。</param>
+   /// <summary>更新菜单的鼠标命中范围，并由预制体中的动画控制器播放过渡。</summary>
+   /// <param name="visible">展开时允许已显露的按钮响应点击，收起时立即停用整排交互。</param>
    public void SetFunctionMenuVisible(bool visible)
    {
-      _functionMenuContent.SetActive(visible);
-      if (visible)
-      {
-         // 入口组在箭头右侧展开后，箭头转为朝左，提示可以收回。
-         _functionMenuArrow.localEulerAngles = new Vector3(0f, 0f, 90f);
-      }
-      else
-      {
-         // 收起时箭头朝右，提示入口组会从右侧展开。
-         _functionMenuArrow.localEulerAngles = new Vector3(0f, 0f, -90f);
-      }
+      _functionMenuGroup.interactable = visible;
+      _functionMenuGroup.blocksRaycasts = visible;
+      _functionMenuAnimator.SetBool(FunctionMenuExpanded, visible);
    }
 
    /// <summary>供控制器刷新角色状态与锁定目标信息。</summary>
