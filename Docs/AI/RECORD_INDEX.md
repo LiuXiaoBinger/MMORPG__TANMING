@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `2dcb6279480fc8553d73cad0fa8ca4b2feb2d86ec0c7d05347d51c30a311ed7f`
+Source normalized SHA256: `dff578698e880c7682a5bc2703e3e10f46f9f648aeb28dd21e6bc83b6d5e257b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -176,11 +176,12 @@ Source normalized SHA256: `2dcb6279480fc8553d73cad0fa8ca4b2feb2d86ec0c7d05347d51
 | [CODE][网络][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Read cross-GS player archives from the project Redis | 1136-1140 |
 | [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-ROLL-20261127] Per-instance equipment attributes and growth | 1141-1144 |
 | [CODE][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Independent manual and gem bags | 1145-1148 |
-| [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing and jade locks | 1149-1151 |
+| [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing and jade locks | 1149-1152 |
+| [CODE][FILES][网络][区服][REALM-START-LOCK-20261127] Start the development realm while old service DLLs are in use | 1153-1155 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `14a3460452f0af0feddd45aa8ad314fd54aa1657ac83c31cf363c74dd9475952`
+Source normalized SHA256: `7ec2e6f4b3a46095bc9685990b2785b3a145e5a66a3ca605506baf6871c7efca`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -351,7 +352,8 @@ Source normalized SHA256: `14a3460452f0af0feddd45aa8ad314fd54aa1657ac83c31cf363c
 | [VERIFY][网络][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Project Redis and real two-GS player handoff | 1187-1191 |
 | [VERIFY][装备][数据库][界面][EQUIP-ROLL-20261127] Equipment rolls, database reload and eye interaction | 1192-1195 |
 | [VERIFY][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Inventory routing, persistence and outside-click verification | 1196-1199 |
-| [VERIFY][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing, persistence and client interaction | 1200-1202 |
+| [VERIFY][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing, persistence and client interaction | 1200-1203 |
+| [VERIFY][网络][区服][REALM-START-LOCK-20261127] Reproduce the startup failure and verify the live first realm | 1204-1206 |
 
 ## Docs/AI/DECISIONS.en.md
 

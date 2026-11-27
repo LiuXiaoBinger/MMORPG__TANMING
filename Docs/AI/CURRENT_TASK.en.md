@@ -1149,3 +1149,7 @@ The RO inventory has two additional tabs. Pack 6 holds 32 complete manuals and 3
 ## [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing and jade locks
 
 Each equipment UID owns up to five active affixes and a separately persisted candidate. A roll or reroll costs three stones and 5,000 / 10,000 / 20,000 copper for up to 3 / 4 / 5 affixes. Four jade grades preserve up to 1 / 2 / 3 / 4 active affixes at their original values. One jade is consumed per roll with at least one lock. Confirmation replaces all active slots without a second fee and refreshes worn genes. Equipment details show the expandable active scheme. Business commit ff6c97f was pushed to codex/feature-development. See 项目修改日志/2026-11-27-装备洗练与萃玉锁词条.md.
+
+## [CODE][FILES][网络][区服][REALM-START-LOCK-20261127] Start the development realm while old service DLLs are in use
+
+The Windows realm launcher builds into `_temp/realm-build`. Each service runs its own content-addressed copy under `_temp/realm-runtime`. Configuration and dependency changes select a new copy. Windows PowerShell 5.1 and PowerShell 7 reuse the same files for identical inputs. MasterServer's two audio directories resolve to the existing storage under `MasterServer/bin/<Configuration>`. Both stop scripts recognize development and classic deployment paths. A distribution without a solution still starts from the shipped binaries. Codex implemented the five deployment files directly. The business commits are `58aae24` and `313dad0` on `codex/feature-development`. See `项目修改日志/2026-11-27-区服启动时构建输出占用.md`.
