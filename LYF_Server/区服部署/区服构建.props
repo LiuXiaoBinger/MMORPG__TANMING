@@ -1,0 +1,8 @@
+<Project>
+  <!-- 启动脚本单独导入此文件。编译器只写开发缓存，各工程保留自己的依赖和配置。 -->
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>$(RealmBuildRoot)\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
+    <OutDir>$(RealmBuildRoot)\bin\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+  </PropertyGroup>
+</Project>

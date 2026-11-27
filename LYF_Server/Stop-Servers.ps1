@@ -3,6 +3,7 @@
 
 # LYF_Server 根目录（本脚本自身所在目录）
 $serverRoot = $PSScriptRoot
+. (Join-Path $serverRoot '区服部署/区服程序.ps1')
 
 # 用于比较的根目录字符串：去掉结尾分隔符并把斜杠统一成反斜杠
 $serverRootKey = $serverRoot.TrimEnd('\', '/').Replace('/', '\')
@@ -32,7 +33,7 @@ for ($i = 0; $i -lt $exeNames.Length; $i++) {
         # 单个候选进程对象
         $proc = $procArray[$j]
         # 该进程可执行文件的绝对路径（权限不足时为 $null）
-        $exePath = $proc.ExecutablePath
+        $exePath = Get-RealmDeploymentPath $serverRoot $proc.ExecutablePath
         if ([string]::IsNullOrEmpty($exePath)) {
             $skippedCount = $skippedCount + 1
             Write-Output ('跳过 ' + $exeName + ' PID=' + $proc.ProcessId + '：读不到 ExecutablePath，不做处理')
@@ -44,7 +45,7 @@ for ($i = 0; $i -lt $exeNames.Length; $i++) {
         $inRoot = $exeDir.Equals($serverRootKey, [System.StringComparison]::OrdinalIgnoreCase) -or $exeDir.StartsWith($serverRootKey + '\', [System.StringComparison]::OrdinalIgnoreCase)
         if ($inRoot) {
             [void]$targetPids.Add([int]$proc.ProcessId)
-            Write-Output ('匹配 ' + $exeName + ' PID=' + $proc.ProcessId + ' 路径=' + $exePath)
+            Write-Output ('匹配 ' + $exeName + ' PID=' + $proc.ProcessId + ' 路径=' + $proc.ExecutablePath)
         }
         else {
             $skippedCount = $skippedCount + 1

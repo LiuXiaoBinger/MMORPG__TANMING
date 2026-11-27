@@ -19,6 +19,7 @@ if ($TradeOnly) { $names = @('TradeServer') }
 elseif ($IncludeShared) { $names += @('LoginServer', 'CenterServer') }
 # 仅匹配项目输出目录下的可执行文件和本次选定的配置。
 $serverRoot = Split-Path -Parent $PSScriptRoot
+. (Join-Path $PSScriptRoot '区服程序.ps1')
 for ($i = 0; $i -lt $names.Count; $i++) {
     # 同名 GS 可能属于不同区，继续按路径和完整参数筛选。
     $name = $names[$i]
@@ -27,7 +28,7 @@ for ($i = 0; $i -lt $names.Count; $i++) {
     for ($j = 0; $j -lt $processes.Count; $j++) {
         # 通过本次部署程序路径和配置参数找到实际的进程号。
         $process = $processes[$j]
-        if ($process.ExecutablePath -ne $expectedExe -or !$process.CommandLine) { continue }
+        if ((Get-RealmDeploymentPath $serverRoot $process.ExecutablePath) -ne $expectedExe -or !$process.CommandLine) { continue }
         if ($process.CommandLine.IndexOf($configArgument,[StringComparison]::OrdinalIgnoreCase) -lt 0) {
             # 直接运行交易服时，Windows 对无空格的最后一个 XML 参数不加引号。
             if ($name -ne 'TradeServer') { continue }

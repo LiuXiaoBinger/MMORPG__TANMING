@@ -28,7 +28,14 @@ if ($TradeOnly) {
 } elseif ($IncludeShared) { $names += @('CenterServer', 'LoginServer') }
 # 开发目录先做增量编译，避免客户端已发送新门号、网关却仍运行上一次的程序。
 $solution = Join-Path $serverRoot 'LYF_Server.sln'
+# 部署包没有开发构建目录，直接从随包的 bin 中启动。
+$buildRoot = $null
 if (Test-Path -LiteralPath $solution -PathType Leaf) {
+    . (Join-Path $PSScriptRoot '区服程序.ps1')
+    # MSBuild 只写项目开发缓存，随后从对应服务的完整运行副本启动。
+    $buildRoot = Join-Path (Split-Path -Parent $serverRoot) '_temp/realm-build'
+    $buildProps = Join-Path $PSScriptRoot '区服构建.props'
+    $buildArgs = @('/nologo', '/verbosity:minimal', "/p:Configuration=$Configuration", "/p:RealmBuildRoot=$buildRoot", "/p:CustomBeforeMicrosoftCommonProps=$buildProps")
     # 交易服单独启动时只构建它和工程引用，其余情况统一更新区服程序及共享配置。
     $buildTarget = $solution
     if ($TradeOnly) { $buildTarget = Join-Path $serverRoot 'TradeServer/TradeServer.csproj' }
@@ -42,17 +49,24 @@ if (Test-Path -LiteralPath $solution -PathType Leaf) {
         }
     }
     if ($msbuild) {
-        & $msbuild $buildTarget /nologo /verbosity:minimal "/p:Configuration=$Configuration"
+        & $msbuild $buildTarget @buildArgs
     } else {
         # 已安装 .NET SDK 的开发环境也可以构建同一工程。
-        & dotnet msbuild $buildTarget /nologo /verbosity:minimal "/p:Configuration=$Configuration"
+        & dotnet msbuild $buildTarget @buildArgs
     }
     if ($LASTEXITCODE -ne 0) { throw "区服编译失败（$LASTEXITCODE），请查看上方构建输出。" }
 }
 for ($i = 0; $i -lt $names.Count; $i++) {
     # 每个服务从自己的输出目录加载依赖。
     $name = $names[$i]
-    $programs[$name] = (Resolve-Path -LiteralPath (Join-Path $serverRoot "$name/bin/$Configuration/$name.exe")).Path
+    if ($buildRoot) {
+        # 各服务的依赖版本分别来自各自的工程输出。
+        $buildDir = Join-Path $buildRoot "bin/$Configuration/$name"
+        $programs[$name] = Get-RealmRuntimeProgram $serverRoot $Configuration $name $buildDir
+    } else {
+        # 没有解决方案的部署包直接使用随包发布的程序。
+        $programs[$name] = (Resolve-Path -LiteralPath (Join-Path $serverRoot "$name/bin/$Configuration/$name.exe")).Path
+    }
 }
 # 双击入口要求显示窗口，自动部署沿用后台启动。
 $windowStyle = 'Hidden'
