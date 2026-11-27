@@ -271,6 +271,7 @@ message MainRoleInfo{
 	int32 skill_up_point = 5;     //技能升级点
 	string camera_offset = 6;     //客户端镜头偏移数据
 	int32 server_id = 7;          //所在游戏服务器ID
+    bool is_gm = 8;               // 当前角色的数据库 GM 标识，由中心服在登录时填写。
 }
 //返回的角色所有技能信息数据
 message RoleSkillInfoRet

@@ -1244,3 +1244,7 @@ An isolated Unity 2023.2.20f1c1 editor replayed three server snapshots. The port
 
 The final checkpoint candidate passed 16 revive, 19 boss arena and 49 dungeon flow checks. Unity fed three authentic 11244 replies to DeathCtrl using the real death prefab and the baked tower navigation mesh. Each player’s model reached its own walkable outside position, the window closed, and the portal was reachable. The side positions were adjusted after measuring the client mesh. Beisen was checked on the server only. Evidence: `_temp/boss-revive-20261127/`.
 The final client replay used the death window embedded in the actual UIRoot prefab, including its serialized button label. All three replies passed.
+
+## [VERIFY][GM][RO-GM-ROLE-20261128] Database-backed GM grant and realm-1 deployment
+
+- GameServer, CenterServer and Network compiled on the feature branch. The real role row was read by CenterServer.StartGame, then serialized and parsed. Over an isolated GM TCP loopback help succeeded for the marked character. An unmarked character of the same account and an unbound session were denied. The running CenterServer and both realm-1 game nodes loaded the DB-flag version and reconnected. A manual player login was not performed. Evidence in _temp/gm-role-20261128/db-role-rpc.log and db-activation.json.

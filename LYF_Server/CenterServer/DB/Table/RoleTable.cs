@@ -23,6 +23,10 @@ internal class RoleTable
     [SugarColumn(DefaultValue = "1", IsOnlyIgnoreInsert = true)]
     public byte State { get; set; }
 
+    /// <summary>角色级 GM 标识，默认关闭，由数据库管理员单独授予，角色常规存档不修改此列。</summary>
+    [SugarColumn(ColumnDataType = "tinyint(1)", DefaultValue = "0", IsOnlyIgnoreUpdate = true)]
+    public bool IsGM { get; set; }
+
     /// <summary>所属账号 ID，对应 AccoutTable.Id。</summary>
     public int AccountID { get; set; }
 

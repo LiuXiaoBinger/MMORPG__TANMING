@@ -1193,3 +1193,7 @@ Dungeon 4060 spawns its three bosses in place. The first positive HP loss closes
 The shared scene graph, GS actor/instance flow and Unity scene renderer carry these changes. The original realm was left running. File manifest and verification boundaries are in `项目修改日志/2026-11-27-魔神塔首领受击开战与团灭重置.md`.
 
 Dungeon checkpoints persist per member and instance through a party wipe. Tower bosses 5501, 5502 and 5503 each have a separate safe spot outside wall 23 near portal 36. Beisen 4050 and 4051 configure their own checkpoint for boss 9751 or 9801. With no personal checkpoint the server uses the party’s last engaged boss, then the starting entrance if no boss has been reached. Entering a fresh dungeon still uses its original entrance. The existing 11243/11244 revive protocol moves each character on confirmation.
+
+## [CODE][FILES][HANDOFF][GM][RO-GM-ROLE-20261128] Per-character GM flag
+
+- MySQL role.IsGM defaults to 0. CenterServer reads the role row in LoginModle.StartGame and sends MainRoleInfo.is_gm (field 8) to GameServer. The GM handler checks the flag on the authenticated online role. Explicit account grants continue to work. One local realm-1 role was granted in MySQL. The temporary per-realm list was retired. See § 2026-11-28 in 项目修改日志/2026-11-26-RO游戏内GM移植.md.

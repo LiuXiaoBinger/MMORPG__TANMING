@@ -5,7 +5,7 @@ using Google.Protobuf;
 /// <summary>RO 游戏内 GM 请求入口，按游戏服分发框架的 IGameMessageHandler 契约消费网关消息。</summary>
 internal sealed class RpcC2G_GSLocalGMCmd : IGameMessageHandler
 {
-    /// <summary>从游戏服进程配置读取允许使用 GM 的账号 ID，空集合即关闭。</summary>
+    /// <summary>保留通过游戏服环境独立授权的数据库账号 ID。</summary>
     private readonly HashSet<int> accounts = new HashSet<int>();
 
     /// <summary>注册接收器时读取游戏服启动环境 LYF_GM_ACCOUNTS，多个账号用逗号分隔。</summary>
@@ -42,7 +42,9 @@ internal sealed class RpcC2G_GSLocalGMCmd : IGameMessageHandler
         // 本次 RPC 的全部分支都返回面板可读的结果。
         GSLocalGMCmdRes result = new GSLocalGMCmdRes();
         if (role == null || role.State != OnlineRoleState.Online || !role.IsRoleDataReady()) result.ResultMsg = "角色尚未进入游戏";
-        else if (!accounts.Contains(role.mainRoleInfo.AccountId)) result.ResultMsg = "此账号未获游戏服 GM 授权";
+        // 角色标识来自中心服读取的数据库记录，兼容已配置的整账号 GM 授权。
+        else if (!role.mainRoleInfo.IsGm && !accounts.Contains(role.mainRoleInfo.AccountId))
+            result.ResultMsg = "当前角色未获游戏服 GM 授权";
         else
         {
             result.ResultMsg = CMDManager.Instance.RunGMCommond(role, request.Args);

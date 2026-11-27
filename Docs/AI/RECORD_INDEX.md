@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `966aa0be9108f56344718a54e317713b56958a5dc5ab717387f771a9687aeeb5`
+Source normalized SHA256: `1bb721db9d0af79e8cfa3e15660af40dce61158a925afd70ece5030c60f22bc8`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -183,11 +183,12 @@ Source normalized SHA256: `966aa0be9108f56344718a54e317713b56958a5dc5ab717387f77
 | [CODE][FILES][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] Author multi-item boss drops inside the RO dungeon editor | 1169-1175 |
 | [CODE][FILES][副本][UI][DUNGEON-JOURNAL-UI-20261127] Dungeon journal, individual boss marks and Friday Final chests | 1176-1181 |
 | [CODE][FILES][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 / omnidirectional and aerial pursuit | 1182-1189 |
-| [CODE][FILES][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Start the Moshenta arena on damage and reset only the encounter on a wipe | 1190-1195 |
+| [CODE][FILES][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Start the Moshenta arena on damage and reset only the encounter on a wipe | 1190-1196 |
+| [CODE][FILES][HANDOFF][GM][RO-GM-ROLE-20261128] Per-character GM flag | 1197-1199 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `ae9c6d6794c1a4e9e83f2216bcedfcd4d02ed9d44e9b1755defe1697de463d53`
+Source normalized SHA256: `2e42b8f9d0b14522acdc383574bada661993cba0a1b17ae1ac57482fcf448954`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -365,7 +366,8 @@ Source normalized SHA256: `ae9c6d6794c1a4e9e83f2216bcedfcd4d02ed9d44e9b1755defe1
 | [VERIFY][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] RO editor rendering, export and multi-item settlement | 1221-1226 |
 | [VERIFY][副本][UI][DUNGEON-JOURNAL-UI-20261127] Journal rendering, personal progress and weekly claim | 1227-1231 |
 | [VERIFY][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 / omnidirectional and aerial pursuit | 1232-1239 |
-| [VERIFY][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Replay first damage, a party wipe, re-entry and victory | 1240-1246 |
+| [VERIFY][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Replay first damage, a party wipe, re-entry and victory | 1240-1247 |
+| [VERIFY][GM][RO-GM-ROLE-20261128] Database-backed GM grant and realm-1 deployment | 1248-1250 |
 
 ## Docs/AI/DECISIONS.en.md
 

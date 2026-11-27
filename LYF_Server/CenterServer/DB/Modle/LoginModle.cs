@@ -495,6 +495,8 @@ public class LoginModle
         ret.MainRoleInfo = new MainRoleInfo
         {
             AccountId = roleTable.AccountID,
+            // 游戏服只使用中心服从当前角色行读出的 GM 标识。
+            IsGm = roleTable.IsGM,
 
             Exp = roleTable.Exp,
             SkillUpPoint = roleTable.SkillUpPoint,
