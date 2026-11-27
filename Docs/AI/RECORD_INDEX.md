@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `55b69fee66a8d1ead612031d7e4294a9b94ceb84bd5c182d30419ccaf6d35b9f`
+Source normalized SHA256: `3b285a1a3a2cd71a4ccaa2adeaccc81bf962fa0fcca65404942edc44fd30b37e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -174,11 +174,12 @@ Source normalized SHA256: `55b69fee66a8d1ead612031d7e4294a9b94ceb84bd5c182d30419
 | [CODE][FILES][HANDOFF][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1128-1131 |
 | [CODE][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag item details and recovery shortcuts | 1132-1135 |
 | [CODE][网络][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Read cross-GS player archives from the project Redis | 1136-1140 |
-| [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-ROLL-20261127] Per-instance equipment attributes and growth | 1141-1143 |
+| [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-ROLL-20261127] Per-instance equipment attributes and growth | 1141-1144 |
+| [CODE][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Independent manual and gem bags | 1145-1147 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `e9b13eefff627dcab2b3aedcb2d91f7498e5f93cb23e9b351a4833c1edeb3b68`
+Source normalized SHA256: `44f2e703216a34c741e2b5da52d36175a85d52d4647c4e6e949749669da3f06d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -347,7 +348,8 @@ Source normalized SHA256: `e9b13eefff627dcab2b3aedcb2d91f7498e5f93cb23e9b351a483
 | [VERIFY][界面][移动][RUN-MODE-20261127] Combat HUD run toggle and fast movement speed | 1179-1182 |
 | [VERIFY][背包][物品][BAG-ITEM-DETAILS-POTION-20261127] Bag card, shortcuts and server potion settlement | 1183-1186 |
 | [VERIFY][网络][副本][分线][存档][REDIS-ROLE-HANDOFF-20261127] Project Redis and real two-GS player handoff | 1187-1191 |
-| [VERIFY][装备][数据库][界面][EQUIP-ROLL-20261127] Equipment rolls, database reload and eye interaction | 1192-1194 |
+| [VERIFY][装备][数据库][界面][EQUIP-ROLL-20261127] Equipment rolls, database reload and eye interaction | 1192-1195 |
+| [VERIFY][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Inventory routing, persistence and outside-click verification | 1196-1198 |
 
 ## Docs/AI/DECISIONS.en.md
 

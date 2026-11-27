@@ -1141,3 +1141,7 @@ All 460 ItemInfo rows specify a detail category. Ordered actions and per-bottle 
 ## [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-ROLL-20261127] Per-instance equipment attributes and growth
 
 Equipment UID owns six integer base rolls in the equip table. New drops and reforging use 80–120% of each template, with ordered attack endpoints. Existing fixed gear keeps its original template values. Strengthening caps at 50 and adds 1.5% per level. Tiers run from 1 to 10 and add 7.5% per completed step. Each contribution rounds separately. All positive slots reaching 90% of their own maximum earn 极. Use the attribute eye for the breakdown. Feature commit b0ecd74, pushed to codex/feature-development. See 项目修改日志/2026-11-27-装备实例重铸与强化进阶.md.
+
+## [CODE][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Independent manual and gem bags
+
+The RO inventory has two additional tabs. Pack 6 holds 32 complete manuals and 32 matching fragment types. Pack 7 holds 230 socket gems across 23 families and ten grades. ItemInfo.PackType routes grants. The training pill and enhancement stones retain their previous bags. New roles get 81 slots per inventory bag. On loading an old save, CenterServer preserves stack UID, count and binding, fills free slots and keeps existing destination positions. At the 255-slot limit overflow stays in its original bag until space is available on a later login. Cross-server caches from before the split fall back to CenterServer. The item card closes on an outside press and another stack opens on release. See 项目修改日志/2026-11-27-秘籍宝石独立背包与点空白关闭.md.

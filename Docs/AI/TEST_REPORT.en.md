@@ -1192,3 +1192,7 @@ The production client, GameServer and GateServer built. Unity isolated Play Mode
 ## [VERIFY][装备][数据库][界面][EQUIP-ROLL-20261127] Equipment rolls, database reload and eye interaction
 
 The staged Unity client, GameServer and CenterServer built. The server and isolated MySQL passed 342 checks including save/reload, legacy backfill, duplicate equipment, actual mounted genes, progression caps and failed charges. Isolated Unity Play passed 18 checks. The eye showed external attack 1100 (+660 +165) and 2500 (+1500 +375), matching panel totals 1925 and 4375 at +40, tier 3. 极 icon and 满 labels were exercised. The running realm, end-to-end network play and a standalone Player remain unverified. Evidence and screenshot under _temp/gear-roll-20261127; see 项目修改日志/2026-11-27-装备实例重铸与强化进阶.md.
+
+## [VERIFY][背包][物品][BAG-MANUAL-GEM-PACKS-20261127] Inventory routing, persistence and outside-click verification
+
+All 460 item rows were compared, with 294 PackType cells changed. Unity Play Mode passed 33 isolated checks using real UI raycasts, mouse and simulated touch. GameServer and CenterServer passed 22 isolated checks covering SQLite migration and another login, slot collisions, overflow, snapshot save and restore, legacy cross-server cache rejection, manual crafting and learning, gem purchase and crafting. The client, GameServer and CenterServer compiled alongside the concurrent equipment changes. Realm 1 and a physical mobile build were not tested. Evidence in _temp/bag-types-20261127/unity-proof.txt and server-proof.txt. See 项目修改日志/2026-11-27-秘籍宝石独立背包与点空白关闭.md.
