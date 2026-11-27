@@ -1146,3 +1146,7 @@ One character entered from the normal challenge UI, clicked stages 137–143, pa
 ## [VERIFY][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals
 
 Luban export succeeded. An isolated copy of the actual game server loaded the four published binaries and passed 18 checks covering real elemental damage, qi damage, shield absorption, reflection, healing windows, stat removal, rank five, item synthesis/learning and catalogue visibility. The developer requested publishing only, so both live game processes kept running. Live account UI, multiplayer balance and packaging were not tested. `项目修改日志/2026-11-27-魔剑士职业秘笈.md`
+
+## [VERIFY][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] Renamed materials in workshop, inventory and market search
+
+Luban reproduced the baseline binary. Comparison of all 460 item rows identified 31 name and nine description changes. Unity Play Mode passed 288 isolated checks including the 31 item names, icons and shelves, exact new-name searches, old-name misses, zero-stock item details and both ten-pattern searches. The three workshop operations retained their ingredient counts. A restored seven-item stack kept its UID and showed the new name in the sell panel. Live realm 1 and mobile builds were not tested. Evidence is in `_temp/gold-material-names-20261127/unity-proof.txt` and `项目修改日志/2026-11-27-作坊材料与魔剑士升级图纸改名.md`.

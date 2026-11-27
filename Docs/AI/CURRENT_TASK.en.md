@@ -1102,3 +1102,7 @@ Quest navigation preserves the selected stage across combat-locked portals, stop
 ## [CODE][FILES][HANDOFF][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals
 
 Renamed only the seven manuals previously tagged Huashan or Great Shaman (IDs 7–13) to Magic Swordsman titles and adapted their rank genes, base passives and both bag items. Common and unclassified entries, IDs, prices and the exact 18 visible catalogue IDs remain intact. ID 12 is still accessible from its item. `项目修改日志/2026-11-27-魔剑士职业秘笈.md`
+
+## [CODE][FILES][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] RO names for workshop materials and Magic Swordsman upgrade patterns
+
+The project item table and its Luban binary now display 31 new names. IDs 10701–10711 are the eleven gold workshop materials. IDs 10501–10510 use 骑士图纸·部位 for levels 80–120 and IDs 10601–10610 use 卢恩图纸·部位 for levels 120–160. Each series keeps its ten slot suffixes. Nine item descriptions use the new material terms. The item IDs, icons, recipe quantities and copper fees stay with the same items. The classic-server names map to project names in `项目分析/一梦江湖金装材料与魔剑士成品.md`. See `项目修改日志/2026-11-27-作坊材料与魔剑士升级图纸改名.md` for the full list.
