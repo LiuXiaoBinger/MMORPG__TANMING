@@ -10,6 +10,8 @@ public sealed class FriendsHandler
     private readonly ChatDataMgr chat = new ChatDataMgr();
     /// <summary>由 MainView 管理的原生好友窗口。</summary>
     private readonly FriendsPanel panel;
+    /// <summary>负责添加弹层的本区可见玩家筛选、搜索和添加。</summary>
+    private readonly AddFriendsCtrl discovery;
     /// <summary>主界面功能菜单“好友”的红点。</summary>
     private readonly GameObject hint;
     /// <summary>公共聊天与好友私聊共享的录放音组件。</summary>
@@ -32,7 +34,8 @@ public sealed class FriendsHandler
         mgr.Changed += Refresh; mgr.PrivateChat += OnPrivateChat; mgr.History += OnReadPrivateMessage; mgr.Failed += ShowError;
         panel.emojis.Selected += SendEmoji; panel.Opened += Open; panel.friends.onClick.AddListener(OnFriends); panel.recent.onClick.AddListener(OnRecent);
         panel.directory.ContactsRequested += OnFriends; panel.directory.Changed += Refresh; panel.directory.GroupCreated += CreateGroup; panel.star.onClick.AddListener(ToggleStar);
-        panel.add.onClick.AddListener(AddFriend); panel.relation.onClick.AddListener(ChangeRelation); panel.send.onClick.AddListener(SendText); panel.input.onSubmit.AddListener(SubmitText);
+        discovery = new AddFriendsCtrl(panel, mgr);
+        panel.relation.onClick.AddListener(ChangeRelation); panel.send.onClick.AddListener(SendText); panel.input.onSubmit.AddListener(SubmitText);
         if (audio != null)
         {
             panel.record.RecordStarted += StartRecord; panel.record.RecordEnded += audio.FinishRecord; audio.Ready += OnAudio;
@@ -43,7 +46,8 @@ public sealed class FriendsHandler
     {
         mgr.Dispose(); panel.emojis.Selected -= SendEmoji; panel.Opened -= Open; panel.friends.onClick.RemoveListener(OnFriends); panel.recent.onClick.RemoveListener(OnRecent);
         panel.directory.ContactsRequested -= OnFriends; panel.directory.Changed -= Refresh; panel.directory.GroupCreated -= CreateGroup; panel.star.onClick.RemoveListener(ToggleStar);
-        panel.add.onClick.RemoveListener(AddFriend); panel.relation.onClick.RemoveListener(ChangeRelation); panel.send.onClick.RemoveListener(SendText); panel.input.onSubmit.RemoveListener(SubmitText);
+        discovery.Dispose();
+        panel.relation.onClick.RemoveListener(ChangeRelation); panel.send.onClick.RemoveListener(SendText); panel.input.onSubmit.RemoveListener(SubmitText);
         if (audio != null)
         {
             panel.record.RecordStarted -= StartRecord; panel.record.RecordEnded -= audio.FinishRecord; audio.Ready -= OnAudio;
@@ -141,14 +145,6 @@ public sealed class FriendsHandler
         // 先显示本地历史，随后用已确认序号请求缺口。
         ReadPrivateMessageRes history = chat.Get(uid);
         panel.ShowChat(history, Play, true); mgr.RequestReadPrivateMessage(uid, history.Squence);
-    }
-    /// <summary>按完整昵称寻找并添加本区好友。</summary>
-    private void AddFriend()
-    {
-        // 输入为空时保留输入框，直接显示原因。
-        string name = panel.nickname.text.Trim();
-        if (name.Length == 0) { ShowError("请输入好友角色名"); return; }
-        recentOnly = false; panel.addDialog.SetActive(false); panel.status.text = ""; Refresh(); mgr.RequestAddFriend(name, 0);
     }
     /// <summary>删除自己的关系，或回加已主动添加自己的角色。</summary>
     private void ChangeRelation()

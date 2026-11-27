@@ -1,6 +1,6 @@
 using UnityEngine;
 
-/// <summary>对应 RO EmailHandler。负责列表选择、邮件按钮及打开后的第一封信，协议收发交 EmailMgr。</summary>
+/// <summary>对应 RO EmailHandler。进入邮箱先显示未选状态，玩家点击后才取正文并处理已读。</summary>
 public sealed class EmailHandler
 {
     /// <summary>本主城窗口对应的邮箱数据管理器。</summary>
@@ -9,10 +9,10 @@ public sealed class EmailHandler
     private readonly EmailPanel panel;
     /// <summary>邮箱入口的未读红点。</summary>
     private readonly GameObject hint;
-    /// <summary>保持当前选择，删除后按原位置选择下一封。</summary>
+    /// <summary>当前收件箱选中的邮件编号，零表示右侧展示选信提示。</summary>
     private long selected;
-    /// <summary>当前选中行的上一次排序位置。</summary>
-    private int selectedIndex;
+    /// <summary>正在查看发件箱页面时不把收件回执绘制进该页。</summary>
+    private bool showingOutbox;
     /// <summary>本次主城窗口显示的角色编号。</summary>
     private int roleId;
     /// <summary>服务器未读变化时通知所有可见的社交侧栏。</summary>
@@ -34,7 +34,8 @@ public sealed class EmailHandler
         mgr.UnreadChanged += SetHint;
         mgr.NewMail += RefreshIfOpen;
         mgr.Failed += panel.SetStatus;
-        panel.Opened += RefreshIfOpen;
+        panel.Opened += OpenInbox;
+        panel.outbox.onClick.AddListener(ChangeFolder);
         panel.getBtn.onClick.AddListener(OnBtnGet);
         panel.delBtn.onClick.AddListener(OnBtnDel);
         panel.getAllBtn.onClick.AddListener(OnBtnGetAll);
@@ -47,7 +48,8 @@ public sealed class EmailHandler
         if (roleId == id) return;
         roleId = id;
         selected = 0;
-        selectedIndex = 0;
+        showingOutbox = false;
+        panel.SetFolder(false);
         mgr.ClearData();
         if (id > 0) mgr.RequestGetMailList();
     }
@@ -55,17 +57,29 @@ public sealed class EmailHandler
     /// <summary>可见窗口在打开及新信抵达时重新读取摘要。</summary>
     private void RefreshIfOpen()
     {
-        if (panel.isActiveAndEnabled) mgr.RequestGetMailList();
+        if (panel.isActiveAndEnabled && !showingOutbox) mgr.RequestGetMailList();
     }
 
-    /// <summary>列表变化后保留当前信；删除当前信时沿相邻行继续。</summary>
+    /// <summary>重新进入收件箱时先显示目录，等待玩家选择。</summary>
+    private void OpenInbox()
+    {
+        showingOutbox = false; selected = 0;
+        panel.SetFolder(false); RefreshList(); RefreshIfOpen();
+    }
+    /// <summary>切换发件箱页面；该页沿用右下角既有发送入口。</summary>
+    private void ChangeFolder()
+    {
+        if (showingOutbox) { OpenInbox(); return; }
+        showingOutbox = true; selected = 0;
+        panel.SetFolder(true); panel.ShowDetail(null, null, true);
+    }
+
+    /// <summary>列表变化只保留仍存在的选中信件；其余来信等玩家点选。</summary>
     private void RefreshList()
     {
-        if (!panel.isActiveAndEnabled) return;
+        if (!panel.isActiveAndEnabled || showingOutbox) return;
         // 数据刷新后原选中项可能已被删除。
         MailBaseInfo mail = mgr.GetMail(selected);
-        if (mail == null && mgr.Datas.Count > 0)
-            mail = mgr.Datas[Mathf.Clamp(selectedIndex, 0, mgr.Datas.Count - 1)];
         if (mail != null) OnClickEmail(mail.MailUid);
         else
         {
@@ -84,7 +98,6 @@ public sealed class EmailHandler
         // 只在选择切换时重置正文滚动位置。
         bool changed = selected != uid;
         selected = uid;
-        selectedIndex = mgr.Datas.IndexOf(mail);
         panel.ShowList(mgr.Datas, uid, OnClickEmail);
         // 已看过的详情直接从角色缓存恢复。
         MailContent body = mgr.GetDetail(uid);
@@ -111,7 +124,8 @@ public sealed class EmailHandler
     /// <summary>随主城控制器释放网络订阅和窗口事件。</summary>
     public void Dispose()
     {
-        panel.Opened -= RefreshIfOpen;
+        panel.Opened -= OpenInbox;
+        panel.outbox.onClick.RemoveListener(ChangeFolder);
         panel.getBtn.onClick.RemoveListener(OnBtnGet);
         panel.delBtn.onClick.RemoveListener(OnBtnDel);
         panel.getAllBtn.onClick.RemoveListener(OnBtnGetAll);

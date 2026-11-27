@@ -26,6 +26,8 @@ public sealed class FriendsPanel : WindowBase
     [SerializeField] private Button openAdd;
     /// <summary>添加好友弹层。</summary>
     [SerializeField] internal GameObject addDialog;
+    /// <summary>原添加弹层内的推荐行、筛选和本区搜索视图。</summary>
+    [SerializeField] internal AddFriendsPanel discovery;
     /// <summary>添加弹层内输入为空时显示的提示。</summary>
     [SerializeField] internal Text addStatus;
     /// <summary>放弃本次添加并收起弹层。</summary>
@@ -36,9 +38,9 @@ public sealed class FriendsPanel : WindowBase
     [SerializeField] internal Text starLabel;
     /// <summary>已有会话但暂无消息时展示的侠客空态。</summary>
     [SerializeField] private GameObject noHistory;
-    /// <summary>同区角色完整昵称输入框。</summary>
+    /// <summary>同区角色号或昵称搜索框。</summary>
     [SerializeField] internal ChatInputField nickname;
-    /// <summary>确认按昵称添加。</summary>
+    /// <summary>按当前输入搜索可见玩家。</summary>
     [SerializeField] internal Button add;
     /// <summary>选中联系人的资料和聊天栏。</summary>
     [SerializeField] internal GameObject conversation;
@@ -82,7 +84,7 @@ public sealed class FriendsPanel : WindowBase
     {
         close.onClick.AddListener(CloseWindow);
         emoji.onClick.AddListener(() => emojis.gameObject.SetActive(!emojis.gameObject.activeSelf));
-        openAdd.onClick.AddListener(() => { nickname.text = ""; addStatus.text = ""; addDialog.SetActive(true); nickname.ActivateInputField(); });
+        openAdd.onClick.AddListener(() => { addStatus.text = ""; addDialog.SetActive(true); });
         cancelAdd.onClick.AddListener(() => addDialog.SetActive(false));
     }
     /// <summary>恢复布局并交控制器读取会话。</summary>

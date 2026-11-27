@@ -8,12 +8,18 @@ public sealed class EmailPanel : WindowBase
 {
     /// <summary>按参考分辨率排版的邮箱面板。</summary>
     [SerializeField] private RectTransform frame;
-    /// <summary>飞鹰和好友共用的货币栏及侧栏。</summary>
+    /// <summary>邮箱和好友共用的货币栏及侧栏。</summary>
     [SerializeField] internal SocialPanelHeader header;
     /// <summary>通过既有好友赠礼流程发送附物传书。</summary>
     [SerializeField] internal Button sendGift;
     /// <summary>录像中传书下方的既有集市入口。</summary>
     [SerializeField] internal Button market;
+    /// <summary>左下切换发件箱和收件箱的按钮。</summary>
+    [SerializeField] internal Button outbox;
+    /// <summary>显示可切换到的另一信箱名称。</summary>
+    [SerializeField] private Text folderLabel;
+    /// <summary>阅读区未选信件或发件箱无历史接口时的提示。</summary>
+    [SerializeField] private Text emptyHint;
     /// <summary>关闭批量删除浮层的右上角按钮。</summary>
     [SerializeField] private Button closeConfirm;
     /// <summary>左栏 ScrollRect 内按顺序排列邮件行的父节点。</summary>
@@ -113,6 +119,18 @@ public sealed class EmailPanel : WindowBase
     /// <summary>显示服务器操作结果，空串清除原提示。</summary><param name="message">当前提示文本。</param>
     internal void SetStatus(string message) { status.text = message; }
 
+    /// <summary>切换阅读区文案和属于收件箱的批量操作。</summary><param name="sent">为真时显示本次的发件箱页面。</param>
+    internal void SetFolder(bool sent)
+    {
+        market.gameObject.SetActive(!sent);
+        listArea.SetActive(!sent);
+        getAllBtn.gameObject.SetActive(!sent);
+        delAllBtn.gameObject.SetActive(!sent);
+        if (sent) { folderLabel.text = "收件箱"; emptyHint.text = "发件记录暂未开放"; }
+        else { folderLabel.text = "发件箱"; emptyHint.text = "请选择左侧邮件阅读"; }
+        SetStatus("");
+    }
+
     /// <summary>刷新左侧行与批量操作的可用状态。</summary>
     /// <param name="mails">当前有序摘要。</param><param name="uid">当前选择的邮件编号。</param>
     /// <param name="clicked">点击某封信时通知 EmailHandler。</param>
@@ -136,9 +154,7 @@ public sealed class EmailPanel : WindowBase
         getAllBtn.interactable = unread || mails.Count == MailCode.MaxClientMailCount;
         delAllBtn.interactable = read || mails.Count == MailCode.MaxClientMailCount;
         // 与 RO 空信箱相同，收起列表底板及两个批量按钮。
-        listArea.SetActive(mails.Count > 0);
-        getAllBtn.gameObject.SetActive(mails.Count > 0);
-        delAllBtn.gameObject.SetActive(mails.Count > 0);
+        listArea.SetActive(true);
     }
 
     /// <summary>右栏显示当前邮件、附件或空态，正文较长时由原生滚动区域承载。</summary>
