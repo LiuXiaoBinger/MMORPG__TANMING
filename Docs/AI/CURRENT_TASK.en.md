@@ -1106,3 +1106,7 @@ Renamed only the seven manuals previously tagged Huashan or Great Shaman (IDs 7�
 ## [CODE][FILES][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] RO names for workshop materials and Magic Swordsman upgrade patterns
 
 The project item table and its Luban binary now display 31 new names. IDs 10701–10711 are the eleven gold workshop materials. IDs 10501–10510 use 骑士图纸·部位 for levels 80–120 and IDs 10601–10610 use 卢恩图纸·部位 for levels 120–160. Each series keeps its ten slot suffixes. Nine item descriptions use the new material terms. The item IDs, icons, recipe quantities and copper fees stay with the same items. The classic-server names map to project names in `项目分析/一梦江湖金装材料与魔剑士成品.md`. See `项目修改日志/2026-11-27-作坊材料与魔剑士升级图纸改名.md` for the full list.
+
+## [CODE][FILES][HANDOFF][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons
+
+The existing Settings → Hotkeys tab now exposes all 46 reference actions plus four project actions. Of the 50 rows, 29 bind to existing commands and 21 are disabled. The preview keyboard, three independently scrolling columns, draft/save/discard/defaults, persistent movement bindings, HUD skill labels, and seven corrected rail icons are in the production prefab and input paths. `项目修改日志/2026-11-27-热键设置与页签图标.md`

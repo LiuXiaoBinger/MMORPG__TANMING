@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `3fc34f7f57baba9cdaca88fbcfbc7fd44b3cfe0c3b69e31bad9d22037eca0e3f`
+Source normalized SHA256: `01f0e0b4d374fcf0861646d8a9abe47b72a156760fec36a18ff1e960aa2df748`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -166,11 +166,12 @@ Source normalized SHA256: `3fc34f7f57baba9cdaca88fbcfbc7fd44b3cfe0c3b69e31bad9d2
 | [CODE][FILES][HANDOFF][好友聊天][SOCIAL-CHAT-20261127] RO friend conversations and persistent friend groups | 1092-1097 |
 | [CODE][FILES][HANDOFF][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Playable Moshenta stairs and boss conversation | 1098-1101 |
 | [CODE][FILES][HANDOFF][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals | 1102-1105 |
-| [CODE][FILES][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] RO names for workshop materials and Magic Swordsman upgrade patterns | 1106-1108 |
+| [CODE][FILES][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] RO names for workshop materials and Magic Swordsman upgrade patterns | 1106-1109 |
+| [CODE][FILES][HANDOFF][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1110-1112 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `916b922154db75e26085f7805f4092d135d45b1c7a782de2b2c76af7cb672908`
+Source normalized SHA256: `6dd26303839a6e5ee770da916497a5f4c0d0ef938a6f6b80582f52a9bbc0f013`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -331,7 +332,8 @@ Source normalized SHA256: `916b922154db75e26085f7805f4092d135d45b1c7a782de2b2c76
 | [VERIFY][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Full graphical client clear of Moshenta 4060 | 1142-1145 |
 | [VERIFY][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals | 1146-1149 |
 | [VERIFY][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] Renamed materials in workshop, inventory and market search | 1150-1153 |
-| [VERIFY][数据库][LOCAL-DB-CLEANUP-20261127] Local mailbox and chat test database cleanup | 1154-1158 |
+| [VERIFY][数据库][LOCAL-DB-CLEANUP-20261127] Local mailbox and chat test database cleanup | 1154-1159 |
+| [VERIFY][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1160-1162 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -1156,3 +1156,7 @@ Luban reproduced the baseline binary. Comparison of all 460 item rows identified
 - Codex removed the 11 databases traced to this conversation on the local MySQL instance on port 3308. Six came from mailbox runs, one from friend gifts and four from private/group chat. Each exact name was matched to this conversation's fixture start and the MySQL binary log entry for database creation.
 - The final teardown had stopped the test servers and left their databases behind. Before removal, all 11 had no active session, metadata lock, live realm configuration reference or running fixture server. A new connection then compared the entire catalog. It fell from 136 to 125. All 117 other candidate databases and all eight protected databases were present, including game_db with its role_mail table.
 - Verification covered this local instance. Client gameplay and remote instances were outside the check. The full database names, creation evidence and deletion receipt are in 项目修改日志/本地MySQL验收库清理-2026-11-27.md.
+
+## [VERIFY][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons
+
+The Editor and Windows Player LYF_Game assemblies compiled with the current source list. Isolated Unity Play Mode passed 38 checks using the production prefab, Common SDF and physical Input System events. Checks cover conflict reporting, draft lifecycle, default restore, preference reload, HUD key lookup, movement, jump, skill/target/window dispatch and rail sprites. Live account gameplay and a complete player build were not verified. `项目修改日志/2026-11-27-热键设置与页签图标.md`
