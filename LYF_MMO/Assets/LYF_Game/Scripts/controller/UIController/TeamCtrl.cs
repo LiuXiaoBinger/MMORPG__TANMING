@@ -65,6 +65,7 @@ public sealed class TeamCtrl : CtrlBase
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_DungeonBossProgress, OnBossProgress);
+        SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_DungeonFinalClaimResult, OnFinalWeekly);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_MonsterAttrUpdateCode, OnMonsterAttrUpdate);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_DungeonInteractResultCode, OnDungeonInteractResult);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.PtcM2C_AskMemberEnterFBNtf, OnAskMemberEnterFB);
@@ -89,6 +90,7 @@ public sealed class TeamCtrl : CtrlBase
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_DungeonBossProgress, OnBossProgress);
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_DungeonFinalClaimResult, OnFinalWeekly);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_MonsterAttrUpdateCode, OnMonsterAttrUpdate);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_DungeonInteractResultCode, OnDungeonInteractResult);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.PtcM2C_AskMemberEnterFBNtf, OnAskMemberEnterFB);
@@ -176,6 +178,11 @@ public sealed class TeamCtrl : CtrlBase
         }
         // 文案只使用权威回包中的实际入包数量，背包列表由正常增量同步。
         string message = "击败" + notice.BossName + " · " + progress;
+        if (TeamData.Instance.DungeonsDegree == DungeonFinalWeek.Difficulty)
+        {
+            TipsMgr.Instance.ShowSystemTips(message + "\n终绝首领进度已记录");
+            return;
+        }
         if (notice.Drops.Count > 0)
         {
             // 同一条提示列出整批实际入包的内容，顺序与策划配置一致。
@@ -332,6 +339,25 @@ public sealed class TeamCtrl : CtrlBase
         MainView main = _view as MainView;
         if (main == null || main.MoshentaBlackCurtainWindow == null) return;
         if (main.MoshentaBlackCurtainWindow.gameObject.activeSelf) main.ShowMainWindow(WindowType.MoshentaBlackCurtainWindow);
+    }
+
+    /// <summary>将玩家选择的已结束周送到游戏服校验并开箱。</summary><param name="week">所选周的北京周五日序。</param>
+    public static void RequestFinalWeekly(int week)
+    {
+        Send(NetDefine.CMD_DungeonFinalClaim, new DungeonFinalClaimReq { Week = week }.ToByteString());
+    }
+
+    /// <summary>展示游戏服实际开箱的内容，次数与背包走已有的增量。</summary><param name="data">游戏服的终绝领箱回包。</param>
+    private void OnFinalWeekly(ByteString data)
+    {
+        DungeonFinalClaimRet reply = DungeonFinalClaimRet.Parser.ParseFrom(data);
+        string message = reply.Message;
+        for (int index = 0; index < reply.Items.Count; index++)
+        {
+            MailItem item = reply.Items[index];
+            message += "\n" + LubanMgr.Instance.GetItemConfigById(item.ItemId).ItemName + " ×" + item.Count;
+        }
+        TipsMgr.Instance.ShowSystemTips(message);
     }
 
     /// <summary>沿原NetAIEventCommand发送玩家明确选中的NPC剧情事件。</summary>

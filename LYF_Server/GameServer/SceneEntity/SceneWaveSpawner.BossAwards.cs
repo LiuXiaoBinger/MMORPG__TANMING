@@ -29,6 +29,7 @@ public sealed partial class SceneWaveSpawner
     private int BossPeriod(DateTime utcNow)
     {
         // 只有难度表 1（新秀）每日刷新，其余难度分别在每周起点刷新。
+        if (Difficulty.DifficultyId == DungeonFinalWeek.Difficulty) return DungeonFinalWeek.Period(utcNow);
         int refreshType = 2;
         if (Difficulty.DifficultyId == 1) refreshType = 1;
         return (int)(RoleCountComponent.PeriodStart(utcNow, refreshType).Ticks / TimeSpan.TicksPerDay);
@@ -65,6 +66,12 @@ public sealed partial class SceneWaveSpawner
         // 本次单播先填入击杀后的完整进度，重复击杀也只显示已有进度。
         DungeonBossProgressNtf notice = BossProgress(counts, period);
         notice.BossName = award.BossName;
+        // 终绝保留个人首领进度，物品在上周宝箱中统一领取。
+        if (Difficulty.DifficultyId == DungeonFinalWeek.Difficulty)
+        {
+            role.SendToClient(NetDefine.CMD_DungeonBossProgress, notice.ToByteString());
+            return;
+        }
         notice.NoDropsConfigured = award.PackIds.Length == 0;
         if (!notice.NoDropsConfigured && counts.GetCount(RoleCountAction.DungeonBossDrop, award.Id) != period)
         {

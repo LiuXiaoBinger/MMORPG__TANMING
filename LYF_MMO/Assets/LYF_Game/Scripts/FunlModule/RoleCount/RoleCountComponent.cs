@@ -5,6 +5,49 @@ using cfg;
 /// <summary>客户端角色次数组件，保存商城、副本等业务次数快照。</summary>
 public sealed class RoleCountComponent : RoleComponentBase
 {
+    /// <summary>角色存档中 DungeonBossKill 的协议行为值，旧版客户端公共程序集也使用同一数值键。</summary>
+    private const long DungeonBossKillAction = 12L;
+
+    /// <summary>按游戏服规则取得新秀每日、其余难度周日开始的 UTC 日序号。</summary>
+    /// <param name="difficulty">正式难度编号，新秀为 1。</param><param name="utc">当前 UTC 时刻。</param>
+    public static int BossPeriodDay(int difficulty, DateTime utc)
+    {
+        // 与角色持久化记录比较的周期起始日。
+        if (difficulty == DungeonFinalWeek.Difficulty) return DungeonFinalWeek.Period(utc);
+        DateTime day = utc.Date;
+        if (difficulty != 1) day = day.AddDays(-(int)day.DayOfWeek);
+        return (int)(day.Ticks / TimeSpan.TicksPerDay);
+    }
+
+    /// <summary>本角色收到终绝成绩或领箱状态后通知已打开的周赏。</summary>
+    public event Action DungeonFinalUpdated;
+
+    /// <summary>列出上周及此前仍欠领的有成绩周期，最近一期在前。</summary>
+    /// <param name="current">本周的北京周五日序。</param>
+    public List<int> DungeonFinalHistory(int current)
+    {
+        // 成绩以周为键，离线跨过多周仍可补领原来的盒子。
+        List<int> weeks = new List<int>();
+        List<RoleCountItemInfo> rows = new List<RoleCountItemInfo>(_roleCountItemList.Values);
+        for (int index = 0; index < rows.Count; index++)
+        {
+            // 每周最高层只有一条，本周不能在上周页被领取。
+            RoleCountItemInfo row = rows[index];
+            if (row.Type != DungeonFinalWeek.Highest || row.Id >= current || row.Count <= 0) continue;
+            int week = (int)row.Id;
+            if (week == current - 7 || GetCount((RoleCountAction)DungeonFinalWeek.Claimed, week) == 0) weeks.Add(week);
+        }
+        weeks.Sort((left, right) => right.CompareTo(left));
+        return weeks;
+    }
+
+    /// <summary>从登录次数快照或本次在线的权威击杀通知读取单只首领状态。</summary>
+    /// <param name="awardId">唯一标识副本、难度及首领的奖励行编号。</param><param name="period">当前展示的周期起始日。</param>
+    public bool IsDungeonBossDefeated(int awardId, int period)
+    {
+        return GetCount((RoleCountAction)DungeonBossKillAction, awardId) == period;
+    }
+
     /// <summary>保留的次数变化事件；当前类内没有触发它，界面通过 DirtyTracker 得知需要刷新。</summary>
     public event Action<RoleCountItemInfo> CountChanged;
 
@@ -273,6 +316,17 @@ public sealed class RoleCountComponent : RoleComponentBase
             // 计数值不得为负。
             if (item.Count < 0)
             {
+                continue;
+            }
+            // 首领进度键来自奖励表，游戏服下发的绝对周期与角色登录存档相同。
+            // 周箱的层数、不同副本数与领取标记也使用服务端绝对值。
+            bool weekly = item.Type == DungeonFinalWeek.Highest || item.Type == DungeonFinalWeek.Distinct || item.Type == DungeonFinalWeek.Claimed;
+            if (item.Type == DungeonBossKillAction || weekly)
+            {
+                // 每只首领独立记录，显示名相同也不会误标其他首领。
+                Tuple<long, long> key = Tuple.Create(item.Type, item.Id);
+                _roleCountItemList[key] = new RoleCountItemInfo(item.Type, item.Id, item.Count);
+                if (weekly) DungeonFinalUpdated?.Invoke();
                 continue;
             }
             SetCount((RoleCountAction)item.Type, (int)item.Id, item.Count);

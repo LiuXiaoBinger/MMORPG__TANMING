@@ -141,6 +141,10 @@ public class NetDefine
     public const ushort CMD_TeamEnterDungeonCode = 11212;
     /// <summary>GS 单播个人首领击杀进度及本次自动入包内容。</summary>
     public const ushort CMD_DungeonBossProgress = 11217;
+    /// <summary>请求领取一个已经结算的终绝周箱。</summary>
+    public const ushort CMD_DungeonFinalClaim = 11218;
+    /// <summary>游戏服返回本人本期周箱实际入包结果。</summary>
+    public const ushort CMD_DungeonFinalClaimResult = 11219;
     /// <summary>服务端下发角色离开视野通知，客户端据此删除远端角色。</summary>
     public const ushort CMD_RoleLeaveCode = 11213;
 }

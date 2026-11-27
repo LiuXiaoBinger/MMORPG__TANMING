@@ -153,6 +153,7 @@
       <LogicalName>PublicCityPortals.xml</LogicalName>
     </EmbeddedResource>
     <Compile Include="Proto\MasterTeam.cs" />
+    <Compile Include="Proto\PbcDungeonFinal.cs" />
     <Compile Include="Proto\PbcDungeon.cs" />
     <Compile Include="Proto\PbcGm.cs" />
     <Compile Include="Proto\PbcChat.cs" />

@@ -72,6 +72,11 @@
         <Compile Include="MessageHandler\Role\RoleReviveHandler.cs" />
         <Compile Include="SceneEntity\SceneWaveSpawner.cs" />
         <Compile Include="SceneEntity\DungeonDifficultySettings.cs" />
+        <Compile Include="..\..\LYF_MMO\Assets\LYF_Game\Scripts\Dungeon\DungeonFinalWeek.cs"><Link>SceneEntity\DungeonFinalWeek.cs</Link></Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\LYF_Game\Scripts\Dungeon\DungeonFinalRewardTier.cs"><Link>SceneEntity\DungeonFinalRewardTier.cs</Link></Compile>
+        <Compile Include="SceneEntity\DungeonFinalRewards.cs" />
+        <Compile Include="MessageHandler\Role\DungeonFinalClaimHandler.cs" />
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\LYF_Game\Config\Resources\Dungeons\FinalWeeklyRewards.xml"><LogicalName>Dungeons.FinalWeeklyRewards.xml</LogicalName></EmbeddedResource>
         <Compile Include="SceneEntity\MoshentaOrc.cs" />
         <Compile Include="SceneEntity\MoshentaOrcDefinition.cs" />
         <!-- 魔神塔原技能表与动作配置的读取。 -->

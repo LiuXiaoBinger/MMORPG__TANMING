@@ -1,1178 +1,443 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using cfg;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
-/// <summary>
-/// 主题副本选择窗口，直接挂在 ThemeDungeonArround 预制体实例的根节点上（该实例挂在 UIRoot / MainView 下），
-/// 负责副本书位填充、翻页、高亮和背景切换；点击书位打开独立详情窗口，确认挑战再通知控制器。
-/// </summary>
+/// <summary>副本纪事主页，在同一窗口浏览副本、首领、掉落及难度，挑战交回现有队伍控制器。</summary>
 public sealed class ThemeDungeonArroundWindow : WindowBase
 {
+    /// <summary>当前章节对应的全屏场景插画。</summary>
+    [SerializeField] private RawImage backdrop;
+    /// <summary>左侧可滚动的副本选项模板。</summary>
+    [SerializeField] private DungeonJournalOption dungeonTemplate;
+    /// <summary>右侧难度选项模板。</summary>
+    [SerializeField] private DungeonJournalOption difficultyTemplate;
+    /// <summary>分层难度的纵向层数选项模板。</summary>
+    [SerializeField] private DungeonJournalOption layerTemplate;
+    /// <summary>只有分层难度才显示的滚动列。</summary>
+    [SerializeField] private GameObject layerPanel;
+    /// <summary>中央首领头像行的正式模板。</summary>
+    [SerializeField] private DungeonBossPortraitWidget bossTemplate;
+    /// <summary>当前副本名。</summary>
+    [SerializeField] private Text dungeonTitle;
+    /// <summary>当前章节与推荐等级。</summary>
+    [SerializeField] private Text chapter;
+    /// <summary>配置正文的首句，完整内容可在档案中查看。</summary>
+    [SerializeField] private Text synopsis;
+    /// <summary>当前角色在本难度、本周期已击败的首领数。</summary>
+    [SerializeField] private Text progress;
+    /// <summary>所选首领的掉落物品与数量。</summary>
+    [SerializeField] private Text rewardName;
+    /// <summary>该难度的掉落周期说明。</summary>
+    [SerializeField] private Text rewardCycle;
+    /// <summary>横向滚动掉落栏内的物品格模板。</summary>
+    [SerializeField] private DungeonRewardPreviewWidget rewardTemplate;
+    /// <summary>进入原有组队确认流程的按钮。</summary>
+    [SerializeField] private Button challenge;
+    /// <summary>寻找队伍入口。</summary>
+    [SerializeField] private Button findTeam;
+    /// <summary>打开项目既有剧情档案的入口。</summary>
+    [SerializeField] private Button archive;
+    /// <summary>终绝难度进入本周进度与上周宝箱的入口。</summary>
+    [SerializeField] private Button weeklyButton;
+    /// <summary>预制体内与副本主页共用生命周期的终绝周赏。</summary>
+    [SerializeField] private DungeonFinalJournalWidget weekly;
+    /// <summary>关闭副本纪事。</summary>
+    [SerializeField] private Button close;
+    /// <summary>选中首领后显示在页面右侧的资料面板。</summary>
+    [SerializeField] private GameObject dossier;
+    /// <summary>关闭资料后继续浏览当前副本和难度。</summary>
+    [SerializeField] private Button closeDossier;
+    /// <summary>右侧资料的首领名。</summary>
+    [SerializeField] private Text dossierName;
+    /// <summary>右侧资料中的首领原图。</summary>
+    [SerializeField] private RawImage dossierPortrait;
+    /// <summary>正式怪物目录与难度表中的数值说明。</summary>
+    [SerializeField] private Text dossierStats;
+    /// <summary>首领技能栏目，仅在该首领有已接入技能时显示。</summary>
+    [SerializeField] private GameObject skillSection;
+    /// <summary>当前首领技能表中用于展示的名字。</summary>
+    [SerializeField] private Text dossierSkills;
+    /// <summary>查看此首领时对应的个人奖励。</summary>
+    [SerializeField] private Text dossierDrop;
 
-    #region 字段
-    /// <summary>配置文件在 Resources 下的路径，指向 theme_dungeon.json。</summary>
-    [SerializeField, Header("配置资源路径")] private string _configResourcePath = "ThemeDungeon/theme_dungeon";
+    /// <summary>九个主题副本使用的正式目录。</summary>
+    private ThemeDungeonEntry[] entries;
+    /// <summary>当前展示的副本数组下标。</summary>
+    private int selectedDungeon;
+    /// <summary>正在浏览的难度配置编号，新秀为一。</summary>
+    private int degree = 1;
+    /// <summary>所选层数，非分层难度为零。</summary>
+    private int layer;
+    /// <summary>中央头像列表当前查看的下标。</summary>
+    private int selectedBoss;
+    /// <summary>上一次刷新头像时的周期起始日，用于跨刷新点更新可见标记。</summary>
+    private int displayedPeriod;
+    /// <summary>上一次完成选项定位时的窗口尺寸，用于横屏比例改变后保持当前选项可见。</summary>
+    private Vector2 displayedSize;
+    /// <summary>横向奖品栏已经分配的物品格，切换首领时复用。</summary>
+    private readonly List<DungeonRewardPreviewWidget> rewardSlots = new List<DungeonRewardPreviewWidget>();
+    /// <summary>当前场景已迁入的表现与基础生命配置。</summary>
+    private ROSceneCreatureCatalog creatures;
+    /// <summary>当前选定的副本和难度对应的首领奖励行，按配置顺序展示。</summary>
+    private readonly List<AwardTable> awards = new List<AwardTable>();
+    /// <summary>来自预制体模板的副本选择行。</summary>
+    private readonly List<DungeonJournalOption> dungeonOptions = new List<DungeonJournalOption>();
+    /// <summary>来自难度表的难度选择行，与该表顺序一致。</summary>
+    private readonly List<DungeonJournalOption> difficultyOptions = new List<DungeonJournalOption>();
+    /// <summary>按分层上限复用的层数行。</summary>
+    private readonly List<DungeonJournalOption> layerOptions = new List<DungeonJournalOption>();
+    /// <summary>复用于不同主题的首领头像格。</summary>
+    private readonly List<DungeonBossPortraitWidget> portraits = new List<DungeonBossPortraitWidget>();
+    /// <summary>由已有 MainView 注入的剧情档案窗口。</summary>
+    private ThemeStoryWindow story;
+    /// <summary>队伍控制器接收当前副本、难度与层数后发起挑战。</summary>
+    public event Action<ThemeDungeonEntry, int, int> OnChallengeRequested;
+    /// <summary>队伍控制器按当前目标打开寻找队伍页。</summary>
+    public event Action<ThemeDungeonEntry, int, int> FindTeamRequested;
+    /// <summary>玩家明确点击上周宝箱后，由控制器发送周期到游戏服。</summary>
+    public event Action<int> WeeklyClaimRequested;
 
-    /// <summary>贴图资源根目录，条目里的 scenePic / painting 都是相对它的路径。</summary>
-    [SerializeField, Header("贴图资源根目录")] private string _textureResourceRoot = "UI/Texture/";
-
-    /// <summary>字体资源路径，运行时创建出来的 TMP 文本统一使用 Common SDF。</summary>
-    [SerializeField, Header("字体资源路径")] private string _fontResourcePath = "UI/Font/Common SDF";
-
-    /// <summary>
-    /// 当前角色等级，仅保留为界面演示数据；主题副本入口的等级限制已取消，本值不再参与书位解锁判定。
-    /// </summary>
-    [SerializeField, Header("当前角色等级")] private int _playerLevel = 50;
-
-    /// <summary>运行时创建文本时使用的默认字号。</summary>
-    private const float DefaultFontSize = 18f;
-
-    /// <summary>金色，用于副本名与标题等强调文本。</summary>
-    private static readonly Color ColGold = new Color(0.98f, 0.84f, 0.51f, 1f);
-
-    /// <summary>常规正文色。</summary>
-    private static readonly Color ColText = new Color(0.93f, 0.94f, 0.96f, 1f);
-
-    /// <summary>次要信息色，用于章节与说明文本。</summary>
-    private static readonly Color ColDim = new Color(0.67f, 0.71f, 0.76f, 1f);
-
-    /// <summary>红色，用于"未解锁"提示文本。</summary>
-    private static readonly Color ColRed = new Color(1f, 0.42f, 0.38f, 1f);
-
-    /// <summary>未选书位的边框保持透明，以突出当前选中的副本。</summary>
-    private static readonly Color ColFrameIdle = new Color(0.36f, 0.29f, 0.18f, 0f);
-
-    /// <summary>选择副本书位时显示的冰蓝色描边。</summary>
-    private static readonly Color ColFrameOn = new Color(0.55f, 0.81f, 1f, 1f);
-
-    /// <summary>全部副本条目，由配置文件反序列化得到。</summary>
-    private ThemeDungeonEntry[] _items = new ThemeDungeonEntry[0];
-
-    /// <summary>从预制体 ScrollView 或 ActivePanel 下找到的 Item1* 书位，顺序随子节点排列，不在代码中固定为 8 个。</summary>
-    private readonly List<Slot> _slots = new List<Slot>();
-
-    /// <summary>ThemeDungeonArround 预制体实例的根变换，所有节点查找都以它为起点。</summary>
-    private RectTransform _root;
-
-    /// <summary>当前页码，从 0 开始。</summary>
-    private int _page;
-
-    /// <summary>当前选中的副本在 _items 中的下标，-1 表示未选中。</summary>
-    private int _selected = -1;
-
-    /// <summary>运行时创建的文本统一使用的字体资源，InitWindow 时加载一次。</summary>
-    private TMP_FontAsset _fontAsset;
-
-    /// <summary>白色 1x1 贴图生成的精灵，用于透明点击区与纯色底。</summary>
-    private Sprite _whiteSprite;
-
-    /// <summary>全屏背景图，取当前选中副本的场景大图。</summary>
-    private RawImage _splash;
-
-    /// <summary>底部操作反馈文本。</summary>
-    private TextMeshProUGUI _statusText;
-
-    /// <summary>翻页按钮上的页码文本。</summary>
-    private TextMeshProUGUI _pageText;
-
-    /// <summary>面板顶部的当前副本名文本。</summary>
-    private TextMeshProUGUI _nameOfPanel;
-
-    /// <summary>上翻页按钮。</summary>
-    private Button _upBtn;
-
-    /// <summary>下翻页按钮。</summary>
-    private Button _downBtn;
-
-    /// <summary>关闭按钮。</summary>
-    private Button _closeBtn;
-
-    /// <summary>中心“挑战玩法”信息牌按钮，目前点击只显示提示。</summary>
-    private Button _challengeBtn;
-
-    /// <summary>
-    /// 是否保留 RO 原版悬浮在书台中心的「挑战玩法」信息牌。
-    /// RO 的 Lua（ThemeDungeonArroundCtrl:RefreshPage）里这块牌子只有在挑战系统开放、
-    /// 且当前主题不为空时才显示，所以它本来就是界面的常驻元素，这里保持显示。
-    /// </summary>
-    private const bool ShowLegacyThemeBadge = true;
-
-    /// <summary>RO 书位名字底条的精灵，从预制体的 NameBg 节点上取，保证和 RO 一致。</summary>
-    private Sprite _nameBarSprite;
-
-    /// <summary>中心信息牌上的副本名文本，随选中副本刷新。</summary>
-    private TextMeshProUGUI _challengeName;
-
-    /// <summary>中心信息牌的透明度分组，没有选中副本时整体压暗。</summary>
-    private CanvasGroup _challengeGroup;
-
-    /// <summary>副本详情窗口（RO 的 Theme_Story），点书位翻开时打开。</summary>
-    private ThemeStoryWindow _storyWindow;
-
-    /// <summary>
-    /// 详情页确认「挑战」后向主控制器传递本次选中的基础副本配置与难度编号。
-    /// 本窗口只负责把选中项交出去，进入副本的场景切换全部由控制器执行，界面层不直接切场景。
-    /// </summary>
-    public System.Action<ThemeDungeonEntry, int, int> OnChallengeRequested;
-
-    /// <summary>详情区的确认按钮。</summary>
-    private Button _confirmBtn;
-
-    /// <summary>是否已经完成初始化，避免重复绑定按钮监听。</summary>
-    private bool _inited;
-    #endregion
-
-    /// <summary>
-    /// 单个书位需要的控件引用：整块点击区、选中边框、缩略图、副本名、章节行、锁定遮罩与提示。
-    /// </summary>
-    private class Slot
-    {
-        /// <summary>书位根变换，点击事件与子节点创建都挂在它上面。</summary>
-        public RectTransform Root;
-
-        /// <summary>本页该书位对应的副本在条目数组中的下标，越界时书位会被隐藏。</summary>
-        public int Index;
-
-        /// <summary>选中高亮边框，位于缩略图下层露出金边。</summary>
-        public Image Frame;
-
-        /// <summary>副本场景缩略图。</summary>
-        public RawImage Thumb;
-
-        /// <summary>副本名文本。</summary>
-        public TextMeshProUGUI Name;
-
-        /// <summary>章节与等级文本。</summary>
-        public TextMeshProUGUI Chapter;
-
-        /// <summary>未解锁时的半透明黑色遮罩。</summary>
-        public Image LockMask;
-
-        /// <summary>遮罩上的"Lv.x 解锁"提示文本。</summary>
-        public TextMeshProUGUI LockText;
-
-        /// <summary>用书位根变换构造，Root 直接取该变换。</summary>
-        public Slot(Transform t)
-        {
-            Root = t as RectTransform;
-        }
-    }
-
-    #region 初始化、外部注入与事件注册
-    /// <summary>外部注入详情窗口，由主界面在初始化时调用。</summary>
+    /// <summary>绑定 MainView 持有的剧情窗口，保持其已有挑战回调。</summary>
+    /// <param name="window">同一主视图中的正式剧情窗口。</param>
     public void SetStoryWindow(ThemeStoryWindow window)
     {
-        _storyWindow = window;
-        if (_storyWindow != null)
-        {
-            _storyWindow.OnEnterDungeon = EnterDungeon;
-        }
+        story = window;
+        story.OnEnterDungeon = (entry, difficulty, floor) => OnChallengeRequested?.Invoke(entry, difficulty, floor);
     }
 
-    /// <summary>总页数，书位为 0 时按 1 页处理。</summary>
-    private int PageCount
-    {
-        get
-        {
-            if (_slots.Count <= 0)
-            {
-                return 1;
-            }
-            return Mathf.Max(1, Mathf.CeilToInt(_items.Length / (float)_slots.Count));
-        }
-    }
-
-    /// <summary>
-    /// 初始化窗口：定位预制体实例、缓存节点、加载配置并填充书位与详情区。
-    /// 重复调用时先移除旧监听，避免按钮回调叠加。
-    /// </summary>
+    /// <summary>从正式预制体绑定各个操作，首次打开时再读取副本配置。</summary>
     public override void InitWindow()
     {
-        base.InitWindow();
-        if (_inited)
+        if (entries != null) return;
+        entries = JsonUtility.FromJson<ThemeDungeonConfig>(Resources.Load<TextAsset>("ThemeDungeon/theme_dungeon").text).items;
+        close.onClick.AddListener(CloseWindow);
+        closeDossier.onClick.AddListener(CloseDossier);
+        archive.onClick.AddListener(OpenArchive);
+        weeklyButton.onClick.AddListener(() => weekly.Open(Global.Instance?.SceneWorld?.LocalRole?.GetRoleComponent<RoleCountComponent>()));
+        weekly.ClaimRequested += week => WeeklyClaimRequested?.Invoke(week);
+        challenge.onClick.AddListener(() => OnChallengeRequested?.Invoke(entries[selectedDungeon], degree, layer));
+        findTeam.onClick.AddListener(() => FindTeamRequested?.Invoke(entries[selectedDungeon], degree, layer));
+        // 每个副本保留正式配置顺序，列表可滚动到最后一项。
+        for (int index = 0; index < entries.Length; index++)
         {
-            RemoveButtonListeners();
-        }
-        _slots.Clear();
-        _selected = -1;
-        _page = 0;
-
-        _root = FindThemeDungeonRoot();
-        if (_root == null)
-        {
-            Debug.LogError("[主题副本] 窗口根节点上没有 RectTransform");
-            return;
-        }
-
-        // 重复初始化时先清掉上一轮建的运行时节点，否则会一层层叠加。
-        ClearRuntimeNodes();
-
-        // RO 原版把预制体根的 localScale 存成 (0,0,0)，运行时由驱动脚本恢复为 1；
-        // 不恢复的话整块界面尺寸为零，任何控件都看不见。
-        _root.localScale = Vector3.one;
-
-        _fontAsset = Resources.Load<TMP_FontAsset>(_fontResourcePath);
-        _whiteSprite = MakeWhiteSprite();
-
-        CacheNodes();
-        SetupChallengeButton();
-        FixLostSpriteGraphics();
-        LoadConfig();
-        CacheLegacySprites();
-        BuildCardVisuals();
-        BuildDetailPanel();
-        ShowPage(0, true);
-        _inited = true;
-    }
-
-    /// <summary>给已缓存的按钮注册点击回调，未找到的按钮直接跳过。</summary>
-    private void AddButtonListeners()
-    {
-        if (_upBtn != null)
-        {
-            _upBtn.onClick.AddListener(PrevPage);
-        }
-        if (_downBtn != null)
-        {
-            _downBtn.onClick.AddListener(NextPage);
-        }
-        if (_closeBtn != null)
-        {
-            _closeBtn.onClick.AddListener(OnCloseClicked);
-        }
-        if (_challengeBtn != null)
-        {
-            _challengeBtn.onClick.AddListener(OnChallengeClicked);
-        }
-        if (_confirmBtn != null)
-        {
-            _confirmBtn.onClick.AddListener(OnConfirmClicked);
+            // 回调捕获行自己的配置下标。
+            int row = index;
+            // 复制已经有图、字和按钮的正式模板。
+            DungeonJournalOption option = AddOption(dungeonTemplate, entries[row].themeName, () => SelectDungeon(row), Art(entries[row].scenePic));
+            dungeonOptions.Add(option);
         }
     }
 
-    /// <summary>移除已注册的点击回调，供重复初始化时调用。</summary>
-    private void RemoveButtonListeners()
-    {
-        if (_upBtn != null)
-        {
-            _upBtn.onClick.RemoveListener(PrevPage);
-        }
-        if (_downBtn != null)
-        {
-            _downBtn.onClick.RemoveListener(NextPage);
-        }
-        if (_closeBtn != null)
-        {
-            _closeBtn.onClick.RemoveListener(OnCloseClicked);
-        }
-        if (_challengeBtn != null)
-        {
-            _challengeBtn.onClick.RemoveListener(OnChallengeClicked);
-        }
-        if (_confirmBtn != null)
-        {
-            _confirmBtn.onClick.RemoveListener(OnConfirmClicked);
-        }
-    }
-    #endregion
-
-    #region 配置读取与解析
-    /// <summary>
-    /// 读取 Resources 配置并转换为条目数组；文件缺失时记录错误，空配置返回空数组，解析异常原样抛出。
-    /// </summary>
-    private void LoadConfig()
-    {
-        // 配置文本资源，Resources 路径不含扩展名。
-        TextAsset asset = Resources.Load<TextAsset>(_configResourcePath);
-        if (asset == null)
-        {
-            Debug.LogError("[主题副本] 找不到配置文件: " + _configResourcePath);
-            _items = new ThemeDungeonEntry[0];
-            return;
-        }
-        // 将配置根对象解析后取得条目数组。
-        ThemeDungeonConfig config = JsonUtility.FromJson<ThemeDungeonConfig>(asset.text);
-        if (config == null || config.items == null)
-        {
-            _items = new ThemeDungeonEntry[0];
-            return;
-        }
-        _items = config.items;
-    }
-    #endregion
-
-    #region 界面显示与刷新
-    /// <summary>
-    /// 显示或隐藏窗口，隐藏时不销毁运行时创建的节点，再次打开直接复用。
-    /// </summary>
-    /// <param name="isShow">true 显示，false 隐藏。</param>
-    /// <param name="obj">外部传入的数据，为空则不刷新。</param>
+    /// <summary>按已有窗口生命周期打开，返回本页时保留所选副本和难度。</summary>
+    /// <param name="isShow">是否打开。</param><param name="obj">Unity 窗口基类要求的可选刷新参数。</param>
     public override void Show(bool isShow = true, object obj = null)
     {
-        gameObject.Show(isShow);
-        if (isShow)
+        base.Show(isShow, obj);
+        weekly.gameObject.SetActive(false);
+        if (!isShow) return;
+        transform.SetAsLastSibling();
+        InitWindow();
+        if (difficultyOptions.Count == 0) BuildDifficulties();
+        // 从战斗内进入时，展示玩家当前实例的准确副本、难度和层数。
+        TeamData team = TeamData.Instance;
+        if (team.DungeonInstanceId != 0)
         {
-            if (!_inited)
+            // 通过实际入场副本编号查主题，不依赖副本标题。
+            for (int index = 0; index < entries.Length; index++)
             {
-                InitWindow();
+                if (entries[index].storyDungeonId != team.DungeonId) continue;
+                selectedDungeon = index;
+                degree = team.DungeonsDegree;
+                layer = team.DungeonLayer;
+                break;
             }
-            // 主界面下所有窗口都是同级的平铺节点，渲染顺序就是兄弟顺序；
-            // 每次打开都提到同级最末，保证不会被聊天、背包、设置等窗口盖住。
-            BringToFront();
         }
-        if (obj != null)
+        SelectDungeon(selectedDungeon);
+    }
+
+    /// <summary>从难度表建立六档选项，文字、主键与挑战请求使用同一来源。</summary>
+    private void BuildDifficulties()
+    {
+        // 服务器与客户端共用的难度行，按策划顺序排列。
+        List<DungeonDifficultyTable> rows = LubanMgr.Instance.ConfigTables.TbDungeonDifficultyTable.DataList;
+        // 每个按钮捕获该行主键。
+        for (int index = 0; index < rows.Count; index++)
         {
-            ReFreshUI(obj);
+            // 本行实际由协议发给服务器的难度号。
+            DungeonDifficultyTable row = rows[index];
+            difficultyOptions.Add(AddOption(difficultyTemplate, row.Name, () => SelectDegree(row.Id)));
         }
     }
 
-    /// <summary>
-    /// 把窗口节点移到同级最后一位，使它在 UGUI 里渲染在最上层。
-    /// </summary>
-    private void BringToFront()
+    /// <summary>在对应列表中实例化正式选项模板。</summary>
+    /// <param name="template">含点击区、选中底纹和字体的模板。</param><param name="label">显示名。</param>
+    /// <param name="click">本行的选择回调。</param><param name="texture">仅副本行使用的插画。</param>
+    private static DungeonJournalOption AddOption(DungeonJournalOption template, string label, UnityEngine.Events.UnityAction click, Texture texture = null)
     {
-        // 当前窗口节点，用兄弟顺序调整同级渲染前后。
-        Transform self = transform;
-        if (self.parent == null)
+        // 模板在布局中保持隐藏，实例继承其尺寸和序列化引用。
+        DungeonJournalOption option = Instantiate(template, template.transform.parent);
+        option.Bind(label, texture);
+        option.Button.onClick.AddListener(click);
+        option.gameObject.SetActive(true);
+        return option;
+    }
+
+    /// <summary>加载主题表中的插画或立绘，Resources 路径使用扩展名前的部分。</summary>
+    /// <param name="path">配置中相对 UI/Texture 的资源名。</param>
+    private static Texture Art(string path)
+    {
+        return Resources.Load<Texture2D>("UI/Texture/" + System.IO.Path.ChangeExtension(path, null));
+    }
+
+    /// <summary>切换左侧副本，刷新场景图与本难度的首领阵容。</summary>
+    /// <param name="index">主题目录中的下标。</param>
+    private void SelectDungeon(int index)
+    {
+        selectedDungeon = index;
+        selectedBoss = 0;
+        dossier.SetActive(false);
+        // 配置条目中的插画、剧情、章节和等级均直接展示。
+        ThemeDungeonEntry entry = entries[index];
+        backdrop.texture = Art(entry.scenePic);
+        dungeonTitle.text = entry.themeName;
+        chapter.text = entry.chapterText + "  /  Lv." + entry.chapterLevel;
+        // 详情页只取剧情首句，未注册战斗的主题也能浏览档案。
+        string content = entry.chapterContent.Replace("\\n", "\n").Trim();
+        int stop = content.IndexOfAny(new[] { '。', '\n', '！', '？', '…' });
+        if (stop >= 0) content = content.Substring(0, stop + 1).Trim();
+        if (content.Length > 37) content = content.Substring(0, 36) + "…";
+        synopsis.text = content;
+        // 副本主表将入口编号映射到实际场景，不使用主题宣传图中的首领替代战斗首领。
+        DungeonsTable dungeon = LubanMgr.Instance.GetDungeonsTableById(entry.storyDungeonId);
+        DungeonSceneResource registration = null;
+        if (dungeon != null) registration = DungeonSceneResource.Load(dungeon.SceneID);
+        creatures = null;
+        if (registration != null) creatures = ROSceneCreatureCatalog.Load(registration.creatureResource);
+        // 更新左侧选中的一行。
+        for (int row = 0; row < dungeonOptions.Count; row++) dungeonOptions[row].Select(row == index);
+        SelectDegree(degree);
+        dungeonOptions[index].Reveal();
+    }
+
+    /// <summary>切换难度时同步重建对应的首领、奖励和可选层数。</summary>
+    /// <param name="value">难度主键。</param>
+    private void SelectDegree(int value)
+    {
+        if (degree != value) layer = 0;
+        degree = value;
+        // 是否分层及上限取自正式难度表。
+        DungeonDifficultyTable difficulty = LubanMgr.Instance.GetDungeonDifficultyById(degree);
+        if (difficulty.MaxLayer > 0) layer = Mathf.Clamp(layer, 1, difficulty.MaxLayer);
+        else layer = 0;
+        // 难度表的行位置与按钮一一对应，主键可以独立于列表位置。
+        List<DungeonDifficultyTable> rows = LubanMgr.Instance.ConfigTables.TbDungeonDifficultyTable.DataList;
+        for (int index = 0; index < rows.Count; index++) difficultyOptions[index].Select(rows[index].Id == degree);
+        layerPanel.SetActive(difficulty.MaxLayer > 0);
+        // 各难度复用已有层数行，上限增大时追加模板。
+        for (int floor = layerOptions.Count + 1; floor <= difficulty.MaxLayer; floor++)
         {
+            // 捕获具体层号，第一层为一。
+            int selected = floor;
+            layerOptions.Add(AddOption(layerTemplate, selected + " 层", () => SelectLayer(selected)));
+        }
+        // 若切换到层数较少的难度，隐藏超出上限的行。
+        for (int index = 0; index < layerOptions.Count; index++) layerOptions[index].gameObject.SetActive(index < difficulty.MaxLayer);
+        SelectLayer(layer);
+        awards.Clear();
+        // 预览读取结算端使用的同一组首领奖励行。
+        List<AwardTable> source = LubanMgr.Instance.ConfigTables.TbAwardTable.DataList;
+        for (int index = 0; index < source.Count; index++)
+        {
+            // 匹配当前基础副本和难度的首领。
+            AwardTable award = source[index];
+            if (award.DungeonId == entries[selectedDungeon].storyDungeonId && award.DifficultyId == degree) awards.Add(award);
+        }
+        selectedBoss = Mathf.Clamp(selectedBoss, 0, Mathf.Max(0, awards.Count - 1));
+        BuildPortraits();
+        RefreshBossMarks();
+        RefreshReward();
+        if (dossier.activeSelf) RefreshDossier();
+    }
+
+    /// <summary>更新将发给服务器的层号以及资料中对应的配置。</summary>
+    /// <param name="value">非分层难度为零，终绝从一开始。</param>
+    private void SelectLayer(int value)
+    {
+        layer = value;
+        for (int index = 0; index < layerOptions.Count; index++) layerOptions[index].Select(index + 1 == layer);
+        if (layer > 0) layerOptions[layer - 1].Reveal();
+        if (dossier.activeSelf && awards.Count > 0) RefreshDossier();
+    }
+
+    /// <summary>创建实际需要的头像格，对尚未迁入的主题仅展示其正式档案首领。</summary>
+    private void BuildPortraits()
+    {
+        // 每个战斗首领只占一格，纯档案主题展示一格原有立绘。
+        int total = Mathf.Max(1, awards.Count);
+        for (int index = 0; index < total; index++)
+        {
+            if (portraits.Count <= index)
+            {
+                // 模板序列化保存菱形遮罩、头像和红色斩痕。
+                DungeonBossPortraitWidget slot = Instantiate(bossTemplate, bossTemplate.transform.parent);
+                // 每个点击区保存自己的头像格下标。
+                int row = index;
+                slot.Button.onClick.AddListener(() => OpenDossier(row));
+                portraits.Add(slot);
+            }
+            // 没有战斗配置时沿用章节的档案首领名及对应立绘。
+            string name = entries[selectedDungeon].leaderName;
+            Texture texture = null;
+            if (awards.Count > 0)
+            {
+                name = awards[index].BossName;
+                // 有实际战斗资源时按模型名取该首领的原版头像。
+                ROSceneCreatureEntity creature = creatures?.FindEntity(awards[index].BossId);
+                if (creature != null) texture = Resources.Load<Texture2D>("UI/Texture/DungeonBoss/" + creature.modelName);
+            }
+            if (texture == null) texture = Art(entries[selectedDungeon].painting);
+            portraits[index].Bind(name, texture);
+        }
+        for (int index = 0; index < portraits.Count; index++) portraits[index].gameObject.SetActive(index < total);
+    }
+
+    /// <summary>从当前角色的权威记录逐只刷新斩痕和数量。</summary>
+    public void RefreshBossMarks()
+    {
+        if (portraits.Count == 0) return;
+        displayedPeriod = RoleCountComponent.BossPeriodDay(degree, DateTime.UtcNow);
+        // 登录角色的快照与在线期间的首领记录保存在同一组件。
+        PlayerEntity role = Global.Instance?.SceneWorld?.LocalRole;
+        RoleCountComponent counts = role?.GetRoleComponent<RoleCountComponent>();
+        // 本周期击杀数只计当前副本与难度下已记录的首领。
+        int killed = 0;
+        for (int index = 0; index < awards.Count; index++)
+        {
+            // 该首领的唯一进度键，切换难度后自然指向另一条记录。
+            bool defeated = counts != null && counts.IsDungeonBossDefeated(awards[index].Id, displayedPeriod);
+            if (defeated) killed++;
+            portraits[index].SetState(defeated, dossier.activeSelf && selectedBoss == index);
+        }
+        progress.text = "首领进度   " + killed + " / " + awards.Count;
+        if (awards.Count == 0)
+        {
+            portraits[0].SetState(false, dossier.activeSelf);
+            progress.text = "副本档案";
+        }
+    }
+
+    /// <summary>页面持续打开跨过日周边界时清除上一周期的红斩。</summary>
+    private void Update()
+    {
+        if (portraits.Count == 0) return;
+        if (displayedPeriod != RoleCountComponent.BossPeriodDay(degree, DateTime.UtcNow)) RefreshBossMarks();
+        // 屏幕变窄或变宽后，原本可见的高层和后段副本可能移出滚动视口。
+        Vector2 size = ((RectTransform)transform).rect.size;
+        if (size == displayedSize) return;
+        displayedSize = size;
+        dungeonOptions[selectedDungeon].Reveal();
+        if (layer > 0) layerOptions[layer - 1].Reveal();
+    }
+
+    /// <summary>显示当前首领实际配置的物品、单次入包数量和重置周期。</summary>
+    private void RefreshReward()
+    {
+        weeklyButton.gameObject.SetActive(degree == DungeonFinalWeek.Difficulty);
+        if (degree == DungeonFinalWeek.Difficulty)
+        {
+            for (int index = 0; index < rewardSlots.Count; index++) rewardSlots[index].gameObject.SetActive(false);
+            rewardName.gameObject.SetActive(true);
+            rewardName.text = "终绝周赏宝箱";
+            rewardCycle.text = "北京时间周五零点结算，按最高通关层数领取一份";
             return;
         }
-        self.SetAsLastSibling();
+        // 与已发布的掉落编辑器使用相同的多包字段，空包也保留该首领的进度。
+        int[] packIds = Array.Empty<int>();
+        if (awards.Count > 0) packIds = awards[selectedBoss].PackIds;
+        rewardName.text = "暂无掉落配置";
+        rewardCycle.text = string.Empty;
+        if (packIds.Length > 0)
+        {
+            rewardCycle.text = "各首领每周首次击败掉落";
+            if (degree == 1) rewardCycle.text = "各首领每日首次击败掉落";
+            // 名称与数量也用于首领档案；顺序与服务端发给背包的掉落一致。
+            string[] names = new string[packIds.Length];
+            for (int index = 0; index < packIds.Length; index++)
+            {
+                // 逐包读取真实的物品、数量和图标。
+                AwardPackTable pack = LubanMgr.Instance.ConfigTables.TbAwardPackTable.Get(packIds[index]);
+                ItemConfigBase item = LubanMgr.Instance.GetItemConfigById(pack.ItemId);
+                names[index] = item.ItemName + "  ×" + pack.ItemCount;
+                if (index == rewardSlots.Count) rewardSlots.Add(Instantiate(rewardTemplate, rewardTemplate.transform.parent));
+                rewardSlots[index].Bind(item, pack.ItemCount);
+            }
+            rewardName.text = string.Join("、", names);
+        }
+        rewardName.gameObject.SetActive(packIds.Length <= 1);
+        for (int index = 0; index < rewardSlots.Count; index++) rewardSlots[index].gameObject.SetActive(index < packIds.Length);
     }
 
-    /// <summary>
-    /// 显示指定页并刷新书位内容。
-    /// </summary>
-    /// <param name="page">目标页码，会被夹在合法范围内。</param>
-    /// <param name="selectFirst">true 时自动选中本页第一个书位。</param>
-    private void ShowPage(int page, bool selectFirst)
+    /// <summary>打开选中首领的资料抽屉。</summary><param name="index">被点击头像的下标。</param>
+    private void OpenDossier(int index)
     {
-        if (_items.Length == 0)
-        {
-            RefreshChallengeButton();
-            return;
-        }
-        _page = Mathf.Clamp(page, 0, PageCount - 1);
-
-        for (int i = 0; i < _slots.Count; i++)
-        {
-            // 把页内书位下标换成配置数组的全局下标。
-            int index = _page * _slots.Count + i;
-            // 当前书位的缓存控件引用。
-            Slot s = _slots[i];
-            if (index >= _items.Length)
-            {
-                s.Root.gameObject.SetActive(false);
-                continue;
-            }
-            s.Root.gameObject.SetActive(true);
-            s.Index = index;
-            ApplySlot(s, _items[index]);
-        }
-
-        UpdateFrames();
-        if (_pageText != null)
-        {
-            _pageText.text = (_page + 1) + " / " + PageCount;
-        }
-        if (selectFirst)
-        {
-            Select(_page * _slots.Count, false);
-        }
-        else
-        {
-            // 翻页后原来选中的副本可能已经不在本页，继续留着会让「进入副本」按钮
-            // 显示上一页的副本名，所以自动改选本页第一个。
-            // 本页第一个配置下标，用于判断原选择是否仍在本页。
-            int first = _page * _slots.Count;
-            // 本页理论最后一个配置下标，实际还要受配置数组长度限制。
-            int last = first + _slots.Count - 1;
-            // 原选择既位于本页范围又没有超过配置数组。
-            bool inPage = _selected >= first && _selected <= last && _selected < _items.Length;
-            if (!inPage)
-            {
-                Select(first, false);
-            }
-        }
-        RefreshChallengeButton();
+        selectedBoss = index;
+        dossier.SetActive(true);
+        RefreshBossMarks();
+        RefreshReward();
+        RefreshDossier();
     }
 
-    /// <summary>
-    /// 用外部数据刷新窗口：整型参数更新本演示等级并重绘书位。
-    /// 等级不再影响解锁状态，重绘只用于保证书位内容与选中态一致。
-    /// </summary>
-    /// <param name="obj">期望为 int 类型的角色等级。</param>
-    public override void ReFreshUI(object obj)
+    /// <summary>展示真实首领资料与当前难度掉落。</summary>
+    private void RefreshDossier()
     {
-        if (obj is int)
+        dossierPortrait.texture = portraits[selectedBoss].Portrait;
+        dossierDrop.text = rewardName.text + "\n" + rewardCycle.text;
+        skillSection.SetActive(false);
+        dossierName.text = entries[selectedDungeon].leaderName;
+        dossierStats.text = entries[selectedDungeon].chapterContent.Replace("\\n", "\n");
+        if (awards.Count == 0) return;
+        // 正式怪物基础血量与难度增益分开显示，不将基础值误当最终属性。
+        AwardTable boss = awards[selectedBoss];
+        dossierName.text = boss.BossName;
+        dossierStats.text = string.Empty;
+        ROSceneCreatureEntity creature = creatures?.FindEntity(boss.BossId);
+        if (creature != null)
         {
-            _playerLevel = (int)obj;
-        }
-        ShowPage(_page, false);
-    }
-
-    /// <summary>
-    /// 按当前选中状态刷新「进入副本」按钮：有选中就把副本名写上去并恢复正常亮度，
-    /// 没选中则显示占位提示并压暗。按钮始终可点，点了会给提示而不是静默无反应。
-    /// </summary>
-    private void RefreshChallengeButton()
-    {
-        // 当前是否已选中数组内的有效条目。
-        bool ready = _selected >= 0 && _selected < _items.Length;
-
-        // 中心信息牌显示当前副本名；点击由 OnChallengeClicked 给出挑战模式提示。
-        if (_challengeName != null)
-        {
-            if (ready)
+            dossierStats.text = "基础气血   " + creature.maxHp.ToString("N0");
+            if (creature.journalSkills != null && creature.journalSkills.Length > 0)
             {
-                _challengeName.text = _items[_selected].themeName;
-                _challengeName.color = Color.white;
-            }
-            else
-            {
-                _challengeName.text = "请选择副本";
-                _challengeName.color = ColDim;
+                skillSection.SetActive(true);
+                dossierSkills.text = string.Join("　·　", creature.journalSkills);
             }
         }
-        if (_challengeGroup != null)
+        // 当前副本、难度和层数使用的逐怪基因效果。
+        DungeonMonsterDifficultyTable tuning = LubanMgr.Instance.GetDungeonMonsterDifficulty(boss.DungeonId, degree, layer, boss.BossId);
+        if (tuning == null) return;
+        for (int index = 0; index < tuning.GeneIds.Length; index++)
         {
-            if (ready)
-            {
-                _challengeGroup.alpha = 1f;
-            }
-            else
-            {
-                _challengeGroup.alpha = 0.4f;
-            }
+            // 只显示该难度有数值的正式效果，百分比单位来自基因定义。
+            Gene gene = LubanMgr.Instance.GetGeneInfoById(tuning.GeneIds[index]);
+            if (gene == null || tuning.GeneValues[index] == 0) continue;
+            string unit = string.Empty;
+            if (gene.ValueType == 1) unit = "%";
+            dossierStats.text += "\n" + gene.EffectDesc + "   " + tuning.GeneValues[index] + unit;
         }
     }
 
-    /// <summary>刷新书位边框，选中项显示金边，未选中项使用透明颜色。</summary>
-    private void UpdateFrames()
+    /// <summary>关闭当前资料抽屉，保留已选的首领和掉落预览。</summary>
+    private void CloseDossier()
     {
-        for (int i = 0; i < _slots.Count; i++)
-        {
-            // 当前书位的缓存控件引用。
-            Slot s = _slots[i];
-            // 此书位是否对应当前选中条目。
-            bool on = s.Index == _selected;
-            if (on)
-            {
-                s.Frame.color = ColFrameOn;
-            }
-            else
-            {
-                s.Frame.color = ColFrameIdle;
-            }
-        }
+        dossier.SetActive(false);
+        RefreshBossMarks();
     }
-    #endregion
 
-    #region 交互响应
-    /// <summary>
-    /// 书位点击回调。RO 里点书位是「把这本书转到正前方」，转到正前方之后再点才翻开；
-    /// LYF 没有 3D 转盘，点一次就把选中与翻开一起做掉，避免玩家点第二下以为失灵。
-    /// </summary>
-    private void OnSlotClicked(int slotIndex)
+    /// <summary>从纪事标题栏打开项目既有剧情档案，带上当前选择。</summary>
+    private void OpenArchive()
     {
-        if (slotIndex < 0 || slotIndex >= _slots.Count)
-        {
-            return;
-        }
-        // 把点击的页内书位还原为全局配置下标。
-        int index = _slots[slotIndex].Index;
-        Select(index, true);
-        if (_selected != index)
-        {
-            return;
-        }
-        EnterSelected();
+        story.Show(true, entries[selectedDungeon]);
+        story.SelectDifficulty(degree);
+        if (layer > 0) story.SelectLayer(layer);
     }
-
-    /// <summary>确认按钮回调，目前只做反馈，不发起进入副本的协议。</summary>
-    private void OnConfirmClicked()
-    {
-        if (_selected < 0)
-        {
-            SetStatus("请先选择一个副本");
-            return;
-        }
-        SetStatus("确认：" + _items[_selected].themeName);
-    }
-
-    /// <summary>
-    /// 中心「挑战玩法」信息牌回调。RO 里它打开的是 Theme_Challenge（主题挑战模式），
-    /// 该界面还没移植，这里只给提示，避免点了没有任何反应。
-    /// </summary>
-    private void OnChallengeClicked()
-    {
-        if (_selected < 0 || _selected >= _items.Length)
-        {
-            SetStatus("请先选择一个副本");
-            return;
-        }
-        SetStatus("挑战模式：" + _items[_selected].themeName + "（界面待移植）");
-    }
-
-    /// <summary>关闭按钮回调，隐藏本窗口。</summary>
-    private void OnCloseClicked()
-    {
-        CloseWindow();
-    }
-    #endregion
-
-    #region 创建与添加
-    /// <summary>创建一个居中锚点的 RectTransform 子节点。</summary>
-    private RectTransform NewRect(string name, Transform parent, float x, float y, float w, float h)
-    {
-        // 本次创建的 UI 子节点，名称用于重复初始化时定位清理。
-        GameObject go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-        // 以父节点中心为锚点设置新节点位置和尺寸。
-        RectTransform rt = go.transform as RectTransform;
-        rt.anchorMin = new Vector2(0.5f, 0.5f);
-        rt.anchorMax = new Vector2(0.5f, 0.5f);
-        rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = new Vector2(x, y);
-        rt.sizeDelta = new Vector2(w, h);
-        return rt;
-    }
-
-    /// <summary>创建一个纯色 Image 子节点。</summary>
-    private Image NewImage(string name, Transform parent, float x, float y, float w, float h, Color c)
-    {
-        // 新节点的矩形，位置和宽高均使用 UI 局部坐标。
-        RectTransform rt = NewRect(name, parent, x, y, w, h);
-        // 给矩形添加可着色图片，使用共用白色精灵。
-        Image img = rt.gameObject.AddComponent<Image>();
-        img.sprite = _whiteSprite;
-        img.color = c;
-        return img;
-    }
-
-    /// <summary>创建一个 TextMeshProUGUI 子节点，字体统一使用 Common SDF。</summary>
-    private TextMeshProUGUI NewText(string name, Transform parent, float x, float y, float w, float h,
-        float fontSize, Color color, TextAlignmentOptions align)
-    {
-        // 新节点的矩形，位置和宽高均使用 UI 局部坐标。
-        RectTransform rt = NewRect(name, parent, x, y, w, h);
-        // 新建文字组件，应用窗口字体、字号和对齐方式。
-        TextMeshProUGUI t = rt.gameObject.AddComponent<TextMeshProUGUI>();
-        if (_fontAsset != null)
-        {
-            t.font = _fontAsset;
-        }
-        if (fontSize > 0f)
-        {
-            t.fontSize = fontSize;
-        }
-        else
-        {
-            t.fontSize = DefaultFontSize;
-        }
-        t.color = color;
-        t.alignment = align;
-        t.raycastTarget = false;
-        t.text = string.Empty;
-        return t;
-    }
-    #endregion
-
-    #region 查询与数据读写
-    /// <summary>
-    /// 取得界面根变换。脚本直接挂在 ThemeDungeonArround 预制体根上，根就是自身；
-    /// 若被挂到别的容器上，则向下找名为 ThemeDungeonArround 的子节点。
-    /// </summary>
-    private RectTransform FindThemeDungeonRoot()
-    {
-        // 脚本所在对象的矩形，找不到专名子根时仍回退使用它。
-        RectTransform self = transform as RectTransform;
-        if (self != null && transform.name == "ThemeDungeonArround")
-        {
-            return self;
-        }
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            // 当前直接子节点，只在这一层寻找专名窗口根。
-            Transform child = transform.GetChild(i);
-            if (child.name == "ThemeDungeonArround")
-            {
-                return child as RectTransform;
-            }
-        }
-        return self;
-    }
-
-    /// <summary>
-    /// 深度优先查找指定名称的子节点。
-    /// </summary>
-    private static Transform FindDeep(Transform root, string name)
-    {
-        if (root == null)
-        {
-            return null;
-        }
-        for (int i = 0; i < root.childCount; i++)
-        {
-            // 当前遍历的直接子节点。
-            Transform c = root.GetChild(i);
-            if (c.name == name)
-            {
-                return c;
-            }
-            // 当前子树递归查找的结果。
-            Transform r = FindDeep(c, name);
-            if (r != null)
-            {
-                return r;
-            }
-        }
-        return null;
-    }
-
-    /// <summary>只在直接子节点里查找指定名称的节点。</summary>
-    private static Transform FindDirect(Transform root, string name)
-    {
-        if (root == null)
-        {
-            return null;
-        }
-        for (int i = 0; i < root.childCount; i++)
-        {
-            // 当前遍历的直接子节点。
-            Transform c = root.GetChild(i);
-            if (c.name == name)
-            {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// 按 Resources 相对路径加载贴图，自动去掉扩展名。
-    /// </summary>
-    private Texture LoadTexture(string relative)
-    {
-        if (string.IsNullOrEmpty(relative))
-        {
-            return null;
-        }
-        // 统一斜杠后的资源相对路径，再去掉文件扩展名。
-        string p = relative.Replace("\\", "/");
-        // 最后一个点的位置，仅在文件名部分时当作扩展名分隔符。
-        int dot = p.LastIndexOf('.');
-        if (dot > p.LastIndexOf('/'))
-        {
-            p = p.Substring(0, dot);
-        }
-        return Resources.Load<Texture2D>(_textureResourceRoot + p);
-    }
-    #endregion
-
-    #region 核心逻辑
-    /// <summary>
-    /// 取预制体里 RO 自带的贴图，供运行时新建的节点复用，保证视觉和 RO 一致。
-    /// 必须在隐藏那些旧节点之前调用。
-    /// </summary>
-    private void CacheLegacySprites()
-    {
-        // 旧预制体名字底条节点，用于复用原精灵。
-        Transform bar = FindDeep(_root, "NameBg");
-        if (bar != null)
-        {
-            // 底条图片组件，读取它的精灵而不复制纹理。
-            Image img = bar.GetComponent<Image>();
-            if (img != null)
-            {
-                _nameBarSprite = img.sprite;
-            }
-        }
-    }
-
-    /// <summary>
-    /// 删掉本脚本运行时创建的所有 TD_ 前缀节点（详情面板、背景、书位装饰等），
-    /// 预制体自带的节点不受影响。重复调用 InitWindow 时用于避免节点叠加。
-    /// </summary>
-    private void ClearRuntimeNodes()
-    {
-        if (_root == null)
-        {
-            return;
-        }
-        // 包含隐藏节点的快照，逆序删除 TD_ 运行时子节点。
-        Transform[] all = _root.GetComponentsInChildren<Transform>(true);
-        for (int i = all.Length - 1; i >= 0; i--)
-        {
-            if (all[i] == null || all[i] == _root)
-            {
-                continue;
-            }
-            if (all[i].name.StartsWith("TD_"))
-            {
-                DestroyImmediate(all[i].gameObject);
-            }
-        }
-
-        // 这些控件都是运行时建的，已经跟着节点一起销毁。引用必须同步清空：
-        // 清掉运行时节点的字段引用，下一次初始化会重新赋值。
-        _splash = null;
-        _statusText = null;
-    }
-
-    /// <summary>
-    /// 缓存预制体里已有的按钮与文本节点，并注册翻页、关闭、挑战、确认的点击事件。
-    /// </summary>
-    private void CacheNodes()
-    {
-        // 上一页按钮节点。
-        Transform up = FindDeep(_root, "UpBtn");
-        if (up != null)
-        {
-            _upBtn = up.GetComponent<Button>();
-        }
-        // 下一页按钮节点。
-        Transform down = FindDeep(_root, "DownBtn");
-        if (down != null)
-        {
-            _downBtn = down.GetComponent<Button>();
-        }
-        // 关闭按钮节点。
-        Transform close = FindDeep(_root, "CloseBtn");
-        if (close != null)
-        {
-            _closeBtn = close.GetComponent<Button>();
-        }
-        // 中心挑战信息牌节点。
-        Transform challenge = FindDeep(_root, "ChallengeDungeonBtn");
-        if (challenge != null)
-        {
-            _challengeBtn = challenge.GetComponent<Button>();
-        }
-        // 中心信息牌的副本名称节点。
-        Transform challengeName = FindDeep(_root, "ChallengeName");
-        if (challengeName != null)
-        {
-            _challengeName = challengeName.GetComponent<TextMeshProUGUI>();
-        }
-        // 预制体中名为 Button 的确认入口节点。
-        Transform confirm = FindDeep(_root, "Button");
-        if (confirm != null)
-        {
-            _confirmBtn = confirm.GetComponent<Button>();
-        }
-
-        // 页码文字节点。
-        Transform pageNode = FindDeep(_root, "PageText");
-        if (pageNode != null)
-        {
-            _pageText = pageNode.GetComponent<TextMeshProUGUI>();
-        }
-        // 窗口顶部名称文字节点。
-        Transform nameNode = FindDeep(_root, "Name");
-        if (nameNode != null)
-        {
-            _nameOfPanel = nameNode.GetComponent<TextMeshProUGUI>();
-        }
-
-        // 书位容器，优先 ScrollView，缺失时使用 ActivePanel。
-        Transform scroll = FindDeep(_root, "ScrollView");
-        if (scroll == null)
-        {
-            scroll = FindDeep(_root, "ActivePanel");
-        }
-        if (scroll != null)
-        {
-            for (int i = 0; i < scroll.childCount; i++)
-            {
-                // 当前候选书位，名称以 Item1 开头才登记。
-                Transform c = scroll.GetChild(i);
-                if (c.name.StartsWith("Item1"))
-                {
-                    _slots.Add(new Slot(c));
-                }
-            }
-        }
-
-        AddButtonListeners();
-    }
-
-    /// <summary>
-    /// 配置中心挑战信息牌：启用主题名自动缩放，并挂一个透明度分组，
-    /// 供未选中任何副本时把整个按钮压暗。重复调用是安全的。
-    /// </summary>
-    private void SetupChallengeButton()
-    {
-        if (_challengeName != null)
-        {
-            // RO 原版把 overflow 设成裁切，长主题名会被直接切掉；改成按框自动缩放。
-            _challengeName.overflowMode = TextOverflowModes.Overflow;
-            _challengeName.enableAutoSizing = true;
-            _challengeName.fontSizeMin = 12f;
-            _challengeName.fontSizeMax = 28f;
-        }
-        if (_challengeBtn != null)
-        {
-            // RO 里这块牌子是「挑战模式」入口（Theme_Challenge），不是进入当前副本的按钮。
-            // 挑战模式界面还没移植，所以只保留可点与提示，不做静默失效。
-            _challengeBtn.interactable = true;
-            _challengeGroup = _challengeBtn.GetComponent<CanvasGroup>();
-            if (_challengeGroup == null)
-            {
-                _challengeGroup = _challengeBtn.gameObject.AddComponent<CanvasGroup>();
-            }
-            _challengeBtn.gameObject.SetActive(ShowLegacyThemeBadge);
-            // RO 的牌子挂在 y=73.4，正好落在 3D 书台的空心位置；LYF 的封面是 2D 矩形，
-            // 往上占得更多，实测把牌子抬到 100 才刚好卡在上下两本书之间（上下各留 ~2px）。
-            // 中心信息牌矩形，使用适配当前二维封面的固定位置。
-            RectTransform badgeRt = _challengeBtn.transform as RectTransform;
-            if (badgeRt != null)
-            {
-                badgeRt.anchoredPosition = new Vector2(3.2f, 100f);
-            }
-            // 底下是明亮的场景大图，白字会糊，所以在副本名背后垫一层半透明暗色。
-            if (_challengeName != null)
-            {
-                // 副本名的父节点，在它下面添加文字底色。
-                Transform info = _challengeName.transform.parent;
-                if (info != null && info.Find("TD_BadgePlate") == null)
-                {
-                    // 副本名后方的半透明暗底，不挡点击。
-                    Image plate = NewImage("TD_BadgePlate", info, 0f, -8f, 214f, 90f, new Color(0f, 0f, 0f, 0.42f));
-                    plate.raycastTarget = false;
-                    plate.transform.SetAsFirstSibling();
-                }
-            }
-        }
-        RefreshChallengeButton();
-    }
-
-    /// <summary>
-    /// 清掉预制体里"sprite 引用丢失的白板"。
-    /// RO 原工程转过来时部分 Image 的 sprite 变成 null，Unity 遇到这种 Image 会画一整块纯白不透明矩形；
-    /// ScrollView 上那张 0x0 拉伸铺满全屏的白板就是它，本身还带 -28° 的 X 轴旋转，
-    /// 在主画布（Screen Space - Camera，透视投影）里会被投成斜着的梯形，把整个界面盖白。
-    /// 这里统一改成全透明，但保留 raycastTarget，滚动与点击区域不受影响。
-    /// </summary>
-    private void FixLostSpriteGraphics()
-    {
-        // 所有图片控件快照，包括隐藏节点。
-        Image[] images = _root.GetComponentsInChildren<Image>(true);
-        // 本次把无精灵图片改透明的数量，仅供日志。
-        int fixedCount = 0;
-        for (int i = 0; i < images.Length; i++)
-        {
-            // 正在检查的图片控件。
-            Image img = images[i];
-            if (img.sprite != null)
-            {
-                continue;
-            }
-            // 保留原 RGB，只把没有精灵图片的透明度改为零。
-            Color c = img.color;
-            if (c.a <= 0f)
-            {
-                continue;
-            }
-            c.a = 0f;
-            img.color = c;
-            fixedCount++;
-        }
-        if (fixedCount > 0)
-        {
-            Debug.Log("[主题副本] 已透明化丢图白板数量: " + fixedCount);
-        }
-    }
-
-    /// <summary>
-    /// 为每个书位补上点击区、选中边框、缩略图、名称、章节与锁定遮罩，
-    /// 并隐藏 RO 原版里位置错位的旧文字与碰撞体子节点。
-    /// </summary>
-    private void BuildCardVisuals()
-    {
-        for (int i = 0; i < _slots.Count; i++)
-        {
-            // 当前书位的缓存控件引用。
-            Slot s = _slots[i];
-            // 当前书位根矩形，以下运行时装饰都挂在这里。
-            RectTransform rt = s.Root;
-
-            // 整块 155x155 都可点：原预制体只有 Collider 子节点可点，偏移对不上。
-            // 覆盖书位的透明射线点击区。
-            Image hit = rt.GetComponent<Image>();
-            if (hit == null)
-            {
-                hit = rt.gameObject.AddComponent<Image>();
-            }
-            hit.sprite = _whiteSprite;
-            hit.color = new Color(1f, 1f, 1f, 0f);
-            hit.raycastTarget = true;
-
-            // 书位点击按钮，当前使用无过渡样式。
-            Button btn = rt.GetComponent<Button>();
-            if (btn == null)
-            {
-                btn = rt.gameObject.AddComponent<Button>();
-            }
-            btn.transition = Selectable.Transition.None;
-            // 为按钮回调固定此书位下标。
-            int captured = i;
-            btn.onClick.AddListener(delegate { OnSlotClicked(captured); });
-
-            // 选中描边画在封面下层，只有选中时才上色，未选中完全透明，避免 RO 原版没有的金框。
-            s.Frame = NewImage("TD_Frame", rt, 0f, 12f, 116f, 116f, ColFrameIdle);
-            s.Frame.raycastTarget = false;
-
-            // RO 的书是 3D 立在书台上的，2D 缩略图不能太大，否则环心会被占满、中心信息牌没地方放。
-            // 当前书位的场景缩略图矩形。
-            RectTransform thumbRt = NewRect("TD_Thumb", rt, 0f, 12f, 108f, 108f);
-            s.Thumb = thumbRt.gameObject.AddComponent<RawImage>();
-            s.Thumb.raycastTarget = false;
-            s.Thumb.color = Color.white;
-
-            // RO 的书位是「压条写章节 + 下面写副本名」（NameBg / ChapterName / DungeonName 三层），
-            // 这里照抄这套层级，只是把 3D 书皮换成了场景缩略图。
-            // 章节文字的底条，优先复用旧预制体精灵。
-            Image bar = NewImage("TD_NameBar", rt, 0f, -56f, 146f, 24f, Color.white);
-            bar.raycastTarget = false;
-            if (_nameBarSprite != null)
-            {
-                bar.sprite = _nameBarSprite;
-                bar.type = Image.Type.Sliced;
-            }
-            else
-            {
-                bar.color = new Color(0.06f, 0.05f, 0.03f, 0.85f);
-            }
-            s.Chapter = NewText("TD_Chapter", rt, 0f, -56f, 142f, 22f, 14f, ColText, TextAlignmentOptions.Center);
-            s.Name = NewText("TD_Name", rt, 0f, -80f, 164f, 26f, 18f, ColGold, TextAlignmentOptions.Center);
-
-            s.LockMask = NewImage("TD_LockMask", rt, 0f, 12f, 108f, 108f, new Color(0f, 0f, 0f, 0.62f));
-            s.LockMask.raycastTarget = false;
-            s.LockText = NewText("TD_LockText", s.LockMask.transform, 0f, 0f, 108f, 30f, 16f, ColRed, TextAlignmentOptions.Center);
-
-            // 旧碰撞点击节点，当前改由整块书位按钮接收点击。
-            Transform col = FindDirect(rt, "Collider");
-            if (col != null)
-            {
-                col.gameObject.SetActive(false);
-            }
-            // 被新二维书位展示替代的旧子节点名称。
-            string[] legacy = { "DungeonName", "ChapterName", "NotOpen", "Lock", "NameBg" };
-            for (int k = 0; k < legacy.Length; k++)
-            {
-                // 需要隐藏的旧展示节点，保留对象不删除。
-                Transform old = FindDirect(rt, legacy[k]);
-                if (old != null)
-                {
-                    old.gameObject.SetActive(false);
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// 创建背景层与操作反馈文本。
-    /// RO 这个界面自己没有详情板：书位下方的章节条 + 副本名、中心的挑战信息牌、以及
-    /// 翻开后的 Theme_Story 才是它的信息结构，所以这里只补一张全屏背景和一个反馈行。
-    /// </summary>
-    private void BuildDetailPanel()
-    {
-        // 全屏背景矩形，插在窗口内容下方。
-        RectTransform splashRt = NewRect("TD_Splash", _root, 0f, 0f, 0f, 0f);
-        Stretch(splashRt);
-        _splash = splashRt.gameObject.AddComponent<RawImage>();
-        _splash.raycastTarget = false;
-        // RawImage 在 texture 为空时会画出一个实心白块，这里先设为全透明，选中后再按贴图恢复。
-        _splash.color = new Color(1f, 1f, 1f, 0f);
-        _splash.uvRect = new Rect(0f, 0f, 1f, 1f);
-        splashRt.SetSiblingIndex(1);
-
-        // 背景上的半透明遮暗层，使前景文字更清楚。
-        Image dim = NewImage("TD_SplashDim", _root, 0f, 0f, 0f, 0f, new Color(0f, 0f, 0f, 0.30f));
-        Stretch(dim.rectTransform);
-        dim.raycastTarget = false;
-        dim.rectTransform.SetSiblingIndex(2);
-
-        // 反馈行放在页签圆点上方居中，和 RO 的底部页码区同一区域，不会压到主界面 HUD。
-        _statusText = NewText("TD_Status", _root, 0f, -252f, 720f, 30f, 16f, ColGold, TextAlignmentOptions.Center);
-        _statusText.text = string.Empty;
-    }
-
-    /// <summary>
-    /// 把一个副本条目的数据填到书位上：缩略图、名称与章节等级文案。
-    /// 主题副本入口不再做等级限制，书位一律按已解锁展示，只保留章节与等级的文字说明。
-    /// </summary>
-    /// <param name="s">当前页对应的书位控件，负责缩略图、名称和等级文案。</param>
-    /// <param name="d">该书位的主题副本配置，等级字段仅用于展示。</param>
-    private void ApplySlot(Slot s, ThemeDungeonEntry d)
-    {
-        s.Thumb.texture = LoadTexture(d.scenePic);
-        ApplyCoverUv(s.Thumb, 0f, 0f);
-        // 缩略图恒为原色，不再按等级压灰，保证所有主题副本外观一致。
-        s.Thumb.color = Color.white;
-        s.Name.text = d.themeName;
-        // 章节与等级只作为信息展示，不参与解锁判定。
-        s.Chapter.text = d.chapterText + " · Lv." + d.chapterLevel;
-        // 锁定遮罩与「Lv.x 解锁」提示随等级限制一并停用，节点保留但不显示。
-        s.LockMask.gameObject.SetActive(false);
-    }
-
-    /// <summary>
-    /// 选中指定下标，刷新书位高亮、背景大图和中心副本名；独立详情窗口另由 EnterSelected 打开。
-    /// </summary>
-    /// <param name="index">副本在 _items 中的下标。</param>
-    /// <param name="fromClick">true 表示由玩家点击触发，会给出操作反馈。</param>
-    private void Select(int index, bool fromClick)
-    {
-        if (index < 0 || index >= _items.Length)
-        {
-            return;
-        }
-        _selected = index;
-        UpdateFrames();
-
-        // 本次选中或要打开的副本配置。
-        ThemeDungeonEntry d = _items[index];
-        _splash.texture = LoadTexture(d.scenePic);
-        ApplySplashCover();
-        // 贴图加载成功才显示，否则保持透明，避免整屏白块。
-        if (_splash.texture != null)
-        {
-            _splash.color = new Color(1f, 1f, 1f, 1f);
-        }
-        else
-        {
-            _splash.color = new Color(1f, 1f, 1f, 0f);
-        }
-
-        if (_nameOfPanel != null)
-        {
-            _nameOfPanel.text = d.themeName;
-        }
-        // 中心挑战信息牌上的副本名跟随当前选中项。
-        RefreshChallengeButton();
-        if (fromClick)
-        {
-            SetStatus("已选中：" + d.themeName);
-        }
-    }
-
-    /// <summary>上一页，已在第一页时给出提示。</summary>
-    private void PrevPage()
-    {
-        if (_page <= 0)
-        {
-            SetStatus("已经是第一页");
-            return;
-        }
-        ShowPage(_page - 1, false);
-    }
-
-    /// <summary>下一页，已在最后一页时给出提示。</summary>
-    private void NextPage()
-    {
-        if (_page >= PageCount - 1)
-        {
-            SetStatus("已经是最后一页");
-            return;
-        }
-        ShowPage(_page + 1, false);
-    }
-
-    /// <summary>
-    /// 打开当前副本的 Theme_Story 详情页；当前书位首次点击就会调用这里，不需要再次点击。
-    /// 详情页的“开始挑战”只转发选中配置，后续建队和进入流程由控制器组织。
-    /// </summary>
-    private void EnterSelected()
-    {
-        if (_selected < 0 || _selected >= _items.Length)
-        {
-            SetStatus("请先选择一个副本");
-            return;
-        }
-        // 本次选中或要打开的副本配置。
-        ThemeDungeonEntry d = _items[_selected];
-        if (_storyWindow == null)
-        {
-            SetStatus("详情界面未接入，" + d.themeName + " 无法打开");
-            return;
-        }
-        _storyWindow.Show(true, d);
-        SetStatus("翻开：" + d.themeName);
-    }
-
-    /// <summary>
-    /// 详情页确认挑战：主题副本入口不再校验等级，挑战先建队再由队伍入口进入。
-    /// 这里只把选中的副本配置交给控制器（由控制器打开建队窗），窗口自身不切换场景。
-    /// </summary>
-    /// <param name="d">详情页当前展示并确认挑战的副本配置。</param>
-    /// <param name="difficultyId">详情页选择的难度表编号，不替换基础副本地图编号。</param>
-    /// <param name="layer">详情页选中的层数，非分层难度为零。</param>
-    private void EnterDungeon(ThemeDungeonEntry d, int difficultyId, int layer)
-    {
-        if (d == null)
-        {
-            return;
-        }
-        if (OnChallengeRequested != null)
-        {
-            OnChallengeRequested(d, difficultyId, layer);
-            return;
-        }
-    }
-
-    /// <summary>把 msg 显示在窗口底部居中的操作反馈行。</summary>
-    private void SetStatus(string msg)
-    {
-        if (_statusText != null)
-        {
-            _statusText.text = msg;
-        }
-    }
-
-    /// <summary>
-    /// 把 RawImage UV 恢复为整张贴图；targetW 和 targetH 当前未参与计算，不执行按比例裁切。
-    /// </summary>
-    private static void ApplyCoverUv(RawImage raw, float targetW, float targetH)
-    {
-        if (raw == null || raw.texture == null)
-        {
-            return;
-        }
-        raw.uvRect = new Rect(0f, 0f, 1f, 1f);
-    }
-
-    /// <summary>为背景调用统一 UV 设置；当前实现显示完整贴图，传入屏幕尺寸不会改变裁切。</summary>
-    private void ApplySplashCover()
-    {
-        if (_splash == null)
-        {
-            return;
-        }
-        ApplyCoverUv(_splash, (float)Screen.width, (float)Screen.height);
-    }
-
-    /// <summary>把 RectTransform 拉伸到铺满父节点。</summary>
-    private static void Stretch(RectTransform rt)
-    {
-        rt.anchorMin = new Vector2(0f, 0f);
-        rt.anchorMax = new Vector2(1f, 1f);
-        rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = Vector2.zero;
-        rt.sizeDelta = Vector2.zero;
-    }
-
-    /// <summary>生成一张 1x1 白色贴图对应的精灵，供纯色图与透明点击区使用。</summary>
-    private Sprite MakeWhiteSprite()
-    {
-        // 一像素白纹理，用作纯色背景及透明点击区的精灵来源。
-        Texture2D tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
-        tex.SetPixel(0, 0, Color.white);
-        tex.Apply();
-        return Sprite.Create(tex, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 100f);
-    }
-    #endregion
 }

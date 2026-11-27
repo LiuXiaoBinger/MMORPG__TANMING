@@ -193,6 +193,7 @@ public sealed class ThemeStoryWindow : WindowBase
             _selectedLayer = 1;
         }
         RefreshDifficulty();
+        RefreshTabContent();
     }
 
     /// <summary>从难度表读取名称，区分准备挑战的选择与服务端已确认的当前副本难度。</summary>
@@ -427,7 +428,7 @@ public sealed class ThemeStoryWindow : WindowBase
         {
             if (_tab == TabBoss)
             {
-                _bossNameText.text = "首领：" + _entry.leaderName;
+                _bossNameText.text = "副本首领";
             }
             else if (_tab == TabSpecial)
             {
@@ -444,7 +445,7 @@ public sealed class ThemeStoryWindow : WindowBase
         }
         if (_rewardTitle != null)
         {
-            _rewardTitle.text = "通关奖励：";
+            _rewardTitle.text = "首领掉落";
         }
         // 切页签换了正文，滚动位置要回到顶部，箭头按新内容的长度重新判断。
         if (_infoScroll != null)
@@ -915,28 +916,32 @@ public sealed class ThemeStoryWindow : WindowBase
         RefreshTabContent();
     }
 
-    /// <summary>按页签拼接固定展示文案，只插入副本名和首领名；这些文案不表示已实现对应战斗机制，也未使用 chapterContent。</summary>
+    /// <summary>档案展示对应副本的实际首领、掉落规则与章节原文。</summary>
     private string BuildTabText()
     {
-        // 用于拼接固定正文的主题副本名称。
-        string name = _entry.themeName;
+        // 只列当前准备挑战的副本和难度中登记的首领。
+        List<AwardTable> rows = LubanMgr.Instance.ConfigTables.TbAwardTable.DataList;
+        // 当前难度的完整阵容供首领、特性两个页签共用。
+        List<string> names = new List<string>();
+        for (int index = 0; index < rows.Count; index++)
+        {
+            // 奖励行中的名称与副本纪事、服务器进度一致。
+            AwardTable boss = rows[index];
+            if (boss.DungeonId == _entry.storyDungeonId && boss.DifficultyId == _selectedDifficulty) names.Add(boss.BossName);
+        }
         if (_tab == TabBoss)
         {
-            return "镇守「" + name + "」的首领是" + _entry.leaderName + "。\n"
-                + "它盘踞在副本最深处，只有在清理掉沿途的守卫之后才会现身。\n"
-                + "击败它可以获得该主题的专属掉落，是本主题剧情的最后一战。";
+            if (names.Count == 0) return _entry.leaderName;
+            return string.Join("、", names);
         }
         if (_tab == TabSpecial)
         {
-            return "「" + name + "」的特性\n"
-                + "· 首领拥有阶段性护盾，护盾存在时受到的伤害大幅降低。\n"
-                + "· 战斗场地会周期性出现陷阱区域，站在其中会持续掉血。\n"
-                + "· 建议携带能够驱散增益的职业组队挑战。";
+            if (names.Count == 0) return "当前难度暂无首领掉落配置";
+            if (_selectedDifficulty == DungeonFinalWeek.Difficulty) return "终绝击杀记录首领进度。通关整层后计入本周最高层，每周五零点后在周赏领取上一期宝箱。";
+            if (_selectedDifficulty == 1) return "各首领每日首次击败时，个人掉落自动进入背包。";
+            return "各首领每周首次击败时，个人掉落自动进入背包。";
         }
-        return "「" + name + "」的档案\n"
-            + "这一主题的剧情围绕该地区发生的异变展开。\n"
-            + "玩家需要依次清理章节内的封锁，才能解锁首领所在的区域。\n"
-            + "通关后可以在奖励界面领取对应的主题材料与外观。";
+        return _entry.chapterContent.Replace("\\n", "\n");
     }
     #endregion
 }

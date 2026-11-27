@@ -74,10 +74,35 @@ public static class DungeonBossAwardsSmoke
 
     /// <summary>取一次测试动作后发给指定角色的真实首领回包。</summary>
     /// <param name="link">该角色的回环网关。</param><param name="role">预期的接收者。</param>
-    private static BasePackage Packet(LoopbackLink link, OnlineRole role)
+    /// <param name="expectedBoss">首杀时应先同步的怪物模板号，其他协议检查传零。</param>
+    private static BasePackage Packet(LoopbackLink link, OnlineRole role, int expectedBoss = 0)
     {
         // 同一次击杀可能先发背包增量，按业务协议筛选最终的个人结算。
         List<DecodedFrame> frames = link.WaitFrames(NetDefine.CMD_DungeonBossProgress, role.UnitySessionId, 1500);
+        if (expectedBoss != 0)
+        {
+            // 从正式配置取得稳定键，不能用显示名或整本通关替代该首领身份。
+            AwardTable award = LubanMgr.Instance.ConfigTables.TbAwardTable.DataList.Find(row =>
+                row.DungeonId == 4060 && row.DifficultyId == 1 && row.BossId == expectedBoss);
+            // 当前角色真实落盘字段中的周期起始日。
+            long day = role.GetComponent<RoleCountComponent>().GetCount(RoleCountAction.DungeonBossKill, award.Id);
+            // 核对这次击杀收到的增量，而非上一次动作的残留通知。
+            bool found = false;
+            for (int index = 0; index < frames.Count; index++)
+            {
+                // 只有发往本人的首领次数包才可点亮纪事标记。
+                DecodedFrame frame = frames[index];
+                if (frame.ProtoCode != NetDefine.CMD_CountUpdateSyncInfoCode || frame.UnitySessionId != role.UnitySessionId) continue;
+                CountUpdateSyncInfo sync = CountUpdateSyncInfo.Parser.ParseFrom(frame.Package.Data);
+                for (int item = 0; item < sync.ItemList.Count; item++)
+                {
+                    // 核对持久化行为、奖励行键及准确周期。
+                    CountItemInfo row = sync.ItemList[item];
+                    if (row.Type == (long)RoleCountAction.DungeonBossKill && row.Id == award.Id && row.Count == day) found = true;
+                }
+            }
+            Check(found, "个人首领头像收到同一奖励行与存档周期的真实次数增量");
+        }
         // 恢复真实协议号、会话及完整消息体。
         for (int index = 0; index < frames.Count; index++)
             if (frames[index].ProtoCode == NetDefine.CMD_DungeonBossProgress && frames[index].UnitySessionId == role.UnitySessionId)
@@ -131,12 +156,94 @@ public static class DungeonBossAwardsSmoke
         finally { link.Close(); }
     }
 
+    /// <summary>以真实胜利快照、个人次数、物品事务及网关回环验收终绝周箱。</summary>
+    private static void WeeklyFinal()
+    {
+        // 周界前后一秒用固定 UTC 时间，测试不依赖运行当日是周几。
+        DateTime boundary = new DateTime(2026, 11, 26, 16, 0, 0, DateTimeKind.Utc);
+        int prior = DungeonFinalWeek.Period(boundary.AddSeconds(-1));
+        int current = DungeonFinalWeek.Period(boundary);
+        Check(current - prior == 7 && DungeonFinalWeek.Friday(current).DayOfWeek == DayOfWeek.Friday, "北京时间周五零点，一秒前后正确换周");
+        // 回环网关承接该角色真正的次数和背包增量。
+        LoopbackLink link = new LoopbackLink(true);
+        LoopbackLink unity = new LoopbackLink(false);
+        try
+        {
+            OnlineRole role = Role(98761, link);
+            RoleCountComponent counts = role.GetComponent<RoleCountComponent>();
+            List<ulong> members = new List<ulong> { role.GetID() };
+            SceneWaveSpawner final = Scene(6, 24, members);
+            Kill(final, 34, 5501);
+            MethodInfo flush = typeof(SceneWaveSpawner).GetMethod("FillFlow", Hidden);
+            flush.Invoke(final, new object[] { new MonsterAttrUpdateNtf() });
+            int liveWeek = DungeonFinalWeek.Period(DateTime.UtcNow);
+            Check(Coins(role) == 0 && counts.GetCount((RoleCountAction)DungeonFinalWeek.Highest, liveWeek) == 0, "终绝单首领击杀无掉落且不算整层胜利");
+            // 5357 是正式 DungeonsTable 胜利模板；模拟其死亡进入原场景计数并消费同一份 Finished。
+            typeof(SceneWaveSpawner).GetMethod("CountDeath", Hidden).Invoke(final, new object[] { 5357 });
+            flush.Invoke(final, new object[] { new MonsterAttrUpdateNtf() });
+            flush.Invoke(final, new object[] { new MonsterAttrUpdateNtf() });
+            Check(counts.GetCount((RoleCountAction)DungeonFinalWeek.Highest, liveWeek) == 24 && counts.GetCount((RoleCountAction)DungeonFinalWeek.Distinct, liveWeek) == 1, "正式达纳托斯胜利登记二十四层，重复快照仍只有一种");
+            // 独立测试角色用于固定周界，其结果不受上面的真实日期影响。
+            OnlineRole old = Role(98762, link);
+            RoleCountComponent saved = old.GetComponent<RoleCountComponent>();
+            Type settlement = typeof(SceneWaveSpawner).Assembly.GetType("DungeonFinalRewards", true);
+            MethodInfo record = settlement.GetMethod("Record", BindingFlags.NonPublic | BindingFlags.Static);
+            MethodInfo claim = settlement.GetMethod("Claim", BindingFlags.NonPublic | BindingFlags.Static);
+            List<OnlineRole> winners = new List<OnlineRole> { old };
+            DateTime played = boundary.AddHours(-8);
+            record.Invoke(null, new object[] { winners, 4060, 5, played });
+            record.Invoke(null, new object[] { winners, 4060, 10, played });
+            record.Invoke(null, new object[] { winners, 4060, 2, played });
+            Check(saved.GetCount((RoleCountAction)DungeonFinalWeek.Highest, prior) == 10 && saved.GetCount((RoleCountAction)DungeonFinalWeek.Distinct, prior) == 1, "同一副本反复通关只算一种，最高层只升不降");
+            record.Invoke(null, new object[] { winners, 4050, 5, played });
+            Check(saved.GetCount((RoleCountAction)DungeonFinalWeek.Distinct, prior) == 2, "第二个不同副本才点亮二种进度");
+            DungeonFinalClaimRet early = (DungeonFinalClaimRet)claim.Invoke(null, new object[] { old, prior, boundary.AddSeconds(-1) });
+            Check(!early.Success && Coins(old) == 0, "周五零点前无法提前领取");
+            // 登录装载使用正常的角色次数格式，在没有在线定时器的情形恢复上周资格。
+            List<RoleCountItemInfo> snapshot = saved.Save();
+            saved.Load(snapshot);
+            // 隔离背包先占满虚拟物品格，验证整批失败后仍能领取。
+            RoItemComponent bag = old.GetComponent<RoItemComponent>();
+            RoItemContainer pack = bag.GetContainer(KnapsackType.RoleVirtualItemPack);
+            int capacity = pack.ContainerSize;
+            pack.SetContainerSize(1);
+            DungeonFinalClaimRet blocked = (DungeonFinalClaimRet)claim.Invoke(null, new object[] { old, prior, boundary });
+            Check(!blocked.Success && saved.GetCount((RoleCountAction)DungeonFinalWeek.Claimed, prior) == 0 && Coins(old) == 0, "背包不足保留原周箱且无部分发放");
+            pack.SetContainerSize(capacity);
+            DungeonFinalClaimRet granted = (DungeonFinalClaimRet)claim.Invoke(null, new object[] { old, prior, boundary.AddDays(15) });
+            Check(granted.Success && granted.Message.Contains("三阶") && Coins(old) == 2 && bag.GetVirtualItemCount(501) == 5, "离线十五天后仍能领最高十层的一份三阶宝箱");
+            int randomPieces = 0;
+            for (int index = 0; index < granted.Items.Count; index++)
+                if (granted.Items[index].ItemId >= 7312) randomPieces += granted.Items[index].Count;
+            Check(randomPieces == 3 && bag.GetItemNum(7301) == 2, "固定修习丹和三次随机碎片按真实物品清单入包");
+            DungeonFinalClaimRet twice = (DungeonFinalClaimRet)claim.Invoke(null, new object[] { old, prior, boundary.AddDays(15) });
+            Check(!twice.Success && Coins(old) == 2, "重复点击与重放无法重复开箱");
+            DungeonFinalClaimRet unearned = (DungeonFinalClaimRet)claim.Invoke(null, new object[] { old, prior - 7, boundary });
+            Check(!unearned.Success, "伪造一个没有成绩的历史周不会发奖");
+            SaveRoleDataReq version = old.SaveAllMoudle();
+            Check(version.RoleCountSnapshot && version.ItemDataLists.Count > 0 && saved.GetCount((RoleCountAction)DungeonFinalWeek.Claimed, prior) == 1, "领取标记与背包进入同版角色保存");
+            // 走正式网关校验后，终端确实收到该角色完整的领取结果。
+            BasePackage outbound = new BasePackage { ProtoCode = NetDefine.CMD_DungeonFinalClaimResult, UnitySessionId = old.UnitySessionId, Data = granted.ToByteString() };
+            GateClientResponseForwarder.ForwardToUnity(SessionMgr.Instance.GetSession(unity.SessionId), outbound);
+            List<DecodedFrame> frames = unity.WaitFrames(NetDefine.CMD_DungeonFinalClaimResult, old.UnitySessionId, 1500);
+            bool delivered = false;
+            for (int index = 0; index < frames.Count; index++)
+            {
+                BasePackage body = frames[index].Package;
+                if (body.ProtoCode == NetDefine.CMD_DungeonFinalClaimResult) delivered = DungeonFinalClaimRet.Parser.ParseFrom(body.Data).Items.Count == granted.Items.Count;
+            }
+            Check(delivered, "终绝宝箱真实协议经网关完整透传");
+        }
+        finally { unity.Close(); link.Close(); }
+    }
+
     /// <summary>运行首领名单、多人掉落、资格持久化、周日刷新和终绝跨层回归。</summary>
     /// <param name="args">传入 multi 时读取隔离编辑器导出的多物品配置。</param>
     public static void Main(string[] args)
     {
         LubanMgr.Instance.Init();
         UIDHelper.ConfigureServerInstanceId(1);
+        if (args.Length > 0 && args[0] == "weekly") { WeeklyFinal(); return; }
         if (args.Length > 0 && args[0] == "multi") { MultiDrop(); return; }
         // 各角色独立连接，避免一次读取提前消费另一个人的通知。
         LoopbackLink firstLink = new LoopbackLink(true);
@@ -157,7 +264,7 @@ public static class DungeonBossAwardsSmoke
             SceneWaveSpawner rookie = Scene(1, 0, roles);
             Kill(rookie, 34, 5501);
             // 捕获真实 GS 字节，通过正式 Gate 回包检查后发送到模拟客户端。
-            BasePackage drop = Packet(firstLink, first);
+            BasePackage drop = Packet(firstLink, first, 5501);
             GateClientResponseForwarder.ForwardToUnity(SessionMgr.Instance.GetSession(unity.SessionId), drop);
             // 客户端最后收到的内容才能作为可展示掉落的证据。
             DungeonBossProgressNtf result = DungeonBossProgressNtf.Parser.ParseFrom(Packet(unity, first).Data);
@@ -195,7 +302,7 @@ public static class DungeonBossAwardsSmoke
             // 两个新实例复用终绝难度的同一份角色资格。
             Kill(Scene(6, 1, roles), 34, 5501);
             Kill(Scene(6, 10, roles), 34, 5501);
-            Check(Coins(first) == 11 && Coins(outside) == 0, "终绝第一层与第十层共用单个首领的周掉落");
+            Check(Coins(first) == 5 && Coins(outside) == 0, "终绝首领在一层和十层均只记录击杀，不现场发奖");
             // 用真实业务方法验证每日与周日起点，覆盖跨年同周和周末换周。
             DateTime saturday = new DateTime(2027, 1, 2, 23, 59, 59, DateTimeKind.Utc);
             MethodInfo period = typeof(SceneWaveSpawner).GetMethod("BossPeriod", Hidden);
@@ -206,7 +313,7 @@ public static class DungeonBossAwardsSmoke
             RoleCountComponent counts = first.GetComponent<RoleCountComponent>();
             counts.SetCount(RoleCountAction.DungeonBossDrop, 550101, counts.GetCount(RoleCountAction.DungeonBossDrop, 550101) - 1);
             Kill(rookie, 34, 5501);
-            Check(Coins(first) == 12 && Coins(second) == 11, "跨周期重新发放，仅影响资格过期的角色");
+            Check(Coins(first) == 6 && Coins(second) == 5, "跨周期重新发放，仅影响资格过期的角色");
             // 用真实虚拟背包制造无空格情形，检查失败时仍记录击杀、清出空间后重新击杀可入包。
             RoItemComponent bag = outside.GetComponent<RoItemComponent>();
             RoItemContainer container = bag.GetContainer(KnapsackType.RoleVirtualItemPack);

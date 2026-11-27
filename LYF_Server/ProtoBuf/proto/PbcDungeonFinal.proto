@@ -1,0 +1,6 @@
+syntax = "proto3";
+import "pbc_mail.proto";
+// 客户端只提交要打开的周箱周期。档位、件数和角色均由游戏服决定。
+message DungeonFinalClaimReq { int32 week = 1; }
+// 领取后下发实际入包的物品清单，失败时保留原领取资格。
+message DungeonFinalClaimRet { int32 week = 1; bool success = 2; string message = 3; repeated MailItem items = 4; }

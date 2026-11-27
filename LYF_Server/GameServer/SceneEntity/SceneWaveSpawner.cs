@@ -46,6 +46,8 @@ public sealed partial class SceneWaveSpawner
     public DungeonsTable Dungeon { get; private set; }
     /// <summary>本实例独立的难度配置，重置波次时保持不变。</summary>
     internal DungeonDifficultySettings Difficulty { get; private set; }
+    /// <summary>每个独立实例只在第一次正式胜利时登记在场成员。</summary>
+    private bool finalFloorRecorded;
     /// <summary>按SceneID定位的正式场景XML，不借用其他副本资源。</summary>
     internal XDocument Config { get; private set; }
     /// <summary>当前副本私有的服务端实体容器。</summary>
@@ -595,6 +597,12 @@ public sealed partial class SceneWaveSpawner
     internal void FillFlow(MonsterAttrUpdateNtf notice)
     {
         FlushAiNotice(notice);
+        // 用正式胜利条件登记。即便流程界面已确认上一个快照，最后一击也能计入成绩。
+        if (Difficulty.DifficultyId == DungeonFinalWeek.Difficulty && !finalFloorRecorded && Flow.IsFinished)
+        {
+            finalFloorRecorded = true;
+            DungeonFinalRewards.Record(Players, Difficulty.DungeonId, Difficulty.Layer, DateTime.UtcNow);
+        }
         if (!Flow.Dirty) return;
         notice.Flow = Flow.Snapshot();
         for (int index = 0; index < monsters_.Count; index++)

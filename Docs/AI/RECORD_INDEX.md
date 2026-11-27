@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `4b58826a83f425ea274341dd53ca6a908a8612735f0725600cd349398ad52a43`
+Source normalized SHA256: `e0c074084175e9fa558603388d849a26937c2939de40747e35d86bc2da18d98f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -180,11 +180,12 @@ Source normalized SHA256: `4b58826a83f425ea274341dd53ca6a908a8612735f0725600cd34
 | [CODE][FILES][网络][区服][REALM-START-LOCK-20261127] Start the development realm while old service DLLs are in use | 1153-1156 |
 | [CODE][FILES][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Publish the shader variant JSON while its old file is mapped | 1157-1162 |
 | [CODE][FILES][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Personal boss drops by dungeon and difficulty | 1163-1168 |
-| [CODE][FILES][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] Author multi-item boss drops inside the RO dungeon editor | 1169-1174 |
+| [CODE][FILES][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] Author multi-item boss drops inside the RO dungeon editor | 1169-1175 |
+| [CODE][FILES][副本][UI][DUNGEON-JOURNAL-UI-20261127] Dungeon journal, individual boss marks and Friday Final chests | 1176-1180 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `fd90f2a88215fe2cab1adeee0f6ab786135c9e8cd45cf0ed409f5089b095a777`
+Source normalized SHA256: `d3f40631da1249b2ce6c21569dbc5b180863e45f85404bd5659b9253245cdaa0`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -359,7 +360,8 @@ Source normalized SHA256: `fd90f2a88215fe2cab1adeee0f6ab786135c9e8cd45cf0ed409f5
 | [VERIFY][网络][区服][REALM-START-LOCK-20261127] Reproduce the startup failure and verify the live first realm | 1204-1207 |
 | [VERIFY][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Reproduce mapped-file contention and verify the saved collection in Unity | 1208-1214 |
 | [VERIFY][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Multi-boss drops, period boundaries and re-entry | 1215-1220 |
-| [VERIFY][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] RO editor rendering, export and multi-item settlement | 1221-1225 |
+| [VERIFY][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] RO editor rendering, export and multi-item settlement | 1221-1226 |
+| [VERIFY][副本][UI][DUNGEON-JOURNAL-UI-20261127] Journal rendering, personal progress and weekly claim | 1227-1230 |
 
 ## Docs/AI/DECISIONS.en.md
 

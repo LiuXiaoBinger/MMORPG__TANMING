@@ -88,6 +88,9 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         if (_mainView.ThemeDungeonArroundWindow != null)
         {
             _mainView.ThemeDungeonArroundWindow.OnChallengeRequested += OnChallengeRequested;
+            _mainView.ThemeDungeonArroundWindow.FindTeamRequested += OnFindDungeonTeam;
+            _mainView.ThemeDungeonArroundWindow.WeeklyClaimRequested += TeamCtrl.RequestFinalWeekly;
+            TeamData.Instance.BossProgressUpdated += _mainView.ThemeDungeonArroundWindow.RefreshBossMarks;
         }
         if (_teamWindow != null)
         {
@@ -128,6 +131,9 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         if (_mainView != null && _mainView.ThemeDungeonArroundWindow != null)
         {
             _mainView.ThemeDungeonArroundWindow.OnChallengeRequested -= OnChallengeRequested;
+            _mainView.ThemeDungeonArroundWindow.FindTeamRequested -= OnFindDungeonTeam;
+            _mainView.ThemeDungeonArroundWindow.WeeklyClaimRequested -= TeamCtrl.RequestFinalWeekly;
+            TeamData.Instance.BossProgressUpdated -= _mainView.ThemeDungeonArroundWindow.RefreshBossMarks;
         }
         if (_teamWindow != null)
         {
@@ -376,6 +382,16 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     private void OnOpenTeamRequested()
     {
         OpenTeamWindow();
+    }
+
+    /// <summary>副本页的寻找队伍按钮沿用已有队伍搜索页，并记下当前目标。</summary>
+    /// <param name="entry">正在浏览的副本。</param><param name="difficulty">所选难度编号。</param><param name="layer">终绝层数，其他难度为零。</param>
+    private void OnFindDungeonTeam(ThemeDungeonEntry entry, int difficulty, int layer)
+    {
+        _selectedEntry = entry;
+        _selectedDifficulty = difficulty;
+        _selectedLayer = layer;
+        OnOpenPageRequested(TeamPage.Search);
     }
 
     /// <summary>从快捷栏打开队伍窗口并切到指定页；不在这里执行对应页面的业务。</summary>

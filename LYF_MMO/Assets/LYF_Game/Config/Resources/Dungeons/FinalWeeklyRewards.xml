@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rewards>
+  <tier name="一阶" floor="1" draws="1">
+    <fixed>
+      <item id="503" count="1" />
+      <item id="501" count="1" />
+      <item id="7301" count="1" />
+    </fixed>
+    <pool>
+      <item id="7312" count="1" />
+      <item id="7313" count="1" />
+      <item id="7314" count="1" />
+      <item id="7315" count="1" />
+      <item id="7316" count="1" />
+    </pool>
+  </tier>
+  <tier name="二阶" floor="5" draws="2">
+    <fixed>
+      <item id="503" count="2" />
+      <item id="501" count="3" />
+      <item id="7301" count="2" />
+    </fixed>
+    <pool>
+      <item id="7312" count="1" />
+      <item id="7313" count="1" />
+      <item id="7314" count="1" />
+      <item id="7315" count="1" />
+      <item id="7316" count="1" />
+      <item id="7317" count="1" />
+    </pool>
+  </tier>
+  <tier name="三阶" floor="10" draws="3">
+    <fixed>
+      <item id="503" count="2" />
+      <item id="501" count="5" />
+      <item id="7301" count="2" />
+    </fixed>
+    <pool>
+      <item id="7312" count="1" />
+      <item id="7313" count="1" />
+      <item id="7314" count="1" />
+      <item id="7315" count="1" />
+      <item id="7316" count="1" />
+      <item id="7317" count="1" />
+      <item id="7318" count="1" />
+    </pool>
+  </tier>
+  <tier name="四阶" floor="15" draws="4">
+    <fixed>
+      <item id="503" count="2" />
+      <item id="501" count="8" />
+      <item id="7301" count="2" />
+    </fixed>
+    <pool>
+      <item id="7312" count="2" />
+      <item id="7313" count="2" />
+      <item id="7314" count="2" />
+      <item id="7315" count="2" />
+      <item id="7316" count="2" />
+      <item id="7317" count="2" />
+      <item id="7318" count="2" />
+      <item id="7319" count="2" />
+    </pool>
+  </tier>
+  <tier name="五阶" floor="18" draws="5">
+    <fixed>
+      <item id="503" count="2" />
+      <item id="501" count="10" />
+      <item id="7301" count="2" />
+    </fixed>
+    <pool>
+      <item id="7312" count="2" />
+      <item id="7313" count="2" />
+      <item id="7314" count="2" />
+      <item id="7315" count="2" />
+      <item id="7316" count="2" />
+      <item id="7317" count="2" />
+      <item id="7318" count="2" />
+      <item id="7319" count="2" />
+      <item id="7320" count="2" />
+    </pool>
+  </tier>
+  <tier name="六阶" floor="21" draws="5">
+    <fixed>
+      <item id="503" count="2" />
+      <item id="501" count="10" />
+      <item id="7301" count="2" />
+    </fixed>
+    <pool>
+      <item id="7312" count="2" />
+      <item id="7313" count="2" />
+      <item id="7314" count="2" />
+      <item id="7315" count="2" />
+      <item id="7316" count="2" />
+      <item id="7317" count="2" />
+      <item id="7318" count="2" />
+      <item id="7319" count="2" />
+      <item id="7320" count="2" />
+      <item id="7321" count="2" />
+    </pool>
+  </tier>
+  <tier name="七阶" floor="24" draws="6">
+    <fixed>
+      <item id="503" count="2" />
+      <item id="501" count="10" />
+      <item id="7301" count="2" />
+    </fixed>
+    <pool>
+      <item id="7312" count="3" />
+      <item id="7313" count="3" />
+      <item id="7314" count="3" />
+      <item id="7315" count="3" />
+      <item id="7316" count="3" />
+      <item id="7317" count="3" />
+      <item id="7318" count="3" />
+      <item id="7319" count="3" />
+      <item id="7320" count="3" />
+      <item id="7321" count="3" />
+      <item id="7322" count="3" />
+    </pool>
+  </tier>
+</rewards>

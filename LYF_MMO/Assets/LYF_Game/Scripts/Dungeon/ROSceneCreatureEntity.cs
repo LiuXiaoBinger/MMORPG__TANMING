@@ -26,6 +26,8 @@ public sealed class ROSceneCreatureEntity
     public bool nonCombatant;
     /// <summary>原怪物表 UnitTypeLevel 为首领的出生配置，供客户端战斗镜头识别。</summary>
     public bool isBoss;
+    /// <summary>副本纪事展示的已接入首领技能名，按该实体正式技能配置的顺序。</summary>
+    public string[] journalSkills;
     /// <summary>本项目基础战斗的出生生命值；零表示没有战斗属性。</summary>
     public int maxHp;
     /// <summary>正式预制体按出生缩放后的水平战斗半径，单位米。</summary>

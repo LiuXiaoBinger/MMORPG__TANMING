@@ -98,6 +98,8 @@ namespace GateServer
             GateMoveCtrl gateMoveCtrl = new GateMoveCtrl();
             server.RegistCommand(NetDefine.CMD_MoveOperationCode, gateMoveCtrl);
             server.RegistCommand(NetDefine.CMD_DungeonInteractCode, gateMoveCtrl);
+            server.RegistCommand(NetDefine.CMD_DungeonFinalClaim, gateMoveCtrl);
+            client.RegistCommand(NetDefine.CMD_DungeonFinalClaimResult, gateMoveCtrl);
             // 原对话命令沿现有网关转发保持真实复合会话身份。
             server.RegistCommand(NetDefine.CMD_DungeonCommandEventCode, gateMoveCtrl);
             client.RegistCommand(NetDefine.CMD_DungeonInteractResultCode, gateMoveCtrl);

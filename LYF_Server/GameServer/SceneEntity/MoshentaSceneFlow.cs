@@ -558,13 +558,21 @@ public sealed class MoshentaSceneFlow
         return lower <= upper;
     }
 
+    /// <summary>游戏服判定的整本胜利状态，供网络快照与周成绩共用。</summary>
+    internal bool IsFinished
+    {
+        get
+        {
+            if (owner.HasSceneAi) return owner.Victory;
+            return events.Contains("FinishDungeon");
+        }
+    }
+
     /// <summary>生成完整实例快照，目标只同步RO当前Section的表定义与实例进度。</summary>
     public DungeonFlowState Snapshot()
     {
         // 对外传输的独立快照，不暴露内部集合。
-        bool finished = events.Contains("FinishDungeon");
-        if (owner.HasSceneAi) finished = owner.Victory;
-        DungeonFlowState result = new DungeonFlowState { Finished = finished };
+        DungeonFlowState result = new DungeonFlowState { Finished = IsFinished };
         result.ActiveWaveIds.Add(active.OrderBy(id => id));
         result.CompletedWaveIds.Add(complete.OrderBy(id => id));
         result.ActiveObjectIds.Add(objects.OrderBy(id => id));

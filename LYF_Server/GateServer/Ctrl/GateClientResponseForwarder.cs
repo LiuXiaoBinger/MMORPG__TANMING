@@ -235,6 +235,11 @@ public static class GateClientResponseForwarder
                 TeamEnterDungeonNtf.Parser.ParseFrom(package.Data);
                 resultCode = CmdCode.Succeed;
                 return true;
+            case NetDefine.CMD_DungeonFinalClaimResult:
+                // 领取成功或背包已满均需透传，客户端显示服务端的实际结果。
+                DungeonFinalClaimRet.Parser.ParseFrom(package.Data);
+                resultCode = CmdCode.Succeed;
+                return true;
             case NetDefine.CMD_DungeonBossProgress:
                 // 游戏服已按角色结算，此处仅校验并转发该成员的个人进度。
                 DungeonBossProgressNtf.Parser.ParseFrom(package.Data);

@@ -581,6 +581,8 @@ public class OnlineRole : IGeneOwner
     internal void SaveStallAssets(long ticket,RoleItemInfo escrow) { _roleNetSender.SendStall(ticket,escrow); }
     /// <summary>收取附件或赠礼扣包后立即沿角色原存档链提交，有在途版本时由其成功回执续存。</summary>
     internal void SaveMailAssets() { _roleNetSender.SendRoleDataToDB(); }
+    /// <summary>把终绝成绩或领取标记与当前背包加入同一版角色保存。</summary>
+    internal void SaveDungeonFinalAssets() { _roleNetSender.SendRoleDataToDB(); }
 
     /// <summary>请求立即保存脏模块，切线要等既有中心服保存回执后才交出角色。</summary>
     internal void FlushForSceneChange() { _roleNetSender.SendRoleDataToDB(); }

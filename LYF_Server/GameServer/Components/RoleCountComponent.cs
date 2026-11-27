@@ -299,6 +299,9 @@ public sealed class RoleCountComponent : RoleComponentBase
         if (value.Count == count) return true;
         value.Count = count;
         MarkChanged();
+        // 仅首领击杀向本人同步奖励行和周期日；副本纪事与登录存档使用相同的稳定键。
+        if (action == RoleCountAction.DungeonBossKill || (int)action == DungeonFinalWeek.Highest) NotifyToClient(value);
+        else if ((int)action == DungeonFinalWeek.Distinct || (int)action == DungeonFinalWeek.Claimed) NotifyToClient(value);
         return true;
     }
 
