@@ -176,12 +176,24 @@ public sealed class TeamCtrl : CtrlBase
         }
         // 文案只使用权威回包中的实际入包数量，背包列表由正常增量同步。
         string message = "击败" + notice.BossName + " · " + progress;
-        if (notice.ItemCount > 0)
+        if (notice.Drops.Count > 0)
+        {
+            // 同一条提示列出整批实际入包的内容，顺序与策划配置一致。
+            string[] names = new string[notice.Drops.Count];
+            for (int index = 0; index < names.Length; index++)
+            {
+                // 此项已经成功写入玩家背包，取客户端物品表的正式名称。
+                RewardItemAmount item = notice.Drops[index];
+                names[index] = LubanMgr.Instance.GetItemConfigById(item.ItemId).ItemName + " ×" + item.Count;
+            }
+            message += "\n获得 " + string.Join("、", names);
+        }
+        else if (notice.ItemCount > 0)
         {
             message += "\n获得 " + LubanMgr.Instance.GetItemConfigById(notice.ItemId).ItemName + " ×" + notice.ItemCount;
         }
         else if (notice.BagFull) message += "\n背包空间不足，本周期再次击败该首领可获得掉落";
-        else message += "\n本周期已获得该首领掉落";
+        else if (!notice.NoDropsConfigured) message += "\n本周期已获得该首领掉落";
         TipsMgr.Instance.ShowSystemTips(message);
     }
 

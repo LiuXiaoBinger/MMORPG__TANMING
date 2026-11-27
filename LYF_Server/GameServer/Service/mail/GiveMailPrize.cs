@@ -57,64 +57,19 @@ public sealed class GiveMailPrize : RoleComponentBase
         else Owner.SendToClient(MailCode.MailOp, reply.ToByteString());
     }
 
-    /// <summary>按类型、绑定状态和配置堆叠上限合计全部格数，再沿现有 AddItem 发放。</summary>
-    /// <param name="bag">已装载的在线角色背包。</param><param name="content">一封信的完整附件列表。</param>
+    /// <summary>将一封信的附件交给与副本共用的整批入包检查，保留原有绑定与更新方式。</summary>
+    /// <param name="bag">已装载的收件人背包。</param><param name="content">中心服读取的完整附件。</param>
     private static bool GiveItems(RoItemComponent bag, MailContent content)
     {
-        // 同物品与绑定状态共享旧堆和新堆，避免不同附件重复使用同一空位。
-        var quantities = new Dictionary<(int Id, ItemSign Sign), long>();
-        // 保留第一次出现的附件顺序供容量核算。
-        var groups = new List<(int Id, ItemSign Sign)>();
-        for (int i = 0; i < content.MailItems.Count; i++)
+        // 原附件顺序和绑定信息随同传给背包。
+        List<RewardItemAmount> rewards = new List<RewardItemAmount>(content.MailItems.Count);
+        for (int index = 0; index < content.MailItems.Count; index++)
         {
-            // 业务系统写入的单项奖励。
-            MailItem item = content.MailItems[i];
-            if (item.ItemId <= 0 || item.Count <= 0) return false;
-            // 绑定状态参与现有背包的堆叠判定。
-            ItemSign sign = ItemSign.IsNoSign;
-            if (item.IsBind) sign = ItemSign.IsItemSignBind;
-            // 同配置编号的绑定和非绑定奖励分别计算容量。
-            var key = (item.ItemId, sign);
-            if (!quantities.ContainsKey(key)) { groups.Add(key); quantities.Add(key, 0); }
-            quantities[key] += item.Count;
+            // 单条邮件附件对应同一条背包发放内容。
+            MailItem item = content.MailItems[index];
+            rewards.Add(new RewardItemAmount { ItemId = item.ItemId, Count = item.Count, IsBind = item.IsBind });
         }
-        // 不同种类也可能进入同类背包，累加它们占用的新格。
-        var slots = new Dictionary<KnapsackType, long>();
-        for (int i = 0; i < groups.Count; i++)
-        {
-            // 本组共享堆叠条件。
-            var group = groups[i];
-            // 通过本项目物品表决定容器和单格容量。
-            ItemConfigBase config = LubanMgr.Instance.GetItemConfigById(group.Id);
-            if (config == null) return false;
-            // 与 AddItem 的 GetDefineContiner 使用同一背包分类。
-            RoItemContainer container = bag.GetContainer(config.PackType);
-            if (container == null) return false;
-            // 每格至少一件。
-            int stack = Math.Max(1, config.MaxStackCount);
-            // 扣除同类型旧堆还能容纳的件数。
-            long remaining = quantities[group];
-            // 快照只复制当前容器内物品的引用。
-            var items = new List<ItemBase>(container.GetItemMap().Values);
-            for (int j = 0; j < items.Count; j++)
-                if (items[j].GetItemID() == group.Id && items[j].GetItemSign() == (int)group.Sign)
-                    remaining -= Math.Max(0, stack - items[j].GetItemCount());
-            // 此容器此前各组已占用的新格数。
-            slots.TryGetValue(config.PackType, out long used);
-            used += (Math.Max(0L, remaining) + stack - 1) / stack;
-            if (used > container.GetEmptySize()) return false;
-            slots[config.PackType] = used;
-        }
-        for (int i = 0; i < content.MailItems.Count; i++)
-        {
-            // 容量已在同一逻辑线程整封核对，沿正常通知、脏标记及装备实例生成路径发放。
-            MailItem item = content.MailItems[i];
-            // 保留该附件的绑定状态。
-            ItemSign sign = ItemSign.IsNoSign;
-            if (item.IsBind) sign = ItemSign.IsItemSignBind;
-            bag.AddItem(item.ItemId, item.Count, new ChangeReason(), sign, 0, 0, UpdateType.eUT_Normal, new IdipParam());
-        }
-        return true;
+        return bag.TryAddRewards(rewards, new ChangeReason(), UpdateType.eUT_Normal);
     }
 
     /// <summary>至少一封已入包的信需要与背包一同持久化。</summary>

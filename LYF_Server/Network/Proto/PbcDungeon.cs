@@ -29,15 +29,17 @@ public static partial class PbcDungeonReflection {
           "cGx5VHlwZSJDChpTeW5jTWVtYmVyUmVwbHlFbnRlckZCRGF0YRILCgN1aWQY",
           "ASABKAQSGAoEdHlwZRgCIAEoDjIKLlJlcGx5VHlwZSJCCg9GYWlsRW50ZXJG",
           "QkRhdGESCwoDdWlkGAEgASgEEiIKBnJlYXNvbhgCIAEoDjISLkZhaWxFbnRl",
-          "ckZCUmVhc29uIqIBChZEdW5nZW9uQm9zc1Byb2dyZXNzTnRmEhMKC2luc3Rh",
+          "ckZCUmVhc29uIuEBChZEdW5nZW9uQm9zc1Byb2dyZXNzTnRmEhMKC2luc3Rh",
           "bmNlX2lkGAEgASgEEhUKDWtpbGxlZF9ib3NzZXMYAiADKAkSEgoKYm9zc190",
           "b3RhbBgDIAEoBRIRCglib3NzX25hbWUYBCABKAkSDwoHaXRlbV9pZBgFIAEo",
-          "BRISCgppdGVtX2NvdW50GAYgASgFEhAKCGJhZ19mdWxsGAcgASgIKjgKCVJl",
-          "cGx5VHlwZRIVChFSRVBMWV9UWVBFX1JFRlVTRRAAEhQKEFJFUExZX1RZUEVf",
-          "QUdSRUUQASp3ChFGYWlsRW50ZXJGQlJlYXNvbhIYChRGQUlMX0VOVEVSX0ZC",
-          "X1NVQ0VTUxAAEhkKFUZBSUxfRU5URVJfRk5fVElNRU9VVBALEi0KKUZBSUxf",
-          "RU5URVJfRkJfU09NRU9ORV9MRUFWRV9XQUlUSU5HX1NDRU5FEA1iBnByb3Rv",
-          "Mw=="));
+          "BRISCgppdGVtX2NvdW50GAYgASgFEhAKCGJhZ19mdWxsGAcgASgIEiAKBWRy",
+          "b3BzGAggAygLMhEuUmV3YXJkSXRlbUFtb3VudBIbChNub19kcm9wc19jb25m",
+          "aWd1cmVkGAkgASgIIkMKEFJld2FyZEl0ZW1BbW91bnQSDwoHaXRlbV9pZBgB",
+          "IAEoBRINCgVjb3VudBgCIAEoBRIPCgdpc19iaW5kGAMgASgIKjgKCVJlcGx5",
+          "VHlwZRIVChFSRVBMWV9UWVBFX1JFRlVTRRAAEhQKEFJFUExZX1RZUEVfQUdS",
+          "RUUQASp3ChFGYWlsRW50ZXJGQlJlYXNvbhIYChRGQUlMX0VOVEVSX0ZCX1NV",
+          "Q0VTUxAAEhkKFUZBSUxfRU5URVJfRk5fVElNRU9VVBALEi0KKUZBSUxfRU5U",
+          "RVJfRkJfU09NRU9ORV9MRUFWRV9XQUlUSU5HX1NDRU5FEA1iBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::ReplyType), typeof(global::FailEnterFBReason), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -45,7 +47,8 @@ public static partial class PbcDungeonReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::MemberReplyEnterFBData), global::MemberReplyEnterFBData.Parser, new[]{ "Type" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SyncMemberReplyEnterFBData), global::SyncMemberReplyEnterFBData.Parser, new[]{ "Uid", "Type" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::FailEnterFBData), global::FailEnterFBData.Parser, new[]{ "Uid", "Reason" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::DungeonBossProgressNtf), global::DungeonBossProgressNtf.Parser, new[]{ "InstanceId", "KilledBosses", "BossTotal", "BossName", "ItemId", "ItemCount", "BagFull" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::DungeonBossProgressNtf), global::DungeonBossProgressNtf.Parser, new[]{ "InstanceId", "KilledBosses", "BossTotal", "BossName", "ItemId", "ItemCount", "BagFull", "Drops", "NoDropsConfigured" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RewardItemAmount), global::RewardItemAmount.Parser, new[]{ "ItemId", "Count", "IsBind" }, null, null, null, null)
         }));
   }
   #endregion
@@ -1148,6 +1151,8 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
     itemId_ = other.itemId_;
     itemCount_ = other.itemCount_;
     bagFull_ = other.bagFull_;
+    drops_ = other.drops_.Clone();
+    noDropsConfigured_ = other.noDropsConfigured_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -1220,7 +1225,7 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
   public const int ItemIdFieldNumber = 5;
   private int itemId_;
   /// <summary>
-  /// 本次实际入包的物品编号，无掉落时为零。
+  /// 兼容旧客户端的第一种实际掉落物品，无掉落时为零。
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1235,7 +1240,7 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
   public const int ItemCountFieldNumber = 6;
   private int itemCount_;
   /// <summary>
-  /// 本次实际入包数量。
+  /// 兼容旧客户端的第一种实际入包数量。
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1261,6 +1266,35 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
     }
   }
 
+  /// <summary>Field number for the "drops" field.</summary>
+  public const int DropsFieldNumber = 8;
+  private static readonly pb::FieldCodec<global::RewardItemAmount> _repeated_drops_codec
+      = pb::FieldCodec.ForMessage(66, global::RewardItemAmount.Parser);
+  private readonly pbc::RepeatedField<global::RewardItemAmount> drops_ = new pbc::RepeatedField<global::RewardItemAmount>();
+  /// <summary>
+  /// 本次实际一起入包的所有物品及数量，保持编辑器顺序。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::RewardItemAmount> Drops {
+    get { return drops_; }
+  }
+
+  /// <summary>Field number for the "no_drops_configured" field.</summary>
+  public const int NoDropsConfiguredFieldNumber = 9;
+  private bool noDropsConfigured_;
+  /// <summary>
+  /// 本首领当前难度仅记击杀进度。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool NoDropsConfigured {
+    get { return noDropsConfigured_; }
+    set {
+      noDropsConfigured_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -1283,6 +1317,8 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
     if (ItemId != other.ItemId) return false;
     if (ItemCount != other.ItemCount) return false;
     if (BagFull != other.BagFull) return false;
+    if(!drops_.Equals(other.drops_)) return false;
+    if (NoDropsConfigured != other.NoDropsConfigured) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -1297,6 +1333,8 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
     if (ItemId != 0) hash ^= ItemId.GetHashCode();
     if (ItemCount != 0) hash ^= ItemCount.GetHashCode();
     if (BagFull != false) hash ^= BagFull.GetHashCode();
+    hash ^= drops_.GetHashCode();
+    if (NoDropsConfigured != false) hash ^= NoDropsConfigured.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -1340,6 +1378,11 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
       output.WriteRawTag(56);
       output.WriteBool(BagFull);
     }
+    drops_.WriteTo(output, _repeated_drops_codec);
+    if (NoDropsConfigured != false) {
+      output.WriteRawTag(72);
+      output.WriteBool(NoDropsConfigured);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -1375,6 +1418,11 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
       output.WriteRawTag(56);
       output.WriteBool(BagFull);
     }
+    drops_.WriteTo(ref output, _repeated_drops_codec);
+    if (NoDropsConfigured != false) {
+      output.WriteRawTag(72);
+      output.WriteBool(NoDropsConfigured);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -1402,6 +1450,10 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(ItemCount);
     }
     if (BagFull != false) {
+      size += 1 + 1;
+    }
+    size += drops_.CalculateSize(_repeated_drops_codec);
+    if (NoDropsConfigured != false) {
       size += 1 + 1;
     }
     if (_unknownFields != null) {
@@ -1434,6 +1486,10 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
     }
     if (other.BagFull != false) {
       BagFull = other.BagFull;
+    }
+    drops_.Add(other.drops_);
+    if (other.NoDropsConfigured != false) {
+      NoDropsConfigured = other.NoDropsConfigured;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -1482,6 +1538,14 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
           BagFull = input.ReadBool();
           break;
         }
+        case 66: {
+          drops_.AddEntriesFrom(input, _repeated_drops_codec);
+          break;
+        }
+        case 72: {
+          NoDropsConfigured = input.ReadBool();
+          break;
+        }
       }
     }
   #endif
@@ -1527,6 +1591,298 @@ public sealed partial class DungeonBossProgressNtf : pb::IMessage<DungeonBossPro
         }
         case 56: {
           BagFull = input.ReadBool();
+          break;
+        }
+        case 66: {
+          drops_.AddEntriesFrom(ref input, _repeated_drops_codec);
+          break;
+        }
+        case 72: {
+          NoDropsConfigured = input.ReadBool();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 作为一批发放的背包物品，种类、数量和绑定状态共同决定堆叠及空格需求。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class RewardItemAmount : pb::IMessage<RewardItemAmount>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<RewardItemAmount> _parser = new pb::MessageParser<RewardItemAmount>(() => new RewardItemAmount());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<RewardItemAmount> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::PbcDungeonReflection.Descriptor.MessageTypes[5]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RewardItemAmount() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RewardItemAmount(RewardItemAmount other) : this() {
+    itemId_ = other.itemId_;
+    count_ = other.count_;
+    isBind_ = other.isBind_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RewardItemAmount Clone() {
+    return new RewardItemAmount(this);
+  }
+
+  /// <summary>Field number for the "item_id" field.</summary>
+  public const int ItemIdFieldNumber = 1;
+  private int itemId_;
+  /// <summary>
+  /// 正式物品或装备配置编号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int ItemId {
+    get { return itemId_; }
+    set {
+      itemId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "count" field.</summary>
+  public const int CountFieldNumber = 2;
+  private int count_;
+  /// <summary>
+  /// 实际发放件数。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int Count {
+    get { return count_; }
+    set {
+      count_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "is_bind" field.</summary>
+  public const int IsBindFieldNumber = 3;
+  private bool isBind_;
+  /// <summary>
+  /// 附件可绑定，首领掉落沿用默认的非绑定状态。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool IsBind {
+    get { return isBind_; }
+    set {
+      isBind_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as RewardItemAmount);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(RewardItemAmount other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (ItemId != other.ItemId) return false;
+    if (Count != other.Count) return false;
+    if (IsBind != other.IsBind) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (ItemId != 0) hash ^= ItemId.GetHashCode();
+    if (Count != 0) hash ^= Count.GetHashCode();
+    if (IsBind != false) hash ^= IsBind.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (ItemId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(ItemId);
+    }
+    if (Count != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(Count);
+    }
+    if (IsBind != false) {
+      output.WriteRawTag(24);
+      output.WriteBool(IsBind);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (ItemId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(ItemId);
+    }
+    if (Count != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(Count);
+    }
+    if (IsBind != false) {
+      output.WriteRawTag(24);
+      output.WriteBool(IsBind);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (ItemId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(ItemId);
+    }
+    if (Count != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(Count);
+    }
+    if (IsBind != false) {
+      size += 1 + 1;
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(RewardItemAmount other) {
+    if (other == null) {
+      return;
+    }
+    if (other.ItemId != 0) {
+      ItemId = other.ItemId;
+    }
+    if (other.Count != 0) {
+      Count = other.Count;
+    }
+    if (other.IsBind != false) {
+      IsBind = other.IsBind;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          ItemId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          Count = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          IsBind = input.ReadBool();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          ItemId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          Count = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          IsBind = input.ReadBool();
           break;
         }
       }

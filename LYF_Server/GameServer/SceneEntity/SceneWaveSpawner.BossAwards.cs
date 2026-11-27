@@ -65,20 +65,27 @@ public sealed partial class SceneWaveSpawner
         // 本次单播先填入击杀后的完整进度，重复击杀也只显示已有进度。
         DungeonBossProgressNtf notice = BossProgress(counts, period);
         notice.BossName = award.BossName;
-        if (counts.GetCount(RoleCountAction.DungeonBossDrop, award.Id) != period)
+        notice.NoDropsConfigured = award.PackIds.Length == 0;
+        if (!notice.NoDropsConfigured && counts.GetCount(RoleCountAction.DungeonBossDrop, award.Id) != period)
         {
-            // 一个包对应一次完整的 AddItem，空间不足时不会先发半包。
-            AwardPackTable pack = LubanMgr.Instance.ConfigTables.TbAwardPackTable.Get(award.PackId);
+            // 按编辑器中的配置顺序取出本首领该难度的全部物品及件数。
+            List<RewardItemAmount> drops = new List<RewardItemAmount>(award.PackIds.Length);
+            for (int index = 0; index < award.PackIds.Length; index++)
+            {
+                // 包行只描述一种物品，引用同一包的其他首领沿用自己的清单。
+                AwardPackTable pack = LubanMgr.Instance.ConfigTables.TbAwardPackTable.Get(award.PackIds[index]);
+                drops.Add(new RewardItemAmount { ItemId = pack.ItemId, Count = pack.ItemCount });
+            }
             // 正式角色背包负责堆叠、容量、增量通知及保存。
             RoItemComponent items = role.GetComponent<RoItemComponent>();
             // 掉落沿用项目现有副本结算变更原因。
             ChangeReason reason = new ChangeReason(ItemChangeReason.ITEM_REASON_DUNGEONS_RESULT);
-            if (items.AddItem(pack.ItemId, pack.ItemCount, reason, ItemSign.IsNoSign, 0, 0,
-                UpdateType.eUT_Update_All, default(IdipParam)) != null)
+            if (items.TryAddRewards(drops, reason, UpdateType.eUT_Update_All))
             {
                 counts.SetCount(RoleCountAction.DungeonBossDrop, award.Id, period);
-                notice.ItemId = pack.ItemId;
-                notice.ItemCount = pack.ItemCount;
+                notice.Drops.AddRange(drops);
+                notice.ItemId = drops[0].ItemId;
+                notice.ItemCount = drops[0].Count;
                 items.NotifyItemChanges();
             }
             else notice.BagFull = true;

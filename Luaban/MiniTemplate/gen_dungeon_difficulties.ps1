@@ -5,13 +5,16 @@
 保存隔离输入、原始生成物和日志的临时目录；默认使用项目根目录 _temp/luban-dungeon-difficulties。
 .PARAMETER BossAwards
 只导出首领难度奖励和奖励包两张表。
+.PARAMETER StagedBossAwards
+编辑器已将待保存的两张工作簿放入 WorkDirectory/Datas，仅验证并生成 Data 目录，正式文件由编辑器在成功后一起发布。
 .EXAMPLE
 powershell -ExecutionPolicy Bypass -File Luaban/MiniTemplate/gen_dungeon_difficulties.ps1
 #>
-param([string]$WorkDirectory, [switch]$BossAwards)
+param([string]$WorkDirectory, [switch]$BossAwards, [switch]$StagedBossAwards)
 
 # 源表复制等操作失败时立即终止，禁止使用隔离目录中的旧输入继续导出。
 $ErrorActionPreference = 'Stop'
+if ($StagedBossAwards) { $BossAwards = $true }
 
 # 当前 Luban 工程与共享客户端/服务端的项目根目录。
 $templateRoot = $PSScriptRoot
@@ -29,7 +32,7 @@ New-Item -ItemType Directory -Force -Path $dataRoot, $codeRoot, $binaryRoot | Ou
 # 此入口只加载三张相关工作簿，# 前缀由 Luban 自动识别，不重复注册 __tables__。
 $workbooks = @('#DungeonDifficultyTable.xlsx', '#DungeonMonsterDifficultyTable.xlsx', '#Gene.xlsx')
 if ($BossAwards) { $workbooks = @('#AwardTable.xlsx', '#AwardPackTable.xlsx') }
-for ($index = 0; $index -lt $workbooks.Length; $index++) {
+for ($index = 0; !$StagedBossAwards -and $index -lt $workbooks.Length; $index++) {
     Copy-Item -LiteralPath (Join-Path $templateRoot ('Datas/' + $workbooks[$index])) -Destination (Join-Path $dataRoot $workbooks[$index])
 }
 # 新增难度类型沿项目既有副本表使用全局命名空间；共享 cfg.Tables 仍由业务接入维护。
@@ -42,6 +45,7 @@ dotnet (Join-Path $templateRoot 'Luban/Luban.dll') -t all -c cs-bin -d bin --con
 if ($LASTEXITCODE -ne 0) {
     throw "Luban 副本难度生成失败，详见 $WorkDirectory/generate.log"
 }
+if ($StagedBossAwards) { return }
 
 # 仅适配新难度类型的中文说明、数组读取与循环写法，不改生成字段或二进制编码。
 $tableNames = @('DungeonDifficultyTable', 'DungeonMonsterDifficultyTable')
@@ -70,6 +74,12 @@ for ($tableIndex = 0; $tableIndex -lt $tableNames.Length; $tableIndex++) {
     $arrayTypes = @('int', 'float')
     $arrayReaders = @('ReadInt', 'ReadFloat')
     $arrayLabels = @('基因ID', '基因覆盖值')
+    if ($tableName -eq 'AwardTable') {
+        $arrayFields = @('PackIds')
+        $arrayTypes = @('int')
+        $arrayReaders = @('ReadInt')
+        $arrayLabels = @('按顺序发放的掉落包ID')
+    }
     for ($arrayIndex = 0; $arrayIndex -lt $arrayFields.Length; $arrayIndex++) {
         # 当前数组的局部计数名和 Luban 紧凑数组读取片段。
         $field = $arrayFields[$arrayIndex]
@@ -80,7 +90,7 @@ for ($tableIndex = 0; $tableIndex -lt $tableNames.Length; $tableIndex++) {
         $pattern = '        \{int __n0 = _buf.ReadSize\(\); ' + $field + ' = new ' + $elementType + '\[__n0\];.*?\}\}'
         # 展开生成器的数组循环，保留相同读取顺序并补足局部变量说明。
         $replacement = @(
-            '        // 当前行的' + $arrayLabel + '数量，顺序与配对数组一致。'
+            '        // 当前行的' + $arrayLabel + '数量，按配置顺序读取。'
             '        int ' + $countName + ' = _buf.ReadSize();'
             '        ' + $field + ' = new ' + $elementType + '[' + $countName + '];'
             '        // 当前' + $arrayLabel + '的零基下标。'

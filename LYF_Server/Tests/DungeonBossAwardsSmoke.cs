@@ -92,11 +92,52 @@ public static class DungeonBossAwardsSmoke
         return role.GetComponent<RoItemComponent>().GetVirtualItemCount(Coin);
     }
 
+    /// <summary>让真实波次消费编辑器导出的三种物品，并从网关回读个人进度和清单。</summary>
+    private static void MultiDrop()
+    {
+        // 单独的登录会话只接收本角色实际产生的协议。
+        LoopbackLink link = new LoopbackLink(true);
+        try
+        {
+            // 在新角色上检验整组发放和同周期重杀。
+            OnlineRole role = Role(97604, link);
+            List<ulong> members = new List<ulong> { role.GetID() };
+            SceneWaveSpawner scene = Scene(1, 0, members);
+            RoItemComponent bag = role.GetComponent<RoItemComponent>();
+            // 两种虚拟货币需要两格，第三种物品使用普通背包。
+            RoItemContainer currency = bag.GetContainer(KnapsackType.RoleVirtualItemPack);
+            currency.SetContainerSize(1);
+            Kill(scene, 34, 5501);
+            DungeonBossProgressNtf result = DungeonBossProgressNtf.Parser.ParseFrom(Packet(link, role).Data);
+            Check(result.BagFull && result.Drops.Count == 0 && result.KilledBosses.Count == 1, "整组空间不足仍然记录首领进度");
+            Check(Coins(role) == 0 && bag.GetVirtualItemCount(501) == 0 && bag.GetItemNum(2001) == 0, "背包容量不足时三种物品均不发放");
+            currency.SetContainerSize(2);
+            Kill(scene, 34, 5501);
+            result = DungeonBossProgressNtf.Parser.ParseFrom(Packet(link, role).Data);
+            Check(result.Drops.Count == 3 && result.ItemId == 503 && result.ItemCount == 4, "客户端收到全清单，旧单项字段也记录首件");
+            // 各项编号、数量和展示顺序均来自刚保存的编辑器数据。
+            int[] ids = { 503, 501, 2001 };
+            int[] counts = { 4, 2, 3 };
+            for (int index = 0; index < ids.Length; index++)
+                Check(result.Drops[index].ItemId == ids[index] && result.Drops[index].Count == counts[index], "掉落显示顺序及数量 " + ids[index]);
+            Check(Coins(role) == 4 && bag.GetVirtualItemCount(501) == 2 && bag.GetItemNum(2001) == 3, "两种货币和普通道具全部进包");
+            Kill(scene, 34, 5501);
+            result = DungeonBossProgressNtf.Parser.ParseFrom(Packet(link, role).Data);
+            Check(result.Drops.Count == 0 && result.ItemCount == 0 && bag.GetItemNum(2001) == 3, "同周期重杀不重复发整组奖励");
+            Kill(Scene(2, 0, members), 35, 5502);
+            result = DungeonBossProgressNtf.Parser.ParseFrom(Packet(link, role).Data);
+            Check(result.NoDropsConfigured && result.Drops.Count == 0 && result.KilledBosses.Count == 1, "另一难度的空掉落只记录击杀进度");
+        }
+        finally { link.Close(); }
+    }
+
     /// <summary>运行首领名单、多人掉落、资格持久化、周日刷新和终绝跨层回归。</summary>
-    public static void Main()
+    /// <param name="args">传入 multi 时读取隔离编辑器导出的多物品配置。</param>
+    public static void Main(string[] args)
     {
         LubanMgr.Instance.Init();
         UIDHelper.ConfigureServerInstanceId(1);
+        if (args.Length > 0 && args[0] == "multi") { MultiDrop(); return; }
         // 各角色独立连接，避免一次读取提前消费另一个人的通知。
         LoopbackLink firstLink = new LoopbackLink(true);
         LoopbackLink secondLink = new LoopbackLink(true);

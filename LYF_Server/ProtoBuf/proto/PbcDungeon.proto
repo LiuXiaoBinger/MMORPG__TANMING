@@ -44,7 +44,16 @@ message DungeonBossProgressNtf {
   repeated string killed_bosses = 2; // 该角色在本周期已经击杀的首领名，按配置表顺序。
   int32 boss_total = 3; // 当前副本和难度登记的首领总数。
   string boss_name = 4; // 触发此次结算的首领，入场进度快照时为空。
-  int32 item_id = 5; // 本次实际入包的物品编号，无掉落时为零。
-  int32 item_count = 6; // 本次实际入包数量。
+  int32 item_id = 5; // 兼容旧客户端的第一种实际掉落物品，无掉落时为零。
+  int32 item_count = 6; // 兼容旧客户端的第一种实际入包数量。
   bool bag_full = 7; // 本次背包空间不足，保留此首领在本周期的掉落资格。
+  repeated RewardItemAmount drops = 8; // 本次实际一起入包的所有物品及数量，保持编辑器顺序。
+  bool no_drops_configured = 9; // 本首领当前难度仅记击杀进度。
+}
+
+// 作为一批发放的背包物品，种类、数量和绑定状态共同决定堆叠及空格需求。
+message RewardItemAmount {
+  int32 item_id = 1; // 正式物品或装备配置编号。
+  int32 count = 2; // 实际发放件数。
+  bool is_bind = 3; // 附件可绑定，首领掉落沿用默认的非绑定状态。
 }

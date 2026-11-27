@@ -290,6 +290,69 @@ public class RoItemComponent : RoleComponentBase
         return lastAdded;
     }
 
+    /// <summary>在 GS 逻辑线程先核算整批物品占用的空格，再沿单件入包路径一次发放。</summary>
+    /// <param name="rewards">按发放顺序排列的物品、数量及绑定状态。</param>
+    /// <param name="reason">副本掉落或附件等调用方原有的变更原因。</param>
+    /// <param name="updateType">调用方的背包更新方式，整批完成后由调用方通知。</param>
+    internal bool TryAddRewards(IList<RewardItemAmount> rewards, ChangeReason reason, UpdateType updateType)
+    {
+        // 同种、同绑定状态的物品共享可继续堆叠的空间。
+        var quantities = new Dictionary<(int Id, ItemSign Sign), long>();
+        // 保留首次出现的顺序，避免多个条目重复占用同一空格。
+        var groups = new List<(int Id, ItemSign Sign)>();
+        for (int index = 0; index < rewards.Count; index++)
+        {
+            // 当前掉落条目在发放前须具备有效类型和正数量。
+            RewardItemAmount item = rewards[index];
+            if (item.ItemId <= 0 || item.Count <= 0) return false;
+            // 堆叠时还需区分绑定状态。
+            ItemSign sign = ItemSign.IsNoSign;
+            if (item.IsBind) sign = ItemSign.IsItemSignBind;
+            // 累计相同类型和标记的总件数，合并容量核算。
+            var key = (item.ItemId, sign);
+            if (!quantities.ContainsKey(key)) { groups.Add(key); quantities.Add(key, 0); }
+            quantities[key] += item.Count;
+        }
+        // 累加不同物品在同一分包需要的新格数。
+        var slots = new Dictionary<KnapsackType, long>();
+        for (int index = 0; index < groups.Count; index++)
+        {
+            // 当前共享堆叠条件的一组物品。
+            var group = groups[index];
+            // 配置确定物品实际进入哪个分包及其堆叠上限。
+            ItemConfigBase config = LubanMgr.Instance.GetItemConfigById(group.Id);
+            if (config == null) return false;
+            // 与 AddItem 使用同一个角色容器。
+            RoItemContainer container = GetContainer(config.PackType);
+            if (container == null) return false;
+            // 由配置限定的新格最大容量，单位为件。
+            int stack = Math.Max(1, config.MaxStackCount);
+            // 已有堆叠容纳后还需占用空格的件数。
+            long remaining = quantities[group];
+            // 只复制容器引用以按下标遍历已有物品。
+            var existing = new List<ItemBase>(container.GetItemMap().Values);
+            for (int slot = 0; slot < existing.Count; slot++)
+                if (existing[slot].GetItemID() == group.Id && existing[slot].GetItemSign() == (int)group.Sign)
+                    remaining -= Math.Max(0, stack - existing[slot].GetItemCount());
+            // 此分包之前累计的格数与本组的新增格数一起核对。
+            slots.TryGetValue(config.PackType, out long used);
+            used += (Math.Max(0L, remaining) + stack - 1) / stack;
+            if (used > container.GetEmptySize()) return false;
+            slots[config.PackType] = used;
+        }
+        // 整批确认有空间后才写背包，中间不触发网络回调或切换游戏线程。
+        for (int index = 0; index < rewards.Count; index++)
+        {
+            // 仍按配置顺序生成物品，装备走正常的实例和词条生成。
+            RewardItemAmount item = rewards[index];
+            // 延用条目的绑定条件，与上面的容量核算一致。
+            ItemSign sign = ItemSign.IsNoSign;
+            if (item.IsBind) sign = ItemSign.IsItemSignBind;
+            AddItem(item.ItemId, item.Count, reason, sign, 0, 0, updateType, default(IdipParam));
+        }
+        return true;
+    }
+
     /// <summary>
     /// 从协议物品信息重建内存物品实例，支持普通物品与装备（含强化等级和词条）。
     /// 创建时间与过期时间按 UTC Ticks 恢复，非法值跳过。

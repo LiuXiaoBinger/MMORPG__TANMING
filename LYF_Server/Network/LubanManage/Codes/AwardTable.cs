@@ -22,7 +22,14 @@ public sealed partial class AwardTable : Luban.BeanBase
         DifficultyId = _buf.ReadInt();
         BossId = _buf.ReadInt();
         BossName = _buf.ReadString();
-        PackId = _buf.ReadInt();
+        // 当前行的按顺序发放的掉落包ID数量，按配置顺序读取。
+        int packIdsCount = _buf.ReadSize();
+        PackIds = new int[packIdsCount];
+        // 当前按顺序发放的掉落包ID的零基下标。
+        for (int index = 0; index < packIdsCount; index++)
+        {
+            PackIds[index] = _buf.ReadInt();
+        }
     }
 
     /// <summary>由表容器读取当前配置行。</summary>
@@ -53,9 +60,9 @@ public sealed partial class AwardTable : Luban.BeanBase
     /// </summary>
     public readonly string BossName;
     /// <summary>
-    /// 结算的奖励包 Id
+    /// 依次掉落的物品包 Id，以 | 分隔；空清单只记录击杀
     /// </summary>
-    public readonly int PackId;
+    public readonly int[] PackIds;
 
     /// <summary>Luban 为该配置类型生成的稳定类型编号。</summary>
     public const int __ID__ = -1933598831;
@@ -77,7 +84,7 @@ public sealed partial class AwardTable : Luban.BeanBase
         + "DifficultyId:" + DifficultyId + ","
         + "BossId:" + BossId + ","
         + "BossName:" + BossName + ","
-        + "PackId:" + PackId + ","
+        + "PackIds:" + Luban.StringUtil.CollectionToString(PackIds) + ","
         + "}";
     }
 }

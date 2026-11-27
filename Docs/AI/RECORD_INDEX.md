@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `b953f8f1715d8d9e8737e9c6f9e03d153333c243d122b0eec623dc19b4a59586`
+Source normalized SHA256: `4b58826a83f425ea274341dd53ca6a908a8612735f0725600cd349398ad52a43`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -179,11 +179,12 @@ Source normalized SHA256: `b953f8f1715d8d9e8737e9c6f9e03d153333c243d122b0eec623d
 | [CODE][FILES][HANDOFF][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing and jade locks | 1149-1152 |
 | [CODE][FILES][网络][区服][REALM-START-LOCK-20261127] Start the development realm while old service DLLs are in use | 1153-1156 |
 | [CODE][FILES][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Publish the shader variant JSON while its old file is mapped | 1157-1162 |
-| [CODE][FILES][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Personal boss drops by dungeon and difficulty | 1163-1167 |
+| [CODE][FILES][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Personal boss drops by dungeon and difficulty | 1163-1168 |
+| [CODE][FILES][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] Author multi-item boss drops inside the RO dungeon editor | 1169-1174 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `1d7558b72fb2a59e4c98ee41e0cb4d088c84c2275c4c0edbd5bcbbe7fe11c430`
+Source normalized SHA256: `fd90f2a88215fe2cab1adeee0f6ab786135c9e8cd45cf0ed409f5089b095a777`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -357,7 +358,8 @@ Source normalized SHA256: `1d7558b72fb2a59e4c98ee41e0cb4d088c84c2275c4c0edbd5bcb
 | [VERIFY][装备][数据库][界面][EQUIP-WASH-20261127] Equipment washing, persistence and client interaction | 1200-1203 |
 | [VERIFY][网络][区服][REALM-START-LOCK-20261127] Reproduce the startup failure and verify the live first realm | 1204-1207 |
 | [VERIFY][资源][YooAsset][YOO-SHADER-MANIFEST-20261127] Reproduce mapped-file contention and verify the saved collection in Unity | 1208-1214 |
-| [VERIFY][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Multi-boss drops, period boundaries and re-entry | 1215-1219 |
+| [VERIFY][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Multi-boss drops, period boundaries and re-entry | 1215-1220 |
+| [VERIFY][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] RO editor rendering, export and multi-item settlement | 1221-1225 |
 
 ## Docs/AI/DECISIONS.en.md
 

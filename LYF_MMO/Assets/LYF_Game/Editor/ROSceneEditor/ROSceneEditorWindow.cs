@@ -50,6 +50,8 @@ public sealed class ROSceneEditorWindow : EditorWindow
     private TbDungeonTargetGroupTable dungeonTargetGroupTable;
     /// <summary>目标面板当前查看的 DungeonsID，切换查看不写回场景 XML。</summary>
     [SerializeField] private int selectedDungeonId = 4060;
+    /// <summary>当前窗口保留的首领掉落清单及尚未保存的多个组合。</summary>
+    [SerializeField] private ROBossDropEditor bossDrops = new ROBossDropEditor();
     /// <summary>副本下拉框的真实编号，顺序与生成表一致。</summary>
     private int[] dungeonIds = new int[0];
     /// <summary>副本下拉框使用编号和原表名称，便于区分同名难度。</summary>
@@ -164,6 +166,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         currentPath = path;
         LoadDungeonTargets();
         BindSceneResource();
+        bossDrops.RefreshScene();
         selected = null;
         selectedArea = null;
         focusedMapPath = "";
@@ -171,7 +174,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         SelectStage("entry");
         stageListScroll = Vector2.zero;
         inspectorScroll = Vector2.zero;
-        hasUnsavedChanges = false;
+        hasUnsavedChanges = bossDrops.Dirty;
         FitGraph();
         Repaint();
     }
@@ -179,7 +182,15 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <summary>保存原 XML 并让 Unity 导入新配置。</summary>
     public override void SaveChanges()
     {
-        if (config != null)
+        // 仅编辑掉落时，保存源表与运行数据即可，无需改写当前场景 XML。
+        bool savingDrops = bossDrops.Dirty;
+        if (savingDrops && !bossDrops.Save())
+        {
+            editorView = 2;
+            hasUnsavedChanges = true;
+            return;
+        }
+        if (config != null && (config.IsDirty || !savingDrops))
         {
             config.SaveToFile(currentPath);
             AssetDatabase.ImportAsset(currentPath);
@@ -188,17 +199,34 @@ public sealed class ROSceneEditorWindow : EditorWindow
         base.SaveChanges();
     }
 
+    /// <summary>窗口关闭并确认放弃时清理未保存的首领奖励。</summary>
+    public override void DiscardChanges()
+    {
+        bossDrops.Discard();
+        base.DiscardChanges();
+    }
+
     /// <summary>绘制工具栏、节点列表、原画布和属性面板。</summary>
     private void OnGUI()
     {
         DrawToolbar();
         if (config == null) return;
+        if (editorView == 2)
+        {
+            // 工具栏可切换副本，仅当地图相同才使用正在编辑的 XML 波次。
+            DungeonsTable dungeon = dungeonsTable?.GetOrDefault(selectedDungeonId);
+            XDocument waves = null;
+            if (dungeon != null && StageMatchesMap(dungeon)) waves = config.Document;
+            bossDrops.Draw(dungeon, waves);
+            hasUnsavedChanges = config.IsDirty || bossDrops.Dirty;
+            return;
+        }
         if (editorView == 0)
         {
             // 仅在配置变化后的布局阶段重建；滚动和重绘不重复解析原图。
             if (stageFlowNeedsRefresh && Event.current.type == EventType.Layout) RefreshStageFlow();
             DrawStageFlow();
-            hasUnsavedChanges = config.IsDirty;
+            hasUnsavedChanges = config.IsDirty || bossDrops.Dirty;
             return;
         }
         // 原始视图保留全部编辑入口，返回流程时统一重新解释最新配置。
@@ -218,14 +246,17 @@ public sealed class ROSceneEditorWindow : EditorWindow
         DrawInspector();
         EditorGUILayout.EndScrollView();
         GUILayout.EndArea();
-        hasUnsavedChanges = config.IsDirty;
+        hasUnsavedChanges = config.IsDirty || bossDrops.Dirty;
     }
 
     /// <summary>绘制打开、保存、场景和预览控制入口。</summary>
     private void DrawToolbar()
     {
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        editorView = GUILayout.Toolbar(editorView, new[] { "阶段流程", "高级：节点编辑" }, EditorStyles.toolbarButton, GUILayout.Width(220));
+        // 返回掉落页时刷新这一轮节点编辑后的实际首领名单。
+        int nextView = GUILayout.Toolbar(editorView, new[] { "阶段流程", "高级：节点编辑", "首领掉落" }, EditorStyles.toolbarButton, GUILayout.Width(300));
+        if (nextView == 2 && editorView != 2) bossDrops.RefreshScene();
+        editorView = nextView;
         if (GUILayout.Button("打开配置", EditorStyles.toolbarButton, GUILayout.Width(75)))
         {
             // Unity 原生文件框只负责选择待编辑文件。
@@ -242,7 +273,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
             if (GUILayout.Button("停止预览", EditorStyles.toolbarButton, GUILayout.Width(75))) StopPreview();
             showAreas = GUILayout.Toggle(showAreas, "触发区域", EditorStyles.toolbarButton, GUILayout.Width(75));
         }
-        else if (GUILayout.Button("查看入口", EditorStyles.toolbarButton, GUILayout.Width(75)))
+        else if (editorView == 0 && GUILayout.Button("查看入口", EditorStyles.toolbarButton, GUILayout.Width(75)))
         {
             SelectStage("entry");
         }
@@ -250,7 +281,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         if (config != null && editorView == 1) GUILayout.Label(config.Nodes.Count + " 节点 / " + config.Connections.Count + " 连线 / " + config.TriggerObjects.Length + " 区域");
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        if (editorView == 0)
+        if (editorView != 1)
         {
             GUILayout.Label("当前副本", EditorStyles.boldLabel, GUILayout.Width(65));
             // 选择其他副本只读其目标表，不把当前 XML 或地图套到该副本上。
@@ -262,8 +293,11 @@ public sealed class ROSceneEditorWindow : EditorWindow
                 stageFlowNeedsRefresh = true;
                 SelectStage("entry");
             }
-            if (GUILayout.Button("重读目标表", EditorStyles.toolbarButton, GUILayout.Width(80))) LoadDungeonTargets();
-            GUILayout.Label("进入 → 查看当前阶段 → 按实际出口继续（配置查看）", EditorStyles.miniLabel);
+            if (editorView == 0)
+            {
+                if (GUILayout.Button("重读目标表", EditorStyles.toolbarButton, GUILayout.Width(80))) LoadDungeonTargets();
+                GUILayout.Label("进入 → 查看当前阶段 → 按实际出口继续（配置查看）", EditorStyles.miniLabel);
+            }
         }
         else
         {
@@ -1561,12 +1595,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         }
         if (GUILayout.Button("重新读取")) LoadDungeonTargets();
         EditorGUILayout.EndHorizontal();
-        EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("首领难度奖励表"))
-            EditorUtility.OpenWithDefaultApp(Path.GetFullPath(Path.Combine(Application.dataPath, "../../Luaban/MiniTemplate/Datas/#AwardTable.xlsx")));
-        if (GUILayout.Button("首领奖励包表"))
-            EditorUtility.OpenWithDefaultApp(Path.GetFullPath(Path.Combine(Application.dataPath, "../../Luaban/MiniTemplate/Datas/#AwardPackTable.xlsx")));
-        EditorGUILayout.EndHorizontal();
+        if (GUILayout.Button("配置首领掉落")) { bossDrops.RefreshScene(); editorView = 2; }
         if (dungeonTargetTable == null || dungeonsTable == null)
         {
             EditorGUILayout.HelpBox("未找到副本目标生成表，请先运行项目 Luban 导出。", MessageType.Warning);
@@ -2052,11 +2081,16 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <summary>切换文件前保护未保存的真实配置编辑。</summary>
     private bool ConfirmDiscard()
     {
-        if (config == null || !config.IsDirty) return true;
+        if (!bossDrops.Dirty && (config == null || !config.IsDirty)) return true;
         // 只在确实存在未保存修改时询问如何处理。
         int choice = EditorUtility.DisplayDialogComplex("切换副本配置", "当前修改尚未保存。", "保存并打开", "取消", "放弃修改");
         if (choice == 1) return false;
-        if (choice == 0) SaveChanges();
+        if (choice == 0)
+        {
+            SaveChanges();
+            return !bossDrops.Dirty;
+        }
+        bossDrops.Discard();
         return true;
     }
 }
