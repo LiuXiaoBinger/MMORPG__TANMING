@@ -13,7 +13,7 @@ public sealed class GoldWorkshopRecipe
     private static readonly int[] Bases = { 20, 0, 18, 18, 14, 14, 25, 30 };
     /// <summary>目标二阶至十阶的部位专材、主材倍率。</summary>
     private static readonly int[] Multipliers = { 1, 2, 3, 4, 5, 6, 8, 10, 12 };
-    /// <summary>逐阶消耗的碧青琉璃颗数。</summary>
+    /// <summary>从二阶到十阶分别消耗的风灵翠羽数量，对应材料 10703。</summary>
     private static readonly int[] Glazes = { 30, 60, 100, 150, 200, 300, 500, 800, 1000 };
     /// <summary>逐阶铜钱，资料原表单位为万。</summary>
     private static readonly int[] Fees = { 75, 150, 300, 600, 1200, 2000, 3000, 5250, 8000 };
@@ -51,7 +51,7 @@ public sealed class GoldWorkshopRecipe
         if (!IsGold(id)) { recipe.Unavailable = "请选择魔剑士辉银金装"; return recipe; }
         // 连续编号的位置与部位专材表同序。
         int slot = id - FirstItem;
-        // 主副手使用红翡，六件防具使用缀珠。
+        // 主副手使用狮鹫金羽，六件防具使用月光珍珠。
         int primary = 10701;
         if (slot < 2) primary = 10702;
         if (operation == EquipOperation.ForgeGold)
