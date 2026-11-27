@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Xml.Linq;
 
 /// <summary>同一副本内首领场地的待战、开战、胜利和团灭重置。</summary>
@@ -17,6 +18,56 @@ public sealed partial class SceneWaveSpawner
     internal bool ArenaFighting { get; private set; }
     /// <summary>当前实例的首领已全部被击败，后续死亡不得重新生成首领奖励。</summary>
     internal bool ArenaCleared { get; private set; }
+
+    /// <summary>本图配置过复活落点的首领出生位，场地重置时继续使用同一份配置。</summary>
+    private readonly List<SpawnPoint> bossCheckpoints = new List<SpawnPoint>();
+    /// <summary>各角色在本实例最近到达或交战的首领复活点，团灭后仍可使用。</summary>
+    private readonly Dictionary<ulong, Vector3> memberRevivePoints = new Dictionary<ulong, Vector3>();
+    /// <summary>本队最近实际交战的首领落点，供还没有个人记录的队员复活。</summary>
+    private Vector3? teamBossRevivePoint;
+
+    /// <summary>角色进入首领区域后记录最近的出生位，离开范围时保留已到达的复活点。</summary>
+    /// <param name="roleId">服务器确认的本实例角色号。</param><param name="position">被接纳的角色世界坐标，单位米。</param>
+    internal void ReachBossCheckpoint(ulong roleId, Vector3 position)
+    {
+        // 重合战场按角色到各首领原出生位置的三维距离选择。
+        float nearest = float.MaxValue;
+        for (int index = 0; index < bossCheckpoints.Count; index++)
+        {
+            // 本次候选的首领区域和对应的墙外安全位置。
+            SpawnPoint checkpoint = bossCheckpoints[index];
+            // 平方距离同时区分同层相邻首领与上下楼层。
+            float distance = Vector3.DistanceSquared(position, checkpoint.Position);
+            if (distance > checkpoint.CheckpointRadiusSquared || distance >= nearest) continue;
+            nearest = distance;
+            memberRevivePoints[roleId] = checkpoint.RevivePosition;
+        }
+    }
+
+    /// <summary>真实伤害认定当前交战的首领，使远程和支援队员也能复活在本场附近。</summary>
+    /// <param name="roleId">造成或受到本次伤害的角色号。</param><param name="spawnId">发生实际伤害的首领出生号。</param>
+    private void EngageBossCheckpoint(ulong roleId, ulong spawnId)
+    {
+        for (int index = 0; index < bossCheckpoints.Count; index++)
+        {
+            // 只用实际被命中或出招的首领，忽略共享血量传递给其他首领的数值。
+            SpawnPoint checkpoint = bossCheckpoints[index];
+            if (checkpoint.SpawnId != spawnId) continue;
+            memberRevivePoints[roleId] = checkpoint.RevivePosition;
+            teamBossRevivePoint = checkpoint.RevivePosition;
+            return;
+        }
+    }
+
+    /// <summary>优先返回本人记录点；从未到达首领区时，使用队伍交战点或初始入口。</summary>
+    /// <param name="roleId">点击复活按钮的角色号。</param>
+    internal Vector3 RevivePosition(ulong roleId)
+    {
+        // 个人在该实例的最后一个首领落点。
+        Vector3 position;
+        if (memberRevivePoints.TryGetValue(roleId, out position)) return position;
+        return teamBossRevivePoint ?? Flow.SpawnPosition;
+    }
 
     /// <summary>从当前副本自己的图中取得墙、入口和首领出生波次。</summary>
     private void LoadBossArena()

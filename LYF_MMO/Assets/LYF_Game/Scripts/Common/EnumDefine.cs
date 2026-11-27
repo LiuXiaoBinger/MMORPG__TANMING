@@ -27,7 +27,7 @@ public enum WindowType
     DungeonFlowWindow, // 服务端副本目标与附近门户、采集交互窗口。
     EquipmentDetailWindow, // 装备实例属性、特技和穿脱操作窗口。
     MoshentaBlackCurtainWindow, // 魔神塔原20002剧情黑幕，沿主界面窗口生命周期显示。
-    DeathWindow, // 副本死亡提示，点击后请求服务端返回出生点复活。
+    DeathWindow, // 副本死亡提示，点击后请求服务端返回当前复活点。
     CurrencyExchangeWindow, // 货币兑换窗口：兑铜币/兑银两/兑银票，元宝为充值货币不参与产出兑换
     YimengChatWindow = 1000, // 独立江湖聊天窗口；保留现有窗口编号。
     ArenaSettingsWindow = 1001, // 竞技设置窗口，仅展示攻击与保护模式的外观选项，不参与任何战斗规则。

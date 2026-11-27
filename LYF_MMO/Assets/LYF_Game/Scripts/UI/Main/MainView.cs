@@ -40,7 +40,7 @@ public class MainView : UIBase
    /// <summary>供兑换控制器访问的强类型窗口引用。</summary>
    public CurrencyExchangeWindow CurrencyExchangeWindow => _currencyExchangeWindow;
 
-   /// <summary>副本死亡提示与返回出生点复活窗口，引用保存在UIRoot预制体。</summary>
+   /// <summary>副本死亡提示与返回记录点复活窗口，引用保存在UIRoot预制体。</summary>
    [SerializeField] private DeathWindow _deathWindow;
    /// <summary>提供给死亡控制器的正式窗口。</summary>
    public DeathWindow DeathWindow => _deathWindow;

@@ -265,6 +265,8 @@ public sealed partial class SceneWaveSpawner
         // 苍蓝屏障先吸收，剩余部分才受当前生命上限约束。
         incoming = target.AbsorbDamage(incoming, sourceGenes, caster.IsBoss);
         int actual = Math.Min(info.CurrHp, incoming); info.CurrHp -= actual;
+        // 被首领打中的角色使用该首领的安全位置，包含在远处受到致死一击的队员。
+        if (actual > 0 && caster.IsBoss) EngageBossCheckpoint(target.GetID(), caster.SpawnId);
         if (actual > 0) equipment.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, sourceGenes, skillId, actual, critical));
         Notice.PlayerHits.Add(new MonsterPlayerHitData { SpawnId = caster.SpawnId, TargetRoleId = info.RoleId, Hp = info.CurrHp, MaxHp = equipment.CalculateAttribute().MaxHp, Damage = actual, SkillId = skillId, ResultIndex = resultIndex, Critical = critical });
         if (info.CurrHp > 0) return;

@@ -269,7 +269,7 @@ public sealed class TeamManager
                     team.WaveSpawner.Reset();
                     frame.MonsterActions.Clear();
                 }
-                // 尸体留在死亡位置，只有本人点击复活并获服务端确认后才回出生点。
+                // 尸体留在死亡位置，只有本人点击复活并获服务端确认后才回记录点。
             }
             team.WaveSpawner.FillFlow(frame);
             bool changed = frame.Flow != null || frame.MonsterActions.Count > 0 || frame.PlayerHits.Count > 0;
@@ -294,7 +294,7 @@ public sealed class TeamManager
             role.SendToClient(NetDefine.CMD_RoleReviveResultCode, reply.ToByteString());
             return;
         }
-        // 本入口只处理当前副本，出生点由实例配置决定。
+        // 本入口只处理当前副本，由实例选取该角色的复活点。
         Dungeon team;
         if (!_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out team))
         {
@@ -302,7 +302,7 @@ public sealed class TeamManager
             role.SendToClient(NetDefine.CMD_RoleReviveResultCode, reply.ToByteString());
             return;
         }
-        role.mainRoleInfo.BaseInfo.Pos = MoshentaSceneFlow.Format(team.WaveSpawner.Flow.SpawnPosition);
+        role.mainRoleInfo.BaseInfo.Pos = MoshentaSceneFlow.Format(team.WaveSpawner.RevivePosition(role.GetID()));
         // 资源由现有属性组件读取最终装备加成，不把最终上限反写到裸属性。
         RoleAttributeComponent attributes = role.GetComponent<RoleAttributeComponent>();
         attributes.RestoreReviveResources();
@@ -346,7 +346,7 @@ public sealed class TeamManager
         Dungeon team;
         if (!_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out team)) return;
         if (role.mainRoleInfo.BaseInfo.CurrHp <= 0) return;
-        team.WaveSpawner.Flow.Enter(role.mainRoleInfo.BaseInfo.Pos.ToVector3());
+        team.WaveSpawner.Flow.Enter(role.GetID(), role.mainRoleInfo.BaseInfo.Pos.ToVector3());
         PublishFlow(team);
     }
 
@@ -376,7 +376,7 @@ public sealed class TeamManager
         }
         role.mainRoleInfo.BaseInfo.Pos = reply.Pos;
         PublishPosition(team, reply);
-        team.WaveSpawner.Flow.Enter(reply.Pos.ToVector3());
+        team.WaveSpawner.Flow.Enter(role.GetID(), reply.Pos.ToVector3());
         PublishFlow(team);
         if (reply.Exited) ResetRoleInstance(role.GetID(), true);
     }
@@ -403,6 +403,7 @@ public sealed class TeamManager
         Dungeon team;
         if (!_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out team)) return;
         role.mainRoleInfo.BaseInfo.Pos = MoshentaSceneFlow.Format(position);
+        team.WaveSpawner.ReachBossCheckpoint(role.GetID(), position);
         PublishPosition(team, new DungeonInteractRet { Success = true, InstanceId = team.InstanceId, RoleId = role.mainRoleInfo.BaseInfo.RoleId, Pos = role.mainRoleInfo.BaseInfo.Pos });
     }
 

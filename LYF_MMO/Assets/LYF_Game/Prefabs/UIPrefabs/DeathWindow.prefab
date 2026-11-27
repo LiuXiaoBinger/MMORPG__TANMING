@@ -543,7 +543,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 返回出生点后恢复全部生命与法力
+  m_Text: 复活后恢复全部生命与法力
 --- !u!1 &9141200000000000017
 GameObject:
   m_ObjectHideFlags: 0
@@ -896,7 +896,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 返回出生点复活
+  m_Text: 返回复活点
 --- !u!114 &9141200000000000026
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -34,6 +34,10 @@ public sealed partial class SceneWaveSpawner
         public XElement[] OrcPatrol;
         /// <summary>原出生点的 Unity 绕 Y 轴角度。</summary>
         public float Facing;
+        /// <summary>首领区域的触发半径平方，单位平方米，普通出生位为零。</summary>
+        public float CheckpointRadiusSquared;
+        /// <summary>进入本首领区域的角色死亡后返回的安全位置，世界米制坐标。</summary>
+        public Vector3 RevivePosition;
         /// <summary>原实体AI树的零基索引。</summary>
         public int AiIndex;
         /// <summary>原场景巡逻类型。</summary>
@@ -186,9 +190,19 @@ public sealed partial class SceneWaveSpawner
                 for (int copy = 0; copy < copies && ordinal < limit; copy++)
                 {
                     ordinal++;
-                    result.Add(new SpawnPoint { SpawnId = ((ulong)(uint)(int)info.Element("id") << 32) | (uint)ordinal,
+                    // 保存原出生位；配置了复活点的首领同时用于识别玩家到达的区域。
+                    SpawnPoint spawn = new SpawnPoint { SpawnId = ((ulong)(uint)(int)info.Element("id") << 32) | (uint)ordinal,
                         Position = MoshentaSceneFlow.Position(point.Element("position")), Facing = (float?)point.Element("face") ?? 0f,
-                        Creature = creature, OrcPatrol = route, AiIndex = (int?)ai.Element("ai_tree_choose") ?? 0, PatrolType = patrolType });
+                        Creature = creature, OrcPatrol = route, AiIndex = (int?)ai.Element("ai_tree_choose") ?? 0, PatrolType = patrolType };
+                    result.Add(spawn);
+                    // 一条波次配置同时决定该首领的识别范围与玩家落点。
+                    XElement checkpoint = wave.Element("boss_checkpoint");
+                    if (checkpoint == null) continue;
+                    // 半径来自场景图，比较平方距离即可覆盖场地的三个坐标轴。
+                    float radius = (float)checkpoint.Attribute("radius");
+                    spawn.CheckpointRadiusSquared = radius * radius;
+                    spawn.RevivePosition = MoshentaSceneFlow.Position(checkpoint.Element("position"));
+                    bossCheckpoints.Add(spawn);
                 }
             }
         }
@@ -441,6 +455,9 @@ public sealed partial class SceneWaveSpawner
             else monster.CurrentHp = Math.Max(0, hpBeforeHit - calculatedDamage);
             // 事件只能使用当前结算得到的实际伤害，零伤害不伪造有效攻击命中。
             int actualDamage = hpBeforeHit - monster.CurrentHp;
+            // 远程命中也能解锁实际攻击的首领，不依赖角色是否走进近战区域。
+            if (actualDamage > 0 && caster != null && point.CheckpointRadiusSquared > 0)
+                EngageBossCheckpoint(caster.GetID(), point.SpawnId);
             if (equipment != null && actualDamage > 0)
             {
                 // 受击事件由该怪物自己的基因组件派发，结算容器与传入对方保持原样。

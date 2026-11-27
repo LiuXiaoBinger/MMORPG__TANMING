@@ -400,9 +400,10 @@ public sealed class MoshentaSceneFlow
     }
 
     /// <summary>位置被正式移动组件接纳后检查区域时机。</summary>
-    /// <param name="position">服务端实际米制位置。</param>
-    internal void Enter(Vector3 position)
+    /// <param name="roleId">本次移动或传送所属的角色号。</param><param name="position">服务端实际米制位置。</param>
+    internal void Enter(ulong roleId, Vector3 position)
     {
+        owner.ReachBossCheckpoint(roleId, position);
         // 自动区域仅对存在的原物件执行，物件可能在结果执行时改变集合。
         int[] ids = objects.ToArray();
         // 当前配置集合的零基下标，仅遍历本次快照长度。

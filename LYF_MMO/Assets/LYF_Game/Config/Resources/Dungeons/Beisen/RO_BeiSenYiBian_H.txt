@@ -2383,6 +2383,7 @@
             <delay_create_time>0</delay_create_time>
             <not_active_create>false</not_active_create>
           </base_info>
+          <boss_checkpoint radius="30"><position><x>151.53</x><y>22.4</y><z>240.31</z></position></boss_checkpoint>
           <monster_info>
             <entity_id>9801</entity_id>
             <monster_base_data>

@@ -5722,6 +5722,7 @@
             <delay_create_time>0</delay_create_time>
             <not_active_create>false</not_active_create>
           </base_info>
+          <boss_checkpoint radius="28"><position><x>77.62</x><y>78.376</y><z>585.9</z></position></boss_checkpoint>
           <monster_info>
             <entity_id>5501</entity_id>
             <monster_base_data>
@@ -5787,6 +5788,7 @@
             <delay_create_time>0</delay_create_time>
             <not_active_create>false</not_active_create>
           </base_info>
+          <boss_checkpoint radius="28"><position><x>79.4</x><y>78.379</y><z>585.9</z></position></boss_checkpoint>
           <monster_info>
             <entity_id>5502</entity_id>
             <monster_base_data>
@@ -7777,6 +7779,7 @@
             <delay_create_time>0</delay_create_time>
             <not_active_create>false</not_active_create>
           </base_info>
+          <boss_checkpoint radius="28"><position><x>76.25</x><y>78.277</y><z>585.9</z></position></boss_checkpoint>
           <monster_info>
             <entity_id>5503</entity_id>
             <monster_base_data>

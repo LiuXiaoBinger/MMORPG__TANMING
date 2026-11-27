@@ -35,6 +35,8 @@ public static class MoshentaEventFlowSmoke
         public TeamEnterDungeonNtf Entry;
         /// <summary>真实交互回包。</summary>
         public readonly List<DungeonInteractRet> Replies = new List<DungeonInteractRet>();
+        /// <summary>本人及同实例观察者经真实回环 TCP 收到的复活结果。</summary>
+        public readonly List<RoleReviveRet> Revives = new List<RoleReviveRet>();
         /// <summary>该观察者已收到、按传输顺序排列的怪物属性与行为通知。</summary>
         public readonly List<MonsterAttrUpdateNtf> Notices = new List<MonsterAttrUpdateNtf>();
 
@@ -88,6 +90,7 @@ public static class MoshentaEventFlowSmoke
                 BasePackage packet = BasePackage.Parser.ParseFrom(NetUtils.Instance.ParseData(frame, length, 0));
                 if (packet.UnitySessionId != Role.UnitySessionId) throw new Exception("包发给了错误的客户端会话");
                 if (packet.ProtoCode == NetDefine.CMD_DungeonInteractResultCode) Replies.Add(DungeonInteractRet.Parser.ParseFrom(packet.Data));
+                if (packet.ProtoCode == NetDefine.CMD_RoleReviveResultCode) Revives.Add(RoleReviveRet.Parser.ParseFrom(packet.Data));
                 if (packet.ProtoCode == NetDefine.CMD_TeamEnterDungeonCode) Entry = TeamEnterDungeonNtf.Parser.ParseFrom(packet.Data);
                 if (packet.ProtoCode == NetDefine.CMD_MonsterAttrUpdateCode) Notices.Add(MonsterAttrUpdateNtf.Parser.ParseFrom(packet.Data));
             }
@@ -293,6 +296,91 @@ public static class MoshentaEventFlowSmoke
         Check(victory.Flow.ActiveObjectIds.Contains(35) && victory.Flow.Finished, "战后原通关出口和胜利结算仍可用");
     }
 
+    /// <summary>通过正式复活处理器发送空请求，只返回本次收到的本人回包。</summary>
+    /// <param name="peer">点击复活按钮的角色连接。</param>
+    private static RoleReviveRet Revive(Peer peer)
+    {
+        // 请求前收到的帧数，用于区分历史广播与本次结果。
+        int previous = peer.Revives.Count;
+        // 正式空请求仅通过网关和客户端会话绑定角色。
+        BasePackage packet = new BasePackage { GateSessionId = peer.Role.GateSessionId, UnitySessionId = peer.Role.UnitySessionId,
+            ProtoCode = NetDefine.CMD_RoleReviveCode, Data = new RoleReviveReq().ToByteString() };
+        new RoleReviveHandler().OnCall(new GameMessageHandlerContext(GameCommand.From(GameCommandSource.GateServer, null, packet)));
+        peer.Receive();
+        if (peer.Revives.Count <= previous) throw new InvalidOperationException("没有收到本次复活回包");
+        return peer.Revives.Last();
+    }
+
+    /// <summary>验证三种首领坐标、玩家与队伍记录、团灭后重试，以及北森两个独立场景。</summary>
+    /// <param name="a">攻击憎恨的队长。</param><param name="b">前往绝望区域的队员。</param>
+    /// <param name="other">隔离实例中的角色。</param><param name="late">晚到后前往悲哀区域的队员。</param>
+    private static void BossRevives(Peer a, Peer b, Peer other, Peer late)
+    {
+        // 同场三名首领在门外的独立落点，期望值直接与最终 11244 回包比对。
+        const string hatred = "77.62_78.376_585.9";
+        const string despair = "79.4_78.379_585.9";
+        const string sorrow = "76.25_78.277_585.9";
+        // 玩家经同队与另一实例两张正式 GS 入场单进场。
+        MasterTeamDungeonOrder order = new MasterTeamDungeonOrder { TeamId = 301, InstanceId = 73001, DungeonId = 4060 };
+        order.MemberIds.Add(new ulong[] { a.Role.GetID(), b.Role.GetID() }); TeamManager.Instance.EnterDungeon(order);
+        MasterTeamDungeonOrder separate = new MasterTeamDungeonOrder { TeamId = 302, InstanceId = 73002, DungeonId = 4060 };
+        separate.MemberIds.Add(other.Role.GetID()); TeamManager.Instance.EnterDungeon(separate);
+        a.Receive(); b.Receive(); other.Receive();
+        Check(a.Entry.Pos == ExpectedMoshentaSpawnPos && b.Entry.Pos == a.Entry.Pos, "首次进本仍使用副本入口");
+        Check(!Revive(a).Success, "存活角色不能使用复活传送");
+        a.Role.mainRoleInfo.BaseInfo.CurrHp = 0;
+        Check(Revive(a).BaseInfo.Pos == ExpectedMoshentaSpawnPos, "未到首领区也未开战时在入口复活");
+        Move(a, 77.36f, 80.32f, 620.49f);
+        Move(b, 85.82f, 80.32f, 617.15f);
+        TeamManager.Instance.OnMonsterHit(a.Role, new Vector2(0, 1), 5000, new HashSet<ulong>());
+        b.Role.mainRoleInfo.BaseInfo.CurrHp = 0;
+        TeamManager.Instance.UpdateMonsters(50);
+        // 验证由服务端决定生命、法力和可站立的坐标。
+        RoleReviveRet right = Revive(b);
+        Check(right.Success && right.BaseInfo.Pos == despair && Snapshot(Scene(73001)).Flow.ActiveWallIds.Contains(23),
+            "战斗中阵亡回绝望复活点，空气墙继续生效");
+        Check(right.BaseInfo.CurrHp == right.BaseInfo.MaxHp && right.BaseInfo.CurrMp == right.BaseInfo.MaxMp, "复活照常恢复生命与法力");
+        a.Receive(); other.Receive();
+        Check(a.Revives.Last().Equals(right) && other.Revives.Count == 0, "同队观察者收到相同坐标，其他实例没有复活广播");
+        Check(!TeamManager.Instance.AllowDungeonMove(b.Role, new Vector3(77.5f, 80.31f, 591.49f)), "复活点位于空气墙外");
+        Interact(b, 36);
+        Check(b.Replies.Last().Success && b.Role.mainRoleInfo.BaseInfo.Pos == "77.5_80.31_591.49", "复活后可以用传送阵回到墙内");
+        Move(b, 85.82f, 80.32f, 617.15f);
+        order.MemberIds.Add(late.Role.GetID()); TeamManager.Instance.EnterDungeon(order); late.Receive();
+        late.Role.mainRoleInfo.BaseInfo.CurrHp = 0;
+        Check(Revive(late).BaseInfo.Pos == hatred, "无个人记录的队员使用队伍交战首领的复活点");
+        Interact(late, 36); Move(late, 69.27f, 80.32f, 617.45f);
+        a.Role.mainRoleInfo.BaseInfo.CurrHp = 0; b.Role.mainRoleInfo.BaseInfo.CurrHp = 0; late.Role.mainRoleInfo.BaseInfo.CurrHp = 0;
+        TeamManager.Instance.UpdateMonsters(50);
+        Check(!Snapshot(Scene(73001)).Flow.ActiveWallIds.Contains(23) && late.Role.mainRoleInfo.BaseInfo.Pos == "69.27_80.32_617.45",
+            "团灭只重置首领，角色尸体等待本人复活");
+        // 团灭后各人分别收到自己的落点，服务器不会用最后一次复活覆盖其他成员。
+        RoleReviveRet center = Revive(a);
+        right = Revive(b);
+        RoleReviveRet left = Revive(late);
+        Check(center.BaseInfo.Pos == hatred && right.BaseInfo.Pos == despair && left.BaseInfo.Pos == sorrow, "团灭后三名队员回三个不同的首领复活点");
+        File.WriteAllBytes(Path.Combine(folder, "revive-hatred.bin"), center.ToByteArray());
+        File.WriteAllBytes(Path.Combine(folder, "revive-despair.bin"), right.ToByteArray());
+        File.WriteAllBytes(Path.Combine(folder, "revive-sorrow.bin"), left.ToByteArray());
+        other.Role.mainRoleInfo.BaseInfo.CurrHp = 0;
+        Check(Revive(other).BaseInfo.Pos == ExpectedMoshentaSpawnPos, "另一支队伍不会继承首领复活点");
+        // 用正式技能强制位移入口到达北森首领附近，再离开区域并团灭。
+        MethodInfo relocate = typeof(TeamManager).GetMethod("ForceDungeonPosition", BindingFlags.Instance | BindingFlags.NonPublic);
+        for (int map = 4050; map <= 4051; map++)
+        {
+            // 同一角色切入全新实例应重新开始积累复活点。
+            MasterTeamDungeonOrder forest = new MasterTeamDungeonOrder { TeamId = 302, InstanceId = (ulong)(74000 + map), DungeonId = map };
+            forest.MemberIds.Add(other.Role.GetID()); TeamManager.Instance.EnterDungeon(forest); other.Receive();
+            other.Role.mainRoleInfo.BaseInfo.CurrHp = 0;
+            Check(Revive(other).BaseInfo.Pos == "193.09_22.34_42.05", map + " 新实例使用自己的入口");
+            // object[] 仅用于调用非公开正式位移方法的反射边界。
+            relocate.Invoke(TeamManager.Instance, new object[] { other.Role, new Vector3(123.59f, 22.38f, 247.72f) });
+            relocate.Invoke(TeamManager.Instance, new object[] { other.Role, new Vector3(193.09f, 22.34f, 42.05f) });
+            other.Role.mainRoleInfo.BaseInfo.CurrHp = 0; TeamManager.Instance.UpdateMonsters(50);
+            Check(Revive(other).BaseInfo.Pos == "151.53_22.4_240.31", map + " 到达凯思利亚斯后离开场地和团灭均保留记录");
+        }
+    }
+
     /// <summary>隔离测试主入口，输出目录由测试启动器明确提供。</summary>
     /// <param name="args">临时证据目录。</param>
     public static int Main(string[] args)
@@ -304,6 +392,11 @@ public static class MoshentaEventFlowSmoke
         using (Peer other = new Peer(985003))
         using (Peer late = new Peer(985004))
         {
+            if (args.Length > 1 && args[1] == "boss-revive")
+            {
+                BossRevives(a, b, other, late);
+                return 0;
+            }
             if (args.Length > 1 && args[1] == "boss-arena")
             {
                 BossArena(a, b, other, late);
