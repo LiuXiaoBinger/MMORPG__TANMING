@@ -172,7 +172,7 @@ Source normalized SHA256: `34e3b28bc8cf8553c5be1b117a82c7dc29b67bc182cc48acc0a9c
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `3dad0acb1aa6ee4983177e046b6cc5438656540554dd4b12ec3b090b98a7d513`
+Source normalized SHA256: `a224d9cbecd02380ed14cebe59d792325a9e86a74bfc2dd51e66695b3d575d0a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -333,9 +333,9 @@ Source normalized SHA256: `3dad0acb1aa6ee4983177e046b6cc5438656540554dd4b12ec3b0
 | [VERIFY][副本][导航][MOSHENTA-CLIENT-FULL-20261127] Full graphical client clear of Moshenta 4060 | 1142-1145 |
 | [VERIFY][武学][秘笈][MJS-PROFESSION-MANUALS-20261127] Magic Swordsman profession manuals | 1146-1149 |
 | [VERIFY][装备][交易][MJS-UPGRADE-MATERIAL-NAMES-20261127] Renamed materials in workshop, inventory and market search | 1150-1153 |
-| [VERIFY][数据库][LOCAL-DB-CLEANUP-20261127] Local mailbox and chat test database cleanup | 1154-1159 |
-| [VERIFY][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1160-1163 |
-| [VERIFY][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD menu pointer and animation checks | 1164-1166 |
+| [VERIFY][数据库][LOCAL-DB-CLEANUP-20261127] Local mailbox and chat test database cleanup | 1154-1160 |
+| [VERIFY][界面][设置][HOTKEY-SETTINGS-20261127] Hotkey settings and navigation icons | 1161-1164 |
+| [VERIFY][界面][FUNCTION-MENU-RO-ANIMATION-20261127] Main HUD menu pointer and animation checks | 1165-1167 |
 
 ## Docs/AI/DECISIONS.en.md
 
