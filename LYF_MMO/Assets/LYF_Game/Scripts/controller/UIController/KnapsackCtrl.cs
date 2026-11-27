@@ -159,6 +159,7 @@ public sealed class KnapsackCtrl : IDisposable
             _detailWindow.TakeOffRequested += TakeOffSelectedEquipment;
             _detailWindow.SpecialSkillRequested += SwitchSelectedSpecialSkill;
             _detailWindow.StrengthenRequested += OpenEquipmentWorkshop;
+            _detailWindow.WashRequested += OpenWashWorkshop;
             _detailWindow.AdvanceRequested += OpenGoldAdvance;
             _detailWindow.GrowthRequested += SubmitDetailGrowth;
         }
@@ -212,6 +213,7 @@ public sealed class KnapsackCtrl : IDisposable
             _detailWindow.TakeOffRequested -= TakeOffSelectedEquipment;
             _detailWindow.SpecialSkillRequested -= SwitchSelectedSpecialSkill;
             _detailWindow.StrengthenRequested -= OpenEquipmentWorkshop;
+            _detailWindow.WashRequested -= OpenWashWorkshop;
             _detailWindow.AdvanceRequested -= OpenGoldAdvance;
             _detailWindow.GrowthRequested -= SubmitDetailGrowth;
         }
@@ -744,6 +746,12 @@ public sealed class KnapsackCtrl : IDisposable
                 case "强化":
                     run = () => OpenBagWorkshop(EquipmentWorkshopWindow.Page.Strengthen);
                     break;
+                case "锁定词条":
+                    run = () => { OpenBagWorkshop(EquipmentWorkshopWindow.Page.Refine); _workshopWindow.SelectWashJade(item.ItemTypeId); };
+                    break;
+                case "洗练":
+                    run = () => { OpenBagWorkshop(EquipmentWorkshopWindow.Page.Refine); _workshopWindow.SelectWashStone(item.ItemTypeId); };
+                    break;
                 case "镶嵌":
                     run = () => OpenBagWorkshop(EquipmentWorkshopWindow.Page.Socket);
                     break;
@@ -914,14 +922,21 @@ public sealed class KnapsackCtrl : IDisposable
     private void WearSelectedEquipment() { SubmitSelectedOperation(EquipOperation.Wear, 0); }
 
     /// <summary>从详情携带装备 UID 打开强化页，并读取该角色当前四种货币的余额。</summary>
-    private void OpenEquipmentWorkshop()
+    private void OpenEquipmentWorkshop() { OpenSelectedWorkshop(EquipmentWorkshopWindow.Page.Strengthen); }
+
+    /// <summary>从当前装备的洗练方案进入工坊。</summary>
+    private void OpenWashWorkshop() { OpenSelectedWorkshop(EquipmentWorkshopWindow.Page.Refine); }
+
+    /// <summary>按详情中的实际装备定位到目标养成页。</summary>
+    /// <param name="page">强化或洗练页签。</param>
+    private void OpenSelectedWorkshop(EquipmentWorkshopWindow.Page page)
     {
         // 详情和养成页指向同一件实例，同名的背包装备也能正确定位。
         EquipBase equip = _itemComponent.GetItemByUID(_selectedEquipmentUid) as EquipBase;
         if (equip == null) return;
         _detailWindow.CloseWindow();
         _mainView.ShowMainWindow(WindowType.EquipmentWorkshopWindow);
-        _workshopWindow.SelectPage(EquipmentWorkshopWindow.Page.Strengthen);
+        _workshopWindow.SelectPage(page);
         _workshopWindow.RenderMoney(_itemComponent.GetVirtualItemCount(CopperItemId),
             _itemComponent.GetVirtualItemCount(SilverItemId), _itemComponent.GetVirtualItemCount(TicketItemId),
             _itemComponent.GetVirtualItemCount(YuanbaoItemId));
@@ -987,6 +1002,14 @@ public sealed class KnapsackCtrl : IDisposable
         if (_pavilionWindow != null) _pavilionWindow.RenderGemTrade(reply);
         if (reply.GemMessage.Length > 0) TipsMgr.Instance.ShowSystemTips(reply.GemMessage);
         else if (reply.CmdCode != CmdCode.Succeed) TipsMgr.Instance.ShowSystemTips("宝石操作失败：" + reply.CmdCode);
+    }
+
+    /// <summary>把实际结果发回洗练窗口，失败时展示服务端给出的具体原因。</summary>
+    /// <param name="reply">游戏服完成或拒绝本次洗练后返回的状态。</param>
+    public void ApplyWash(EquipOperationRet reply)
+    {
+        if (_workshopWindow != null) _workshopWindow.RenderWash(reply);
+        if (!string.IsNullOrEmpty(reply.WashMessage)) TipsMgr.Instance.ShowSystemTips(reply.WashMessage);
     }
 
     /// <summary>从主城菜单进入作坊，空背包也能预览和合成成品。</summary>
@@ -1281,7 +1304,7 @@ public sealed class KnapsackCtrl : IDisposable
         result.ReforgeText = reforge.Append("重铸将替换现有基础值，消耗 ").Append(EquipmentGrowth.ReforgeCost).Append(" 铜币").ToString();
         // 铭缀与洗练暂无实例数据，写中性空态，不推算任何数值。
         result.InscribeRowText = "暂无信息";
-        result.WashRowText = "暂无信息";
+        result.WashRowText = EquipmentWashPanel.Describe(EquipmentWash.Snapshot(equip));
         // 宝石孔数取真实配置，必须先于说明文本赋值，否则界面会显示「共 0 孔」。
         result.GemSlotCount = config.GemSlotCount;
         // 收集各孔中实际存在的宝石，顺序与装备实例相同。

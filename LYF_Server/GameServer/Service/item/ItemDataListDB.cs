@@ -183,6 +183,13 @@ public sealed class ItemDataListDB
                     GeneId0 = equip.GeneID0,
                     GeneId1 = equip.GeneID1,
                     GeneId2 = equip.GeneID2,
+                    GeneId3 = equip.GeneID3,
+                    GeneValue3 = equip.GeneValue3,
+                    GeneId4 = equip.GeneID4,
+                    GeneValue4 = equip.GeneValue4,
+                    WashRevision = equip.WashRevision,
+                    WashStone = equip.WashStone,
+                    WashCandidate = equip.WashCandidate ?? string.Empty,
                     GeneValue0 = equip.GeneValue0,
                     GeneValue1 = equip.GeneValue1,
                     GeneValue2 = equip.GeneValue2

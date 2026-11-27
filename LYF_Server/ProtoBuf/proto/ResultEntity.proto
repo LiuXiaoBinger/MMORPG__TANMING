@@ -442,6 +442,15 @@ message RoleEquipGeneInfo
 	int32 gene_value0 = 6;//装备词条0数值
 	int32 gene_value1 = 7;//装备词条1数值
 	int32 gene_value2 = 8;//装备词条2数值
+	int32 gene_id3 = 9;//第四个洗练槽
+	int32 gene_value3 = 10;//第四槽数值
+	int32 gene_id4 = 11;//第五个洗练槽
+	int32 gene_value4 = 12;//第五槽数值
+	int64 wash_revision = 13;//装备洗练版本
+	int32 wash_stone = 14;//上次使用的萃石
+	string wash_candidate = 15;//待确认的词条快照，空串表示没有候选
+	int32 wash_jade = 16;//候选快照记录上次使用的萃玉
+	int32 wash_locks = 17;//候选快照记录上次勾选的生效槽位
 }
 
 // CenterServer 在数据库事务提交后返回的角色物品保存确认。
@@ -629,6 +638,8 @@ enum EquipOperation {
 	Strengthen = 12;//提升一级强化
 	Advance = 13;//非金装提升一阶
 	Reforge = 14;//按配置区间重新生成六槽基础值
+	RollWash = 15;//支付萃石和铜币生成候选
+	ApplyWash = 16;//将指定版本候选替换为生效词条
 }
 
 // 装备操作结果；成功后的完整物品位置和装备字段沿用 UpdateItemRet 下发。
@@ -640,6 +651,8 @@ message EquipOperationRet {
 	repeated int32 market_remaining = 5;//该品种一至三级的最新个人剩余限购量
 	string gem_message = 6;//合成或购买结果的界面提示
 	string gold_message = 7;//金装作坊单次结算提示
+	string wash_message = 8;//本次洗练结果提示
+	RoleEquipGeneInfo wash_info = 9;//操作后该装备的词条和候选快照
 }
 
 // 装备和基因效果计算后的最终角色属性，裸属性仍由角色存档保存。

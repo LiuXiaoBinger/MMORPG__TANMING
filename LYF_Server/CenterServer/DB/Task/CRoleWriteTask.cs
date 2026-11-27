@@ -174,6 +174,13 @@ public sealed class CRoleWriteTask
                     GeneID0 = item.EquipGeneInfo.GeneId0,
                     GeneID1 = item.EquipGeneInfo.GeneId1,
                     GeneID2 = item.EquipGeneInfo.GeneId2,
+                    GeneID3 = item.EquipGeneInfo.GeneId3,
+                    GeneValue3 = item.EquipGeneInfo.GeneValue3,
+                    GeneID4 = item.EquipGeneInfo.GeneId4,
+                    GeneValue4 = item.EquipGeneInfo.GeneValue4,
+                    WashRevision = item.EquipGeneInfo.WashRevision,
+                    WashStone = item.EquipGeneInfo.WashStone,
+                    WashCandidate = item.EquipGeneInfo.WashCandidate,
                     GeneValue0 = item.EquipGeneInfo.GeneValue0,
                     GeneValue1 = item.EquipGeneInfo.GeneValue1,
                     GeneValue2 = item.EquipGeneInfo.GeneValue2
@@ -710,6 +717,14 @@ public sealed class CRoleWriteTask
                     return false;
                 }
                 // 三个词条 ID 不一致即判定不匹配。
+                // 同版本重放须包含相同的第四、五槽以及尚未确认的候选。
+                if (storedGene.GeneID3 != requested.EquipGeneInfo.GeneId3) return false;
+                if (storedGene.GeneValue3 != requested.EquipGeneInfo.GeneValue3) return false;
+                if (storedGene.GeneID4 != requested.EquipGeneInfo.GeneId4) return false;
+                if (storedGene.GeneValue4 != requested.EquipGeneInfo.GeneValue4) return false;
+                if (storedGene.WashRevision != requested.EquipGeneInfo.WashRevision) return false;
+                if (storedGene.WashStone != requested.EquipGeneInfo.WashStone) return false;
+                if ((storedGene.WashCandidate ?? string.Empty) != requested.EquipGeneInfo.WashCandidate) return false;
                 if (storedGene.GeneID0 != requested.EquipGeneInfo.GeneId0 ||
                     storedGene.GeneID1 != requested.EquipGeneInfo.GeneId1 ||
                     storedGene.GeneID2 != requested.EquipGeneInfo.GeneId2)

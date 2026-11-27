@@ -38,6 +38,27 @@ public class RoleEquipComponent : RoleComponentBase
         NotifyAttributeUpdate();
     }
 
+    /// <summary>替换已穿装备的洗练来源槽 7 至 11，保留其他基因的触发状态。</summary>
+    /// <param name="equipment">已经确认替换的原装备。</param>
+    public void RefreshWash(EquipBase equipment)
+    {
+        if (!attachedEquipment.Contains(equipment.GetItemUID())) return;
+        // 只移除本装备此前挂载的洗练来源。
+        ulong source = (ulong)equipment.GetItemUID();
+        for (int index = Runtime.ActiveGenes.Count - 1; index >= 0; index--)
+        {
+            GeneBase gene = Runtime.ActiveGenes[index]; // 其他基因可能共用同一装备来源。
+            if (gene.SourceId == source && gene.SourceSlot >= 7 && gene.SourceSlot <= 11) Runtime.RemoveGene(gene);
+        }
+        RoleEquipGeneInfo lines = EquipmentWash.Snapshot(equipment); // 新的已生效词条。
+        for (int slot = 0; slot < EquipmentWash.Slots; slot++)
+        {
+            int id = EquipmentWash.Id(lines, slot); // 空槽不创建根节点。
+            if (id != 0) Runtime.AddGene(id, source, EquipmentWash.Value(lines, slot), 7 + slot, Owner.GetID());
+        }
+        NotifyAttributeUpdate();
+    }
+
     /// <summary>装载、穿脱或启用特技变更后，按当前穿戴容器更新来源及同名特技等级。</summary>
     public virtual void OnEquipChange()
     {
@@ -129,10 +150,10 @@ public class RoleEquipComponent : RoleComponentBase
         cfg.EquipInfo config = LubanMgr.Instance.GetEquipInfoById(equipment.GetItemID());
         // 与数值数组一一对应的六个基础槽和三个实例槽。
         int[] ids = { config.GeneId0, config.GeneId1, config.GeneId2, config.GeneId3, config.GeneId4, config.GeneId5,
-            equipment.GeneID0, equipment.GeneID1, equipment.GeneID2 };
+            equipment.GeneID0, equipment.GeneID1, equipment.GeneID2, equipment.GeneID3, equipment.GeneID4 };
         // 每槽的实际数值；相同编号也不互相覆盖。
         int[] values = { config.GeneValue0, config.GeneValue1, config.GeneValue2, config.GeneValue3, config.GeneValue4, config.GeneValue5,
-            equipment.GeneValue0, equipment.GeneValue1, equipment.GeneValue2 };
+            equipment.GeneValue0, equipment.GeneValue1, equipment.GeneValue2, equipment.GeneValue3, equipment.GeneValue4 };
         for (int i = 0; i < ids.Length; i++)
         {
             if (i < EquipmentGrowth.Slots) values[i] = EquipmentGrowth.Total(equipment, values[i], i);

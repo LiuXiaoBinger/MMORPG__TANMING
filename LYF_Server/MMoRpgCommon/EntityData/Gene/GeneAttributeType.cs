@@ -55,6 +55,12 @@ public enum GeneAttributeType
     DamageTaken = 25,
     /// <summary>接受治疗倍率的百分数，未修正时为 100。</summary>
     HealingReceived = 26,
+    /// <summary>装备提供的基础劲点数。</summary>
+    Strength = 27,
+    /// <summary>装备提供的基础体点数。</summary>
+    Constitution = 28,
+    /// <summary>装备提供的基础敏点数。</summary>
+    Agility = 29,
 
     // 高级属性：101 至 120 为五行属性攻击、穿透、抵抗与穿透上限，均为面板点数值。
     /// <summary>水属性攻击，单位面板点数。</summary>

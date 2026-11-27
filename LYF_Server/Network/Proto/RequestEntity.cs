@@ -67,13 +67,15 @@ public static partial class RequestEntityReflection {
           "ZWFtQnlUZWFtSWRBcmcSDwoHdGVhbV9pZBgBIAEoBCJyChhDYXB0YWluUmVx",
           "dWVzdEVudGVyRkJBcmcSEgoKZHVuZ2Vvbl9pZBgBIAEoBRISCgpjaGFwdGVy",
           "X2lkGAIgASgFEhcKD2R1bmdlb25zX2RlZ3JlZRgDIAEoBRIVCg1kdW5nZW9u",
-          "X2xheWVyGAQgASgFIp8CChFFcXVpcE9wZXJhdGlvblJlcRIQCghpdGVtX3Vp",
+          "X2xheWVyGAQgASgFIvECChFFcXVpcE9wZXJhdGlvblJlcRIQCghpdGVtX3Vp",
           "ZBgBIAEoAxIiCglvcGVyYXRpb24YAiABKA4yDy5FcXVpcE9wZXJhdGlvbhIb",
           "ChNzcGVjaWFsX3NraWxsX2luZGV4GAMgASgFEhgKEGdlbV9zb2NrZXRfaW5k",
           "ZXgYBCABKAUSEwoLZ2VtX2l0ZW1faWQYBSABKAUSFgoOYmFnX2dlbV9jb3Vu",
           "dHMYBiADKAUSGQoRbWFya2V0X2dlbV9jb3VudHMYByADKAUSGQoMYnV5X3F1",
           "YW50aXR5GAggASgFSACIAQESFAoMZ29sZF9pdGVtX2lkGAkgASgFEhMKC2dv",
-          "bGRfdGFyZ2V0GAogASgFQg8KDV9idXlfcXVhbnRpdHliBnByb3RvMw=="));
+          "bGRfdGFyZ2V0GAogASgFEhIKCndhc2hfc3RvbmUYCyABKAUSFQoNd2FzaF9y",
+          "ZXZpc2lvbhgMIAEoAxIRCgl3YXNoX2phZGUYDSABKAUSEgoKd2FzaF9sb2Nr",
+          "cxgOIAEoBUIPCg1fYnV5X3F1YW50aXR5YgZwcm90bzM="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, global::PbcMailReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -102,7 +104,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::LeaveTeamArg), global::LeaveTeamArg.Parser, new[]{ "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BegInTeamByTeamIdArg), global::BegInTeamByTeamIdArg.Parser, new[]{ "TeamId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::CaptainRequestEnterFBArg), global::CaptainRequestEnterFBArg.Parser, new[]{ "DungeonId", "ChapterId", "DungeonsDegree", "DungeonLayer" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationReq), global::EquipOperationReq.Parser, new[]{ "ItemUid", "Operation", "SpecialSkillIndex", "GemSocketIndex", "GemItemId", "BagGemCounts", "MarketGemCounts", "BuyQuantity", "GoldItemId", "GoldTarget" }, new[]{ "BuyQuantity" }, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationReq), global::EquipOperationReq.Parser, new[]{ "ItemUid", "Operation", "SpecialSkillIndex", "GemSocketIndex", "GemItemId", "BagGemCounts", "MarketGemCounts", "BuyQuantity", "GoldItemId", "GoldTarget", "WashStone", "WashRevision", "WashJade", "WashLocks" }, new[]{ "BuyQuantity" }, null, null, null)
         }));
   }
   #endregion
@@ -7083,6 +7085,10 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     buyQuantity_ = other.buyQuantity_;
     goldItemId_ = other.goldItemId_;
     goldTarget_ = other.goldTarget_;
+    washStone_ = other.washStone_;
+    washRevision_ = other.washRevision_;
+    washJade_ = other.washJade_;
+    washLocks_ = other.washLocks_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -7255,6 +7261,66 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     }
   }
 
+  /// <summary>Field number for the "wash_stone" field.</summary>
+  public const int WashStoneFieldNumber = 11;
+  private int washStone_;
+  /// <summary>
+  ///所选萃石编号
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int WashStone {
+    get { return washStone_; }
+    set {
+      washStone_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "wash_revision" field.</summary>
+  public const int WashRevisionFieldNumber = 12;
+  private long washRevision_;
+  /// <summary>
+  ///玩家看到的装备洗练版本
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long WashRevision {
+    get { return washRevision_; }
+    set {
+      washRevision_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "wash_jade" field.</summary>
+  public const int WashJadeFieldNumber = 13;
+  private int washJade_;
+  /// <summary>
+  ///选填的萃玉物品编号
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int WashJade {
+    get { return washJade_; }
+    set {
+      washJade_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "wash_locks" field.</summary>
+  public const int WashLocksFieldNumber = 14;
+  private int washLocks_;
+  /// <summary>
+  ///勾选生效词条的五位掩码
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int WashLocks {
+    get { return washLocks_; }
+    set {
+      washLocks_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -7280,6 +7346,10 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     if (BuyQuantity != other.BuyQuantity) return false;
     if (GoldItemId != other.GoldItemId) return false;
     if (GoldTarget != other.GoldTarget) return false;
+    if (WashStone != other.WashStone) return false;
+    if (WashRevision != other.WashRevision) return false;
+    if (WashJade != other.WashJade) return false;
+    if (WashLocks != other.WashLocks) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -7297,6 +7367,10 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     if (HasBuyQuantity) hash ^= BuyQuantity.GetHashCode();
     if (GoldItemId != 0) hash ^= GoldItemId.GetHashCode();
     if (GoldTarget != 0) hash ^= GoldTarget.GetHashCode();
+    if (WashStone != 0) hash ^= WashStone.GetHashCode();
+    if (WashRevision != 0L) hash ^= WashRevision.GetHashCode();
+    if (WashJade != 0) hash ^= WashJade.GetHashCode();
+    if (WashLocks != 0) hash ^= WashLocks.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -7349,6 +7423,22 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
       output.WriteRawTag(80);
       output.WriteInt32(GoldTarget);
     }
+    if (WashStone != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(WashStone);
+    }
+    if (WashRevision != 0L) {
+      output.WriteRawTag(96);
+      output.WriteInt64(WashRevision);
+    }
+    if (WashJade != 0) {
+      output.WriteRawTag(104);
+      output.WriteInt32(WashJade);
+    }
+    if (WashLocks != 0) {
+      output.WriteRawTag(112);
+      output.WriteInt32(WashLocks);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -7393,6 +7483,22 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
       output.WriteRawTag(80);
       output.WriteInt32(GoldTarget);
     }
+    if (WashStone != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(WashStone);
+    }
+    if (WashRevision != 0L) {
+      output.WriteRawTag(96);
+      output.WriteInt64(WashRevision);
+    }
+    if (WashJade != 0) {
+      output.WriteRawTag(104);
+      output.WriteInt32(WashJade);
+    }
+    if (WashLocks != 0) {
+      output.WriteRawTag(112);
+      output.WriteInt32(WashLocks);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -7428,6 +7534,18 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     }
     if (GoldTarget != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(GoldTarget);
+    }
+    if (WashStone != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(WashStone);
+    }
+    if (WashRevision != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(WashRevision);
+    }
+    if (WashJade != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(WashJade);
+    }
+    if (WashLocks != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(WashLocks);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -7466,6 +7584,18 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     }
     if (other.GoldTarget != 0) {
       GoldTarget = other.GoldTarget;
+    }
+    if (other.WashStone != 0) {
+      WashStone = other.WashStone;
+    }
+    if (other.WashRevision != 0L) {
+      WashRevision = other.WashRevision;
+    }
+    if (other.WashJade != 0) {
+      WashJade = other.WashJade;
+    }
+    if (other.WashLocks != 0) {
+      WashLocks = other.WashLocks;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -7528,6 +7658,22 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
           GoldTarget = input.ReadInt32();
           break;
         }
+        case 88: {
+          WashStone = input.ReadInt32();
+          break;
+        }
+        case 96: {
+          WashRevision = input.ReadInt64();
+          break;
+        }
+        case 104: {
+          WashJade = input.ReadInt32();
+          break;
+        }
+        case 112: {
+          WashLocks = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -7587,6 +7733,22 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
         }
         case 80: {
           GoldTarget = input.ReadInt32();
+          break;
+        }
+        case 88: {
+          WashStone = input.ReadInt32();
+          break;
+        }
+        case 96: {
+          WashRevision = input.ReadInt64();
+          break;
+        }
+        case 104: {
+          WashJade = input.ReadInt32();
+          break;
+        }
+        case 112: {
+          WashLocks = input.ReadInt32();
           break;
         }
       }

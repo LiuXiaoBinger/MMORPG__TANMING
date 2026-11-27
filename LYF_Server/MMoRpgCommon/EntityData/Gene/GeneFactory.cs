@@ -71,6 +71,9 @@ public abstract class GeneFactory
             case GeneAttributeType.Qi: return new QiGene();
             case GeneAttributeType.MoveSpeed: return new MoveSpeedGene();
             case GeneAttributeType.DamageTaken: return new DamageTakenGene();
+            case GeneAttributeType.Strength:
+            case GeneAttributeType.Constitution:
+            case GeneAttributeType.Agility:
             case GeneAttributeType.AttackSpeedSlow:
             case GeneAttributeType.TrueQiDamageTaken:
             case GeneAttributeType.PhysicalDamageReduction:

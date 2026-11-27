@@ -70,6 +70,8 @@ public sealed class EquipmentWorkshopWindow : WindowBase
     [SerializeField] private Text[] _stoneCounts;
     /// <summary>同一养成窗口内的选孔、便捷购买和合成控件。</summary>
     [SerializeField] private GemWorkshopPanel _gems;
+    /// <summary>装备洗练页的材料、对比和替换控件。</summary>
+    [SerializeField] private EquipmentWashPanel _wash;
     /// <summary>镶嵌页右下角进入空目标合成的按钮。</summary>
     [SerializeField] private Button _openCompose;
     /// <summary>每个品种依次为绿、蓝、紫、橙棕四张图，与背包的物品图标共用。</summary>
@@ -115,6 +117,7 @@ public sealed class EquipmentWorkshopWindow : WindowBase
         _worn.onClick.AddListener(() => SourceSelected?.Invoke(true));
         _bag.onClick.AddListener(() => SourceSelected?.Invoke(false));
         _gems.Init(this);
+        _wash.Init(this);
         _openCompose.onClick.AddListener(() => _gems.OpenSynthesis(-1));
         // 每个按钮保存自己在当前装备中的零基孔号。
         for (int index = 0; index < _sockets.Length; index++)
@@ -229,6 +232,7 @@ public sealed class EquipmentWorkshopWindow : WindowBase
     public void RefreshStock(int changedItemId = 0)
     {
         _gems.Refresh();
+        _wash.Refresh();
         if (_selected == null || _page != Page.Strengthen) return;
         if (changedItemId != 0 && (changedItemId < _firstStoneId || changedItemId >= _firstStoneId + _stoneCounts.Length)) return;
         StockRequested?.Invoke(_firstStoneId, _stoneCounts.Length);
@@ -257,6 +261,15 @@ public sealed class EquipmentWorkshopWindow : WindowBase
     /// <summary>将商会额度或正式结算结果送到打开的面板。</summary>
     /// <param name="reply">服务端装备交易回包。</param>
     public void RenderTrade(EquipOperationRet reply) { _gems.Receive(reply); }
+    /// <summary>按装备操作回复刷新候选对比。</summary>
+    /// <param name="reply">原装备的洗练回执。</param>
+    public void RenderWash(EquipOperationRet reply) { _wash.Receive(reply); }
+    /// <summary>用背包材料打开洗练时预选其实际档位。</summary>
+    /// <param name="id">所选的萃石物品编号。</param>
+    public void SelectWashStone(int id) { _wash.SelectStone(id); }
+    /// <summary>从萃玉的物品详情进入工坊时直接选用该材料。</summary>
+    /// <param name="id">背包里的实际萃玉编号。</param>
+    public void SelectWashJade(int id) { _wash.SelectJade(id); }
 
     /// <summary>从服务器同步的装备实例绘制各孔，品种图透明，物品格的等级底板只在背包及选材面板使用。</summary>
     /// <param name="equip">当前选中装备的最新实例。</param>
@@ -264,6 +277,7 @@ public sealed class EquipmentWorkshopWindow : WindowBase
     public void RenderGems(EquipBase equip, int cap)
     {
         _maxGemGrade = cap;
+        _wash.Bind(EquipmentWash.Snapshot(equip));
         for (int slot = 0; slot < _sockets.Length; slot++)
         {
             // 配置编号同时记录宝石品种与等级。

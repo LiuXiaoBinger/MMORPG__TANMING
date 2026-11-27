@@ -341,6 +341,13 @@ public class RoItemComponent : RoleComponentBase
                 equip.GeneID0 = itemInfo.EquipGeneInfo.GeneId0;
                 equip.GeneID1 = itemInfo.EquipGeneInfo.GeneId1;
                 equip.GeneID2 = itemInfo.EquipGeneInfo.GeneId2;
+                equip.GeneID3 = itemInfo.EquipGeneInfo.GeneId3;
+                equip.GeneValue3 = itemInfo.EquipGeneInfo.GeneValue3;
+                equip.GeneID4 = itemInfo.EquipGeneInfo.GeneId4;
+                equip.GeneValue4 = itemInfo.EquipGeneInfo.GeneValue4;
+                equip.WashRevision = itemInfo.EquipGeneInfo.WashRevision;
+                equip.WashStone = itemInfo.EquipGeneInfo.WashStone;
+                equip.WashCandidate = itemInfo.EquipGeneInfo.WashCandidate;
                 equip.GeneValue0 = itemInfo.EquipGeneInfo.GeneValue0;
                 equip.GeneValue1 = itemInfo.EquipGeneInfo.GeneValue1;
                 equip.GeneValue2 = itemInfo.EquipGeneInfo.GeneValue2;

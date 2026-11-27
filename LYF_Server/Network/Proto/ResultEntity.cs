@@ -158,110 +158,116 @@ public static partial class ResultEntityReflection {
           "cGVjaWFsX3NraWxsX2luZGV4GAggASgFEiIKGm9wZW5lZF9zcGVjaWFsX3Nr",
           "aWxsX2NvdW50GAkgASgFEhQKDGdlbV9pdGVtX2lkcxgKIAMoBRIYChBnb2xk",
           "X2xldmVsX3N0ZXBzGAsgASgFEhcKD2dvbGRfdGllcl9zdGVwcxgMIAEoBRIS",
-          "CgpiYXNlX3JvbGxzGA0gAygFIqsBChFSb2xlRXF1aXBHZW5lSW5mbxIQCghp",
+          "CgpiYXNlX3JvbGxzGA0gAygFIuMCChFSb2xlRXF1aXBHZW5lSW5mbxIQCghp",
           "dGVtX3VpZBgBIAEoAxIPCgdyb2xlX2lkGAIgASgFEhAKCGdlbmVfaWQwGAMg",
           "ASgFEhAKCGdlbmVfaWQxGAQgASgFEhAKCGdlbmVfaWQyGAUgASgFEhMKC2dl",
           "bmVfdmFsdWUwGAYgASgFEhMKC2dlbmVfdmFsdWUxGAcgASgFEhMKC2dlbmVf",
-          "dmFsdWUyGAggASgFInsKD1NhdmVSb2xlRGF0YVJldBIaCghjbWRfY29kZRgB",
-          "IAEoDjIILkNtZENvZGUSDwoHcm9sZV9pZBgCIAEoBRIPCgd2ZXJzaW9uGAMg",
-          "ASgDEg8KB21lc3NhZ2UYBCABKAkSGQoRcGVyc2lzdGVkX3ZlcnNpb24YBSAB",
-          "KAMifAoTT3BlbktuYXBzYWNrR3JpZFJldBIaCghjbWRfY29kZRgBIAEoDjII",
-          "LkNtZENvZGUSDwoHcm9sZV9pZBgCIAEoBRIhChljdXJyZW50X29wZW5lZF9n",
-          "cmlkX2NvdW50GAMgASgFEhUKDWtuYXBzYWNrX3R5cGUYBCABKAUiTwoNQ291",
-          "bnRJdGVtSW5mbxIMCgR0eXBlGAEgASgDEgoKAmlkGAIgASgDEg0KBWNvdW50",
-          "GAMgASgFEhUKDWNkX3RpbWVfc3RhbXAYBCABKAMiUAoPR2V0Q291bnRJbmZv",
-          "UmVzEhoKCGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIhCglpdGVtX2xpc3QY",
-          "AiADKAsyDi5Db3VudEl0ZW1JbmZvIlQKE0NvdW50VXBkYXRlU3luY0luZm8S",
-          "GgoIY21kX2NvZGUYASABKA4yCC5DbWRDb2RlEiEKCWl0ZW1fbGlzdBgCIAMo",
-          "CzIOLkNvdW50SXRlbUluZm8iKwoPTWFwS2V5NjRWYWx1ZTMyEgsKA2tleRgB",
-          "IAEoBBILCgN2YWwYAiABKAUiagoKVXBkYXRlSXRlbRIlCgtkZWxldGVfbGlz",
-          "dBgBIAMoCzIQLk1hcEtleTY0VmFsdWUzMhITCgt1cGRhdGVfdGltZRgCIAEo",
-          "AxIgCglpdGVtX2xpc3QYAyADKAsyDS5Sb2xlSXRlbUluZm8iSgoNVXBkYXRl",
-          "SXRlbVJldBIaCghjbWRfY29kZRgBIAEoDjIILkNtZENvZGUSHQoISXRlbURh",
-          "dGUYAiABKAsyCy5VcGRhdGVJdGVtIpcBCgtTeW5jTW92ZU50ZhIPCgdyb2xl",
-          "X2lkGAEgASgFEgoKAmR4GAIgASgCEgoKAmR5GAMgASgCEgoKAmR6GAQgASgC",
-          "EgwKBGZhY2UYBSABKAISDAoEdGltZRgGIAEoAhIRCglpc19tb3ZpbmcYByAB",
-          "KAgSEAoIaXNfbW92ZWQYCCABKAgSEgoKanVtcF9jb3VudBgJIAEoBSK6AgoR",
-          "TW9uc3RlckFjdGlvbkRhdGESEAoIc3Bhd25faWQYASABKAQSIgoFcGhhc2UY",
-          "AiABKA4yEy5Nb25zdGVyQWN0aW9uUGhhc2USCQoBeBgDIAEoAhIJCgF5GAQg",
-          "ASgCEgkKAXoYBSABKAISDAoEdG9feBgGIAEoAhIMCgR0b195GAcgASgCEgwK",
-          "BHRvX3oYCCABKAISEwoLZHVyYXRpb25fbXMYCSABKAUSDAoEZmFjZRgKIAEo",
-          "AhIQCghza2lsbF9pZBgLIAEoBRIWCg50YXJnZXRfcm9sZV9pZBgMIAEoBRIS",
-          "CgplbGFwc2VkX21zGA0gASgFEg4KBmNhc3RfeBgOIAEoAhIOCgZjYXN0X3kY",
-          "DyABKAISDgoGY2FzdF96GBAgASgCEhMKC3NraWxsX2xldmVsGBEgASgFImYK",
-          "EE1vbnN0ZXJTcGF3bkRhdGESEAoIc3Bhd25faWQYASABKAQSEQoJZW50aXR5",
-          "X2lkGAIgASgFEgkKAXgYAyABKAISCQoBeRgEIAEoAhIJCgF6GAUgASgCEgwK",
-          "BGZhY2UYBiABKAIiZwoTTW9uc3RlckFpTm90aWNlRGF0YRIMCgRraW5kGAEg",
-          "ASgFEhEKCW5vdGljZV9pZBgCIAEoBRIXCg9zb3VyY2Vfc3Bhd25faWQYAyAB",
-          "KAQSFgoOdGFyZ2V0X3JvbGVfaWQYBCABKAUibAoYTW9uc3RlclNraWxsUmVz",
-          "dWx0RnhEYXRhEhAKCHNwYXduX2lkGAEgASgEEhAKCHNraWxsX2lkGAIgASgF",
-          "EhQKDHJlc3VsdF9pbmRleBgDIAEoBRIWCg50YXJnZXRfcm9sZV9pZBgEIAEo",
-          "BSKmAQoUTW9uc3RlclBsYXllckhpdERhdGESFgoOdGFyZ2V0X3JvbGVfaWQY",
-          "ASABKAUSCgoCaHAYAiABKAUSDgoGbWF4X2hwGAMgASgFEg4KBmRhbWFnZRgE",
-          "IAEoBRIQCghzcGF3bl9pZBgFIAEoBBIQCghza2lsbF9pZBgGIAEoBRIUCgxy",
-          "ZXN1bHRfaW5kZXgYByABKAUSEAoIY3JpdGljYWwYCCABKAgiOAoSRHVuZ2Vv",
-          "bkludGVyYWN0UmVxEhEKCW9iamVjdF9pZBgBIAEoBRIPCgd3YXZlX2lkGAIg",
-          "ASgFIngKEkR1bmdlb25JbnRlcmFjdFJldBIPCgdzdWNjZXNzGAEgASgIEg4K",
-          "BnJlYXNvbhgCIAEoCRITCgtpbnN0YW5jZV9pZBgDIAEoBBIPCgdyb2xlX2lk",
-          "GAQgASgFEgsKA3BvcxgFIAEoCRIOCgZleGl0ZWQYBiABKAgiagoURHVuZ2Vv",
-          "bk9iamVjdGl2ZURhdGESCgoCaWQYASABKAUSEwoLZGVzY3JpcHRpb24YAiAB",
-          "KAkSDwoHY3VycmVudBgDIAEoBRINCgV0b3RhbBgEIAEoBRIRCgljb21wbGV0",
-          "ZWQYBSABKAgiuAEKEER1bmdlb25GbG93U3RhdGUSFwoPYWN0aXZlX3dhdmVf",
-          "aWRzGAEgAygFEhoKEmNvbXBsZXRlZF93YXZlX2lkcxgCIAMoBRIZChFhY3Rp",
-          "dmVfb2JqZWN0X2lkcxgDIAMoBRIXCg9hY3RpdmVfd2FsbF9pZHMYBCADKAUS",
-          "KQoKb2JqZWN0aXZlcxgFIAMoCzIVLkR1bmdlb25PYmplY3RpdmVEYXRhEhAK",
-          "CGZpbmlzaGVkGAYgASgIIr8BChFFcXVpcE9wZXJhdGlvblJldBIaCghjbWRf",
-          "Y29kZRgBIAEoDjIILkNtZENvZGUSEAoIaXRlbV91aWQYAiABKAMSIgoJb3Bl",
-          "cmF0aW9uGAMgASgOMg8uRXF1aXBPcGVyYXRpb24SEwoLZ2VtX2l0ZW1faWQY",
-          "BCABKAUSGAoQbWFya2V0X3JlbWFpbmluZxgFIAMoBRITCgtnZW1fbWVzc2Fn",
-          "ZRgGIAEoCRIUCgxnb2xkX21lc3NhZ2UYByABKAki0AEKFlJvbGVBdHRyaWJ1",
-          "dGVVcGRhdGVOdGYSEAoDZXhwGAcgASgFSACIAQESIAoJYmFzZV9pbmZvGAEg",
-          "ASgLMg0uUm9sZUJhc2VJbmZvEhIKCmdlbmVzX2Z1bGwYAiABKAgSHAoFZ2Vu",
-          "ZXMYAyADKAsyDS5Sb2xlR2VuZURhdGESFQoNZ2VuZV9zY2VuYXJpbxgEIAEo",
-          "BRIYChBzaGllbGRfcmVtYWluaW5nGAUgASgFEhcKD3NoaWVsZF9jYXBhY2l0",
-          "eRgGIAEoBUIGCgRfZXhwIsMCCgxSb2xlR2VuZURhdGESDwoHZ2VuZV9pZBgB",
-          "IAEoBRIRCglzb3VyY2VfaWQYAiABKAQSEwoLc291cmNlX3Nsb3QYAyABKAUS",
-          "EAoIZmlyZXJfaWQYBCABKAQSEwoLc3RhY2tfY291bnQYBSABKAUSFAoMcmVt",
-          "YWluaW5nX21zGAYgASgDEg8KB3JlbW92ZWQYByABKAgSDAoEbmFtZRgIIAEo",
-          "CRITCgtlZmZlY3RfdHlwZRgJIAEoBRIUCgxhdHRyaWJ1dGVfaWQYCiABKAUS",
-          "DQoFc3RhdGUYCyABKAUSGgoScmVtYWluaW5nX3RyaWdnZXJzGAwgASgFEhUK",
-          "DXRyaWdnZXJfZXZlbnQYDSABKAUSHwoIY2hpbGRyZW4YDiADKAsyDS5Sb2xl",
-          "R2VuZURhdGESEAoIc2NlbmFyaW8YDyABKAUirQEKD01vbnN0ZXJCdWZmRGF0",
-          "YRIXCg90YXJnZXRfc3Bhd25faWQYASABKAQSFgoOdGFyZ2V0X3JvbGVfaWQY",
-          "AiABKAUSFwoPY2FzdGVyX3NwYXduX2lkGAMgASgEEg8KB2J1ZmZfaWQYBCAB",
-          "KAUSFAoMcmVtYWluaW5nX21zGAUgASgFEg8KB3JlbW92ZWQYBiABKAgSGAoQ",
-          "YnVmZl9pbnN0YW5jZV9pZBgHIAEoBCImChZEdW5nZW9uQ29tbWFuZEV2ZW50",
-          "UmVxEgwKBG5hbWUYASABKAkiDwoNUm9sZVJldml2ZVJlcSJSCg1Sb2xlUmV2",
-          "aXZlUmV0Eg8KB3N1Y2Nlc3MYASABKAgSDgoGcmVhc29uGAIgASgJEiAKCWJh",
-          "c2VfaW5mbxgDIAEoCzINLlJvbGVCYXNlSW5mbyqrBgoHQ21kQ29kZRILCgdT",
-          "dWNjZWVkEAASDQoJQWNjdEV4aXN0EAESDwoLU2VydmVyRXJyb3IQAhIQCgxB",
-          "Y2N0Tm90RXhpc3QQAxIRCg1QYXNzd29yZEVycm9yEAQSDwoLQWNjdERpc2Fi",
-          "bGUQBRIRCg1SZXFQYXJhbUVycm9yEAYSEQoNTmlja25hbWVFeGlzdBAHEhMK",
-          "D1VzZXJOYW1lSWxsZWdhbBAIEhMKD1Bob25lTnVtSWxsZWdhbBAJEhMKD1Bh",
-          "c3N3b3JkSWxsZWdhbBAKEhIKDlVzZXJPZnRlbkxvZ2luEAsSDwoLVmFyaWZ5",
-          "RXJyb3IQDBIQCgxSb2xlTm90RXhpc3QQDRITCg9GZWF0dXJlTm90UmVhZHkQ",
-          "DhIUChBEdXBsaWNhdGVSZXF1ZXN0EA8SFQoRTm90RW5vdWdoQ3VycmVuY3kQ",
-          "EBIUChBTaG9wSXRlbU5vdEZvdW5kEBESGAoUUHVyY2hhc2VMaW1pdFJlYWNo",
-          "ZWQQEhILCgdCYWdGdWxsEBMSEgoOSW52YWxpZFNlc3Npb24QFBITCg9JbnZh",
-          "bGlkUXVhbnRpdHkQFRIPCgtJbnZhbGlkU2hvcBAWEhUKEVRyYW5zYWN0aW9u",
-          "RmFpbGVkEBcSFQoRSW5zdWZmaWNpZW50SXRlbXMQGBIZChVJbmNvcnJlY3RC",
-          "YWNrcGFja1R5cGUQGRIQCgxJdGVtTm90RXhpc3QQGhIRCg1JdGVtTm90RW5v",
-          "dWdoEBsSEwoPU2tpbGxOb3RMZWFybmVkEBwSFgoSU2tpbGxDb25maWdNaXNz",
-          "aW5nEB0SEwoPU2tpbGxPbkNvb2xkb3duEB4SFwoTU2tpbGxJbnN1ZmZpY2ll",
-          "bnRNcBAfEhUKEVNraWxsU3RhdGVCbG9ja2VkECASGgoWU2tpbGxUYXJnZXRV",
-          "bnN1cHBvcnRlZBAhEhkKFUR1bmdlb25BbHJlYWR5RW50ZXJlZBAiEhgKFFNr",
-          "aWxsVXBncmFkZU1heExldmVsECMSGQoVU2tpbGxVcGdyYWRlUm9sZUxldmVs",
-          "ECQSHAoYU2tpbGxVcGdyYWRlTGV2ZWxDaGFuZ2VkECUqxAEKEk1vbnN0ZXJB",
-          "Y3Rpb25QaGFzZRIaChZNb25zdGVyQWN0aW9uUGhhc2VJZGxlEAASGgoWTW9u",
-          "c3RlckFjdGlvblBoYXNlTW92ZRABEhwKGE1vbnN0ZXJBY3Rpb25QaGFzZUF0",
-          "dGFjaxACEhoKFk1vbnN0ZXJBY3Rpb25QaGFzZURlYWQQAxIdChlNb25zdGVy",
-          "QWN0aW9uUGhhc2VTaW5naW5nEAQSHQoZTW9uc3RlckFjdGlvblBoYXNlS25v",
-          "Y2tVcBAFKvgBCg5FcXVpcE9wZXJhdGlvbhIICgROb25lEAASCAoEV2VhchAB",
-          "EgsKB1Rha2VPZmYQAhIWChJTd2l0Y2hTcGVjaWFsU2tpbGwQAxIYChRPcGVu",
-          "U3BlY2lhbFNraWxsU2xvdBAEEg0KCVNvY2tldEdlbRAFEg0KCUdlbU1hcmtl",
-          "dBAGEg4KCkNvbXBvc2VHZW0QBxIKCgZCdXlHZW0QCBINCglGb3JnZUdvbGQQ",
-          "CRIPCgtBZHZhbmNlR29sZBAKEg8KC1VwZ3JhZGVHb2xkEAsSDgoKU3RyZW5n",
-          "dGhlbhAMEgsKB0FkdmFuY2UQDRILCgdSZWZvcmdlEA5iBnByb3RvMw=="));
+          "dmFsdWUyGAggASgFEhAKCGdlbmVfaWQzGAkgASgFEhMKC2dlbmVfdmFsdWUz",
+          "GAogASgFEhAKCGdlbmVfaWQ0GAsgASgFEhMKC2dlbmVfdmFsdWU0GAwgASgF",
+          "EhUKDXdhc2hfcmV2aXNpb24YDSABKAMSEgoKd2FzaF9zdG9uZRgOIAEoBRIW",
+          "Cg53YXNoX2NhbmRpZGF0ZRgPIAEoCRIRCgl3YXNoX2phZGUYECABKAUSEgoK",
+          "d2FzaF9sb2NrcxgRIAEoBSJ7Cg9TYXZlUm9sZURhdGFSZXQSGgoIY21kX2Nv",
+          "ZGUYASABKA4yCC5DbWRDb2RlEg8KB3JvbGVfaWQYAiABKAUSDwoHdmVyc2lv",
+          "bhgDIAEoAxIPCgdtZXNzYWdlGAQgASgJEhkKEXBlcnNpc3RlZF92ZXJzaW9u",
+          "GAUgASgDInwKE09wZW5LbmFwc2Fja0dyaWRSZXQSGgoIY21kX2NvZGUYASAB",
+          "KA4yCC5DbWRDb2RlEg8KB3JvbGVfaWQYAiABKAUSIQoZY3VycmVudF9vcGVu",
+          "ZWRfZ3JpZF9jb3VudBgDIAEoBRIVCg1rbmFwc2Fja190eXBlGAQgASgFIk8K",
+          "DUNvdW50SXRlbUluZm8SDAoEdHlwZRgBIAEoAxIKCgJpZBgCIAEoAxINCgVj",
+          "b3VudBgDIAEoBRIVCg1jZF90aW1lX3N0YW1wGAQgASgDIlAKD0dldENvdW50",
+          "SW5mb1JlcxIaCghjbWRfY29kZRgBIAEoDjIILkNtZENvZGUSIQoJaXRlbV9s",
+          "aXN0GAIgAygLMg4uQ291bnRJdGVtSW5mbyJUChNDb3VudFVwZGF0ZVN5bmNJ",
+          "bmZvEhoKCGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIhCglpdGVtX2xpc3QY",
+          "AiADKAsyDi5Db3VudEl0ZW1JbmZvIisKD01hcEtleTY0VmFsdWUzMhILCgNr",
+          "ZXkYASABKAQSCwoDdmFsGAIgASgFImoKClVwZGF0ZUl0ZW0SJQoLZGVsZXRl",
+          "X2xpc3QYASADKAsyEC5NYXBLZXk2NFZhbHVlMzISEwoLdXBkYXRlX3RpbWUY",
+          "AiABKAMSIAoJaXRlbV9saXN0GAMgAygLMg0uUm9sZUl0ZW1JbmZvIkoKDVVw",
+          "ZGF0ZUl0ZW1SZXQSGgoIY21kX2NvZGUYASABKA4yCC5DbWRDb2RlEh0KCEl0",
+          "ZW1EYXRlGAIgASgLMgsuVXBkYXRlSXRlbSKXAQoLU3luY01vdmVOdGYSDwoH",
+          "cm9sZV9pZBgBIAEoBRIKCgJkeBgCIAEoAhIKCgJkeRgDIAEoAhIKCgJkehgE",
+          "IAEoAhIMCgRmYWNlGAUgASgCEgwKBHRpbWUYBiABKAISEQoJaXNfbW92aW5n",
+          "GAcgASgIEhAKCGlzX21vdmVkGAggASgIEhIKCmp1bXBfY291bnQYCSABKAUi",
+          "ugIKEU1vbnN0ZXJBY3Rpb25EYXRhEhAKCHNwYXduX2lkGAEgASgEEiIKBXBo",
+          "YXNlGAIgASgOMhMuTW9uc3RlckFjdGlvblBoYXNlEgkKAXgYAyABKAISCQoB",
+          "eRgEIAEoAhIJCgF6GAUgASgCEgwKBHRvX3gYBiABKAISDAoEdG9feRgHIAEo",
+          "AhIMCgR0b196GAggASgCEhMKC2R1cmF0aW9uX21zGAkgASgFEgwKBGZhY2UY",
+          "CiABKAISEAoIc2tpbGxfaWQYCyABKAUSFgoOdGFyZ2V0X3JvbGVfaWQYDCAB",
+          "KAUSEgoKZWxhcHNlZF9tcxgNIAEoBRIOCgZjYXN0X3gYDiABKAISDgoGY2Fz",
+          "dF95GA8gASgCEg4KBmNhc3RfehgQIAEoAhITCgtza2lsbF9sZXZlbBgRIAEo",
+          "BSJmChBNb25zdGVyU3Bhd25EYXRhEhAKCHNwYXduX2lkGAEgASgEEhEKCWVu",
+          "dGl0eV9pZBgCIAEoBRIJCgF4GAMgASgCEgkKAXkYBCABKAISCQoBehgFIAEo",
+          "AhIMCgRmYWNlGAYgASgCImcKE01vbnN0ZXJBaU5vdGljZURhdGESDAoEa2lu",
+          "ZBgBIAEoBRIRCglub3RpY2VfaWQYAiABKAUSFwoPc291cmNlX3NwYXduX2lk",
+          "GAMgASgEEhYKDnRhcmdldF9yb2xlX2lkGAQgASgFImwKGE1vbnN0ZXJTa2ls",
+          "bFJlc3VsdEZ4RGF0YRIQCghzcGF3bl9pZBgBIAEoBBIQCghza2lsbF9pZBgC",
+          "IAEoBRIUCgxyZXN1bHRfaW5kZXgYAyABKAUSFgoOdGFyZ2V0X3JvbGVfaWQY",
+          "BCABKAUipgEKFE1vbnN0ZXJQbGF5ZXJIaXREYXRhEhYKDnRhcmdldF9yb2xl",
+          "X2lkGAEgASgFEgoKAmhwGAIgASgFEg4KBm1heF9ocBgDIAEoBRIOCgZkYW1h",
+          "Z2UYBCABKAUSEAoIc3Bhd25faWQYBSABKAQSEAoIc2tpbGxfaWQYBiABKAUS",
+          "FAoMcmVzdWx0X2luZGV4GAcgASgFEhAKCGNyaXRpY2FsGAggASgIIjgKEkR1",
+          "bmdlb25JbnRlcmFjdFJlcRIRCglvYmplY3RfaWQYASABKAUSDwoHd2F2ZV9p",
+          "ZBgCIAEoBSJ4ChJEdW5nZW9uSW50ZXJhY3RSZXQSDwoHc3VjY2VzcxgBIAEo",
+          "CBIOCgZyZWFzb24YAiABKAkSEwoLaW5zdGFuY2VfaWQYAyABKAQSDwoHcm9s",
+          "ZV9pZBgEIAEoBRILCgNwb3MYBSABKAkSDgoGZXhpdGVkGAYgASgIImoKFER1",
+          "bmdlb25PYmplY3RpdmVEYXRhEgoKAmlkGAEgASgFEhMKC2Rlc2NyaXB0aW9u",
+          "GAIgASgJEg8KB2N1cnJlbnQYAyABKAUSDQoFdG90YWwYBCABKAUSEQoJY29t",
+          "cGxldGVkGAUgASgIIrgBChBEdW5nZW9uRmxvd1N0YXRlEhcKD2FjdGl2ZV93",
+          "YXZlX2lkcxgBIAMoBRIaChJjb21wbGV0ZWRfd2F2ZV9pZHMYAiADKAUSGQoR",
+          "YWN0aXZlX29iamVjdF9pZHMYAyADKAUSFwoPYWN0aXZlX3dhbGxfaWRzGAQg",
+          "AygFEikKCm9iamVjdGl2ZXMYBSADKAsyFS5EdW5nZW9uT2JqZWN0aXZlRGF0",
+          "YRIQCghmaW5pc2hlZBgGIAEoCCL8AQoRRXF1aXBPcGVyYXRpb25SZXQSGgoI",
+          "Y21kX2NvZGUYASABKA4yCC5DbWRDb2RlEhAKCGl0ZW1fdWlkGAIgASgDEiIK",
+          "CW9wZXJhdGlvbhgDIAEoDjIPLkVxdWlwT3BlcmF0aW9uEhMKC2dlbV9pdGVt",
+          "X2lkGAQgASgFEhgKEG1hcmtldF9yZW1haW5pbmcYBSADKAUSEwoLZ2VtX21l",
+          "c3NhZ2UYBiABKAkSFAoMZ29sZF9tZXNzYWdlGAcgASgJEhQKDHdhc2hfbWVz",
+          "c2FnZRgIIAEoCRIlCgl3YXNoX2luZm8YCSABKAsyEi5Sb2xlRXF1aXBHZW5l",
+          "SW5mbyLQAQoWUm9sZUF0dHJpYnV0ZVVwZGF0ZU50ZhIQCgNleHAYByABKAVI",
+          "AIgBARIgCgliYXNlX2luZm8YASABKAsyDS5Sb2xlQmFzZUluZm8SEgoKZ2Vu",
+          "ZXNfZnVsbBgCIAEoCBIcCgVnZW5lcxgDIAMoCzINLlJvbGVHZW5lRGF0YRIV",
+          "Cg1nZW5lX3NjZW5hcmlvGAQgASgFEhgKEHNoaWVsZF9yZW1haW5pbmcYBSAB",
+          "KAUSFwoPc2hpZWxkX2NhcGFjaXR5GAYgASgFQgYKBF9leHAiwwIKDFJvbGVH",
+          "ZW5lRGF0YRIPCgdnZW5lX2lkGAEgASgFEhEKCXNvdXJjZV9pZBgCIAEoBBIT",
+          "Cgtzb3VyY2Vfc2xvdBgDIAEoBRIQCghmaXJlcl9pZBgEIAEoBBITCgtzdGFj",
+          "a19jb3VudBgFIAEoBRIUCgxyZW1haW5pbmdfbXMYBiABKAMSDwoHcmVtb3Zl",
+          "ZBgHIAEoCBIMCgRuYW1lGAggASgJEhMKC2VmZmVjdF90eXBlGAkgASgFEhQK",
+          "DGF0dHJpYnV0ZV9pZBgKIAEoBRINCgVzdGF0ZRgLIAEoBRIaChJyZW1haW5p",
+          "bmdfdHJpZ2dlcnMYDCABKAUSFQoNdHJpZ2dlcl9ldmVudBgNIAEoBRIfCghj",
+          "aGlsZHJlbhgOIAMoCzINLlJvbGVHZW5lRGF0YRIQCghzY2VuYXJpbxgPIAEo",
+          "BSKtAQoPTW9uc3RlckJ1ZmZEYXRhEhcKD3RhcmdldF9zcGF3bl9pZBgBIAEo",
+          "BBIWCg50YXJnZXRfcm9sZV9pZBgCIAEoBRIXCg9jYXN0ZXJfc3Bhd25faWQY",
+          "AyABKAQSDwoHYnVmZl9pZBgEIAEoBRIUCgxyZW1haW5pbmdfbXMYBSABKAUS",
+          "DwoHcmVtb3ZlZBgGIAEoCBIYChBidWZmX2luc3RhbmNlX2lkGAcgASgEIiYK",
+          "FkR1bmdlb25Db21tYW5kRXZlbnRSZXESDAoEbmFtZRgBIAEoCSIPCg1Sb2xl",
+          "UmV2aXZlUmVxIlIKDVJvbGVSZXZpdmVSZXQSDwoHc3VjY2VzcxgBIAEoCBIO",
+          "CgZyZWFzb24YAiABKAkSIAoJYmFzZV9pbmZvGAMgASgLMg0uUm9sZUJhc2VJ",
+          "bmZvKqsGCgdDbWRDb2RlEgsKB1N1Y2NlZWQQABINCglBY2N0RXhpc3QQARIP",
+          "CgtTZXJ2ZXJFcnJvchACEhAKDEFjY3ROb3RFeGlzdBADEhEKDVBhc3N3b3Jk",
+          "RXJyb3IQBBIPCgtBY2N0RGlzYWJsZRAFEhEKDVJlcVBhcmFtRXJyb3IQBhIR",
+          "Cg1OaWNrbmFtZUV4aXN0EAcSEwoPVXNlck5hbWVJbGxlZ2FsEAgSEwoPUGhv",
+          "bmVOdW1JbGxlZ2FsEAkSEwoPUGFzc3dvcmRJbGxlZ2FsEAoSEgoOVXNlck9m",
+          "dGVuTG9naW4QCxIPCgtWYXJpZnlFcnJvchAMEhAKDFJvbGVOb3RFeGlzdBAN",
+          "EhMKD0ZlYXR1cmVOb3RSZWFkeRAOEhQKEER1cGxpY2F0ZVJlcXVlc3QQDxIV",
+          "ChFOb3RFbm91Z2hDdXJyZW5jeRAQEhQKEFNob3BJdGVtTm90Rm91bmQQERIY",
+          "ChRQdXJjaGFzZUxpbWl0UmVhY2hlZBASEgsKB0JhZ0Z1bGwQExISCg5JbnZh",
+          "bGlkU2Vzc2lvbhAUEhMKD0ludmFsaWRRdWFudGl0eRAVEg8KC0ludmFsaWRT",
+          "aG9wEBYSFQoRVHJhbnNhY3Rpb25GYWlsZWQQFxIVChFJbnN1ZmZpY2llbnRJ",
+          "dGVtcxAYEhkKFUluY29ycmVjdEJhY2twYWNrVHlwZRAZEhAKDEl0ZW1Ob3RF",
+          "eGlzdBAaEhEKDUl0ZW1Ob3RFbm91Z2gQGxITCg9Ta2lsbE5vdExlYXJuZWQQ",
+          "HBIWChJTa2lsbENvbmZpZ01pc3NpbmcQHRITCg9Ta2lsbE9uQ29vbGRvd24Q",
+          "HhIXChNTa2lsbEluc3VmZmljaWVudE1wEB8SFQoRU2tpbGxTdGF0ZUJsb2Nr",
+          "ZWQQIBIaChZTa2lsbFRhcmdldFVuc3VwcG9ydGVkECESGQoVRHVuZ2VvbkFs",
+          "cmVhZHlFbnRlcmVkECISGAoUU2tpbGxVcGdyYWRlTWF4TGV2ZWwQIxIZChVT",
+          "a2lsbFVwZ3JhZGVSb2xlTGV2ZWwQJBIcChhTa2lsbFVwZ3JhZGVMZXZlbENo",
+          "YW5nZWQQJSrEAQoSTW9uc3RlckFjdGlvblBoYXNlEhoKFk1vbnN0ZXJBY3Rp",
+          "b25QaGFzZUlkbGUQABIaChZNb25zdGVyQWN0aW9uUGhhc2VNb3ZlEAESHAoY",
+          "TW9uc3RlckFjdGlvblBoYXNlQXR0YWNrEAISGgoWTW9uc3RlckFjdGlvblBo",
+          "YXNlRGVhZBADEh0KGU1vbnN0ZXJBY3Rpb25QaGFzZVNpbmdpbmcQBBIdChlN",
+          "b25zdGVyQWN0aW9uUGhhc2VLbm9ja1VwEAUqlQIKDkVxdWlwT3BlcmF0aW9u",
+          "EggKBE5vbmUQABIICgRXZWFyEAESCwoHVGFrZU9mZhACEhYKElN3aXRjaFNw",
+          "ZWNpYWxTa2lsbBADEhgKFE9wZW5TcGVjaWFsU2tpbGxTbG90EAQSDQoJU29j",
+          "a2V0R2VtEAUSDQoJR2VtTWFya2V0EAYSDgoKQ29tcG9zZUdlbRAHEgoKBkJ1",
+          "eUdlbRAIEg0KCUZvcmdlR29sZBAJEg8KC0FkdmFuY2VHb2xkEAoSDwoLVXBn",
+          "cmFkZUdvbGQQCxIOCgpTdHJlbmd0aGVuEAwSCwoHQWR2YW5jZRANEgsKB1Jl",
+          "Zm9yZ2UQDhIMCghSb2xsV2FzaBAPEg0KCUFwcGx5V2FzaBAQYgZwcm90bzM="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::CmdCode), typeof(global::MonsterActionPhase), typeof(global::EquipOperation), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -299,7 +305,7 @@ public static partial class ResultEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::Kanpsacktypecount), global::Kanpsacktypecount.Parser, new[]{ "Type", "Count" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleItemInfo), global::RoleItemInfo.Parser, new[]{ "ItemUid", "Count", "RoleId", "ItemTypeId", "BagType", "BagIndex", "EquipInfo", "EquipGeneInfo", "ItemSign", "MoneyType", "TotalPrice", "CreateTimeUtcTicks", "ExpireTimeUtcTicks" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleEquipItemInfo), global::RoleEquipItemInfo.Parser, new[]{ "ItemUid", "RoleId", "StrengthenLevel", "EquipType", "SpecialSkillId0", "SpecialSkillId1", "SpecialSkillId2", "ActiveSpecialSkillIndex", "OpenedSpecialSkillCount", "GemItemIds", "GoldLevelSteps", "GoldTierSteps", "BaseRolls" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::RoleEquipGeneInfo), global::RoleEquipGeneInfo.Parser, new[]{ "ItemUid", "RoleId", "GeneId0", "GeneId1", "GeneId2", "GeneValue0", "GeneValue1", "GeneValue2" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RoleEquipGeneInfo), global::RoleEquipGeneInfo.Parser, new[]{ "ItemUid", "RoleId", "GeneId0", "GeneId1", "GeneId2", "GeneValue0", "GeneValue1", "GeneValue2", "GeneId3", "GeneValue3", "GeneId4", "GeneValue4", "WashRevision", "WashStone", "WashCandidate", "WashJade", "WashLocks" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SaveRoleDataRet), global::SaveRoleDataRet.Parser, new[]{ "CmdCode", "RoleId", "Version", "Message", "PersistedVersion" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::OpenKnapsackGridRet), global::OpenKnapsackGridRet.Parser, new[]{ "CmdCode", "RoleId", "CurrentOpenedGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::CountItemInfo), global::CountItemInfo.Parser, new[]{ "Type", "Id", "Count", "CdTimeStamp" }, null, null, null, null),
@@ -318,7 +324,7 @@ public static partial class ResultEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::DungeonInteractRet), global::DungeonInteractRet.Parser, new[]{ "Success", "Reason", "InstanceId", "RoleId", "Pos", "Exited" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::DungeonObjectiveData), global::DungeonObjectiveData.Parser, new[]{ "Id", "Description", "Current", "Total", "Completed" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::DungeonFlowState), global::DungeonFlowState.Parser, new[]{ "ActiveWaveIds", "CompletedWaveIds", "ActiveObjectIds", "ActiveWallIds", "Objectives", "Finished" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationRet), global::EquipOperationRet.Parser, new[]{ "CmdCode", "ItemUid", "Operation", "GemItemId", "MarketRemaining", "GemMessage", "GoldMessage" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationRet), global::EquipOperationRet.Parser, new[]{ "CmdCode", "ItemUid", "Operation", "GemItemId", "MarketRemaining", "GemMessage", "GoldMessage", "WashMessage", "WashInfo" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleAttributeUpdateNtf), global::RoleAttributeUpdateNtf.Parser, new[]{ "Exp", "BaseInfo", "GenesFull", "Genes", "GeneScenario", "ShieldRemaining", "ShieldCapacity" }, new[]{ "Exp" }, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleGeneData), global::RoleGeneData.Parser, new[]{ "GeneId", "SourceId", "SourceSlot", "FirerId", "StackCount", "RemainingMs", "Removed", "Name", "EffectType", "AttributeId", "State", "RemainingTriggers", "TriggerEvent", "Children", "Scenario" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MonsterBuffData), global::MonsterBuffData.Parser, new[]{ "TargetSpawnId", "TargetRoleId", "CasterSpawnId", "BuffId", "RemainingMs", "Removed", "BuffInstanceId" }, null, null, null, null),
@@ -583,6 +589,14 @@ public enum EquipOperation {
   ///按配置区间重新生成六槽基础值
   /// </summary>
   [pbr::OriginalName("Reforge")] Reforge = 14,
+  /// <summary>
+  ///支付萃石和铜币生成候选
+  /// </summary>
+  [pbr::OriginalName("RollWash")] RollWash = 15,
+  /// <summary>
+  ///将指定版本候选替换为生效词条
+  /// </summary>
+  [pbr::OriginalName("ApplyWash")] ApplyWash = 16,
 }
 
 #endregion
@@ -14696,6 +14710,15 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
     geneValue0_ = other.geneValue0_;
     geneValue1_ = other.geneValue1_;
     geneValue2_ = other.geneValue2_;
+    geneId3_ = other.geneId3_;
+    geneValue3_ = other.geneValue3_;
+    geneId4_ = other.geneId4_;
+    geneValue4_ = other.geneValue4_;
+    washRevision_ = other.washRevision_;
+    washStone_ = other.washStone_;
+    washCandidate_ = other.washCandidate_;
+    washJade_ = other.washJade_;
+    washLocks_ = other.washLocks_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -14825,6 +14848,141 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
     }
   }
 
+  /// <summary>Field number for the "gene_id3" field.</summary>
+  public const int GeneId3FieldNumber = 9;
+  private int geneId3_;
+  /// <summary>
+  ///第四个洗练槽
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GeneId3 {
+    get { return geneId3_; }
+    set {
+      geneId3_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "gene_value3" field.</summary>
+  public const int GeneValue3FieldNumber = 10;
+  private int geneValue3_;
+  /// <summary>
+  ///第四槽数值
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GeneValue3 {
+    get { return geneValue3_; }
+    set {
+      geneValue3_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "gene_id4" field.</summary>
+  public const int GeneId4FieldNumber = 11;
+  private int geneId4_;
+  /// <summary>
+  ///第五个洗练槽
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GeneId4 {
+    get { return geneId4_; }
+    set {
+      geneId4_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "gene_value4" field.</summary>
+  public const int GeneValue4FieldNumber = 12;
+  private int geneValue4_;
+  /// <summary>
+  ///第五槽数值
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GeneValue4 {
+    get { return geneValue4_; }
+    set {
+      geneValue4_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "wash_revision" field.</summary>
+  public const int WashRevisionFieldNumber = 13;
+  private long washRevision_;
+  /// <summary>
+  ///装备洗练版本
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long WashRevision {
+    get { return washRevision_; }
+    set {
+      washRevision_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "wash_stone" field.</summary>
+  public const int WashStoneFieldNumber = 14;
+  private int washStone_;
+  /// <summary>
+  ///上次使用的萃石
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int WashStone {
+    get { return washStone_; }
+    set {
+      washStone_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "wash_candidate" field.</summary>
+  public const int WashCandidateFieldNumber = 15;
+  private string washCandidate_ = "";
+  /// <summary>
+  ///待确认的词条快照，空串表示没有候选
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string WashCandidate {
+    get { return washCandidate_; }
+    set {
+      washCandidate_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "wash_jade" field.</summary>
+  public const int WashJadeFieldNumber = 16;
+  private int washJade_;
+  /// <summary>
+  ///候选快照记录上次使用的萃玉
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int WashJade {
+    get { return washJade_; }
+    set {
+      washJade_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "wash_locks" field.</summary>
+  public const int WashLocksFieldNumber = 17;
+  private int washLocks_;
+  /// <summary>
+  ///候选快照记录上次勾选的生效槽位
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int WashLocks {
+    get { return washLocks_; }
+    set {
+      washLocks_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -14848,6 +15006,15 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
     if (GeneValue0 != other.GeneValue0) return false;
     if (GeneValue1 != other.GeneValue1) return false;
     if (GeneValue2 != other.GeneValue2) return false;
+    if (GeneId3 != other.GeneId3) return false;
+    if (GeneValue3 != other.GeneValue3) return false;
+    if (GeneId4 != other.GeneId4) return false;
+    if (GeneValue4 != other.GeneValue4) return false;
+    if (WashRevision != other.WashRevision) return false;
+    if (WashStone != other.WashStone) return false;
+    if (WashCandidate != other.WashCandidate) return false;
+    if (WashJade != other.WashJade) return false;
+    if (WashLocks != other.WashLocks) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -14863,6 +15030,15 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
     if (GeneValue0 != 0) hash ^= GeneValue0.GetHashCode();
     if (GeneValue1 != 0) hash ^= GeneValue1.GetHashCode();
     if (GeneValue2 != 0) hash ^= GeneValue2.GetHashCode();
+    if (GeneId3 != 0) hash ^= GeneId3.GetHashCode();
+    if (GeneValue3 != 0) hash ^= GeneValue3.GetHashCode();
+    if (GeneId4 != 0) hash ^= GeneId4.GetHashCode();
+    if (GeneValue4 != 0) hash ^= GeneValue4.GetHashCode();
+    if (WashRevision != 0L) hash ^= WashRevision.GetHashCode();
+    if (WashStone != 0) hash ^= WashStone.GetHashCode();
+    if (WashCandidate.Length != 0) hash ^= WashCandidate.GetHashCode();
+    if (WashJade != 0) hash ^= WashJade.GetHashCode();
+    if (WashLocks != 0) hash ^= WashLocks.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -14913,6 +15089,42 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
       output.WriteRawTag(64);
       output.WriteInt32(GeneValue2);
     }
+    if (GeneId3 != 0) {
+      output.WriteRawTag(72);
+      output.WriteInt32(GeneId3);
+    }
+    if (GeneValue3 != 0) {
+      output.WriteRawTag(80);
+      output.WriteInt32(GeneValue3);
+    }
+    if (GeneId4 != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(GeneId4);
+    }
+    if (GeneValue4 != 0) {
+      output.WriteRawTag(96);
+      output.WriteInt32(GeneValue4);
+    }
+    if (WashRevision != 0L) {
+      output.WriteRawTag(104);
+      output.WriteInt64(WashRevision);
+    }
+    if (WashStone != 0) {
+      output.WriteRawTag(112);
+      output.WriteInt32(WashStone);
+    }
+    if (WashCandidate.Length != 0) {
+      output.WriteRawTag(122);
+      output.WriteString(WashCandidate);
+    }
+    if (WashJade != 0) {
+      output.WriteRawTag(128, 1);
+      output.WriteInt32(WashJade);
+    }
+    if (WashLocks != 0) {
+      output.WriteRawTag(136, 1);
+      output.WriteInt32(WashLocks);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -14955,6 +15167,42 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
       output.WriteRawTag(64);
       output.WriteInt32(GeneValue2);
     }
+    if (GeneId3 != 0) {
+      output.WriteRawTag(72);
+      output.WriteInt32(GeneId3);
+    }
+    if (GeneValue3 != 0) {
+      output.WriteRawTag(80);
+      output.WriteInt32(GeneValue3);
+    }
+    if (GeneId4 != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(GeneId4);
+    }
+    if (GeneValue4 != 0) {
+      output.WriteRawTag(96);
+      output.WriteInt32(GeneValue4);
+    }
+    if (WashRevision != 0L) {
+      output.WriteRawTag(104);
+      output.WriteInt64(WashRevision);
+    }
+    if (WashStone != 0) {
+      output.WriteRawTag(112);
+      output.WriteInt32(WashStone);
+    }
+    if (WashCandidate.Length != 0) {
+      output.WriteRawTag(122);
+      output.WriteString(WashCandidate);
+    }
+    if (WashJade != 0) {
+      output.WriteRawTag(128, 1);
+      output.WriteInt32(WashJade);
+    }
+    if (WashLocks != 0) {
+      output.WriteRawTag(136, 1);
+      output.WriteInt32(WashLocks);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -14988,6 +15236,33 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
     }
     if (GeneValue2 != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(GeneValue2);
+    }
+    if (GeneId3 != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GeneId3);
+    }
+    if (GeneValue3 != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GeneValue3);
+    }
+    if (GeneId4 != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GeneId4);
+    }
+    if (GeneValue4 != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GeneValue4);
+    }
+    if (WashRevision != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(WashRevision);
+    }
+    if (WashStone != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(WashStone);
+    }
+    if (WashCandidate.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(WashCandidate);
+    }
+    if (WashJade != 0) {
+      size += 2 + pb::CodedOutputStream.ComputeInt32Size(WashJade);
+    }
+    if (WashLocks != 0) {
+      size += 2 + pb::CodedOutputStream.ComputeInt32Size(WashLocks);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -15024,6 +15299,33 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
     }
     if (other.GeneValue2 != 0) {
       GeneValue2 = other.GeneValue2;
+    }
+    if (other.GeneId3 != 0) {
+      GeneId3 = other.GeneId3;
+    }
+    if (other.GeneValue3 != 0) {
+      GeneValue3 = other.GeneValue3;
+    }
+    if (other.GeneId4 != 0) {
+      GeneId4 = other.GeneId4;
+    }
+    if (other.GeneValue4 != 0) {
+      GeneValue4 = other.GeneValue4;
+    }
+    if (other.WashRevision != 0L) {
+      WashRevision = other.WashRevision;
+    }
+    if (other.WashStone != 0) {
+      WashStone = other.WashStone;
+    }
+    if (other.WashCandidate.Length != 0) {
+      WashCandidate = other.WashCandidate;
+    }
+    if (other.WashJade != 0) {
+      WashJade = other.WashJade;
+    }
+    if (other.WashLocks != 0) {
+      WashLocks = other.WashLocks;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -15076,6 +15378,42 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
           GeneValue2 = input.ReadInt32();
           break;
         }
+        case 72: {
+          GeneId3 = input.ReadInt32();
+          break;
+        }
+        case 80: {
+          GeneValue3 = input.ReadInt32();
+          break;
+        }
+        case 88: {
+          GeneId4 = input.ReadInt32();
+          break;
+        }
+        case 96: {
+          GeneValue4 = input.ReadInt32();
+          break;
+        }
+        case 104: {
+          WashRevision = input.ReadInt64();
+          break;
+        }
+        case 112: {
+          WashStone = input.ReadInt32();
+          break;
+        }
+        case 122: {
+          WashCandidate = input.ReadString();
+          break;
+        }
+        case 128: {
+          WashJade = input.ReadInt32();
+          break;
+        }
+        case 136: {
+          WashLocks = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -15125,6 +15463,42 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
         }
         case 64: {
           GeneValue2 = input.ReadInt32();
+          break;
+        }
+        case 72: {
+          GeneId3 = input.ReadInt32();
+          break;
+        }
+        case 80: {
+          GeneValue3 = input.ReadInt32();
+          break;
+        }
+        case 88: {
+          GeneId4 = input.ReadInt32();
+          break;
+        }
+        case 96: {
+          GeneValue4 = input.ReadInt32();
+          break;
+        }
+        case 104: {
+          WashRevision = input.ReadInt64();
+          break;
+        }
+        case 112: {
+          WashStone = input.ReadInt32();
+          break;
+        }
+        case 122: {
+          WashCandidate = input.ReadString();
+          break;
+        }
+        case 128: {
+          WashJade = input.ReadInt32();
+          break;
+        }
+        case 136: {
+          WashLocks = input.ReadInt32();
           break;
         }
       }
@@ -21662,6 +22036,8 @@ public sealed partial class EquipOperationRet : pb::IMessage<EquipOperationRet>
     marketRemaining_ = other.marketRemaining_.Clone();
     gemMessage_ = other.gemMessage_;
     goldMessage_ = other.goldMessage_;
+    washMessage_ = other.washMessage_;
+    washInfo_ = other.washInfo_ != null ? other.washInfo_.Clone() : null;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -21775,6 +22151,36 @@ public sealed partial class EquipOperationRet : pb::IMessage<EquipOperationRet>
     }
   }
 
+  /// <summary>Field number for the "wash_message" field.</summary>
+  public const int WashMessageFieldNumber = 8;
+  private string washMessage_ = "";
+  /// <summary>
+  ///本次洗练结果提示
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string WashMessage {
+    get { return washMessage_; }
+    set {
+      washMessage_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "wash_info" field.</summary>
+  public const int WashInfoFieldNumber = 9;
+  private global::RoleEquipGeneInfo washInfo_;
+  /// <summary>
+  ///操作后该装备的词条和候选快照
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::RoleEquipGeneInfo WashInfo {
+    get { return washInfo_; }
+    set {
+      washInfo_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -21797,6 +22203,8 @@ public sealed partial class EquipOperationRet : pb::IMessage<EquipOperationRet>
     if(!marketRemaining_.Equals(other.marketRemaining_)) return false;
     if (GemMessage != other.GemMessage) return false;
     if (GoldMessage != other.GoldMessage) return false;
+    if (WashMessage != other.WashMessage) return false;
+    if (!object.Equals(WashInfo, other.WashInfo)) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -21811,6 +22219,8 @@ public sealed partial class EquipOperationRet : pb::IMessage<EquipOperationRet>
     hash ^= marketRemaining_.GetHashCode();
     if (GemMessage.Length != 0) hash ^= GemMessage.GetHashCode();
     if (GoldMessage.Length != 0) hash ^= GoldMessage.GetHashCode();
+    if (WashMessage.Length != 0) hash ^= WashMessage.GetHashCode();
+    if (washInfo_ != null) hash ^= WashInfo.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -21854,6 +22264,14 @@ public sealed partial class EquipOperationRet : pb::IMessage<EquipOperationRet>
       output.WriteRawTag(58);
       output.WriteString(GoldMessage);
     }
+    if (WashMessage.Length != 0) {
+      output.WriteRawTag(66);
+      output.WriteString(WashMessage);
+    }
+    if (washInfo_ != null) {
+      output.WriteRawTag(74);
+      output.WriteMessage(WashInfo);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -21889,6 +22307,14 @@ public sealed partial class EquipOperationRet : pb::IMessage<EquipOperationRet>
       output.WriteRawTag(58);
       output.WriteString(GoldMessage);
     }
+    if (WashMessage.Length != 0) {
+      output.WriteRawTag(66);
+      output.WriteString(WashMessage);
+    }
+    if (washInfo_ != null) {
+      output.WriteRawTag(74);
+      output.WriteMessage(WashInfo);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -21917,6 +22343,12 @@ public sealed partial class EquipOperationRet : pb::IMessage<EquipOperationRet>
     }
     if (GoldMessage.Length != 0) {
       size += 1 + pb::CodedOutputStream.ComputeStringSize(GoldMessage);
+    }
+    if (WashMessage.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(WashMessage);
+    }
+    if (washInfo_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(WashInfo);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -21948,6 +22380,15 @@ public sealed partial class EquipOperationRet : pb::IMessage<EquipOperationRet>
     }
     if (other.GoldMessage.Length != 0) {
       GoldMessage = other.GoldMessage;
+    }
+    if (other.WashMessage.Length != 0) {
+      WashMessage = other.WashMessage;
+    }
+    if (other.washInfo_ != null) {
+      if (washInfo_ == null) {
+        WashInfo = new global::RoleEquipGeneInfo();
+      }
+      WashInfo.MergeFrom(other.WashInfo);
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -21997,6 +22438,17 @@ public sealed partial class EquipOperationRet : pb::IMessage<EquipOperationRet>
           GoldMessage = input.ReadString();
           break;
         }
+        case 66: {
+          WashMessage = input.ReadString();
+          break;
+        }
+        case 74: {
+          if (washInfo_ == null) {
+            WashInfo = new global::RoleEquipGeneInfo();
+          }
+          input.ReadMessage(WashInfo);
+          break;
+        }
       }
     }
   #endif
@@ -22043,6 +22495,17 @@ public sealed partial class EquipOperationRet : pb::IMessage<EquipOperationRet>
         }
         case 58: {
           GoldMessage = input.ReadString();
+          break;
+        }
+        case 66: {
+          WashMessage = input.ReadString();
+          break;
+        }
+        case 74: {
+          if (washInfo_ == null) {
+            WashInfo = new global::RoleEquipGeneInfo();
+          }
+          input.ReadMessage(WashInfo);
           break;
         }
       }

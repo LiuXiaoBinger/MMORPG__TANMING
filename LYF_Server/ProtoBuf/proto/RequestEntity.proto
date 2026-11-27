@@ -208,4 +208,8 @@ message EquipOperationReq {
 	optional int32 buy_quantity = 8;//商会直购的颗数，旧工坊未指定时购买一颗
 	int32 gold_item_id = 9;//选定金装的配置编号
 	int32 gold_target = 10;//界面选定的目标装备等级或阶数
+	int32 wash_stone = 11;//所选萃石编号
+	int64 wash_revision = 12;//玩家看到的装备洗练版本
+	int32 wash_jade = 13;//选填的萃玉物品编号
+	int32 wash_locks = 14;//勾选生效词条的五位掩码
 }

@@ -70,8 +70,16 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private TMP_Text _washRowValue;
     /// <summary>铭缀独立行末的查看入口，只给未开放提示。</summary>
     [SerializeField] private Button _inscribeRowButton;
-    /// <summary>洗练独立行末的查看入口，只给未开放提示。</summary>
+    /// <summary>洗练方案行末的展开与收起按钮。</summary>
     [SerializeField] private Button _washRowButton;
+    /// <summary>以此装备打开工坊洗练页。</summary>
+    [SerializeField] private Button _washWorkshopButton;
+    /// <summary>洗练方案在详情滚动列表占用的实际高度。</summary>
+    [SerializeField] private LayoutElement _washLayout;
+    /// <summary>当前详情的洗练正文是否展开。</summary>
+    private bool _washExpanded = true;
+    /// <summary>通知背包控制器定位当前装备的洗练页。</summary>
+    public event Action WashRequested;
     /// <summary>镶嵌展开区，折叠时整体隐藏并让父布局回收高度。</summary>
     [SerializeField] private GameObject _gemExpandPanel;
     /// <summary>镶嵌展开区的孔位说明文本。</summary>
@@ -280,6 +288,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         _forgeFoldButton.onClick.AddListener(OnForgeFoldClicked);
         _inscribeRowButton.onClick.AddListener(OnInscribeRowClicked);
         _washRowButton.onClick.AddListener(OnWashRowClicked);
+        _washWorkshopButton.onClick.AddListener(() => WashRequested?.Invoke());
         _strengthenButton.onClick.AddListener(OnStrengthenClicked);
         _inscribeButton.onClick.AddListener(OnMainButtonSecond);
         _forgeButton.onClick.AddListener(OnMainButtonThird);
@@ -319,6 +328,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         // 铭缀、洗练、镶嵌、套装、淬锋五个分区的正文只做展示，文本全部来自控制器。
         _inscribeRowValue.text = data.InscribeRowText;
         _washRowValue.text = data.WashRowText;
+        RenderWashRows();
         _gemInfoText.text = data.GemInfoText;
         _setExpandText.text = data.SetExpandText;
         _forgeExpandText.text = data.ForgeExpandText;
@@ -829,10 +839,25 @@ public sealed class EquipmentDetailWindow : WindowBase
         TipsMgr.Instance.ShowSystemTips("铭缀：暂未开放");
     }
 
-    /// <summary>洗练行末查看入口只给未开放提示，不请求洗练数据。</summary>
+    /// <summary>折叠或展开该装备已确认的洗练方案。</summary>
     private void OnWashRowClicked()
     {
-        TipsMgr.Instance.ShowSystemTips("洗练：暂未开放");
+        _washExpanded = !_washExpanded;
+        RenderWashRows();
+    }
+
+    /// <summary>为全部生效词条保留整行空间，空装备显示一行说明。</summary>
+    private void RenderWashRows()
+    {
+        _washRowValue.gameObject.SetActive(_washExpanded);
+        int count = 1; // 空方案保留一行，非空按换行符计数。
+        for (int index = 0; index < _washRowValue.text.Length; index++)
+            if (_washRowValue.text[index] == '\n') count++;
+        _washLayout.preferredHeight = 36;
+        if (_washExpanded) _washLayout.preferredHeight += count * 28 + 4;
+        if (_washExpanded) SetButtonLabel(_washRowButton, "收起");
+        else SetButtonLabel(_washRowButton, "展开");
+        LayoutRebuilder.MarkLayoutForRebuild((RectTransform)_washLayout.transform.parent);
     }
 
     /// <summary>外观行末的查看入口只提示暂未开放，不请求外观数据、不发协议。</summary>

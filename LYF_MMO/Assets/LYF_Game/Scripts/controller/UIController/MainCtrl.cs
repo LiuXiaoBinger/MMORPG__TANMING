@@ -561,6 +561,11 @@ public class MainCtrl : CtrlBase
             _knapsackCtrl.ApplyGoldWorkshop(result);
             return;
         }
+        if (result.Operation == EquipOperation.RollWash || result.Operation == EquipOperation.ApplyWash)
+        {
+            _knapsackCtrl.ApplyWash(result);
+            return;
+        }
         if (result.Operation == EquipOperation.GemMarket || result.Operation == EquipOperation.ComposeGem || result.Operation == EquipOperation.BuyGem)
         {
             _knapsackCtrl.ApplyGemTrade(result);

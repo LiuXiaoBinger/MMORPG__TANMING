@@ -127,6 +127,7 @@
     <Compile Include="RecoveryPotion.cs" />
     <Compile Include="Proto\MartialManual.cs" />
     <Compile Include="EquipmentGrowth.cs" />
+    <Compile Include="EquipmentWash.cs" />
     <Compile Include="GoldWorkshopRecipe.cs" />
     <Compile Include="Proto\RequestEntity.cs" />
     <Compile Include="Proto\SceneLine.cs" />

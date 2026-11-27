@@ -211,6 +211,7 @@
         <Compile Include="Service\item\BagTransition.cs" />
         <Compile Include="Service\item\GoldWorkshopTrade.cs" />
     <Compile Include="Service\item\GemWorkshopTrade.cs" />
+    <Compile Include="Service\item\EquipmentWashTrade.cs" />
         <Compile Include="manger\BackstageActivityManager.cs" />
         <Compile Include="manger\DecoupleManager.cs" />
         <Compile Include="manger\GvgManager.cs" />

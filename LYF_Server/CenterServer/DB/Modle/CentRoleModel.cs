@@ -559,6 +559,13 @@ public class CentRoleModel
                     GeneId0 = gene.GeneID0,
                     GeneId1 = gene.GeneID1,
                     GeneId2 = gene.GeneID2,
+                    GeneId3 = gene.GeneID3,
+                    GeneValue3 = gene.GeneValue3,
+                    GeneId4 = gene.GeneID4,
+                    GeneValue4 = gene.GeneValue4,
+                    WashRevision = gene.WashRevision,
+                    WashStone = gene.WashStone,
+                    WashCandidate = gene.WashCandidate ?? string.Empty,
                     GeneValue0 = gene.GeneValue0,
                     GeneValue1 = gene.GeneValue1,
                     GeneValue2 = gene.GeneValue2
