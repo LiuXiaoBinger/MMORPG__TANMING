@@ -49,7 +49,7 @@ public sealed class CRoleWriteTask
     /// <returns>在角色可持久化背包类型范围内返回 true，包括虚拟物品背包。</returns>
     private static bool IsValidBagType(int value)
     {
-        return value >= (int)KnapsackType.RolePackPlain && value <= (int)KnapsackType.RoleVirtualItemPack;
+        return value >= (int)KnapsackType.RolePackPlain && value <= (int)KnapsackType.RolePackGem;
     }
 
     #region 数据读写

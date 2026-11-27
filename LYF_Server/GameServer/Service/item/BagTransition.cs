@@ -493,7 +493,7 @@ public class BagExpansionTransition : BagTransition
             return contextResult;
         }
 
-        if (!IsExpandableType(knapsackType) || gridCount <= 0)
+        if (!InventoryKnapsacks.Types.Contains(knapsackType) || gridCount <= 0)
         {
             return BagTransitionResult.InvalidArgument;
         }
@@ -517,18 +517,6 @@ public class BagExpansionTransition : BagTransition
         return BagTransitionResult.KnapsackUnavailable;
     }
 
-    /// <summary>判断是否为持久化的四类可扩容背包。</summary>
-    private static bool IsExpandableType(KnapsackType type)
-    {
-        // 是否为角色普通背包。
-        bool isPlainPack = type == KnapsackType.RolePackPlain;
-        // 是否为角色装备背包。
-        bool isEquipPack = type == KnapsackType.RolePackEquip;
-        // 是否为角色消耗品或材料背包。
-        bool isConsumeOrMaterialPack = type == KnapsackType.RolePackConsume ||
-            type == KnapsackType.RolePackMaterial;
-        return isPlainPack || isEquipPack || isConsumeOrMaterialPack;
-    }
 }
 
 /// <summary>按装备实例 UID 执行穿脱、同槽换装和特技切换，再重算角色装备效果。</summary>

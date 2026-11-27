@@ -33,9 +33,9 @@ public sealed class GiftMgr
         var available = new List<ItemBase>();
         if (player != null && player.TryGetComponent(out RoItemComponent bag))
         {
-            // 当前赠礼表中的修习丹和碎片属于普通背包。
-            RoItemContainer container = bag.GetContainer(KnapsackType.RolePackPlain);
-            if (container != null) available.AddRange(container.GetItemMap().Values);
+            // 修习丹在普通包，秘籍碎片在秘籍包；仍按赠礼表筛选可寄物品。
+            available.AddRange(bag.GetContainer(KnapsackType.RolePackPlain).GetItemMap().Values);
+            available.AddRange(bag.GetContainer(KnapsackType.RolePackManual).GetItemMap().Values);
         }
         available.RemoveAll(item => !GiftTable.Contains(item.GetItemID()) || item.GetItemSign() != 0 || item.GetExpireTime() != DateTime.MinValue);
         available.Sort((left, right) => left.GetBagIndex().CompareTo(right.GetBagIndex()));

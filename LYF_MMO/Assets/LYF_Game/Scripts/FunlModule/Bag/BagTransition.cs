@@ -461,7 +461,7 @@ public class BagExpansionTransition : BagTransition
             return contextResult;
         }
 
-        if (!IsExpandableType(knapsackType) || gridCount <= 0)
+        if (!InventoryKnapsacks.Types.Contains(knapsackType) || gridCount <= 0)
         {
             return BagTransitionResult.InvalidArgument;
         }
@@ -485,15 +485,6 @@ public class BagExpansionTransition : BagTransition
         return BagTransitionResult.KnapsackUnavailable;
     }
 
-    /// <summary>判断是否为四类可扩容背包。</summary>
-    private static bool IsExpandableType(KnapsackType type)
-    {
-        // 普通格与装备格属于可扩容背包类型。
-        bool isBaseType = type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip;
-        // 消耗品格与材料格同样属于可扩容背包类型。
-        bool isResourceType = type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
-        return isBaseType || isResourceType;
-    }
 }
 
 /// <summary>按实例 UID 请求服务器穿脱装备，客户端物品位置只接受权威增量更新。</summary>

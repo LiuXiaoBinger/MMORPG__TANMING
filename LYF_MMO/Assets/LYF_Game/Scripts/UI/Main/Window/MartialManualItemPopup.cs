@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 /// <summary>背包物品卡。显示物品表中的介绍、来源和按当前堆叠筛选的操作。</summary>
 public sealed class MartialManualItemPopup : MonoBehaviour
@@ -33,8 +34,6 @@ public sealed class MartialManualItemPopup : MonoBehaviour
     [SerializeField] private Button sourceButton;
     /// <summary>切换来源前后的页脚按钮文案。</summary>
     [SerializeField] private TMP_Text sourceLabel;
-    /// <summary>收起卡片并保留背包格的关闭按钮。</summary>
-    [SerializeField] private Button close;
     /// <summary>当前展示的物品，快速换格时也用于甄别图标回调。</summary>
     private cfg.ItemInfo selected;
     /// <summary>展示本堆叠的绑定或交易状态。</summary>
@@ -47,8 +46,20 @@ public sealed class MartialManualItemPopup : MonoBehaviour
     /// <summary>注册固定按钮，换格时只更新具体物品的操作。</summary>
     private void Awake()
     {
-        close.onClick.AddListener(Hide);
         sourceButton.onClick.AddListener(() => { showingSource = !showingSource; RefreshBody(); });
+    }
+
+    /// <summary>按下鼠标或触屏时收起卡面外的详情，保留同一次点击给背包格和页签。</summary>
+    private void Update()
+    {
+        // 当前点击设备给出这次按下的屏幕坐标，触屏使用主触点。
+        Pointer pointer = Pointer.current;
+        if (pointer == null || !pointer.press.wasPressedThisFrame) return;
+        // 叠加画布的投影相机为空，相机画布使用自身的事件相机。
+        Canvas canvas = card.GetComponentInParent<Canvas>().rootCanvas;
+        Camera camera = canvas.worldCamera;
+        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay) camera = null;
+        if (!RectTransformUtility.RectangleContainsScreenPoint(card, pointer.position.ReadValue(), camera)) Hide();
     }
 
     /// <summary>读取所点物品的表格字段并将可执行的按钮绑定到右侧。</summary>
@@ -94,17 +105,16 @@ public sealed class MartialManualItemPopup : MonoBehaviour
             labels[index].text = action.Key;
             buttons[index].onClick.AddListener(() => { Hide(); action.Value(); });
         }
-        // 没有可执行操作时收起右栏，关闭按钮随卡片右边缘移动。
+        // 没有可执行操作时收起右栏，只占用正文宽度。
         bool hasActions = actions.Count > 0;
         railRule.SetActive(hasActions);
         // 预制体首个按钮的位置定义展开宽度，品质标题栏定义仅阅读时的宽度。
         RectTransform firstButton = (RectTransform)buttons[0].transform;
         float width = header.rectTransform.rect.width + 4f; // 只读卡的宽度含两侧描边。
-        float titleWidth = width - title.rectTransform.anchoredPosition.x - 46f; // 预留右上角关闭按钮。
+        float titleWidth = header.rectTransform.rect.width - title.rectTransform.anchoredPosition.x - 8f; // 标题与品质栏右侧留八个画布单位。
         if (hasActions)
         {
             width = firstButton.anchoredPosition.x + firstButton.rect.width + 10f;
-            titleWidth = header.rectTransform.rect.width - title.rectTransform.anchoredPosition.x - 8f;
         }
         card.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
         title.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, titleWidth);

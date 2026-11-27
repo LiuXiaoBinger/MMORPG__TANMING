@@ -134,12 +134,12 @@ public class LoginModle
     }
 
     /// <summary>
-    /// 删除该角色旧容量记录，再为普通、装备、消耗品和材料背包分别创建 81 格容量。
+    /// 删除该角色旧容量记录，再为普通、装备、消耗品、材料、秘籍和宝石背包分别创建 81 格容量。
     /// </summary>
     /// <param name="roleid">正在初始化的持久角色编号。</param>
     private void CreateRoleKnapsackInfo(int roleid)
     {
-        // 建角时为四类可持久化背包各创建一条 81 格记录；穿戴栏不参与扩容。
+        // 建角时为六类可持久化背包各创建一条 81 格记录；穿戴栏不参与扩容。
         List<RoleKnapsackTable> oldRows =
             _db.Queryable<RoleKnapsackTable>().Where(v => v.RoleId == roleid).ToList();
         if (oldRows != null && oldRows.Count > 0)
@@ -149,14 +149,9 @@ public class LoginModle
 
         DateTime now = DateTime.Now;
         List<RoleKnapsackTable> rows = new List<RoleKnapsackTable>();
-        KnapsackType[] persistedTypes = new[]
-        {
-            KnapsackType.RolePackPlain,
-            KnapsackType.RolePackEquip,
-            KnapsackType.RolePackConsume,
-            KnapsackType.RolePackMaterial
-        };
-        for (int index = 0; index < persistedTypes.Length; index++)
+        // 新角色按背包页签顺序建立六种独立容量。
+        IReadOnlyList<KnapsackType> persistedTypes = InventoryKnapsacks.Types;
+        for (int index = 0; index < persistedTypes.Count; index++)
         {
             KnapsackType type = persistedTypes[index];
             rows.Add(new RoleKnapsackTable

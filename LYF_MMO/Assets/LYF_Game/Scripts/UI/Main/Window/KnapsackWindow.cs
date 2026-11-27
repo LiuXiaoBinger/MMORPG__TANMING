@@ -58,7 +58,7 @@ public class KnapsackWindow : WindowBase
     // ============================================================
     // 二、背包分类 Tab 按钮
     // ============================================================
-    // 五个分类：普通背包、装备、消耗品、材料、当前装备。
+    // 主背包六个页签，兼容独立的穿戴栏入口。
     [Header("背包分类按钮")]
     /// <summary>普通背包分类按钮，只负责发出分类切换。</summary>
     [SerializeField] private Button _btnAll;
@@ -73,6 +73,11 @@ public class KnapsackWindow : WindowBase
 
     /// <summary>材料分类按钮，只负责发出分类切换。</summary>
     [SerializeField] private Button _btnMaterial;
+
+    /// <summary>打开整本秘籍及其碎片的独立背包。</summary>
+    [SerializeField] private Button _btnManual;
+    /// <summary>打开属性和元素宝石的独立背包。</summary>
+    [SerializeField] private Button _btnGem;
 
     /// <summary>当前穿戴分类按钮，只负责发出分类切换。</summary>
     [SerializeField] private Button _btnCurrtEquip;
@@ -103,6 +108,15 @@ public class KnapsackWindow : WindowBase
     /// <summary>材料页签的选中外观节点。</summary>
     [SerializeField] private GameObject _materialOn;
 
+    /// <summary>秘籍页签未选中的白色图标和文字。</summary>
+    [SerializeField] private GameObject _manualOff;
+    /// <summary>秘籍页签选中时的蓝色图标和底板。</summary>
+    [SerializeField] private GameObject _manualOn;
+    /// <summary>宝石页签未选中的结晶图标和文字。</summary>
+    [SerializeField] private GameObject _gemOff;
+    /// <summary>宝石页签选中时的蓝色结晶和底板。</summary>
+    [SerializeField] private GameObject _gemOn;
+
     /// <summary>当前穿戴页签的未选中外观节点。</summary>
     [SerializeField] private GameObject _currtEquipOff;
 
@@ -132,7 +146,7 @@ public class KnapsackWindow : WindowBase
     // 当前页已经开启的格子数量，仅用于计算虚拟列表高度。
     private int _openedSlotCount;
 
-    // 当前正在展示的独立背包分类（普通背包/装备/消耗品/材料/当前装备）。
+    // 当前正在展示的独立背包分类（普通背包/装备/消耗品/材料/秘籍/宝石/当前装备）。
     private KnapsackType _currtType = KnapsackType.RolePackPlain;
 
     // 逻辑格子总数：至少 81 格，并覆盖已开容量和当前物品最大格号，用它计算滚动高度。
@@ -723,24 +737,28 @@ public class KnapsackWindow : WindowBase
     // 七、分类 Tab 按钮事件绑定
     // ============================================================
 
-    /// <summary>为五个分类按钮注册对应选择入口。</summary>
+    /// <summary>为各分类按钮注册对应选择入口。</summary>
     private void BindTabButtons()
     {
         if (_btnAll != null) _btnAll.onClick.AddListener(SelectAll);
         if (_btnEquip != null) _btnEquip.onClick.AddListener(SelectEquip);
         if (_btnConsume != null) _btnConsume.onClick.AddListener(SelectConsume);
         if (_btnMaterial != null) _btnMaterial.onClick.AddListener(SelectMaterial);
+        if (_btnManual != null) _btnManual.onClick.AddListener(SelectManual);
+        if (_btnGem != null) _btnGem.onClick.AddListener(SelectGem);
         if (_btnCurrtEquip != null) _btnCurrtEquip.onClick.AddListener(SelectCurrtEquip);
         BindMoneyButtons();
     }
 
-    /// <summary>仅移除本窗口添加的五个分类监听。</summary>
+    /// <summary>仅移除本窗口添加的分类监听。</summary>
     private void UnbindTabButtons()
     {
         if (_btnAll != null) _btnAll.onClick.RemoveListener(SelectAll);
         if (_btnEquip != null) _btnEquip.onClick.RemoveListener(SelectEquip);
         if (_btnConsume != null) _btnConsume.onClick.RemoveListener(SelectConsume);
         if (_btnMaterial != null) _btnMaterial.onClick.RemoveListener(SelectMaterial);
+        if (_btnManual != null) _btnManual.onClick.RemoveListener(SelectManual);
+        if (_btnGem != null) _btnGem.onClick.RemoveListener(SelectGem);
         if (_btnCurrtEquip != null) _btnCurrtEquip.onClick.RemoveListener(SelectCurrtEquip);
         UnbindMoneyButtons();
     }
@@ -821,7 +839,7 @@ public class KnapsackWindow : WindowBase
     // 八、分类切换
     // ============================================================
 
-    // 五个按钮的快捷方法，都调用 SelectType 传入对应的独立容器类型。
+    // 各分类按钮的快捷方法，都调用 SelectType 传入对应的独立容器类型。
     // SelectAll 保留旧方法名以兼容预制体事件绑定，实际映射为普通背包页。
     /// <summary>选择普通背包容器，旧 All 名称不表示合并所有分类。</summary>
     private void SelectAll() => SelectType(KnapsackType.RolePackPlain);
@@ -834,6 +852,12 @@ public class KnapsackWindow : WindowBase
 
     /// <summary>选择材料背包分类。</summary>
     private void SelectMaterial() => SelectType(KnapsackType.RolePackMaterial);
+
+    /// <summary>选择包含整本秘籍和碎片的背包。</summary>
+    private void SelectManual() => SelectType(KnapsackType.RolePackManual);
+
+    /// <summary>选择可供镶嵌和合成的宝石背包。</summary>
+    private void SelectGem() => SelectType(KnapsackType.RolePackGem);
 
     /// <summary>选择当前穿戴装备容器。</summary>
     private void SelectCurrtEquip() => SelectType(KnapsackType.RoleCurrtEquipPack);
@@ -869,6 +893,8 @@ public class KnapsackWindow : WindowBase
         SetTabVisual(_equipOff, _equipOn, _currtType == KnapsackType.RolePackEquip);
         SetTabVisual(_consumeOff, _consumeOn, _currtType == KnapsackType.RolePackConsume);
         SetTabVisual(_materialOff, _materialOn, _currtType == KnapsackType.RolePackMaterial);
+        SetTabVisual(_manualOff, _manualOn, _currtType == KnapsackType.RolePackManual);
+        SetTabVisual(_gemOff, _gemOn, _currtType == KnapsackType.RolePackGem);
         SetTabVisual(_currtEquipOff, _currtEquipOn, _currtType == KnapsackType.RoleCurrtEquipPack);
     }
 

@@ -355,6 +355,8 @@ message RoleKanpsackInfo
 	int64 save_version = 7;//CenterServer 已持久化的物品版本
   repeated RoleItemInfo role_virtual_item_pack = 8;//角色虚拟物品，不占用普通背包格子
   repeated RoleCountInfo role_count_info_list = 9;//角色商城、副本次数
+  repeated RoleItemInfo role_pack_manual = 10;//秘籍及同名碎片的独立背包
+  repeated RoleItemInfo role_pack_gem = 11;//可镶嵌宝石的独立背包
 }
 
 // 角色商城和副本次数的通用登录与持久化快照。

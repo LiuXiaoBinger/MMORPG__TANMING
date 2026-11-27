@@ -11,13 +11,13 @@ public class RoItemComponent : RoleComponentBase
 {
 
     #region 字段
-    // 四类可扩容背包的最小初始容量。
+    // 六类可扩容背包的最小初始容量。
     private const int MinOpenedGridCount = 81;
 
     // 数据库存储为 byte 时允许的最大容量。
     private const int MaxOpenedGridCount = byte.MaxValue;
 
-    // 仅保存四类可扩容背包的权威容量。
+    // 仅保存六类可扩容背包的权威容量。
     private readonly Dictionary<KnapsackType, int> _openedGridCounts =
         new Dictionary<KnapsackType, int>();
 
@@ -45,7 +45,7 @@ public class RoItemComponent : RoleComponentBase
     }
 
     /// <summary>
-    /// 初始化组件，创建六类背包容器与对应的持久化状态对象，并为四类可扩容背包设置默认 81 格容量。
+    /// 初始化组件，创建八类背包容器与对应的持久化状态对象，并为六类可扩容背包设置默认 81 格容量。
     /// </summary>
     public override void Initialize()
     {
@@ -54,7 +54,7 @@ public class RoItemComponent : RoleComponentBase
         _need_update_item = new Dictionary<long, ChangeReason>();
         _delay_del_item_map = new Dictionary<long, ChangeReason>();
 
-        // 六类配置背包在角色组件初始化时一次性创建，避免首次访问时出现空容器。
+        // 八类配置背包在角色组件初始化时一次性创建，避免首次访问时出现空容器。
         KnapsackType[] containerTypes =
         {
             KnapsackType.RolePackPlain,
@@ -62,7 +62,9 @@ public class RoItemComponent : RoleComponentBase
             KnapsackType.RolePackConsume,
             KnapsackType.RolePackMaterial,
             KnapsackType.RoleCurrtEquipPack,
-            KnapsackType.RoleVirtualItemPack
+            KnapsackType.RoleVirtualItemPack,
+            KnapsackType.RolePackManual,
+            KnapsackType.RolePackGem
         };
 
         for (int index = 0; index < containerTypes.Length; index++)
@@ -72,9 +74,9 @@ public class RoItemComponent : RoleComponentBase
             _itemDataLists[type] = new ItemDataListDB(_itemContainers[type]);
         }
 
-        // 四类可扩容背包统一从最小 81 格初始化，穿戴栏不参与扩容。
-        KnapsackType[] expandableTypes = GetExpandableTypes();
-        for (int index = 0; index < expandableTypes.Length; index++)
+        // 六类可扩容背包统一从最小 81 格初始化，穿戴栏不参与扩容。
+        IReadOnlyList<KnapsackType> expandableTypes = InventoryKnapsacks.Types;
+        for (int index = 0; index < expandableTypes.Count; index++)
         {
             KnapsackType type = expandableTypes[index];
             ApplyOpenedGridCount(type, MinOpenedGridCount);
@@ -505,7 +507,7 @@ public class RoItemComponent : RoleComponentBase
     }
 
     /// <summary>获取指定可扩容背包的已开启格子数。</summary>
-    /// <param name="type">背包类型，应为四类可扩容背包之一。</param>
+    /// <param name="type">背包类型，应为六类可扩容背包之一。</param>
     /// <returns>已开启格子数；未记录时回退到容器当前容量。</returns>
     public int GetOpenedGridCount(KnapsackType type)
     {
@@ -521,31 +523,6 @@ public class RoItemComponent : RoleComponentBase
             return 0;
         }
         return container.GetContainerSize();
-    }
-
-    /// <summary>判断是否为四类可扩容背包。</summary>
-    /// <param name="type">待判断的背包类型。</param>
-    /// <returns>可扩容返回 true，穿戴栏等返回 false。</returns>
-    private static bool IsExpandableType(KnapsackType type)
-    {
-        // 是否为普通包裹或装备包裹类型。
-        bool isPlainOrEquip = type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip;
-        // 是否为消耗品包裹或材料包裹类型。
-        bool isConsumeOrMaterial = type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
-        return isPlainOrEquip || isConsumeOrMaterial;
-    }
-
-    /// <summary>获取四类可扩容背包的类型数组，用于批量初始化与遍历。</summary>
-    /// <returns>包含四类可扩容背包类型的新数组。</returns>
-    private static KnapsackType[] GetExpandableTypes()
-    {
-        return new[]
-        {
-            KnapsackType.RolePackPlain,
-            KnapsackType.RolePackEquip,
-            KnapsackType.RolePackConsume,
-            KnapsackType.RolePackMaterial
-        };
     }
 
     /// <summary>记录离场角色的实际格数。独立扩容协议不会提高统一存档版本。</summary>
@@ -882,7 +859,7 @@ public class RoItemComponent : RoleComponentBase
     /// <returns>加载成功返回 true。</returns>
     public bool LoadOpenedGridCount(KnapsackType type, int count)
     {
-        if (!IsExpandableType(type) || count <= 0 || count > MaxOpenedGridCount)
+        if (!InventoryKnapsacks.Types.Contains(type) || count <= 0 || count > MaxOpenedGridCount)
         {
             return false;
         }
@@ -930,6 +907,8 @@ public class RoItemComponent : RoleComponentBase
         LoadItems(info.RolePackEquip, loadedItemUids);
         LoadItems(info.RolePackConsume, loadedItemUids);
         LoadItems(info.RolePackMaterial, loadedItemUids);
+        LoadItems(info.RolePackManual, loadedItemUids);
+        LoadItems(info.RolePackGem, loadedItemUids);
         LoadItems(info.RoleCurrtEquipPack, loadedItemUids);
         LoadItems(info.RoleVirtualItemPack, loadedItemUids);
 
@@ -1063,7 +1042,7 @@ public class RoItemComponent : RoleComponentBase
     /// <returns>设置成功返回 true，类型不合法或越界返回 false。</returns>
     public bool SetOpenedGridCount(KnapsackType type, int count)
     {
-        if (!IsExpandableType(type) || count < MinOpenedGridCount || count > MaxOpenedGridCount)
+        if (!InventoryKnapsacks.Types.Contains(type) || count < MinOpenedGridCount || count > MaxOpenedGridCount)
         {
             return false;
         }
@@ -1078,7 +1057,7 @@ public class RoItemComponent : RoleComponentBase
     {
         RoItemContainer container = GetContainer(type);
         // 类型不可扩容或容器尚未创建时拒绝写入。
-        if (!IsExpandableType(type) || container == null)
+        if (!InventoryKnapsacks.Types.Contains(type) || container == null)
         {
             return false;
         }

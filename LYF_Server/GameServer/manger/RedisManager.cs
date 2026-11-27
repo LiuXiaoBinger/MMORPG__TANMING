@@ -80,6 +80,9 @@ public sealed class RedisManager
     /// <param name="inventory">待采用的缓存背包和容量快照。</param>
     private static bool MatchesGridCounts(SceneRoleTransfer transfer, RoleKanpsackInfo inventory)
     {
+        // 拆包前的缓存没有这两份容量，交给中心服迁移旧物品并重新生成完整快照。
+        if (!inventory.KanpsackTypeCountLst.Any(row => row.Type == (int)KnapsackType.RolePackManual)) return false;
+        if (!inventory.KanpsackTypeCountLst.Any(row => row.Type == (int)KnapsackType.RolePackGem)) return false;
         for (int index = 0; index < transfer.OpenedGrids.Count; index++)
         {
             // 以类型编号关联容量，中心服按数据库行顺序返回。

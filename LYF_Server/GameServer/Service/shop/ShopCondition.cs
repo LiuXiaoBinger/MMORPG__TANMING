@@ -84,12 +84,13 @@ public class ShopCondition
             code = ItemTransition.TryTakeItem(role, total_cost);
             if (code != CmdCode.Succeed) return code;
 
-            // 背包容量
-            // 按配置背包分类；下面的调用未传分组键，仍使用容量检查的默认背包参数。
-            Dictionary<KnapsackType, List < ItemDesc >> thingsByKnapsackType = ItemTransition.ClassifyItemsByBagType(things_to_buy);
-            foreach (var item in thingsByKnapsackType)
+            // 按实际入包目标核对空格，普通包已满也能向有空位的宝石包发货。
+            Dictionary<KnapsackType, List<ItemDesc>> thingsByKnapsackType = ItemTransition.ClassifyItemsByBagType(things_to_buy);
+            for (int index = 0; index < InventoryKnapsacks.Types.Count; index++)
             {
-                ItemZhuDongGetResult result =  ItemTransition.TryZhuDongGetItem(role, item.Value);
+                KnapsackType type = InventoryKnapsacks.Types[index]; // 当前接受商品的实体背包。
+                if (!thingsByKnapsackType.TryGetValue(type, out List<ItemDesc> goods)) continue; // 该包本次需要容纳的商品。
+                ItemZhuDongGetResult result = ItemTransition.TryZhuDongGetItem(role, goods, type); // 只检查该包的空间。
                 if (result.ErrorCode != CmdCode.Succeed)
                 {
                     return result.ErrorCode;

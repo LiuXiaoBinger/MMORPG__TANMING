@@ -59,7 +59,7 @@ public class CentRoleModel
             return ret;
         }
         // 已开格子数超出 byte 范围或背包类型不在持久化范围内时按参数错误返回。
-        if (req.OpenedGridCount > byte.MaxValue || !IsPersistedKnapsackType((KnapsackType)req.KnapsackType))
+        if (req.OpenedGridCount > byte.MaxValue || !InventoryKnapsacks.Types.Contains((KnapsackType)req.KnapsackType))
         {
             ret.CmdCode = CmdCode.ReqParamError;
             return ret;
@@ -119,6 +119,12 @@ public class CentRoleModel
                 break;
             case KnapsackType.RolePackMaterial:
                 ret.RolePackMaterial.Add(itemInfo);
+                break;
+            case KnapsackType.RolePackManual:
+                ret.RolePackManual.Add(itemInfo);
+                break;
+            case KnapsackType.RolePackGem:
+                ret.RolePackGem.Add(itemInfo);
                 break;
             case KnapsackType.RoleCurrtEquipPack:
                 ret.RoleCurrtEquipPack.Add(itemInfo);
@@ -203,29 +209,6 @@ public class CentRoleModel
             return 0L;
         }
         return value.ToUniversalTime().Ticks;
-    }
-
-    /// <summary>判断该背包是否保存可扩容容量；穿戴栏和虚拟物品栏不在其中。</summary>
-    /// <param name="type">待检查的背包分类。</param>
-    private static bool IsPersistedKnapsackType(KnapsackType type)
-    {
-        // 是否为普通包裹或装备包裹类型。
-        bool isPlainOrEquip = type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip;
-        // 是否为消耗品包裹或材料包裹类型。
-        bool isConsumeOrMaterial = type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
-        return isPlainOrEquip || isConsumeOrMaterial;
-    }
-
-    /// <summary>返回需要分别保存容量的普通、装备、消耗品和材料背包。</summary>
-    private static KnapsackType[] GetPersistedKnapsackTypes()
-    {
-        return new[]
-        {
-            KnapsackType.RolePackPlain,
-            KnapsackType.RolePackEquip,
-            KnapsackType.RolePackConsume,
-            KnapsackType.RolePackMaterial
-        };
     }
 
     /// <summary>旧普通背包记录是分类容量补齐时的最低值。</summary>
@@ -469,12 +452,16 @@ public class CentRoleModel
             .Where(v => v.RoleID == req.RoleId)
             .OrderBy(v => v.BagType)
             .OrderBy(v => v.BagIndex)
+            .OrderBy(v => v.ItemUID)
             .ToList();
         if (itemList == null)
         {
             ret.CmdCode = CmdCode.ServerError;
             return ret;
         }
+
+        MigrateSpecialBag(itemList, knapsackTables, legacyFallback, KnapsackType.RolePackManual);
+        MigrateSpecialBag(itemList, knapsackTables, legacyFallback, KnapsackType.RolePackGem);
 
         // 三张表都用 ItemUID 标识同一个物品实例，不能用物品配置 ID 关联。
         Dictionary<long, EquipTable> equipByItemUid = _db.Queryable<EquipTable>()
@@ -581,8 +568,8 @@ public class CentRoleModel
             AddItemToPack(ret.RoleKanpsackInfo, packType, itemInfo);
         }
 
-        KnapsackType[] persistedTypes = GetPersistedKnapsackTypes();
-        for (int typeIndex = 0; typeIndex < persistedTypes.Length; typeIndex++)
+        IReadOnlyList<KnapsackType> persistedTypes = InventoryKnapsacks.Types;
+        for (int typeIndex = 0; typeIndex < persistedTypes.Count; typeIndex++)
         {
             KnapsackType packType = persistedTypes[typeIndex];
             RoleKnapsackTable row = null;
@@ -628,13 +615,62 @@ public class CentRoleModel
         return ret;
     }
 
-    /// <summary>查询旧角色时补齐四类可扩容背包，穿戴栏不创建容量记录。</summary>
+    /// <summary>首次读取旧存档时将该类堆叠移到独立背包，已在目标格中的物品保留原位。</summary>
+    /// <param name="items">当前角色全部物品，已按原背包、格位、实例编号排序。</param>
+    /// <param name="rows">已补齐的角色背包容量记录。</param>
+    /// <param name="legacyCapacity">角色沿用旧普通背包的最低容量，单位为格。</param>
+    /// <param name="target">本次迁移的秘籍或宝石背包。</param>
+    private void MigrateSpecialBag(List<ItemTable> items, List<RoleKnapsackTable> rows, int legacyCapacity, KnapsackType target)
+    {
+        // 保留玩家已经整理过的格子，旧物品顺序填入其余空位。
+        HashSet<int> occupied = new HashSet<int>();
+        for (int index = 0; index < items.Count; index++)
+            if (items[index].BagType == (int)target) occupied.Add(items[index].BagIndex);
+        // 只持久化真正移动的堆叠，不拆合物品，不改变绑定、数量或实例编号。
+        List<ItemTable> moved = new List<ItemTable>();
+        int slot = 0; // 下一个可分配的零起始格位。
+        for (int index = 0; index < items.Count; index++)
+        {
+            ItemTable item = items[index]; // 角色当前的一堆物品。
+            if (item.BagType == (int)target || !InventoryKnapsacks.Types.Contains((KnapsackType)item.BagType)) continue;
+            ItemConfigBase config = LubanMgr.Instance.GetItemConfigById(item.ItemTypeID); // 由物品表决定归属。
+            if (config == null || config.PackType != target) continue;
+            while (occupied.Contains(slot)) slot++;
+            // 容量字段最多保存 255 格。历史超额堆叠留在原位，下次腾出位置时再归入。
+            if (slot >= byte.MaxValue) break;
+            item.BagType = (int)target;
+            item.BagIndex = slot++;
+            moved.Add(item);
+        }
+        if (moved.Count == 0) return;
+        // 容量与坐标一起落库，下一次登录直接沿用现有格位。
+        RoleKnapsackTable capacity = rows.First(row => row.roleKnapsack == (byte)target);
+        _db.Ado.BeginTran();
+        try
+        {
+            _db.Updateable(moved).UpdateColumns(row => new { row.BagType, row.BagIndex }).ExecuteCommand();
+            if (slot > GetMigratedGridCount(capacity, legacyCapacity))
+            {
+                capacity.roleKnapsackcount = (byte)slot;
+                _db.Updateable<RoleKnapsackTable>().SetColumns(row => row.roleKnapsackcount == capacity.roleKnapsackcount)
+                    .Where(row => row.RoleId == capacity.RoleId && row.roleKnapsack == capacity.roleKnapsack).ExecuteCommand();
+            }
+            _db.Ado.CommitTran();
+        }
+        catch
+        {
+            _db.Ado.RollbackTran();
+            throw;
+        }
+    }
+
+    /// <summary>查询旧角色时补齐六类可扩容背包，穿戴栏不创建容量记录。</summary>
     private void EnsureMissingKnapsackRows(int roleId, List<RoleKnapsackTable> rows, int legacyFallback)
     {
         List<RoleKnapsackTable> missingRows = new List<RoleKnapsackTable>();
         System.DateTime now = System.DateTime.Now;
-        KnapsackType[] persistedTypes = GetPersistedKnapsackTypes();
-        for (int typeIndex = 0; typeIndex < persistedTypes.Length; typeIndex++)
+        IReadOnlyList<KnapsackType> persistedTypes = InventoryKnapsacks.Types;
+        for (int typeIndex = 0; typeIndex < persistedTypes.Count; typeIndex++)
         {
             KnapsackType type = persistedTypes[typeIndex];
             if (rows != null && rows.Any(v => v.roleKnapsack == (byte)type))

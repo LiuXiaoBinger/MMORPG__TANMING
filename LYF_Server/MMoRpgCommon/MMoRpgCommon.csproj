@@ -137,6 +137,7 @@
         <Compile Include="EntityData\Gene\SpecialGene\TimeBuff\TimeBuffGeneBase.cs" />
         <Compile Include="EntityData\Gene\SpecialGene\TimeBuff\SkillAttributeGene.cs" />
     <Compile Include="enum\BackPackEnum.cs" />
+    <Compile Include="enum\InventoryKnapsacks.cs" />
         <Compile Include="enum\EquipEnum.cs" />
         <Compile Include="enum\Item.cs" />
         <Compile Include="enum\ChangeReason.cs" />

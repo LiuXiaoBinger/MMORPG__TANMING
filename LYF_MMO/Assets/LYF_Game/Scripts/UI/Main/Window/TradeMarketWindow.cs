@@ -981,14 +981,15 @@ public sealed class TradeMarketWindow : WindowBase
     private void RefreshBag()
     {
         _bagFilterLabel.text = BagNames[_bagFilter];
-        // 只读取普通、装备、消耗和材料四个包，不陈列穿戴中物品及虚拟货币。
+        // 读取六个实体背包，不陈列穿戴中物品及虚拟货币。
         int count = 0;
-        // i 对应四个真实背包的 KnapsackType 序号。
-        for (int i = 0; i < 4; i++)
+        // 默认筛选展示六个背包，分类筛选按原有背包编号匹配。
+        for (int i = 0; i < InventoryKnapsacks.Types.Count; i++)
         {
-            if (_bagFilter != 0 && i != _bagFilter) continue;
+            KnapsackType type = InventoryKnapsacks.Types[i]; // 当前检查的实体背包。
+            if (_bagFilter != 0 && (int)type != _bagFilter) continue;
             // 当前角色的这一个包裹提供物品实例及格位。
-            RoItemContainer container = _inventory?.GetContainer((KnapsackType)i);
+            RoItemContainer container = _inventory?.GetContainer(type);
             if (container == null) continue;
             // 同一包按格序陈列，分开的堆叠分别保留。
             List<ItemBase> entries = new List<ItemBase>(container.GetItemMap().Values);

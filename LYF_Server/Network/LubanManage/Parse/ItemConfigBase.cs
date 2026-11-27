@@ -117,17 +117,12 @@ public abstract class ItemConfigBase
     }
 
     /// <summary>
-    /// 校验表中的背包类别，只允许物品可存放的四类普通背包和虚拟物品背包；非法值使用调用方指定的默认类别。
+    /// 校验表中的背包类别，只允许物品可存放的六类实体背包和虚拟物品背包；非法值使用调用方指定的默认类别。
     /// </summary>
     protected static KnapsackType NormalizePackType(int value, KnapsackType fallback, int itemId)
     {
-        // 是否为角色普通、装备、消耗品三类主背包。
-        bool isMainPackType = value == (int)KnapsackType.RolePackPlain ||
-            value == (int)KnapsackType.RolePackEquip || value == (int)KnapsackType.RolePackConsume;
-        // 是否为角色材料背包或虚拟物品背包。
-        bool isMaterialOrVirtualPack = value == (int)KnapsackType.RolePackMaterial ||
-            value == (int)KnapsackType.RoleVirtualItemPack;
-        if (isMainPackType || isMaterialOrVirtualPack)
+        // 物品可默认进入六个实体背包或虚拟物品栏，穿戴栏只由穿戴操作写入。
+        if (InventoryKnapsacks.Types.Contains((KnapsackType)value) || value == (int)KnapsackType.RoleVirtualItemPack)
         {
             return (KnapsackType)value;
         }
