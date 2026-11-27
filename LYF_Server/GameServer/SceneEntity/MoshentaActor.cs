@@ -25,6 +25,8 @@ internal sealed class MoshentaActor
     internal ulong UnitId { get { return Monster.UID; } }
     /// <summary>固定波次号，动态召唤为-1。</summary>
     internal int WaveId { get; private set; }
+    /// <summary>固定首领波次或该场战斗召唤的单位，团灭时与首领一同撤除。</summary>
+    internal bool ArenaMember { get; set; }
     /// <summary>原实体等级，技能公式从运行表读取。</summary>
     internal int Level { get; private set; }
     /// <summary>原IsDummy实体可执行机制，但不是玩家技能伤害目标。</summary>
@@ -117,6 +119,7 @@ internal sealed class MoshentaActor
         {
             if (removed) return long.MaxValue;
             if (dead) return corpseRemoveAt;
+            if (ArenaMember && !Owner.ArenaFighting) return long.MaxValue;
             long next = Math.Min(nextThink, Math.Min(ExpireTime, Skills.NextEventTime));
             if (navigation.Moving) next = Math.Min(next, navigation.End);
             return next;
@@ -156,6 +159,7 @@ internal sealed class MoshentaActor
     internal MoshentaActor(SceneWaveSpawner owner, ServerMonster monster, int entityId, ulong spawnId, int waveId, int aiIndex, XElement[] points, string type)
     {
         Owner = owner; Monster = monster; EntityId = entityId; SpawnId = spawnId; WaveId = waveId;
+        ArenaMember = owner.IsArenaWave(waveId);
         Now = owner.Now; BornPosition = Position; patrol = points; patrolType = type;
         difficultyRow = owner.Difficulty.Monster(entityId);
         BasicAttackIntervalMs = owner.Difficulty.BasicAttackIntervalMs;
@@ -245,6 +249,8 @@ internal sealed class MoshentaActor
     /// <summary>按实际失血打断可受击的普攻前摇，再把玩家伤害计入仇恨。</summary><param name="role">玩家施害者，可空。</param><param name="damage">本次实际扣除的生命点数。</param>
     internal void OnHit(OnlineRole role, int damage)
     {
+        // 首击按结算后的失血开战，致死的一击也走同一流程。
+        if (ArenaMember && IsBoss && damage > 0) Owner.StartBossFight();
         if (IsDead) { Die(); return; }
         if (damage <= 0) return;
         Skills.InterruptBasicAttackOnHit();
@@ -255,6 +261,7 @@ internal sealed class MoshentaActor
     /// <summary>原SetEntityHatred与120%换目标规则；联盟通知只传播第一点，避免循环联动。</summary><param name="role">实际角色。</param><param name="amount">新增仇恨，初始为1。</param><param name="fromAlliance">是否来自原波次联盟。</param>
     internal void AddHatred(OnlineRole role, long amount, bool fromAlliance)
     {
+        if (ArenaMember && !Owner.ArenaFighting) return;
         if (!Valid(role) || IsDead) return;
         bool first = threats.Count == 0;
         if (!threatValues.ContainsKey(role.GetID())) { threats.Add(role); threatValues[role.GetID()] = 0; }
@@ -307,6 +314,7 @@ internal sealed class MoshentaActor
         Now = now;
         if (removed) return;
         if (IsDead) { Die(); if (now >= corpseRemoveAt) Owner.RemoveActor(this); return; }
+        if (ArenaMember && !Owner.ArenaFighting) return;
         if (now >= ExpireTime) { Owner.KillActor(this); return; }
         bool casting = Skills.IsCasting;
         Skills.Update(now);

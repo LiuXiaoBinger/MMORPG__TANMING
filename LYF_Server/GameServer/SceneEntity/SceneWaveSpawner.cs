@@ -71,6 +71,7 @@ public sealed partial class SceneWaveSpawner
         DungeonSceneRegistration registration = DungeonSceneRegistration.Load(Dungeon.SceneID);
         if (!string.IsNullOrEmpty(registration.battleConfig)) Battle = new DungeonBattleConfig(registration.battleConfig);
         using (Stream source = typeof(SceneWaveSpawner).Assembly.GetManifestResourceStream("Dungeons." + Dungeon.SceneID + ".Waves.xml")) Config = XDocument.Load(source);
+        LoadBossArena();
         spawn_points_ = LoadSpawnPoints();
         InitializeAi();
         Flow = new MoshentaSceneFlow(this);

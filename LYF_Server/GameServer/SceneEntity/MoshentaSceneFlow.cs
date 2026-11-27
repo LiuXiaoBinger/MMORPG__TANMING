@@ -69,6 +69,8 @@ public sealed class MoshentaSceneFlow
         // 当前配置集合的零基下标，仅遍历本次快照长度。
         for (int index = 0; index < rows.Length; index++)
             if (!(bool)rows[index].Element("ignore_init")) objects.Add((int)rows[index].Element("id"));
+        // 首领与本场控制器在副本创建时就位，战斗时机单独由实际受伤决定。
+        if (owner.ArenaWaveEvent != null) events.Add(owner.ArenaWaveEvent);
         Advance();
     }
 
@@ -203,7 +205,26 @@ public sealed class MoshentaSceneFlow
     }
 
     /// <summary>真实死亡结算并完成清波后消费原monster_die场景AI事件。</summary>
-    internal void MonsterDied() { SceneAIEvent("monster_die"); }
+    internal void MonsterDied()
+    {
+        SceneAIEvent("monster_die");
+        owner.CheckBossVictory();
+    }
+
+    /// <summary>将权威墙面和单向入口写入本实例的完整可见状态。</summary>
+    /// <param name="closed">本次首领战开始后封住步行通道。</param><param name="entryOpen">外侧队员是否可从阵中入场。</param>
+    internal void SetArenaObjects(bool closed, bool entryOpen)
+    {
+        if (closed) { objects.Add(owner.ArenaWall); walls.Add(owner.ArenaWall); }
+        else { objects.Remove(owner.ArenaWall); walls.Remove(owner.ArenaWall); }
+        if (entryOpen) objects.Add(owner.ArenaPortal);
+        else objects.Remove(owner.ArenaPortal);
+        Dirty = true;
+    }
+
+    /// <summary>团灭重开时恢复首领波次的未完成状态，任务和前置波次保留。</summary>
+    /// <param name="wave">本次重新生成的首领、符文或控制器波次。</param>
+    internal void RearmArenaWave(int wave) { complete.Remove(wave); }
 
     /// <summary>保留原NPC脚本事件接入边界；本项目尚无NPC脚本执行器，不由客户端直接调用。</summary>
     /// <param name="name">RO对话或分支选择事件名。</param>
@@ -322,14 +343,20 @@ public sealed class MoshentaSceneFlow
                 case "SSTResultTypeWaveEvent": Event((string)row.Element("wave_event_info").Element("wave_event")); break;
                 case "SSTResultTypeSceneAIEvent": SceneAIEvent((string)row.Element("scene_ai_event").Element("ai_event")); break;
                 case "SSTResultTypeCreateObj": objects.Add(id); Dirty = true; break;
-                case "SSTResultTypeDestroyObj": objects.Remove(id); walls.Remove(id); Dirty = true; break;
-                case "SSTResultTypeAirWall": objects.Add(id); walls.Add(id); Dirty = true; break;
+                case "SSTResultTypeDestroyObj":
+                    // 首领墙由受伤、团灭和胜利结算控制，剧情组只操作其余场景物件。
+                    if (id == owner.ArenaWall) break;
+                    objects.Remove(id); walls.Remove(id); Dirty = true; break;
+                case "SSTResultTypeAirWall":
+                    // 旧预警到期不能跨场次重新升墙。
+                    if (id == owner.ArenaWall) break;
+                    objects.Add(id); walls.Add(id); Dirty = true; break;
                 case "SSTResultTypeTransPosition":
                     if (reply != null) reply.Pos = Format(Position(row.Element("trans_position_info").Element("position")));
                     break;
                 case "SSTResultTypeResetDungeons":
                     // RO 此节点仅通知触发实体的 Boss AI 和同视层采集表现刷新，不重置整本。
-                    // 本轮尚未移植 Boss AI/视层采集刷新组件；实例全灭由 TeamManager.Reset 独立处理。
+                    // 区域刷新不代替 TeamManager 对全队死亡的判定。
                     break;
                 case "SSTResultTypeDungeonsEnd":
                     if (reply != null) { reply.Exited = true; Event("DungeonsEnd"); }

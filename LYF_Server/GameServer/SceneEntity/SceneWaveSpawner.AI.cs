@@ -391,6 +391,7 @@ public sealed partial class SceneWaveSpawner
         ulong spawnId = 0xFFFFFFFF00000000UL | ++summonSequence;
         MoshentaActor actor = new MoshentaActor(this, monster, entityId, spawnId, -1, 0, new XElement[0], "");
         actor.SummonerId = caster.UnitId;
+        actor.ArenaMember = caster.ArenaMember;
         if (lifetimeMs > 0) actor.ExpireTime = Now + lifetimeMs;
         world_.Add(monster); monsters_.Add(monster); activePoints.Add(new SpawnPoint { SpawnId = spawnId, Position = position, Facing = facing, Creature = new ROSceneCreatureEntity { id = entityId } }); Actors.Add(actor);
         // 召唤物先装配同实例Gene，再发布第一次生命快照。

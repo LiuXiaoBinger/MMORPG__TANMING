@@ -66,6 +66,7 @@
         <Compile Include="manger\TeamManager.cs" />
         <Compile Include="Service\MasterTeamLink.cs" />
         <Compile Include="SceneEntity\MoshentaSceneFlow.cs" />
+        <Compile Include="SceneEntity\SceneWaveSpawner.BossArena.cs" />
         <Compile Include="SceneEntity\DungeonTargetProgress.cs" />
         <Compile Include="MessageHandler\Role\DungeonInteractHandler.cs" />
         <Compile Include="MessageHandler\Role\RoleReviveHandler.cs" />

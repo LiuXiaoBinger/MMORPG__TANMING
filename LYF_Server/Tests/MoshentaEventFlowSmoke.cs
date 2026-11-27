@@ -97,7 +97,6 @@ public static class MoshentaEventFlowSmoke
         public void Dispose()
         {
             RoleManager.Instance.RemoveOnlineRole(Role.mainRoleInfo.BaseInfo.RoleId);
-            Role.Dispose();
             SessionMgr.Instance.RemoveSession(session.SessionID);
             session.Disconnect();
             reader.Dispose();
@@ -119,7 +118,9 @@ public static class MoshentaEventFlowSmoke
     /// <param name="id">服务端实例号。</param>
     private static SceneWaveSpawner Scene(ulong id)
     {
+        // 测试只读正式实例索引，可验证最后一名成员离开后的注销。
         IDictionary instances = (IDictionary)typeof(TeamManager).GetField("_instances", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(TeamManager.Instance);
+        if (!instances.Contains(id)) return null;
         return (SceneWaveSpawner)instances[id].GetType().GetField("WaveSpawner").GetValue(instances[id]);
     }
 
@@ -198,6 +199,100 @@ public static class MoshentaEventFlowSmoke
         }
     }
 
+    /// <summary>比较首领动作与原出生点，容许协议里朝向另行同步。</summary>
+    /// <param name="action">待核对的真实权威动作。</param><param name="spawn">入场时的原始动作与坐标。</param>
+    private static bool IdleAtSpawn(MonsterActionData action, MonsterActionData spawn)
+    {
+        // 三个轴均为服务器米制位置。
+        bool samePoint = action.X == spawn.X && action.Y == spawn.Y && action.Z == spawn.Z;
+        return samePoint && action.Phase == MonsterActionPhase.Idle && action.TargetRoleId == 0;
+    }
+
+    /// <summary>用正式入场、伤害、交互和按帧死亡检测回放一次双人首领战。</summary>
+    /// <param name="a">首击和重新拉起首领的玩家。</param><param name="b">从墙外进场的队友。</param>
+    /// <param name="other">用于核对实例隔离的另一队玩家。</param><param name="late">战斗中进入的观察者。</param>
+    private static void BossArena(Peer a, Peer b, Peer other, Peer late)
+    {
+        // 测试使用两个独立实例，所有角色数据都在本进程的回环会话内。
+        MasterTeamDungeonOrder order = new MasterTeamDungeonOrder { TeamId = 100, InstanceId = 70001, DungeonId = 4060 };
+        order.MemberIds.Add(new ulong[] { a.Role.GetID(), b.Role.GetID() });
+        TeamManager.Instance.EnterDungeon(order);
+        MasterTeamDungeonOrder separate = new MasterTeamDungeonOrder { TeamId = 200, InstanceId = 70002, DungeonId = 4060 };
+        separate.MemberIds.Add(other.Role.GetID());
+        TeamManager.Instance.EnterDungeon(separate);
+        a.Receive(); b.Receive(); other.Receive();
+        // 初始出生号和位置来自正式的服务器入场消息。
+        SceneWaveSpawner scene = Scene(70001);
+        ulong boss = (34UL << 32) | 1;
+        TeamEnterDungeonNtf initial = Snapshot(scene);
+        MonsterActionData idle = initial.MonsterActions.Single(row => row.SpawnId == boss);
+        Check(initial.Monsters.Any(row => row.SpawnId == boss) && initial.Flow.ActiveObjectIds.Contains(36) &&
+            !initial.Flow.ActiveWallIds.Contains(23), "开本首领已就位，墙外阵可用，空气墙未升起");
+        File.WriteAllBytes(Path.Combine(folder, "arena-idle.bin"), initial.ToByteArray());
+        // 保留一个前置区域的阶段进度，以辨别团灭是否误重置了整个副本。
+        Move(a, 133.14f, 63.89f, 121.74f);
+        Check(Objective(scene, 138), "前置目标137已完成");
+        Move(a, 77.5f, 80.31f, 591.49f);
+        Interact(b, 36);
+        Check(!b.Replies.Last().Success, "远处无法操作场地入口");
+        Move(b, 77.62f, 78.87f, 585.9f);
+        Interact(b, 36);
+        Check(b.Replies.Last().Success && b.Role.mainRoleInfo.BaseInfo.Pos == "77.5_80.31_591.49", "按钮按配置将玩家送入墙内");
+        TeamManager.Instance.CommandEvent(a.Role, "BossEnterCombat");
+        // 贴身、剧情对话和足以触发旧延时升墙的心跳均不能拉起首领。
+        a.Role.mainRoleInfo.BaseInfo.Pos = "77.36_80.32_620.49";
+        TeamManager.Instance.UpdateMonsters(12000);
+        TeamManager.Instance.OnMonsterHit(a.Role, new Vector2(0, 1), 0, new HashSet<ulong>());
+        TeamEnterDungeonNtf before = Snapshot(scene);
+        MonsterActionData still = before.MonsterActions.Single(row => row.SpawnId == boss);
+        Check(!before.Flow.ActiveWallIds.Contains(23) && IdleAtSpawn(still, idle), "贴身、交谈和零伤害均不拉怪或升墙");
+        // 用实际伤害入口开战，队友在同一广播中看到实体墙。
+        TeamManager.Instance.OnMonsterHit(a.Role, new Vector2(0, 1), 5000, new HashSet<ulong>());
+        a.Receive(); b.Receive();
+        TeamEnterDungeonNtf fighting = Snapshot(scene);
+        Check(fighting.Monsters.Single(row => row.SpawnId == boss).Hp < before.Monsters.Single(row => row.SpawnId == boss).Hp &&
+            fighting.Flow.ActiveWallIds.Contains(23) && b.Notices.Any(row => row.Flow != null && row.Flow.ActiveWallIds.Contains(23)), "首笔真实伤害同次升墙并向队友广播");
+        File.WriteAllBytes(Path.Combine(folder, "arena-fighting.bin"), fighting.ToByteArray());
+        Check(!Snapshot(Scene(70002)).Flow.ActiveWallIds.Contains(23), "另一队的首领仍在待机");
+        order.MemberIds.Add(late.Role.GetID());
+        TeamManager.Instance.EnterDungeon(order);
+        late.Receive();
+        Check(late.Entry.Flow.ActiveWallIds.Contains(23) && late.Entry.Flow.ActiveObjectIds.Contains(36), "中途入场同时恢复墙和入口");
+        Move(late, 77.62f, 78.87f, 585.9f);
+        Check(!TeamManager.Instance.AllowDungeonMove(late.Role, new Vector3(77.5f, 80.31f, 591.49f)), "空气墙拒绝队员直接穿行");
+        Interact(late, 36);
+        Check(late.Replies.Last().Success && late.Role.mainRoleInfo.BaseInfo.Pos == "77.5_80.31_591.49", "战斗中墙外队员仍可通过单向传送阵进场");
+        TeamManager.Instance.UpdateMonsters(1000);
+        Check(Snapshot(scene).MonsterActions.Any(row => row.SpawnId == boss && row.TargetRoleId != 0), "开战后首领对攻击者建立仇恨");
+        a.Role.mainRoleInfo.BaseInfo.CurrHp = 0;
+        TeamManager.Instance.UpdateMonsters(50);
+        Check(Snapshot(scene).Flow.ActiveWallIds.Contains(23), "一人死亡不撤墙");
+        b.Role.mainRoleInfo.BaseInfo.CurrHp = 0; late.Role.mainRoleInfo.BaseInfo.CurrHp = 0;
+        TeamManager.Instance.UpdateMonsters(50);
+        a.Receive(); b.Receive(); late.Receive();
+        TeamEnterDungeonNtf reset = Snapshot(scene);
+        MonsterActionData home = reset.MonsterActions.Single(row => row.SpawnId == boss);
+        Check(!reset.Flow.ActiveWallIds.Contains(23) && reset.Flow.ActiveObjectIds.Contains(36) &&
+            reset.Monsters.Single(row => row.SpawnId == boss).Hp == initial.Monsters.Single(row => row.SpawnId == boss).Hp,
+            "全队阵亡撤墙，入口可用，首领满血");
+        Check(IdleAtSpawn(home, idle) && reset.Flow.ActiveWaveIds.Contains(18) && !Objective(scene, 137), "首领回出生点清仇恨，前置波次和目标进度保留");
+        Check(b.Notices.Any(row => row.RemovedSpawnIds.Contains(boss)) && b.Notices.Last().Flow.Equals(reset.Flow), "队友先移除旧实体再收到重置快照");
+        File.WriteAllBytes(Path.Combine(folder, "arena-reset.bin"), reset.ToByteArray());
+        a.Role.mainRoleInfo.BaseInfo.CurrHp = StartingHp;
+        TeamManager.Instance.UpdateMonsters(12000);
+        Check(!Snapshot(scene).Flow.ActiveWallIds.Contains(23), "复活后旧计时器不会自行升墙");
+        a.Role.mainRoleInfo.BaseInfo.Pos = "77.36_80.32_620.49";
+        TeamManager.Instance.OnMonsterHit(a.Role, new Vector2(0, 1), 5000, new HashSet<ulong>());
+        Check(Snapshot(scene).Flow.ActiveWallIds.Contains(23), "重新伤害首领可二次开战");
+        Kill(a, 34); Kill(a, 35); Kill(a, 46);
+        Check(!Snapshot(scene).Flow.ActiveWallIds.Contains(23) && !Snapshot(scene).Flow.ActiveObjectIds.Contains(36),
+            "击败全部首领后撤墙并收起战斗入口");
+        // 原结算 NPC 的技能时间轴在演出后打开通关出口，期间只推进这个实例。
+        for (int tick = 0; tick < 300; tick++) scene.Update(50, new MonsterAttrUpdateNtf());
+        TeamEnterDungeonNtf victory = Snapshot(scene);
+        Check(victory.Flow.ActiveObjectIds.Contains(35) && victory.Flow.Finished, "战后原通关出口和胜利结算仍可用");
+    }
+
     /// <summary>隔离测试主入口，输出目录由测试启动器明确提供。</summary>
     /// <param name="args">临时证据目录。</param>
     public static int Main(string[] args)
@@ -209,6 +304,11 @@ public static class MoshentaEventFlowSmoke
         using (Peer other = new Peer(985003))
         using (Peer late = new Peer(985004))
         {
+            if (args.Length > 1 && args[1] == "boss-arena")
+            {
+                BossArena(a, b, other, late);
+                return 0;
+            }
             // 模拟 MS 已批准的入场单，GS 内使用正式实例创建流程。
             MasterTeamDungeonOrder order = new MasterTeamDungeonOrder { TeamId = 100, InstanceId = 70001, DungeonId = 4060 };
             order.MemberIds.Add(new ulong[] { a.Role.GetID(), b.Role.GetID() });
@@ -218,7 +318,8 @@ public static class MoshentaEventFlowSmoke
             TeamManager.Instance.EnterDungeon(separate);
             a.Receive(); b.Receive(); other.Receive();
             SceneWaveSpawner scene = Scene(70001);
-            Check(a.Entry.Equals(b.Entry) && a.Entry.Monsters.Count == 0, "同队入场快照一致且无战斗怪物");
+            Check(a.Entry.Flow.Equals(b.Entry.Flow) && a.Entry.Monsters.Any(row => row.SpawnId == ((34UL << 32) | 1)) &&
+                !a.Entry.Flow.ActiveWallIds.Contains(23), "同队入场可见待机首领，墙尚未升起");
             Check(scene.Flow.SpawnPosition == new Vector3(132.97f, 58.89f, 60.95f) && ExpectedMoshentaSpawnPos == a.Entry.Pos, "单一XML入口与协议位置一致");
             Check(Objective(scene, 137), "初始只同步原表137且进度为0");
             Check(a.Entry.Flow.Objectives[0].Description == LubanMgr.Instance.GetDungeonTargetTableById(137).TargetDes, "目标文案直接来自正式Luban表");
@@ -248,11 +349,14 @@ public static class MoshentaEventFlowSmoke
             Check(Objective(scene, 139), "原区域19完成138并进入139");
             // 保留原18波巡逻与当前位置命中结算。
             for (int frame = 0; frame < 100; frame++) TeamManager.Instance.UpdateMonsters(50);
-            MonsterActionData orc = Snapshot(scene).MonsterActions.Single();
+            // 同一实例同时存在待机首领和场景 NPC，按第 18 波自己的出生号查巡逻者。
+            MonsterActionData orc = Snapshot(scene).MonsterActions.Single(row => row.SpawnId == ((18UL << 32) | 1));
             Check(orc.Phase == MonsterActionPhase.Move, "事件生成后第18波仍沿原行为树巡逻");
             a.Role.mainRoleInfo.BaseInfo.Pos = string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}", orc.X, orc.Y, orc.Z - 1.7f);
-            TeamManager.Instance.OnMonsterHit(a.Role, new Vector2(0, 1), 1, new HashSet<ulong>());
-            Check(Snapshot(scene).Monsters.Single(row => row.SpawnId == orc.SpawnId).Hp == 239, "第18波移动后按当前坐标命中");
+            // 以本次入场的实际生命核对伤害，沿用当前难度的怪物属性。
+            int orcHp = Snapshot(scene).Monsters.Single(row => row.SpawnId == orc.SpawnId).Hp;
+            TeamManager.Instance.OnMonsterHit(a.Role, new Vector2(0, 1), 5000, new HashSet<ulong>());
+            Check(Snapshot(scene).Monsters.Single(row => row.SpawnId == orc.SpawnId).Hp < orcHp, "第18波移动后按当前坐标命中");
             // 让原行为树在下一次心跳选择刚刚造成伤害的攻击者。
             for (int frame = 0; frame < 20; frame++) TeamManager.Instance.UpdateMonsters(50);
             // 门0带原战斗限制，兽人仍锁定攻击者时必须拒绝。
@@ -289,7 +393,10 @@ public static class MoshentaEventFlowSmoke
             Move(a, 77.62f, 78.87f, 586.55f);
             Check(Snapshot(scene).Flow.CompletedWaveIds.Contains(42), "原区域25不会把已清波次误重置");
             Move(a, 77.5f, 80.31f, 591.49f);
-            Check(Snapshot(scene).Flow.ActiveWallIds.Contains(23), "Boss入口事件创建权威空气墙23");
+            Check(!Snapshot(scene).Flow.ActiveWallIds.Contains(23), "走进首领区域不升墙");
+            a.Role.mainRoleInfo.BaseInfo.Pos = "77.36_80.32_620.49";
+            TeamManager.Instance.OnMonsterHit(a.Role, new Vector2(0, 1), 5000, new HashSet<ulong>());
+            Check(Snapshot(scene).Flow.ActiveWallIds.Contains(23), "首领实际失血创建权威空气墙23");
             Check(Objective(scene, 143), "原区域21完成142并进入143且不补提前事件");
             a.Receive(); b.Receive();
             Check(a.Notices.Last().Flow.Equals(b.Notices.Last().Flow), "空气墙及Boss目标同步所有同实例队员");
@@ -309,13 +416,15 @@ public static class MoshentaEventFlowSmoke
             Kill(a, 35);
             Check(Objective(scene, 143), "只死亡Boss波34和35不完成143");
             Kill(a, 46);
+            // 让原结算演出执行到打开胜利出口的时刻。
+            for (int tick = 0; tick < 300; tick++) scene.Update(50, new MonsterAttrUpdateNtf());
             Check(!Snapshot(scene).Flow.ActiveWallIds.Contains(23) && Snapshot(scene).Flow.ActiveObjectIds.Contains(35), "Boss实际全灭执行63释放墙并生成出口");
             Check(Snapshot(scene).Flow.Finished && Objective(scene, 143, 1), "三Boss实际全灭完成143并保留现有胜利出口链");
             TargetEvent(scene, 143);
             Check(Objective(scene, 143, 1), "末目标重复事件保持143完成且不增计数");
             a.Receive();
             File.WriteAllBytes(Path.Combine(folder, "wire-victory.bin"), a.Notices.Last().ToByteArray());
-            Check(Snapshot(Scene(70002)).Monsters.Count == 0, "另一个副本的怪物和流程始终独立");
+            Check(!Snapshot(Scene(70002)).Flow.ActiveWallIds.Contains(23) && !Snapshot(Scene(70002)).Flow.ActiveWaveIds.Contains(18), "另一个副本的怪物和流程始终独立");
             Check(Objective(Scene(70002), 137), "另一副本目标保持137且不串当前Section");
             Move(late, 77.46f, 80.32f, 604.5f);
             // 测试角色从入口跨越已释放墙，可直接到达出口。
@@ -326,20 +435,14 @@ public static class MoshentaEventFlowSmoke
             late.Role.mainRoleInfo.BaseInfo.CurrHp = 0;
             TeamManager.Instance.UpdateMonsters(50);
             a.Receive(); b.Receive(); late.Receive();
-            Check(Snapshot(scene).Monsters.Count == 0 && Snapshot(scene).Flow.ActiveWallIds.Count == 0 && !Snapshot(scene).Flow.ActiveObjectIds.Contains(35), "全队死亡重置实体空气墙和出口");
-            Check(Objective(scene, 137) && !Snapshot(scene).Flow.Finished, "全灭目标进度回到原表137初始状态");
-            Check(a.Notices.Last().Flow.Equals(b.Notices.Last().Flow) && a.Role.mainRoleInfo.BaseInfo.Pos == ExpectedMoshentaSpawnPos, "全灭重置快照同队一致且回权威入口");
-            File.WriteAllBytes(Path.Combine(folder, "wire-reset.bin"), a.Notices.Last().ToByteArray());
-            a.Role.mainRoleInfo.BaseInfo.CurrHp = StartingHp;
-            TeamManager.Instance.UpdateMonsters(50);
-            Move(a, 133.14f, 63.89f, 121.74f);
-            Check(Snapshot(scene).Monsters.Count == count, "重置后区域能够重新激活且无旧实体重叠");
+            Check(!Snapshot(scene).Flow.ActiveWallIds.Contains(23) && Snapshot(scene).Flow.Finished, "胜利后全队阵亡仍保留通关");
+            Check(Objective(scene, 143, 1), "团灭不会撤销已经完成的首领目标");
             TeamManager.Instance.LeaveDungeon(a.Role.GetID());
             Interact(a, 5);
             Check(!a.Replies.Last().Success && a.Role.mainRoleInfo.BaseInfo.InstanceId == 0, "离开副本后的交互请求不能误入实例");
             TeamManager.Instance.LeaveDungeon(b.Role.GetID());
             TeamManager.Instance.LeaveDungeon(late.Role.GetID());
-            Check(Snapshot(scene).Monsters.Count == 0, "最后队员离开实际释放怪物世界");
+            Check(Scene(70001) == null && scene.Flow == null, "最后队员离开实际释放怪物世界");
         }
         Console.WriteLine("MOSHENTA_EVENT_FLOW: PASS " + passed);
         return 0;

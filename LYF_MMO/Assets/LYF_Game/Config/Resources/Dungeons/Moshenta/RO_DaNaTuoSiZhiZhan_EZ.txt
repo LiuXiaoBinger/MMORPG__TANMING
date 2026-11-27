@@ -1711,8 +1711,64 @@
         <check_time>0</check_time>
         <audio_list />
       </MSceneTriggerObjectData>
+      <MSceneTriggerObjectData>
+        <id>36</id>
+        <ignore_init>false</ignore_init>
+        <options>
+          <SceneTriggerObjectOpType>StoOpTypePlayerButton</SceneTriggerObjectOpType>
+          <SceneTriggerObjectOpType>StoOpTypeCreateSceneTriggerObject</SceneTriggerObjectOpType>
+        </options>
+        <position>
+          <x>77.62</x>
+          <y>78.87</y>
+          <z>585.9</z>
+        </position>
+        <face>0</face>
+        <box>
+          <check_time>0</check_time>
+          <scale>
+            <x>3</x>
+            <y>2</y>
+            <z>1.6</z>
+          </scale>
+          <offset>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+          </offset>
+          <player_limit>0</player_limit>
+          <interrupt_nav>false</interrupt_nav>
+          <button_position>
+            <x>0</x>
+            <y>0</y>
+          </button_position>
+          <button_scale>0</button_scale>
+          <modify_button_position>false</modify_button_position>
+          <modify_button_scale>false</modify_button_scale>
+          <title>进入首领场地</title>
+        </box>
+        <reset>false</reset>
+        <elf_id>0</elf_id>
+        <init_invisible>false</init_invisible>
+        <shape_type>StObjectShapeTypeCube</shape_type>
+        <fx_list>
+          <MSceneFxData>
+            <fx_id>110005</fx_id>
+            <fx_scale>
+              <x>1</x>
+              <y>1</y>
+              <z>1</z>
+            </fx_scale>
+            <fx_lifetime>FxLifeTimeType_OnCreate</fx_lifetime>
+          </MSceneFxData>
+        </fx_list>
+        <check_time>0</check_time>
+        <audio_list />
+      </MSceneTriggerObjectData>
     </scene_trigger_objects>
 
+    <!-- 首领和机制在场内待机，首次受伤才封墙；阵在墙外供队员单向进场。 -->
+    <boss_arena wave_event="BossBattle" wall="23" portal="36" />
     <scene_ai_events source="roserver/exe/gsconf/AI/Dungeons/DaNaTuoSiZhiZhan/Dungeons_DaNaTuoSiZhiZhan_SceneAI_EZ.xml" selection="first_success">
       <variables />
       <event name="monster_die" source_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]/Sequence[1]" selector_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]">
@@ -11330,22 +11386,6 @@
           <animationData />
         </MSceneTriggerResultDataEx>
       </Object>
-      <Object refID="9076762619536213027" type="PbLocal.Xml.MSSceneTriggerResultData">
-        <MSSceneTriggerResultData>
-          <result_type>SSTResultTypeAirWall</result_type>
-          <scene_trigger_obj_id>23</scene_trigger_obj_id>
-          <result_index>0</result_index>
-        </MSSceneTriggerResultData>
-      </Object>
-      <Object refID="9076762619536213028" type="MEditor.MSceneTriggerResultDataEx">
-        <MSceneTriggerResultDataEx>
-          <drawBoxInfo />
-          <luaData />
-          <teleportDoorData />
-          <transPositionData />
-          <animationData />
-        </MSceneTriggerResultDataEx>
-      </Object>
       <Object refID="9076762619536213033" type="PbLocal.Xml.MSSceneTriggerGroupData">
         <MSSceneTriggerGroupData>
           <id>34</id>
@@ -11538,6 +11578,75 @@
           <luaData />
           <teleportDoorData />
           <transPositionData />
+          <animationData />
+        </MSceneTriggerResultDataEx>
+      </Object>
+      <Object refID="9076762810000000006" type="PbLocal.Xml.MSSceneTriggerData">
+        <MSSceneTriggerData>
+          <id>0</id>
+          <reset>false</reset>
+          <enable>true</enable>
+          <trigger_count_limit>0</trigger_count_limit>
+          <run_results_data>
+            <run_results_type>SceneTriggerRunResultsType_None</run_results_type>
+            <run_results_random>
+              <min_run_results_num>0</min_run_results_num>
+              <max_run_results_num>0</max_run_results_num>
+              <results_weight />
+            </run_results_random>
+          </run_results_data>
+          <opentimings />
+        </MSSceneTriggerData>
+      </Object>
+      <Object refID="9076762810000000007" type="MEditor.MSceneTriggerDataEx">
+        <MSceneTriggerDataEx>
+          <triggerName>入口到二楼</triggerName>
+          <runResults />
+        </MSceneTriggerDataEx>
+      </Object>
+      <Object refID="9076762810000000011" type="PbLocal.Xml.MSSceneTriggerTimingData">
+        <MSSceneTriggerTimingData>
+          <condition_logic_type>SceneTriggerConditionLogicType_And</condition_logic_type>
+          <timing_type>SSttimingTypePlayerButton</timing_type>
+          <scene_trigger_obj_id>36</scene_trigger_obj_id>
+        </MSSceneTriggerTimingData>
+      </Object>
+      <Object refID="9076762810000000012" type="MEditor.MSceneTriggerTimingDataEx">
+        <MSceneTriggerTimingDataEx>
+          <drawBoxInfo />
+          <conditionList />
+        </MSceneTriggerTimingDataEx>
+      </Object>
+      <Object refID="9076762810000000015" type="PbLocal.Xml.MSSceneTriggerResultData">
+        <MSSceneTriggerResultData>
+          <result_type>SSTResultTypeTransPosition</result_type>
+          <scene_trigger_obj_id>0</scene_trigger_obj_id>
+          <trans_position_info>
+            <position>
+              <x>77.5</x>
+              <y>80.31</y>
+              <z>591.49</z>
+            </position>
+            <face>90</face>
+            <scene_id>4060</scene_id>
+            <camera>225</camera>
+            <fade_in_out_data>
+              <in_time>500</in_time>
+              <out_time>500</out_time>
+              <keep_time>800</keep_time>
+              <fade_type>black</fade_type>
+            </fade_in_out_data>
+          </trans_position_info>
+          <result_index>0</result_index>
+        </MSSceneTriggerResultData>
+      </Object>
+      <Object refID="9076762810000000016" type="MEditor.MSceneTriggerResultDataEx">
+        <MSceneTriggerResultDataEx>
+          <luaData />
+          <teleportDoorData />
+          <transPositionData>
+            <useCameraFadeInOut>true</useCameraFadeInOut>
+          </transPositionData>
           <animationData />
         </MSceneTriggerResultDataEx>
       </Object>
@@ -18820,27 +18929,6 @@
           </content>
         </Variables>
       </Node>
-      <Node name="[结果]空气墙(server)" ID="9076762619536213025" author="cassisji" type="[结果]空气墙(server)">
-        <nodePos>
-          <Vector2>
-            <x>2500</x>
-            <y>2300</y>
-          </Vector2>
-        </nodePos>
-        <Ports>
-          <Port ID="9076762619536213026" name="inKnob" dynamic="False" />
-        </Ports>
-        <Variables>
-          <Variable name="realData" refID="9076762619536213027" />
-          <Variable name="dataEx" refID="9076762619536213028" />
-          <_isHideChilren>
-            <boolean>false</boolean>
-          </_isHideChilren>
-          <content>
-            <string>战斗开启空气墙23</string>
-          </content>
-        </Variables>
-      </Node>
       <Node name="[0]TriggerGroup-触发器组(server)" ID="9076762619536213029" author="cassisji" type="触发器组(server)">
         <nodePos>
           <Vector2>
@@ -19080,6 +19168,73 @@
           </_isHideChilren>
           <content>
             <string>TaDingZhenPing</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="触发器(server)" ID="9076762810000000001" author="cassisji" type="触发器(server)">
+        <nodePos>
+          <Vector2>
+            <x>1581.20068</x>
+            <y>3750</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762810000000002" name="inKnob" dynamic="False" />
+          <Port ID="9076762810000000003" name="borntimingKnob" dynamic="False" />
+          <Port ID="9076762810000000004" name="timingKnob" dynamic="False" />
+          <Port ID="9076762810000000005" name="resultKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762810000000006" />
+          <Variable name="dataEx" refID="9076762810000000007" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>首领场地单向入口</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[时机]玩家进入(服务器触发)" ID="9076762810000000008" author="cassisji" type="[时机]玩家进入(服务器触发)">
+        <nodePos>
+          <Vector2>
+            <x>1935.60083</x>
+            <y>3822</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762810000000009" name="inKnob" dynamic="False" />
+          <Port ID="9076762810000000010" name="conditionKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762810000000011" />
+          <Variable name="dataEx" refID="9076762810000000012" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>在墙外操作传送阵</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[结果]传送(server)" ID="9076762810000000013" author="cassisji" type="[结果]传送(server)">
+        <nodePos>
+          <Vector2>
+            <x>1940.80115</x>
+            <y>3894</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762810000000014" name="inKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762810000000015" />
+          <Variable name="dataEx" refID="9076762810000000016" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>传至首领场地内侧</string>
           </content>
         </Variables>
       </Node>
@@ -19326,7 +19481,6 @@
       <Connection port1ID="-6169089164797673471" port2ID="9076762619536213010" />
       <Connection port1ID="9076762619536213012" port2ID="9076762619536213017" />
       <Connection port1ID="9076762619536213013" port2ID="9076762619536213022" />
-      <Connection port1ID="9076762619536213013" port2ID="9076762619536213026" />
       <Connection port1ID="9076762619536213031" port2ID="9076762619536213036" />
       <Connection port1ID="9076762619536213038" port2ID="9076762619536213043" />
       <Connection port1ID="9076762619536213039" port2ID="9076762619536213048" />
@@ -19339,6 +19493,9 @@
       <Connection port1ID="9076762619536213067" port2ID="9076762619536213072" />
       <Connection port1ID="9076762619536213068" port2ID="9076762619536213077" />
       <Connection port1ID="9076762619536213013" port2ID="9076762619536213081" />
+      <Connection port1ID="-6169089164802064383" port2ID="9076762810000000002" />
+      <Connection port1ID="9076762810000000004" port2ID="9076762810000000009" />
+      <Connection port1ID="9076762810000000014" port2ID="9076762810000000005" />
     </Connections>
     <Groups>
       <Group name="BossAirWallController">

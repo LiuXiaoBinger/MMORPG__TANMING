@@ -204,7 +204,11 @@ public partial class MSceneDungeon : MonoBehaviour
                 // 配置盒中的正式传送按钮，不使用自动触碰传送。
                 MSceneInteraction interaction = new MSceneInteraction();
                 interaction.ObjectId = id;
+                // 首领入口使用场景配置的中文按钮名，原有本地化键继续使用通用传送提示。
+                string title = (string)data.Element("box")?.Element("title");
                 interaction.Title = "传送";
+                if (!string.IsNullOrEmpty(title) && !title.StartsWith("DUNGEONS_", System.StringComparison.Ordinal))
+                    interaction.Title = title;
                 interaction.Position = instance.transform.position;
                 interaction.Rotation = instance.transform.rotation;
                 interaction.Extents = ROSceneXml.Vector(data, "box/scale") * 0.5f;
@@ -312,6 +316,12 @@ public partial class MSceneDungeon : MonoBehaviour
             }
             // 资源加载期间收到的移除同样有效，不能让晚完成模型重新生成尸体。
             if (!string.IsNullOrEmpty(Resource.battleConfig) && !TeamData.Instance.GetMonsterAttr(spawnId, out authority))
+            {
+                Destroy(model);
+                return;
+            }
+            // 团灭前后同一出生位可有两个加载回调，先完成的已按最新权威状态建立实体。
+            if (monsters.ContainsKey(spawnId))
             {
                 Destroy(model);
                 return;

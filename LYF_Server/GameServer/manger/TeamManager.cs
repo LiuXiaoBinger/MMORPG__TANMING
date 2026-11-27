@@ -257,8 +257,18 @@ public sealed class TeamManager
             else if (!team.Wiped)
             {
                 team.Wiped = true;
-                team.WaveSpawner.Reset();
-                frame.MonsterActions.Clear();
+                if (team.WaveSpawner.ArenaFighting)
+                {
+                    // 先让客户端移除旧出生号，再用同一套配置点同步满血首领及待机动作。
+                    team.WaveSpawner.ResetBossFight(frame);
+                    SendMonsterNotice(team, frame);
+                    frame = new MonsterAttrUpdateNtf { InstanceId = team.InstanceId };
+                }
+                else if (!team.WaveSpawner.ArenaCleared)
+                {
+                    team.WaveSpawner.Reset();
+                    frame.MonsterActions.Clear();
+                }
                 // 尸体留在死亡位置，只有本人点击复活并获服务端确认后才回出生点。
             }
             team.WaveSpawner.FillFlow(frame);
@@ -378,7 +388,11 @@ public sealed class TeamManager
         Dungeon team;
         if (!_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out team)) return;
         if (name.Length == 0) return;
-        team.WaveSpawner.SceneEvent(name, 0, 0, role.GetID());
+        // 兼容旧客户端的 NPC 帮助选项，只展示印记机关；首领实际扣血才启动战斗树。
+        if (team.WaveSpawner.ArenaWall >= 0 && name == "BossEnterCombat")
+            team.WaveSpawner.Flow.SendTriggerGroup(8, 0);
+        else
+            team.WaveSpawner.SceneEvent(name, 0, 0, role.GetID());
         PublishFlow(team);
     }
 
