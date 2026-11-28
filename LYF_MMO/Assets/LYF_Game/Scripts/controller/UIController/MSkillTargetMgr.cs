@@ -9,6 +9,8 @@ public sealed class MSkillTargetMgr
     public static readonly MSkillTargetMgr singleton = new MSkillTargetMgr();
     /// <summary>普通攻击取敌及角色查看使用的基础选择半径，单位米。</summary>
     public const float MaxChooseDistance = 10f;
+    /// <summary>普通攻击手动锁定后允许出手的最大追近距离，单位米。</summary>
+    internal const float ManualCastDistance = 10f;
     /// <summary>攻击技能没有有效目标时自动获取敌人的半径，单位米，与技能出招射程独立。</summary>
     public const float AutoChooseDistance = 10f;
     /// <summary>沿 RO 默认值，只在距离最近的前四个候选中循环。</summary>
@@ -21,21 +23,20 @@ public sealed class MSkillTargetMgr
     /// <summary>单例只统一选择职责，不创建目标实体或服务器状态。</summary>
     private MSkillTargetMgr() { }
 
-    /// <summary>已装配逐月的角色可以手动选中其追击范围内的敌人。</summary>
+    /// <summary>已装配逐月的角色通过 Tab 在逐月追击范围内循环选敌。</summary>
     /// <param name="player">当前负责选择的本地玩家。</param>
-    /// <returns>点击或瞄准敌人时可以保留的立体距离，单位米。</returns>
+    /// <returns>Tab 收集候选敌人的立体距离，单位米。</returns>
     private static float GetEnemySelectionRange(PlayerEntity player)
     {
         if (player?.Skill?.GetSkillCore(SkillCtrl.MoonChaseSkillId) == null) return MaxChooseDistance;
         return Mathf.Max(MaxChooseDistance, LubanMgr.Instance.GetSkillInfoById(SkillCtrl.MoonChaseSkillId).AtkDistance);
     }
 
-    /// <summary>当前敌人选择可保留的立体半径，用于施法和追近期间核对同一个目标。</summary>
-    /// <param name="player">本地主角，已装配的逐月决定手动锁定距离。</param>
-    /// <returns>手动锁定或自动目标各自的保留距离，单位米。</returns>
-    internal float GetHeldEnemyRange(PlayerEntity player)
+    /// <summary>查询当前目标的保留距离，场景内有效手选敌人可一直追近。</summary>
+    /// <returns>普通自动目标的保留半径为十米，手动目标返回无距离上限。</returns>
+    internal float GetHeldEnemyRange()
     {
-        if (HasManualTarget) return GetEnemySelectionRange(player);
+        if (HasManualTarget) return float.PositiveInfinity;
         return MaxChooseDistance;
     }
 
@@ -123,14 +124,12 @@ public sealed class MSkillTargetMgr
         TargetChanged?.Invoke(target);
     }
 
-    /// <summary>RO 同名主动选敌入口，只接受存活敌方且在选择距离内的对象。</summary>
+    /// <summary>点中已加载的存活敌人后建立手动锁定，出手距离由技能追近检查。</summary>
     /// <param name="target">点击或其他入口提交的敌方候选。</param>
     /// <returns>目标被接受时为 true。</returns>
     public bool OnSelectTarget(MEntity target)
     {
-        // 手动点选沿用当前角色已装配的追击距离。
-        PlayerEntity player = Global.Instance?.SceneWorld?.LocalRole;
-        if (!CanAttack(target, GetEnemySelectionRange(player)))
+        if (!CanAttack(target, float.PositiveInfinity))
         {
             return false;
         }
@@ -157,9 +156,9 @@ public sealed class MSkillTargetMgr
             ResetTarget(null);
             return;
         }
-        // 手选敌人可保持至逐月的追击边界，普通自动目标及友方仍用基础半径。
+        // 有效手选敌人在追近时可走出自动索敌范围，普通自动目标及友方仍用基础半径。
         float range = MaxChooseDistance;
-        if (MSkillTargetDefine.IsEnemy(player.Target)) range = GetHeldEnemyRange(player);
+        if (MSkillTargetDefine.IsEnemy(player.Target)) range = GetHeldEnemyRange();
         if ((player.Target.Position - player.Position).sqrMagnitude > range * range)
         {
             ResetTarget(null);

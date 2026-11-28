@@ -24,7 +24,7 @@ public sealed class MWaitingDataMgr
         DoCastSkill(castingSkill, castPoint, target);
     }
 
-    /// <summary>常规攻击按射程追近，刀刃风暴和逐月从按键时的位置起手。</summary>
+    /// <summary>手选敌人超出出手范围时先追同一个敌人，进入范围后执行原施法指令。</summary>
     /// <param name="skillCore">本次输入对应的技能核心。</param>
     /// <param name="castPoint">世界空间释放点，单位米。</param>
     /// <param name="target">输入层保留或自动获取的敌人，空值表示沿角色当前朝向释放。</param>
@@ -41,13 +41,27 @@ public sealed class MWaitingDataMgr
         cfg.SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(skillCore.SkillId);
         // 普攻和主动攻击沿用主表分类，其他类型无需按攻击射程追近。
         bool isAttack = skillInfo.Type == 1 || skillInfo.Type == 2;
-        // 逐月自行追抵锁定目标，导航预先追近会吃掉远程起手的剑光。
+        // 自带追身的逐月和原地起手的刀刃风暴只有手选敌人超出各自起手距离时才先走近。
         bool approachBeforeCast = skillCore.SkillId != BladeStormSkillId && skillCore.SkillId != SkillCtrl.MoonChaseSkillId;
+        // 当前目标确实来自玩家主动锁定，自动选敌不会进入额外的追近分支。
+        bool manualTarget = target != null && MSkillTargetMgr.singleton.HasManualTarget &&
+            ReferenceEquals(player.Target, target);
+        // 常规手选攻击至少要进入十米，若技能要求更近则沿用其原射程，单位米。
+        float upperRange = skillInfo.AtkDistance;
+        if (manualTarget)
+        {
+            upperRange = Mathf.Min(upperRange, MSkillTargetMgr.ManualCastDistance);
+            // 当前特殊武功先用原起手距离核对，超过后才启动十米追近。逐月按立体距离核对。
+            float startRange = MSkillTargetMgr.ManualCastDistance;
+            if (skillCore.SkillId == SkillCtrl.MoonChaseSkillId) startRange = skillInfo.AtkDistance;
+            if ((target.Position - player.Position).sqrMagnitude > startRange * startRange)
+                approachBeforeCast = true;
+        }
         if (isAttack && target != null && approachBeforeCast)
         {
             navigation.NeedTarget = true;
             navigation.Target = target;
-            navigation.UpperRange = skillInfo.AtkDistance;
+            navigation.UpperRange = upperRange;
         }
         player.NavComp.Interrupt(false);
         player.DispatchEvent(MEventType.MEvent_Navigation, navigation);

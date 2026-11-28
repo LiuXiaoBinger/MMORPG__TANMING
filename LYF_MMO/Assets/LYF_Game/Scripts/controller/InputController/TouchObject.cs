@@ -235,10 +235,10 @@ public sealed class TouchObject
     /// <summary>沿 RO 点击写入目标前检查最大选择距离，普通角色可被查看但不会被自动认作敌人。</summary>
     /// <param name="entity">按下与松开均命中的当前世界实体。</param>
     /// <param name="selectOnly">保留的选择模式参数，当前方法不读取它，也不触发普攻。</param>
-    /// <returns>敌人在当前角色可追击的选择半径内，或普通角色在查看距离内，并已选中时为 true。</returns>
+    /// <returns>选中了有效敌人，或选中了查看距离内的普通角色时为 true。</returns>
     private bool setPlayerTarget(MEntity entity, bool selectOnly)
     {
-        // 点击敌人和 Tab 瞄准共用逐月的可选范围，查看其他角色仍按基础半径。
+        // 点中敌人直接建立手动锁定，查看其他角色仍按基础半径。
         if (MSkillTargetDefine.IsEnemy(entity)) return MSkillTargetMgr.singleton.OnSelectTarget(entity);
         if ((entity.Position - Global.Instance.SceneWorld.LocalRole.Position).sqrMagnitude >
             MSkillTargetMgr.MaxChooseDistance * MSkillTargetMgr.MaxChooseDistance)

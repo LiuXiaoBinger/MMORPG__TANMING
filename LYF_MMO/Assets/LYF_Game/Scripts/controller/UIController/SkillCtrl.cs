@@ -492,9 +492,10 @@ public sealed class SkillCtrl : CtrlBase
         {
             return null;
         }
-        // 第一级：普通技能使用当前锁定的保留距离，逐月用自身主表的立体追击距离，单位米。
-        float targetRange = MSkillTargetMgr.singleton.GetHeldEnemyRange(GetLocalRole());
-        if (skillCore.SkillId == MoonChaseSkillId) targetRange = skillInfo.AtkDistance;
+        // 第一级：先保留有效手选目标。逐月的主表距离只限制自动选择和技能自身的追击。
+        float targetRange = MSkillTargetMgr.singleton.GetHeldEnemyRange();
+        if (skillCore.SkillId == MoonChaseSkillId && !MSkillTargetMgr.singleton.HasManualTarget)
+            targetRange = skillInfo.AtkDistance;
         // 第一级：范围内仍有效的已选敌人优先，避免换招时丢失玩家锁定。
         if (MSkillTargetMgr.singleton.CanAttack(target, targetRange))
         {
@@ -503,7 +504,7 @@ public sealed class SkillCtrl : CtrlBase
         // 逐月无锁定时从同一立体范围内选最近的敌人，身后及空中均可。
         if (skillCore.SkillId == MoonChaseSkillId)
         {
-            return MSkillTargetDefine.FindOneTarget(true, targetRange);
+            return MSkillTargetDefine.FindOneTarget(true, skillInfo.AtkDistance);
         }
         // 第二级：没有有效选中目标时按前方优先自动索敌；第三级：无候选返回空，沿当前朝向空放。
         // 刀刃风暴虽以施法者为中心结算伤害，起手朝向仍与其余主动攻击统一取敌，不再只认已选目标。

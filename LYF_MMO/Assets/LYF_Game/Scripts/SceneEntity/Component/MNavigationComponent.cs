@@ -429,8 +429,8 @@ public class MNavigationComponent : EntityComponentBase
         }
         // 本导航组件仅由本地主角装配，锁定目标保存在 PlayerEntity 上。
         PlayerEntity player = (PlayerEntity)Entity;
-        // 追近沿用起手允许的锁定距离。跨过自动索敌的十米边界仍追原来的手动目标。
-        float range = MSkillTargetMgr.singleton.GetHeldEnemyRange(player);
+        // 手选敌人保留至目标失效或换锁，追近时可以位于十米之外。
+        float range = MSkillTargetMgr.singleton.GetHeldEnemyRange();
         return ReferenceEquals(player.Target, _target) && MSkillTargetMgr.singleton.CanAttack(_target, range);
     }
 
@@ -471,6 +471,12 @@ public class MNavigationComponent : EntityComponentBase
         if (Mathf.Abs(dir.y) > SelectTargetDistanceHeight)
         {
             return false;
+        }
+        // 手动锁定的十米出手边界用实际立体距离，追近跨过边界后才放行。
+        if (_useAfterAction && MSkillTargetMgr.singleton.HasManualTarget &&
+            _upperRange == MSkillTargetMgr.ManualCastDistance)
+        {
+            return dir.sqrMagnitude <= _upperRange * _upperRange;
         }
         dir.y = 0f;
         // 当前水平目标距离，单位米。
