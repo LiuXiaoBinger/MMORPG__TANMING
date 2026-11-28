@@ -1200,3 +1200,7 @@ Windows 区服启动脚本将构建产物输出到 `_temp/realm-build`。各服�
 ## [CODE][FILES][HANDOFF][UI][传送][RO-PORTAL-SKIN-20261128] 地面传送确认窗美术返修
 
 - `codex/feature-development` 分支的提交 `30e1fff` 仅修改了 `LYF_MMO/Assets/LYF_Game/Prefabs/UIPrefabs/TipsDiialog/PortalConfirm.prefab`。480 × 264 的弹窗复用了 Common1、Common、Map 和 NpcIcon01 中的七个 RO 精灵切片，配有地图飘带、传送插画、金色确认按钮和蓝色取消按钮。WorkBuddy 使用 DeepSeek V4.1 Flash 完成修改，Codex 验收并推送。仍只有点击确认才会发起传送请求。详见 `项目修改日志/地面传送确认窗美术返修-2026-11-28.md`。
+
+## [CODE][FILES][镜头][场景][CAMERA-INDOOR-INPUT-20261128] 天空中之城室内镜头改为按住右键拖动
+
+- 已清空 `LYF_MMO/Assets/LYF_Game/Scenes/SkyCity/Interiors/晨钟教堂.unity` 和 `LYF_MMO/Assets/LYF_Game/Scenes/SkyCity/Interiors/金穗餐馆.unity` 中 FreeLook 的 `Mouse X`、`Mouse Y` 输入轴名称。两个室内场景现与室外主城共用现有的 `CameraMgr` 控制，按住鼠标右键拖动可旋转镜头，滚轮可调整镜头距离。完整记录见 `项目修改日志/2026-11-23-PC镜头设置与世界相机.md`。

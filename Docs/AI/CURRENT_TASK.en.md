@@ -1205,3 +1205,7 @@ Dungeon checkpoints persist per member and instance through a party wipe. Tower 
 ## [CODE][FILES][HANDOFF][UI][传送][RO-PORTAL-SKIN-20261128] Ground portal confirmation artwork
 
 - Commit `30e1fff` on `codex/feature-development` updates only `LYF_MMO/Assets/LYF_Game/Prefabs/UIPrefabs/TipsDiialog/PortalConfirm.prefab`. The 480 × 264 dialog uses seven existing RO sprite slices from Common1, Common, Map and NpcIcon01. It pairs a map ribbon and portal illustration with gold confirm and blue cancel buttons. WorkBuddy used DeepSeek V4.1 Flash. Codex accepted and pushed the change. The confirm-only interaction is preserved. See `项目修改日志/地面传送确认窗美术返修-2026-11-28.md`.
+
+## [CODE][FILES][镜头][场景][CAMERA-INDOOR-INPUT-20261128] Right-drag control in the Sky City interiors
+
+- Cleared the FreeLook `Mouse X` and `Mouse Y` axis names in `LYF_MMO/Assets/LYF_Game/Scenes/SkyCity/Interiors/晨钟教堂.unity` and `LYF_MMO/Assets/LYF_Game/Scenes/SkyCity/Interiors/金穗餐馆.unity`. Both interiors now use the existing `CameraMgr` right-drag and wheel controls, as in the outdoor city. Full record: `项目修改日志/2026-11-23-PC镜头设置与世界相机.md`.

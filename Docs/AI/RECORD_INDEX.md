@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `17ac54f4a8a722845c7b5992a58947696a48ee14ee9fc56d351700149baa4454`
+Source normalized SHA256: `1bdfb4b4291d6831121a3b51026e63d78e345965daba7cc6864b54ae9e1e0455`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -185,11 +185,12 @@ Source normalized SHA256: `17ac54f4a8a722845c7b5992a58947696a48ee14ee9fc56d35170
 | [CODE][FILES][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 / omnidirectional and aerial pursuit | 1182-1193 |
 | [CODE][FILES][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Start the Moshenta arena on damage and reset only the encounter on a wipe | 1194-1200 |
 | [CODE][FILES][HANDOFF][GM][RO-GM-ROLE-20261128] Per-character GM flag | 1201-1204 |
-| [CODE][FILES][HANDOFF][UI][传送][RO-PORTAL-SKIN-20261128] Ground portal confirmation artwork | 1205-1207 |
+| [CODE][FILES][HANDOFF][UI][传送][RO-PORTAL-SKIN-20261128] Ground portal confirmation artwork | 1205-1208 |
+| [CODE][FILES][镜头][场景][CAMERA-INDOOR-INPUT-20261128] Right-drag control in the Sky City interiors | 1209-1211 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `30dc02d25e56b63bc8fd4697422b002e994055e9527a05708a8d43d012441311`
+Source normalized SHA256: `d59209a26e0bc11974b9ab4b260a1abb0f45e90ea079a4ab3f0dbeac8c2534f6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -369,7 +370,8 @@ Source normalized SHA256: `30dc02d25e56b63bc8fd4697422b002e994055e9527a05708a8d4
 | [VERIFY][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 / omnidirectional and aerial pursuit | 1232-1243 |
 | [VERIFY][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Replay first damage, a party wipe, re-entry and victory | 1244-1251 |
 | [VERIFY][GM][RO-GM-ROLE-20261128] Database-backed GM grant and realm-1 deployment | 1252-1255 |
-| [VERIFY][UI][传送][RO-PORTAL-SKIN-20261128] Portal artwork and interaction in Unity Play | 1256-1258 |
+| [VERIFY][UI][传送][RO-PORTAL-SKIN-20261128] Portal artwork and interaction in Unity Play | 1256-1259 |
+| [VERIFY][镜头][场景][CAMERA-INDOOR-INPUT-20261128] Interior mouse release, right drag and zoom | 1260-1263 |
 
 ## Docs/AI/DECISIONS.en.md
 

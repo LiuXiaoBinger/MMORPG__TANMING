@@ -1256,3 +1256,8 @@ The final client replay used the death window embedded in the actual UIRoot pref
 ## [VERIFY][UI][传送][RO-PORTAL-SKIN-20261128] Portal artwork and interaction in Unity Play
 
 - WorkBuddy ran 32 prefab checks and 60 wiring checks. Codex inspected the Unity Play screenshot and matched the SHA-256 of the production prefab to the isolated Play copy. All 11 Play checks passed, including the destination name, cancel and re-entry, closing on exit, and a single request on two confirm clicks. Preview in `_temp/ro-portal-skin-20261128/preview/unity_actual.png`. A physical phone and live-account map transfer were untested. See `项目修改日志/地面传送确认窗美术返修-2026-11-28.md`.
+
+## [VERIFY][镜头][场景][CAMERA-INDOOR-INPUT-20261128] Interior mouse release, right drag and zoom
+
+- In the live chapel Game view, moving the unpressed mouse rotated the camera before the fix. The same movement held both axes steady after the fix. The wheel changed the distance and a reverse scroll restored it.
+- An isolated Unity 2023.2.20f1c1 Play Mode run exercised the saved chapel, restaurant and outdoor Sky City camera rigs with the same Smart 3D mouse input. Both fixed interiors and the outdoor control had 0.000° idle and post-release yaw, 15.167° of yaw and 0.043 normalized pitch change during right drag, and a wheel zoom target of 12 to 10 m. Each camera followed a 5 m target displacement. Original indoor settings reproduced unintended rotation. Evidence: `_temp/church-camera-control-20261128/input-proof.txt` and `_temp/church-camera-control-20261128/现场对比.json`. The standalone Player was not rebuilt.
