@@ -1181,6 +1181,8 @@ The Windows realm launcher builds into `_temp/realm-build`. Each service runs it
 
 ## [CODE][FILES][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 / omnidirectional and aerial pursuit
 
+2026-11-28 impact feel. Default key 8 uses a 0.75 s clip, with opposing strike impulses at 0.30 and 0.50 s. Edit authoring/binding 3014001, both Moon Chase particle prefabs and the three 10140/2014001/3014001 Luban rows together. Keep the first beam, close retreat, omnidirectional 10 m aerial lock and 8 s cooldown. The developer chose to keep the existing connection. Realm 1 will load the new timing at its next normal startup. The new GameServer startup build contains all three updated tables.
+
 2026-11-28 hotbar fix. The purple Moon Chase icon on default key 8 sits between 3 and the central R emblem, above the health bar. In UIRoot.prefab, SkillSlot/7 must draw after both EmptySlot and EmptySlotInset so the placeholder graphics stay behind the icon and its key label.
 
 2026-11-28 update. Keyboard 8 now prefers the selected enemy or acquires the nearest attackable enemy within a 10 m sphere, including behind and overhead. The beam arrives first. Point-blank casts step back 3.4 m before returning. Both cuts follow airborne target height until recovery. Empty casts retain the 8 m forward dash. Tune the path in MjsMoonChasePath.cs and the beam anchors in MjsMoonChaseTrail.cs. Stable dungeon spawn IDs reach observers through the cast-start notification. Both local realm 1 game nodes run the update.

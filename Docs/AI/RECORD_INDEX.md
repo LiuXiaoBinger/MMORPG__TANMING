@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `2c713fce0c116b5e969b089adc80a48887ed29601e45bf6a6ba233a9369c53cb`
+Source normalized SHA256: `17ac54f4a8a722845c7b5992a58947696a48ee14ee9fc56d351700149baa4454`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -182,14 +182,14 @@ Source normalized SHA256: `2c713fce0c116b5e969b089adc80a48887ed29601e45bf6a6ba23
 | [CODE][FILES][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Personal boss drops by dungeon and difficulty | 1163-1168 |
 | [CODE][FILES][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] Author multi-item boss drops inside the RO dungeon editor | 1169-1175 |
 | [CODE][FILES][副本][UI][DUNGEON-JOURNAL-UI-20261127] Dungeon journal, individual boss marks and Friday Final chests | 1176-1181 |
-| [CODE][FILES][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 / omnidirectional and aerial pursuit | 1182-1191 |
-| [CODE][FILES][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Start the Moshenta arena on damage and reset only the encounter on a wipe | 1192-1198 |
-| [CODE][FILES][HANDOFF][GM][RO-GM-ROLE-20261128] Per-character GM flag | 1199-1202 |
-| [CODE][FILES][HANDOFF][UI][传送][RO-PORTAL-SKIN-20261128] Ground portal confirmation artwork | 1203-1205 |
+| [CODE][FILES][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 / omnidirectional and aerial pursuit | 1182-1193 |
+| [CODE][FILES][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Start the Moshenta arena on damage and reset only the encounter on a wipe | 1194-1200 |
+| [CODE][FILES][HANDOFF][GM][RO-GM-ROLE-20261128] Per-character GM flag | 1201-1204 |
+| [CODE][FILES][HANDOFF][UI][传送][RO-PORTAL-SKIN-20261128] Ground portal confirmation artwork | 1205-1207 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `b74dd8c188fb72f996cf09ebd1381b71deb960b88ff8c6333ae1ef6a41d5e7c2`
+Source normalized SHA256: `30dc02d25e56b63bc8fd4697422b002e994055e9527a05708a8d43d012441311`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -366,10 +366,10 @@ Source normalized SHA256: `b74dd8c188fb72f996cf09ebd1381b71deb960b88ff8c6333ae1e
 | [VERIFY][副本][奖励][DUNGEON-BOSS-DROPS-20261127] Multi-boss drops, period boundaries and re-entry | 1215-1220 |
 | [VERIFY][副本][奖励][DUNGEON-BOSS-LOOT-EDITOR-20261127] RO editor rendering, export and multi-item settlement | 1221-1226 |
 | [VERIFY][副本][UI][DUNGEON-JOURNAL-UI-20261127] Journal rendering, personal progress and weekly claim | 1227-1231 |
-| [VERIFY][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 / omnidirectional and aerial pursuit | 1232-1241 |
-| [VERIFY][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Replay first damage, a party wipe, re-entry and victory | 1242-1249 |
-| [VERIFY][GM][RO-GM-ROLE-20261128] Database-backed GM grant and realm-1 deployment | 1250-1253 |
-| [VERIFY][UI][传送][RO-PORTAL-SKIN-20261128] Portal artwork and interaction in Unity Play | 1254-1256 |
+| [VERIFY][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 / omnidirectional and aerial pursuit | 1232-1243 |
+| [VERIFY][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Replay first damage, a party wipe, re-entry and victory | 1244-1251 |
+| [VERIFY][GM][RO-GM-ROLE-20261128] Database-backed GM grant and realm-1 deployment | 1252-1255 |
+| [VERIFY][UI][传送][RO-PORTAL-SKIN-20261128] Portal artwork and interaction in Unity Play | 1256-1258 |
 
 ## Docs/AI/DECISIONS.en.md
 
