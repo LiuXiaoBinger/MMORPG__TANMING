@@ -1,9 +1,14 @@
+using UnityEngine;
+
 /// <summary>
 /// 技能时间轴回调要携带的数据：本次施法身份，以及特效、声音或位移指令。
 /// 回调触发时用 UUID 和技能复用次数判断它是否仍属于原来的施法。
 /// </summary>
 public sealed class MSkillTimerArgs
 {
+    /// <summary>当前挥剑拍点的镜头平面冲量，横纵分量以米表示，随该次施法计时器释放。</summary>
+    public Vector2 ShakeOffset { get; private set; }
+
     /// <summary>注册事件时锁定的非零施法 UUID，用于阻止回池后旧回调作用于新施法。</summary>
     public ulong SkillUuid { get; private set; }
 
@@ -33,6 +38,17 @@ public sealed class MSkillTimerArgs
         SkillUuid = skillUuid;
         Id = id;
         FireGeneration = fireGeneration;
+    }
+
+    /// <summary>为单个动作重音保存独立的镜头方向与强度。</summary>
+    /// <param name="skillUuid">当前重音所属施法的唯一编号。</param>
+    /// <param name="id">交由表现定时器处理的动作重音编号。</param>
+    /// <param name="offset">向镜头右方和上方的有符号位移，单位米。</param>
+    /// <param name="fireGeneration">登记时的施法代次，复用后忽略旧回调。</param>
+    public MSkillTimerArgs(ulong skillUuid, int id, Vector2 offset, ulong fireGeneration)
+        : this(skillUuid, id, fireGeneration)
+    {
+        ShakeOffset = offset;
     }
 
     /// <summary>创建粒子时间轴参数，生命周期从注册延续到成功派发或施法取消。</summary>

@@ -11,6 +11,9 @@ public class MArtSkill : MSkill
 {
 
     #region 字段与属性
+    /// <summary>逐月第一刀向收刀的反方向振屏，位移取第二刀的 64%，区分两次挥剑的轻重。</summary>
+    private const float MoonOpeningShakeRatio = 0.64f;
+
     /// <summary>锁敌逐月共用的剑光起点、目标及折返轨迹，空放和其他武功不分配。</summary>
     internal MjsMoonChasePath MoonPath { get; private set; }
 
@@ -298,13 +301,30 @@ public class MArtSkill : MSkill
                 return;
             }
         }
-        // 距动作重音的剩余秒数，冷加载时跳过已经过去的重音。
-        float shakeDelay = presentation.CastShakeTimeSeconds - TimelineElapsedSeconds;
-        if (_firer.IsPlayer && presentation.CastShakeOffset != Vector2.zero && shakeDelay >= 0f)
+        if (_firer.IsPlayer && presentation.CastShakeOffset != Vector2.zero)
         {
-            AddedTimerToken(MTimerMgr.singleton.SetTimer(shakeDelay, _onProcessTimer,
-                new MSkillTimerArgs(SkillUuid, (int)EArtsSkillTimerCb.ECastShake, fireGeneration)));
+            if (SkillId == SkillCtrl.MoonChaseSkillId && presentation.Collisions.Count == 2)
+            {
+                // 第一刀跟随实际判定的起始帧，调快攻击轨时剑光和镜头仍同时出手。
+                SkillRuntimeCollision opening = presentation.Collisions[0];
+                RegisterCastShake(opening.StartFrame / opening.FrameRate,
+                    -presentation.CastShakeOffset * MoonOpeningShakeRatio, fireGeneration);
+            }
+            RegisterCastShake(presentation.CastShakeTimeSeconds, presentation.CastShakeOffset, fireGeneration);
         }
+    }
+
+    /// <summary>将本机动作重音排在技能时钟上，资源迟到时跳过已过去的拍点。</summary>
+    /// <param name="at">从本次出招开始至挥剑重音的秒数。</param>
+    /// <param name="offset">镜头平面向右、向上的有符号冲量位移，单位米。</param>
+    /// <param name="fireGeneration">登记事件的这次施法代次，取消或回池时使旧事件失效。</param>
+    private void RegisterCastShake(float at, Vector2 offset, ulong fireGeneration)
+    {
+        // 已播出的动作相位不补震，以免两刀在资源加载完成的同一帧叠加。
+        float delay = at - TimelineElapsedSeconds;
+        if (delay < 0f) return;
+        AddedTimerToken(MTimerMgr.singleton.SetTimer(delay, _onProcessTimer,
+            new MSkillTimerArgs(SkillUuid, (int)EArtsSkillTimerCb.ECastShake, offset, fireGeneration)));
     }
 
     /// <summary>分发到期的表现事件，动作重音只在本次施法仍占用动作槽时振屏。</summary>
@@ -332,8 +352,15 @@ public class MArtSkill : MSkill
                 ghost();
                 return true;
             case EArtsSkillTimerCb.ECastShake:
-                if (!_animationReleased)
-                    CameraMgr.Instance?.PlaySkillAccentShake(_runtimePresentation.CastShakeOffset);
+                if (_animationReleased) return true;
+                if (SkillId == SkillCtrl.MoonChaseSkillId)
+                {
+                    CameraMgr.Instance?.PlaySkillStrikeShake(param.ShakeOffset);
+                }
+                else
+                {
+                    CameraMgr.Instance?.PlaySkillAccentShake(param.ShakeOffset);
+                }
                 return true;
         }
         return false;

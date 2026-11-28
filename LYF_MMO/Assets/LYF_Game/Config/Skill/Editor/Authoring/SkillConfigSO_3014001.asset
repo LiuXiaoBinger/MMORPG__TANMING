@@ -56,8 +56,8 @@ MonoBehaviour:
   skillClip: {fileID: 7400000, guid: 6b9ab34edb12eeb4894463172412e661, type: 2}
   exitFrame: 0
   moveSegmentList:
-  - keyNumber: 5
-    endKeyNumber: 24
+  - keyNumber: 2
+    endKeyNumber: 15
     driveMode: 0
     rootMotionScale: 1
     space: 0
@@ -182,8 +182,8 @@ MonoBehaviour:
     unblockable: 0
     unparryable: 0
     interactionTag:
-    keyNumber: 37
-    endKeyNumber: 37
+    keyNumber: 18
+    endKeyNumber: 18
     isReWrite: 0
     shapeType: 1
     parameter1: 4
@@ -234,8 +234,8 @@ MonoBehaviour:
     unblockable: 0
     unparryable: 0
     interactionTag:
-    keyNumber: 60
-    endKeyNumber: 60
+    keyNumber: 30
+    endKeyNumber: 30
     isReWrite: 0
     shapeType: 1
     parameter1: 4
@@ -300,8 +300,8 @@ MonoBehaviour:
     volumeVariation: 0.05
     baseVolume: 1
   - contentKind: 1
-    keyNumber: 37
-    endKeyNumber: 37
+    keyNumber: 18
+    endKeyNumber: 18
     particleSystem: {fileID: 5810301611930917441, guid: 4f8570b7b9beacf4a9e0026adfc0b70d, type: 3}
     offset: {x: 0, y: 0.055, z: 0}
     socketPath:
@@ -319,8 +319,8 @@ MonoBehaviour:
     volumeVariation: 0.05
     baseVolume: 1
   - contentKind: 1
-    keyNumber: 60
-    endKeyNumber: 60
+    keyNumber: 30
+    endKeyNumber: 30
     particleSystem: {fileID: 5810301611930917441, guid: 4f8570b7b9beacf4a9e0026adfc0b70d, type: 3}
     offset: {x: 0, y: 0.18, z: 0}
     socketPath:
@@ -338,8 +338,8 @@ MonoBehaviour:
     volumeVariation: 0.05
     baseVolume: 1
   - contentKind: 2
-    keyNumber: 1
-    endKeyNumber: 1
+    keyNumber: 0
+    endKeyNumber: 0
     particleSystem: {fileID: 0}
     offset: {x: 0, y: 0, z: 0}
     socketPath:
@@ -355,10 +355,10 @@ MonoBehaviour:
     audioRandomize: 0
     pitchVariation: 0.1
     volumeVariation: 0.05
-    baseVolume: 0.68
+    baseVolume: 0.62
   - contentKind: 2
-    keyNumber: 37
-    endKeyNumber: 37
+    keyNumber: 12
+    endKeyNumber: 12
     particleSystem: {fileID: 0}
     offset: {x: 0, y: 0, z: 0}
     socketPath:
@@ -374,10 +374,10 @@ MonoBehaviour:
     audioRandomize: 0
     pitchVariation: 0.1
     volumeVariation: 0.05
-    baseVolume: 0.84
+    baseVolume: 0.90
   - contentKind: 2
-    keyNumber: 60
-    endKeyNumber: 60
+    keyNumber: 25
+    endKeyNumber: 25
     particleSystem: {fileID: 0}
     offset: {x: 0, y: 0, z: 0}
     socketPath:
@@ -393,7 +393,7 @@ MonoBehaviour:
     audioRandomize: 0
     pitchVariation: 0.1
     volumeVariation: 0.05
-    baseVolume: 0.77
+    baseVolume: 1
   cancelList: []
   projectileList: []
   hitFxList: []

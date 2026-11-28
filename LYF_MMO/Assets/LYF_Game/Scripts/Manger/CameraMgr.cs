@@ -37,6 +37,16 @@ public partial class CameraMgr : MonoBehaviour
         m_ImpulseDuration = 0.14f,
     };
 
+    /// <summary>逐月挥刀用的 0.12 秒镜头曲线，前 0.054 秒保持峰值，使两刀在较低帧率下各自有清晰的一拍。</summary>
+    private static readonly CinemachineImpulseDefinition SkillStrikeImpulse = new CinemachineImpulseDefinition
+    {
+        m_ImpulseChannel = CombatShakeChannel,
+        m_ImpulseType = CinemachineImpulseDefinition.ImpulseTypes.Uniform,
+        m_ImpulseShape = CinemachineImpulseDefinition.ImpulseShapes.Custom,
+        m_ImpulseDuration = 0.12f,
+        m_CustomImpulseShape = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(0.45f, 1f), new Keyframe(1f, 0f)),
+    };
+
     /// <summary>当前 FreeLook 虚拟相机的战斗脉冲监听器，随相机一起销毁。</summary>
     private CinemachineImpulseListener _combatShakeListener;
 
@@ -195,6 +205,13 @@ public partial class CameraMgr : MonoBehaviour
         if (WorldCameraSettings.Allows(WorldCameraFeature.SkillAccent)) PlayCombatShake(SkillCastImpulse, offset);
     }
 
+    /// <summary>挥刀时立即达到镜头偏移峰值，保持约三帧后回正，沿用玩家的技能振屏设置。</summary>
+    /// <param name="offset">本次斩击沿镜头右向和上向的有符号峰值位移，单位米。</param>
+    public void PlaySkillStrikeShake(Vector2 offset)
+    {
+        if (WorldCameraSettings.Allows(WorldCameraFeature.SkillAccent)) PlayCombatShake(SkillStrikeImpulse, offset);
+    }
+
     /// <summary>本地主角命中目标时，沿画面平面播放更强、更快起峰的冲量。</summary>
     public void PlaySkillHitShake()
     {
@@ -219,7 +236,13 @@ public partial class CameraMgr : MonoBehaviour
             _combatShakeListener.m_Gain = 1f;
             _combatShakeListener.m_UseCameraSpace = true;
         }
-        impulse.CreateEvent(_cinemachine.State.FinalPosition, offset);
+        // 保存本次脉冲以设定本机剑击的传播方式，事件仍由 Cinemachine 统一采样和回收。
+        CinemachineImpulseManager.ImpulseEvent pulse = impulse.CreateAndReturnEvent(_cinemachine.State.FinalPosition, offset);
+        if (impulse == SkillStrikeImpulse && pulse != null)
+        {
+            // FreeLook 各子机位不重合。采用瞬时传播，出刀帧的采样时间才不会因微小距离变成负值。
+            pulse.m_PropagationSpeed = float.PositiveInfinity;
+        }
     }
 
     /// <summary>让自由视角相机跟随本地主角模型，不依赖旧 MainRoleCtrl。</summary>

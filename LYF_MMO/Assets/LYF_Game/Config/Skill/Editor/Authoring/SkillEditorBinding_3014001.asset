@@ -22,9 +22,9 @@ MonoBehaviour:
   Config: {fileID: 11400000, guid: 4adc0b98b3f692644992395eb27e7a47, type: 2}
   PreviewModel: {fileID: 8115728581419920701, guid: d76aa3412cb81bd4598ec4a0db60d14f, type: 3}
   SourceClip: {fileID: 7400000, guid: 6b9ab34edb12eeb4894463172412e661, type: 2}
-  SkillStateTimeMs: 1300
-  CastShakeTimeSeconds: 0
-  CastShakeOffset: {x: 0, y: 0}
+  SkillStateTimeMs: 750
+  CastShakeTimeSeconds: 0.5
+  CastShakeOffset: {x: 0.34, y: -0.27}
   CollisionAtTarget: 0
   CollisionForwardDistance: 0
   FxSources: []

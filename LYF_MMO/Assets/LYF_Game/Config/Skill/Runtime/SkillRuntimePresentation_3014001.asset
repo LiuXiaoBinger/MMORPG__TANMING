@@ -15,10 +15,10 @@ MonoBehaviour:
   PresentationId: 3014001
   SkillId: 10140
   AnimationLocation: Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Skill/Anim_MJS_MoonChase.anim
-  DurationSeconds: 1.3
-  TimelineDurationSeconds: 1.3
-  CastShakeTimeSeconds: 0
-  CastShakeOffset: {x: 0, y: 0}
+  DurationSeconds: 0.75
+  TimelineDurationSeconds: 0.75
+  CastShakeTimeSeconds: 0.5
+  CastShakeOffset: {x: 0.34, y: -0.27}
   FxEvents:
   - SourceEventIndex: 0
     Frame: 1
@@ -31,8 +31,8 @@ MonoBehaviour:
     LocalScale: {x: 1, y: 1, z: 1}
     ForwardDistance: 0
   - SourceEventIndex: 1
-    Frame: 37
-    TimeSeconds: 0.6166667
+    Frame: 18
+    TimeSeconds: 0.3
     Particle: {fileID: 5810301611930917441, guid: 4f8570b7b9beacf4a9e0026adfc0b70d, type: 3}
     PlacementKind: 0
     SocketPath:
@@ -41,8 +41,8 @@ MonoBehaviour:
     LocalScale: {x: 1, y: 1, z: 1}
     ForwardDistance: 0
   - SourceEventIndex: 2
-    Frame: 60
-    TimeSeconds: 1
+    Frame: 30
+    TimeSeconds: 0.5
     Particle: {fileID: 5810301611930917441, guid: 4f8570b7b9beacf4a9e0026adfc0b70d, type: 3}
     PlacementKind: 0
     SocketPath:
@@ -52,23 +52,23 @@ MonoBehaviour:
     ForwardDistance: 0
   AudioEvents:
   - SourceEventIndex: 3
-    Frame: 1
-    TimeSeconds: 0.016666668
+    Frame: 0
+    TimeSeconds: 0
     Clip: {fileID: 8300000, guid: a54c365ca3a94624fa605c1eb9fd56cb, type: 3}
-    Volume: 0.68
+    Volume: 0.62
   - SourceEventIndex: 4
-    Frame: 37
-    TimeSeconds: 0.6166667
+    Frame: 12
+    TimeSeconds: 0.2
     Clip: {fileID: 8300000, guid: 590384e82dc51ba4490cce70b75f0dc1, type: 3}
-    Volume: 0.84
+    Volume: 0.9
   - SourceEventIndex: 5
-    Frame: 60
-    TimeSeconds: 1
+    Frame: 25
+    TimeSeconds: 0.41666666
     Clip: {fileID: 8300000, guid: b6ecbbaf3e445b346862c58ca57db223, type: 3}
-    Volume: 0.77
+    Volume: 1
   ChargeList:
-  - At: 0.083333336
-    End: 0.4
+  - At: 0.033333335
+    End: 0.25
     CurveX:
       serializedVersion: 2
       m_Curve: []
@@ -105,8 +105,8 @@ MonoBehaviour:
     AllowReverse: 0
     StopAtDistanceLimit: 0
   Collisions:
-  - StartFrame: 37
-    EndFrame: 37
+  - StartFrame: 18
+    EndFrame: 18
     FrameRate: 60
     Shape: 1
     Radius: 4
@@ -117,8 +117,8 @@ MonoBehaviour:
     RepeatFrames: 0
     AtTarget: 0
     ForwardDistance: 0
-  - StartFrame: 60
-    EndFrame: 60
+  - StartFrame: 30
+    EndFrame: 30
     FrameRate: 60
     Shape: 1
     Radius: 4

@@ -42,7 +42,7 @@ ParticleSystem:
   m_GameObject: {fileID: 270347056761266512}
   serializedVersion: 8
   lengthInSec: 0.289
-  simulationSpeed: 1
+  simulationSpeed: 1.6
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
@@ -4950,7 +4950,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1354793968144442981}
   serializedVersion: 8
   lengthInSec: 0.3
-  simulationSpeed: 1
+  simulationSpeed: 1.6
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
@@ -9858,7 +9858,7 @@ ParticleSystem:
   m_GameObject: {fileID: 2303380754835155280}
   serializedVersion: 8
   lengthInSec: 0.29
-  simulationSpeed: 1
+  simulationSpeed: 1.6
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
@@ -14748,7 +14748,7 @@ ParticleSystem:
   m_GameObject: {fileID: 4300788038298706868}
   serializedVersion: 8
   lengthInSec: 0.27199998
-  simulationSpeed: 1
+  simulationSpeed: 1.6
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
@@ -19638,7 +19638,7 @@ ParticleSystem:
   m_GameObject: {fileID: 5907529612490300486}
   serializedVersion: 8
   lengthInSec: 0.252
-  simulationSpeed: 1
+  simulationSpeed: 1.6
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
@@ -24554,7 +24554,7 @@ ParticleSystem:
   m_GameObject: {fileID: 5987096226121677005}
   serializedVersion: 8
   lengthInSec: 0.29
-  simulationSpeed: 1
+  simulationSpeed: 1.6
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
@@ -29386,7 +29386,7 @@ ParticleSystem:
   m_GameObject: {fileID: 7258696722880513960}
   serializedVersion: 8
   lengthInSec: 0.281
-  simulationSpeed: 1
+  simulationSpeed: 1.6
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
@@ -34276,7 +34276,7 @@ ParticleSystem:
   m_GameObject: {fileID: 8041243453852427324}
   serializedVersion: 8
   lengthInSec: 0.254
-  simulationSpeed: 1
+  simulationSpeed: 1.6
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
@@ -39166,7 +39166,7 @@ ParticleSystem:
   m_GameObject: {fileID: 8363691519469675118}
   serializedVersion: 8
   lengthInSec: 0.26299998
-  simulationSpeed: 1
+  simulationSpeed: 1.6
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0

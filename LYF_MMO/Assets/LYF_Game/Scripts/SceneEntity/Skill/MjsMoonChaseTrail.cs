@@ -42,12 +42,12 @@ public sealed class MjsMoonChaseTrail : MonoBehaviour
         echo.SetPositionAndRotation(path.Origin, Quaternion.LookRotation(path.Forward));
         for (int i = 0; i < sparks.Length; i++)
         {
-            // 目标闪点比角色追身提前约八十毫秒。
+            // 目标闪点先于追身，在快速折返起步前标出剑光落点。
             ParticleSystem spark = sparks[i];
             spark.transform.position = path.LightTarget + Vector3.up * 0.98f;
-            // 时间相对剑光出生，以秒计。
+            // 相对剑光出生的粒子模拟秒数，按预制体 1.5 倍速约合实际 43 毫秒。
             ParticleSystem.MainModule main = spark.main;
-            main.startDelay = 0.105f;
+            main.startDelay = 0.065f;
         }
     }
 }
