@@ -190,7 +190,7 @@ Source normalized SHA256: `1bdfb4b4291d6831121a3b51026e63d78e345965daba7cc6864b5
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `d59209a26e0bc11974b9ab4b260a1abb0f45e90ea079a4ab3f0dbeac8c2534f6`
+Source normalized SHA256: `d25f6448c3d3819c12356d8510497382bfe2e9caa6c94f796f87f5ef16a592b0`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -371,7 +371,8 @@ Source normalized SHA256: `d59209a26e0bc11974b9ab4b260a1abb0f45e90ea079a4ab3f0db
 | [VERIFY][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Replay first damage, a party wipe, re-entry and victory | 1244-1251 |
 | [VERIFY][GM][RO-GM-ROLE-20261128] Database-backed GM grant and realm-1 deployment | 1252-1255 |
 | [VERIFY][UI][传送][RO-PORTAL-SKIN-20261128] Portal artwork and interaction in Unity Play | 1256-1259 |
-| [VERIFY][镜头][场景][CAMERA-INDOOR-INPUT-20261128] Interior mouse release, right drag and zoom | 1260-1263 |
+| [VERIFY][镜头][场景][CAMERA-INDOOR-INPUT-20261128] Interior mouse release, right drag and zoom | 1260-1264 |
+| [VERIFY][区服][REALM1-CONSOLE-RECOVERY-20261128] Realm 1 recovered after a console-host failure | 1265-1267 |
 
 ## Docs/AI/DECISIONS.en.md
 
