@@ -100,7 +100,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     DistanceX: 0
-    DistanceZ: 8
+    DistanceZ: 14
     AimTarget: 0
     AllowReverse: 0
     StopAtDistanceLimit: 0

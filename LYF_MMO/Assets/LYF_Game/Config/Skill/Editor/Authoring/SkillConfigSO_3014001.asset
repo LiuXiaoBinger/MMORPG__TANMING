@@ -39,7 +39,7 @@ MonoBehaviour:
   flowNodes: []
   skillID: 10140
   skillName: "\u9010\u6708"
-  skillDescription: "\u5251\u5149\u5148\u884C\uFF0C\u6CBF\u9762\u5411\u7A81\u8FDB\u81F3\u591A8\u7C73\uFF0C\u5728\u843D\u70B9\u6325\u51FA\u4E24\u9053\u6708\u7259\u3002"
+  skillDescription: "\u5251\u5149\u5148\u81F3\uFF0C\u8FFD\u5230\u76EE\u6807\u8EAB\u8FB9\u8FDE\u65A9\u4E24\u5200\u3002\u8D34\u8EAB\u65F6\u5148\u540E\u64A45.5\u7C73\u518D\u6298\u8FD4\u3002\u4F18\u5148\u8FFD\u51FB\u5F53\u524D\u9501\u5B9A\u76EE\u6807\uFF0C\u53EF\u8FFD\u51FB\u5468\u8EAB16\u7C73\u5185\u7684\u5730\u9762\u6216\u7A7A\u4E2D\u654C\u4EBA\u3002\u8303\u56F4\u5185\u6CA1\u6709\u654C\u4EBA\u65F6\u6CBF\u9762\u5411\u7A81\u8FDB14\u7C73\u3002"
   skillType: 2
   previewModelName: Role_MJS
   ownerType: 0
@@ -89,7 +89,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    maxDistance: 8
+    maxDistance: 14
     curveX:
       serializedVersion: 2
       m_Curve: []

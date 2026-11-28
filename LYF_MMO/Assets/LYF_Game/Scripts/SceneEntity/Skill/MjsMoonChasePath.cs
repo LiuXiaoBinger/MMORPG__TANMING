@@ -7,7 +7,7 @@ internal sealed class MjsMoonChasePath
     /// <summary>位移段前三分之一用于近身退步或远程亮剑，后续时间供人物追身。</summary>
     private const float TurnProgress = 0.38f;
     /// <summary>贴身时从施法点向后拉开的世界米数。</summary>
-    private const float RetreatDistance = 3.4f;
+    private const float RetreatDistance = 5.5f;
     /// <summary>本次锁定的敌人，其当前水平位置决定折返终点。</summary>
     private readonly MEntity target;
     /// <summary>起手时的实体身份，防止对象回池后追向另一个出生单位。</summary>

@@ -41,7 +41,7 @@ public sealed class SkillCtrl : CtrlBase
 
     /// <summary>龙卷斩的稳定主表编号，施法沿角色当前水平朝向放出特效。</summary>
     internal const int TornadoSlashSkillId = 10130;
-    /// <summary>逐月的主表编号，突进始终沿施法者当前面向。</summary>
+    /// <summary>逐月的主表编号，锁敌时全向追身，空放时沿施法者面向前冲。</summary>
     internal const int MoonChaseSkillId = 10140;
     #endregion
 
@@ -490,15 +490,18 @@ public sealed class SkillCtrl : CtrlBase
         {
             return null;
         }
-        // 自动取得和主动选择的敌人同样保持，身后或更近的新怪不会抢走已有目标。
-        if (MSkillTargetMgr.singleton.CanAttack(target))
+        // 逐月用自身主表的立体追击距离，其余技能保留原有选敌半径，单位米。
+        float targetRange = MSkillTargetMgr.MaxChooseDistance;
+        if (skillCore.SkillId == MoonChaseSkillId) targetRange = skillInfo.AtkDistance;
+        // 优先保留本招范围内已经选中的敌人。
+        if (MSkillTargetMgr.singleton.CanAttack(target, targetRange))
         {
             return target;
         }
         // 逐月优先追当前锁定，无锁定时从同一立体范围内选最近的敌人，身后及空中均可。
         if (skillCore.SkillId == MoonChaseSkillId)
         {
-            return MSkillTargetDefine.FindOneTarget(true, MSkillTargetMgr.MaxChooseDistance);
+            return MSkillTargetDefine.FindOneTarget(true, targetRange);
         }
         // 无锁定时刀刃风暴沿角色当前方向起手，不自动抢占敌人。
         if (skillCore.SkillId == MWaitingDataMgr.BladeStormSkillId)

@@ -753,11 +753,17 @@ public class MArtSkill : MSkill
         }
         effect.transform.localScale = fxEvent.LocalScale;
         // 只有逐月起手预制体带剑光锚点，两刀的月牙仍跟随角色根节点。
-        if (MoonPath != null && effect.TryGetComponent(out MjsMoonChaseTrail trail))
+        if (SkillId == SkillCtrl.MoonChaseSkillId && effect.TryGetComponent(out MjsMoonChaseTrail trail))
         {
             // 原粒子启用时会自动播放，先清空首帧再按本次目标重启整组。
             effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            trail.Aim(MoonPath);
+            if (MoonPath != null) trail.Aim(MoonPath.Origin, MoonPath.Forward, MoonPath.LightTarget);
+            else
+            {
+                // 空放的剑光和人物使用同一段前冲距离，闪点留在该次施法的世界终点。
+                Vector3 landing = CastPoint + SkillTowardsTo * _runtimePresentation.ChargeList[0].DistanceZ;
+                trail.Aim(CastPoint, SkillTowardsTo, landing);
+            }
         }
         effect.Play(true);
         return true;

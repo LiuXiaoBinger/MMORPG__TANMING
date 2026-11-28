@@ -7,7 +7,7 @@ public sealed class MSkillTargetMgr
 {
     /// <summary>当前客户端唯一选择入口，不持有跨场景玩家引用。</summary>
     public static readonly MSkillTargetMgr singleton = new MSkillTargetMgr();
-    /// <summary>当前魔剑士点击、瞄准切换与目标保持的最大距离，单位米；超过十米取消选择。</summary>
+    /// <summary>普通攻击取敌及角色查看使用的基础选择半径，单位米。</summary>
     public const float MaxChooseDistance = 10f;
     /// <summary>攻击技能没有有效目标时自动获取敌人的半径，单位米，与技能出招射程独立。</summary>
     public const float AutoChooseDistance = 10f;
@@ -20,6 +20,15 @@ public sealed class MSkillTargetMgr
 
     /// <summary>单例只统一选择职责，不创建目标实体或服务器状态。</summary>
     private MSkillTargetMgr() { }
+
+    /// <summary>已装配逐月的角色可以手动选中其追击范围内的敌人。</summary>
+    /// <param name="player">当前负责选择的本地玩家。</param>
+    /// <returns>点击或瞄准敌人时可以保留的立体距离，单位米。</returns>
+    private static float GetEnemySelectionRange(PlayerEntity player)
+    {
+        if (player?.Skill?.GetSkillCore(SkillCtrl.MoonChaseSkillId) == null) return MaxChooseDistance;
+        return Mathf.Max(MaxChooseDistance, LubanMgr.Instance.GetSkillInfoById(SkillCtrl.MoonChaseSkillId).AtkDistance);
+    }
 
     /// <summary>沿 RO 瞄准按钮流程，过滤怪物等级后在最近四个有效敌人中循环。</summary>
     /// <param name="monsterType">怪物等级位掩码，负一表示所有已接入怪物等级。</param>
@@ -34,7 +43,7 @@ public sealed class MSkillTargetMgr
         PlayerEntity player = Global.Instance.SceneWorld.LocalRole;
         // 临时候选列表借自现有强类型列表池。
         List<MEntity> targets = MListPool<MEntity>.Get();
-        MSkillTargetDefine.FindAllTarget(targets, true, MaxChooseDistance);
+        MSkillTargetDefine.FindAllTarget(targets, true, GetEnemySelectionRange(player));
         // 倒序去除不属于本次等级掩码的候选。
         for (int index = targets.Count - 1; index >= 0; index--)
         {
@@ -110,7 +119,9 @@ public sealed class MSkillTargetMgr
     /// <returns>目标被接受时为 true。</returns>
     public bool OnSelectTarget(MEntity target)
     {
-        if (!CanAttack(target))
+        // 手动点选沿用当前角色已装配的追击距离。
+        PlayerEntity player = Global.Instance?.SceneWorld?.LocalRole;
+        if (!CanAttack(target, GetEnemySelectionRange(player)))
         {
             return false;
         }
@@ -118,7 +129,7 @@ public sealed class MSkillTargetMgr
         return true;
     }
 
-    /// <summary>目标离场、死亡、隐藏或超过十米时取消选择；检查选择状态时不改变角色朝向。</summary>
+    /// <summary>目标离场、死亡、隐藏或离开本次选择半径时，清除当前选择。</summary>
     public void UpdateToCheckTarget()
     {
         if (Global.Instance == null || Global.Instance.SceneWorld == null ||
@@ -137,16 +148,20 @@ public sealed class MSkillTargetMgr
             ResetTarget(null);
             return;
         }
-        if ((player.Target.Position - player.Position).sqrMagnitude > MaxChooseDistance * MaxChooseDistance)
+        // 手选敌人可保持至逐月的追击边界，普通自动目标及友方仍用基础半径。
+        float range = MaxChooseDistance;
+        if (HasManualTarget && MSkillTargetDefine.IsEnemy(player.Target)) range = GetEnemySelectionRange(player);
+        if ((player.Target.Position - player.Position).sqrMagnitude > range * range)
         {
             ResetTarget(null);
         }
     }
 
-    /// <summary>判断当前世界中十米内的有效敌人，供选敌、出招及追近中断共用同一距离边界。</summary>
+    /// <summary>判断敌人是否存活且处于本次选敌或出招使用的立体范围内。</summary>
     /// <param name="entity">当前目标或候选，可为空。</param>
-    /// <returns>本地玩家存在且有效敌人距离不超过十米时为 true。</returns>
-    public bool CanAttack(MEntity entity)
+    /// <param name="range">从本地玩家中心量起的世界米数，普通攻击默认使用基础半径。</param>
+    /// <returns>本地玩家存在且有效敌人距离不超过指定半径时为 true。</returns>
+    public bool CanAttack(MEntity entity, float range = MaxChooseDistance)
     {
         // 目标是当前世界中有效的敌对单位；IsValidTarget 内部已包含全局与世界非空判断。
         bool isEnemyTarget = MSkillTargetDefine.IsValidTarget(entity) &&
@@ -164,6 +179,6 @@ public sealed class MSkillTargetMgr
             return false;
         }
         return (entity.Position - Global.Instance.SceneWorld.LocalRole.Position).sqrMagnitude <=
-            MaxChooseDistance * MaxChooseDistance;
+            range * range;
     }
 }
