@@ -7074,7 +7074,7 @@ MonoBehaviour:
     shapeType: 1
     parameter1: 3
     parameter2: 3
-    offset: {x: 0, y: 1.1, z: 1.7}
+    offset: {x: 0, y: 1.1, z: 6}
     damageRatio: 0
     knockbackForce: 0
     autoAim: 0

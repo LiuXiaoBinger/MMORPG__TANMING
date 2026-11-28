@@ -51,33 +51,27 @@ MonoBehaviour:
     Volume: 0.85
   ChargeList: []
   Collisions:
-  - StartFrame: 4
-    EndFrame: 8
+  - StartFrame: 28
+    EndFrame: 29
     FrameRate: 30
     Shape: 1
     Radius: 5
     BoxSize: {x: 5, y: 2.5, z: 5}
     Rotation: {x: 0, y: 0, z: 0}
     Offsets:
-    - {x: 0, y: 1.1, z: 0}
-    - {x: 0, y: 1.1, z: 0}
-    - {x: 0, y: 1.1, z: 0}
     - {x: 0, y: 1.1, z: 0}
     - {x: 0, y: 1.1, z: 0}
     RepeatFrames: 0
     AtTarget: 1
     ForwardDistance: 10
-  - StartFrame: 13
-    EndFrame: 17
+  - StartFrame: 33
+    EndFrame: 34
     FrameRate: 30
     Shape: 1
     Radius: 5
     BoxSize: {x: 5, y: 2.5, z: 5}
     Rotation: {x: 0, y: 0, z: 0}
     Offsets:
-    - {x: 0, y: 1.1, z: 0}
-    - {x: 0, y: 1.1, z: 0}
-    - {x: 0, y: 1.1, z: 0}
     - {x: 0, y: 1.1, z: 0}
     - {x: 0, y: 1.1, z: 0}
     RepeatFrames: 0

@@ -8,6 +8,10 @@ internal sealed class ROWeaponHitSkill : ROSkill
 {
     /// <summary>与武功表现前方碰撞盒一致的盒心偏移，单位米。</summary>
     private const float ForwardBoxOffset = 1.7f;
+    /// <summary>斩天剑的主表编号。第二段在角色前方的落剑特效处结算。</summary>
+    private const int SkyCleaverSkillId = 10060;
+    /// <summary>斩天剑第二段落剑特效相对施法者的水平盒心偏移，单位米。</summary>
+    private const float SkyCleaverImpactOffset = 6f;
     /// <summary>落点武功无目标时的原特效默认瞄准距离，单位米。</summary>
     private const float DefaultAimDistance = 10f;
     /// <summary>持有权威位置和战斗属性的施法者。</summary>
@@ -91,6 +95,8 @@ internal sealed class ROWeaponHitSkill : ROSkill
             Vector3 origin = caster_.mainRoleInfo.BaseInfo.Pos.ToVector3();
             // 当前形状是固定落点时，盒体以落点为中心。
             float forwardOffset = ForwardBoxOffset;
+            // 斩天剑的第一段仍在近处，第二段以落剑特效所在的前方区域为中心。
+            if (SkillID() == SkyCleaverSkillId && hitCount_ == 1) forwardOffset = SkyCleaverImpactOffset;
             if (hitEffect_.MaxRangeCm > 0)
             {
                 origin = aimCenter_;

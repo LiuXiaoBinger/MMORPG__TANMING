@@ -906,9 +906,12 @@ public sealed class MSkillComponent : MBasicActionComponent
                 }
             }
         }
-        // 远端实体编号各不相同，只有锁敌逐月才需把副本出生标识换成本地目标。
+        // 远端实体编号各不相同，逐月和无限剑决用本地实体还原追身目标或起手落剑点。
         MEntity chaseTarget = null;
-        if (data.SkillId == SkillCtrl.MoonChaseSkillId && data.TargetSpawnId != 0 && !Entity.IsPlayer)
+        // 这两招在服务端开始通知中携带目标出生标识。
+        bool usesTargetSpawn = data.SkillId == SkillCtrl.MoonChaseSkillId ||
+            data.SkillId == SkillCtrl.InfiniteSwordSkillId;
+        if (usesTargetSpawn && data.TargetSpawnId != 0 && !Entity.IsPlayer)
         {
             // 当前正式副本负责管理已加载的固定和动态出生实体。
             MSceneDungeon dungeon = UnityEngine.Object.FindFirstObjectByType<MSceneDungeon>();
@@ -939,7 +942,7 @@ public sealed class MSkillComponent : MBasicActionComponent
     /// <param name="skillUuid">客户端生成并由服务器原样回传的非零施法 UUID。</param>
     /// <param name="realtimeSeconds">本次输入发生的本机秒数。</param>
     /// <param name="currentMp">客户端最近一次已知 MP。</param>
-    /// <param name="chaseTarget">逐月本次锁定的敌人，空放时为空。</param>
+    /// <param name="chaseTarget">逐月追身或无限剑决落点使用的本次目标，空放时为空。</param>
     /// <returns>成功登记预测时返回 true；缺少表现资源仍可请求服务器。</returns>
     public bool BeginPrediction(int skillId, ulong skillUuid,
         float realtimeSeconds, int currentMp, MEntity chaseTarget = null)
@@ -1064,7 +1067,7 @@ public sealed class MSkillComponent : MBasicActionComponent
     /// <summary>收到开始广播后按同一 UUID 确认本地预表现，远端才启动新表现。</summary>
     /// <param name="core">按服务器效果 ID 与施法者职业解析的技能核心。</param>
     /// <param name="skillUuid">请求与广播共同携带的非零单次施法 UUID。</param>
-    /// <param name="chaseTarget">由副本出生标识解析的逐月目标，只用于本次动作表现。</param>
+    /// <param name="chaseTarget">由副本出生标识解析的逐月或无限剑决目标，用于本次表现。</param>
     /// <returns>广播已匹配或启动新表现时返回 true。</returns>
     public bool ApplyServerStart(MSkillCore core, ulong skillUuid, MEntity chaseTarget = null)
     {

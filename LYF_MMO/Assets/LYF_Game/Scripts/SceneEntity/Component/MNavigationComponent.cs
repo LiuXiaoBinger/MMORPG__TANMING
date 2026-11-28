@@ -189,9 +189,12 @@ public class MNavigationComponent : EntityComponentBase
         cfg.SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(skillArgs.Identify);
         // 普攻及主动武功采用水平瞄准点，移动动作不使用该字段。
         bool needsCastDirection = skillInfo.Type == 1 || skillInfo.Type == 2;
-        // 此次逐月锁定的敌人，空放及其他技能沿用各自的表现轨道。
+        // 逐月用目标追身，无限剑决用目标在起手时的位置固定大剑落点。
         MEntity chaseTarget = null;
-        if (skillArgs.Identify == SkillCtrl.MoonChaseSkillId) chaseTarget = skillArgs.Target;
+        if (skillArgs.Identify == SkillCtrl.MoonChaseSkillId || skillArgs.Identify == SkillCtrl.InfiniteSwordSkillId)
+        {
+            chaseTarget = skillArgs.Target;
+        }
         if (MNetClient.Client != null)
         {
             try
@@ -204,7 +207,7 @@ public class MNavigationComponent : EntityComponentBase
                     Vector3 direction = localRole.Model.GameObject.Transform.forward;
                     // 无限剑决沿用特效在无锁定目标时向前十米的落点，其他招式取该点的朝向。
                     float aimDistance = 1f;
-                    if (skillInfo.Id == 10070) aimDistance = 10f;
+                    if (skillInfo.Id == SkillCtrl.InfiniteSwordSkillId) aimDistance = 10f;
                     // 状态机接收的瞄准点使用世界水平坐标，服务端按技能射程取合法位置。
                     Vector3 point = localRole.Position + direction * aimDistance;
                     if (skillArgs.Target != null) point = skillArgs.Target.Position;

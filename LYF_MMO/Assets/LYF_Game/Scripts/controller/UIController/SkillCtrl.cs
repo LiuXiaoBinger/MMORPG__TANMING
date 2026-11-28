@@ -43,6 +43,8 @@ public sealed class SkillCtrl : CtrlBase
     internal const int TornadoSlashSkillId = 10130;
     /// <summary>逐月的主表编号，锁敌时全向追身，空放时沿施法者面向前冲。</summary>
     internal const int MoonChaseSkillId = 10140;
+    /// <summary>无限剑决的主表编号，用于把本次锁定目标的位置交给落剑表现。</summary>
+    internal const int InfiniteSwordSkillId = 10070;
     #endregion
 
     #region 构造、初始化与事件注册

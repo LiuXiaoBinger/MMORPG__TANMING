@@ -55,7 +55,13 @@ public class MSkillCollision
                 center += actor.forward * collision.ForwardDistance;
                 // 与目标落点特效共用本次 TargetUid；不按距离随意换一个目标。
                 ROObject selected;
-                if (Global.Instance.SceneWorld.TryGetEntity(targetUid, out selected))
+                if (owner.SkillId == SkillCtrl.InfiniteSwordSkillId && targetUid != 0)
+                {
+                    // 主城受击表现沿用大剑在施法时记录的落点，高度以施法者脚下为基准。
+                    center = new Vector3(owner.CastPoint.x, actor.position.y, owner.CastPoint.z) +
+                        collision.Offsets[sample - collision.StartFrame];
+                }
+                else if (Global.Instance.SceneWorld.TryGetEntity(targetUid, out selected))
                 {
                     MEntity targetEntity = selected as MEntity;
                     if (targetEntity != null) center = targetEntity.Position + collision.Offsets[sample - collision.StartFrame];

@@ -38,8 +38,10 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// 保证校验与提交之间不重复读配置、不重复计时。
     /// </summary>
     private PreparedCast prepared_cast_;
-    /// <summary>逐月主表编号，仅此技能广播锁定敌人的出生标识。</summary>
+    /// <summary>逐月主表编号，开始广播用目标出生身份还原追身目标。</summary>
     internal const int MoonChaseSkillId = 10140;
+    /// <summary>无限剑决主表编号，开始广播用目标出生身份还原大剑落点。</summary>
+    internal const int InfiniteSwordSkillId = 10070;
     /// <summary>
     /// 进入技能态前生成的明确拒绝结果；状态机不接受事件时用它回终态，避免客户端请求悬挂。
     /// </summary>
@@ -58,7 +60,7 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         public SkillEffectInfo effect_;
         /// <summary>本次输入的水平世界施法点，魔神塔普攻据此定向。</summary>
         public ROVector3 cast_point_;
-        /// <summary>当前逐月的副本目标出生身份，零表示空放。</summary>
+        /// <summary>逐月或无限剑决的副本目标出生身份，零表示空放。</summary>
         public ulong target_spawn_id_;
     }
 
@@ -166,7 +168,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         }
         if (!PrepareCast(args.skill_id_, args.skill_uuid_, out prepared_cast_, out pending_reject_)) return false;
         prepared_cast_.cast_point_ = args.cast_point_;
-        if (args.skill_id_ == MoonChaseSkillId) prepared_cast_.target_spawn_id_ = args.target_;
+        if (args.skill_id_ == MoonChaseSkillId || args.skill_id_ == InfiniteSwordSkillId)
+            prepared_cast_.target_spawn_id_ = args.target_;
         return true;
     }
 
@@ -534,7 +537,7 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         {
             return false;
         }
-        if (request.SkillId == MoonChaseSkillId)
+        if (request.SkillId == MoonChaseSkillId || request.SkillId == InfiniteSwordSkillId)
         {
             prepared.target_spawn_id_ = request.TargetSpawnId;
             if (request.CastPoint != null) prepared.cast_point_ = new ROVector3(request.CastPoint.X, 0f, request.CastPoint.Z);

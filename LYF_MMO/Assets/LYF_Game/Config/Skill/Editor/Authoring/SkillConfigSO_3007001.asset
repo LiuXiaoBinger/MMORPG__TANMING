@@ -98,8 +98,8 @@ MonoBehaviour:
     unblockable: 0
     unparryable: 0
     interactionTag: 
-    keyNumber: 4
-    endKeyNumber: 8
+    keyNumber: 28
+    endKeyNumber: 29
     isReWrite: 0
     shapeType: 1
     parameter1: 5
@@ -150,8 +150,8 @@ MonoBehaviour:
     unblockable: 0
     unparryable: 0
     interactionTag: 
-    keyNumber: 13
-    endKeyNumber: 17
+    keyNumber: 33
+    endKeyNumber: 34
     isReWrite: 0
     shapeType: 1
     parameter1: 5

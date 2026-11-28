@@ -721,7 +721,12 @@ public class MArtSkill : MSkill
             {
                 worldPosition += roleTransform.position +
                     roleTransform.forward * fxEvent.ForwardDistance;
-                if (TargetUid != 0 && Global.Instance != null &&
+                if (SkillId == SkillCtrl.InfiniteSwordSkillId && TargetUid != 0)
+                {
+                    // 大剑固定落在施法请求选定的水平坐标，高度以施法者脚下为基准。
+                    worldPosition = new Vector3(CastPoint.x, roleTransform.position.y, CastPoint.z) + fxEvent.LocalPosition;
+                }
+                else if (TargetUid != 0 && Global.Instance != null &&
                     Global.Instance.SceneWorld != null)
                 {
                     // 有效目标的模型高度与实体位置共同确定头顶世界落点。
