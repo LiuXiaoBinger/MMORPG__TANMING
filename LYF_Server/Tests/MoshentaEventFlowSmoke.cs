@@ -145,9 +145,14 @@ public static class MoshentaEventFlowSmoke
         // 每次从业务入口创建独立快照，禁止借测试修改内部进度。
         DungeonFlowState state = Snapshot(scene).Flow;
         if (state.Objectives.Count != 1) return false;
-        // 4060每个Section只有一个特殊事件目标，总次数取正式表定义。
+        // 4060每个Section只有一个目标；总次数按正式表类型约定换算，区域类第三项是物件号。
         DungeonObjectiveData target = state.Objectives[0];
-        if (target.Total != (int)LubanMgr.Instance.GetDungeonTargetTableById(id).Target[2]) return false;
+        DungeonTargetTable row = LubanMgr.Instance.GetDungeonTargetTableById(id);
+        int type = (int)row.Target[0];
+        // 对话、进入区域和清波沿用RO基类固定的一次完成，其余类型取第三项总次数。
+        int total = (int)row.Target[2];
+        if (type == 1 || type == 5 || type == 8) total = 1;
+        if (target.Total != total) return false;
         return target.Id == id && target.Current == current && target.Completed == (current == target.Total);
     }
 
@@ -200,6 +205,51 @@ public static class MoshentaEventFlowSmoke
             peer.Role.mainRoleInfo.BaseInfo.Pos = string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}", (float)point.Element("x"), (float)point.Element("y"), (float)point.Element("z") - 1.7f);
             TeamManager.Instance.OnMonsterHit(peer.Role, new Vector2(0, 1), int.MaxValue, new HashSet<ulong>());
         }
+    }
+
+    /// <summary>按服务端最近广播的真实坐标击杀指定波次的若干普通怪物，容许可巡逻移动的兽人。</summary>
+    /// <param name="peer">攻击者，需已在目标副本实例内。</param>
+    /// <param name="waveId">原场景波次号，同时是出生标识高32位。</param>
+    /// <param name="count">本次连续击杀的存活实体数。</param>
+    private static void KillAlive(Peer peer, int waveId, int count)
+    {
+        for (int killed = 0; killed < count; killed++)
+        {
+            // 每只重新取快照，已死亡实体不再参与拣选。
+            SceneWaveSpawner scene = Scene((ulong)peer.Role.mainRoleInfo.BaseInfo.InstanceId);
+            TeamEnterDungeonNtf snapshot = Snapshot(scene);
+            // 同波仍存活的实体，按权威生命排除上一轮已击倒者。
+            MonsterHpData[] live = snapshot.Monsters.Where(row => (int)(row.SpawnId >> 32) == waveId && row.Hp > 0).ToArray();
+            bool hit = false;
+            for (int index = 0; index < live.Length && !hit; index++)
+            {
+                // 动作表只登记已有AI的怪物，未移动者也应带有当前位置。
+                MonsterActionData action = snapshot.MonsterActions.FirstOrDefault(row => row.SpawnId == live[index].SpawnId);
+                if (action == null) continue;
+                peer.Role.mainRoleInfo.BaseInfo.Pos = string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}", action.X, action.Y, action.Z - 1.7f);
+                TeamManager.Instance.OnMonsterHit(peer.Role, new Vector2(0, 1), int.MaxValue, new HashSet<ulong>());
+                // 让按帧死亡检测结算本次扣血，再看该实体是否真的掉血。
+                TeamManager.Instance.UpdateMonsters(50);
+                MonsterHpData after = Snapshot(scene).Monsters.FirstOrDefault(row => row.SpawnId == live[index].SpawnId);
+                hit = after == null || after.Hp < live[index].Hp;
+            }
+            if (!hit) throw new InvalidOperationException("未能在波次 " + waveId + " 命中存活怪物");
+        }
+    }
+
+    /// <summary>按出生号击倒当前仍在场的指定怪物，沿用正式碰撞、防御与死亡结算。</summary>
+    /// <param name="peer">攻击者，需已在目标副本实例内。</param>
+    /// <param name="spawnId">服务端广播的出生标识，高32位为原波次号。</param>
+    private static void KillSpawn(Peer peer, ulong spawnId)
+    {
+        SceneWaveSpawner scene = Scene((ulong)peer.Role.mainRoleInfo.BaseInfo.InstanceId);
+        MonsterActionData action = Snapshot(scene).MonsterActions.FirstOrDefault(row => row.SpawnId == spawnId);
+        // 已随尸体移除的目标无需再结算，调用方下一轮按真实目标重新挑选。
+        if (action == null) return;
+        peer.Role.mainRoleInfo.BaseInfo.Pos = string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}", action.X, action.Y, action.Z - 1.7f);
+        // 无穷伤害只用于隔离测试，仍走正式防御链与死亡计数。
+        TeamManager.Instance.OnMonsterHit(peer.Role, new Vector2(0, 1), int.MaxValue, new HashSet<ulong>());
+        TeamManager.Instance.UpdateMonsters(50);
     }
 
     /// <summary>比较首领动作与原出生点，容许协议里朝向另行同步。</summary>
@@ -415,31 +465,52 @@ public static class MoshentaEventFlowSmoke
                 !a.Entry.Flow.ActiveWallIds.Contains(23), "同队入场可见待机首领，墙尚未升起");
             Check(scene.Flow.SpawnPosition == new Vector3(132.97f, 58.89f, 60.95f) && ExpectedMoshentaSpawnPos == a.Entry.Pos, "单一XML入口与协议位置一致");
             Check(Objective(scene, 137), "初始只同步原表137且进度为0");
-            Check(a.Entry.Flow.Objectives[0].Description == LubanMgr.Instance.GetDungeonTargetTableById(137).TargetDes, "目标文案直接来自正式Luban表");
-            TargetEvent(scene, 138);
-            TargetEvent(scene, 140);
-            TargetEvent(scene, 142);
+            Check(a.Entry.Flow.Objectives[0].Description == "前往前线与突击部队会合", "137文案改为玩家可执行的会合动作");
+            // 143仍是特殊事件目标，提前送达不得推进当前阶段。
             TargetEvent(scene, 143);
             Check(Objective(scene, 137), "提前目标事件不推进或预完成后续Section");
             TargetEvent(scene, 999999);
-            TargetEvent(scene, 137, "错误事件名");
+            TargetEvent(scene, 143, "错误事件名");
             Check(Objective(scene, 137), "错误目标ID和事件名不能推进当前Section");
             File.WriteAllBytes(Path.Combine(folder, "wire-entry.bin"), a.Entry.ToByteArray());
             Interact(a, 5);
             Check(!a.Replies.Last().Success && a.Role.mainRoleInfo.BaseInfo.Pos == a.Entry.Pos, "未解锁门户拒绝且位置不变");
+            // 塔顶只有 5/10 两个入口，二者初始都不存在，正常客户端无法提前进入首领场打三首领。
+            Check(!a.Entry.Flow.ActiveObjectIds.Contains(5) && !a.Entry.Flow.ActiveObjectIds.Contains(10), "上塔门户5与10初始都不存在");
+            // 137阶段尚未会合，15/17波邪骸士兵不存在，不存在被提前清光后再也完不成138的路径。
+            Check(!Snapshot(scene).Monsters.Any(row => (int)(row.SpawnId >> 32) == 15 || (int)(row.SpawnId >> 32) == 17), "137阶段不存在可提前清光的邪骸士兵");
             Move(a, 133.14f, 63.89f, 121.74f);
             a.Receive(); b.Receive(); other.Receive();
             Check(Snapshot(scene).Monsters.Any(row => row.SpawnId == ((18UL << 32) | 1)), "前线区域激活第18波");
             Check(Objective(scene, 138), "原区域18完成137并进入138且不补提前事件");
-            TargetEvent(scene, 137);
-            Check(Objective(scene, 138), "已完成137重复事件不会跨阶段推进");
+            Check(Snapshot(scene).Flow.Objectives[0].Description == "击败邪骸士兵", "138文案直接点名邪骸士兵");
+            // 15/17两波共10名邪骸士兵随会合事件生成，138从第一只起按原表累计。
+            Check(Snapshot(scene).Monsters.Count(row => (int)(row.SpawnId >> 32) == 15 || (int)(row.SpawnId >> 32) == 17) == 10, "会合事件按原波次生成10名邪骸士兵");
+            // 138是按原EntityTable计数的击杀目标，重复进入前线区域不能跳过。
             int count = Snapshot(scene).Monsters.Count;
             Move(a, 133.14f, 63.89f, 121.74f);
             Check(Snapshot(scene).Monsters.Count == count, "重复区域上报不重复生成");
+            Check(Objective(scene, 138, 0), "重复进入前线区域不会跳过击杀目标");
             Check(a.Notices.SequenceEqual(b.Notices) && other.Notices.Count == 0, "事件快照同队一致且不串实例");
             File.WriteAllBytes(Path.Combine(folder, "wire-frontline.bin"), a.Notices.Last().ToByteArray());
+            // 先走到二楼通道口：当前阶段仍是击杀目标，区域事件不得提前放行。
             Move(a, 116.1f, 63.89f, 179.02f);
-            Check(Objective(scene, 139), "原区域19完成138并进入139");
+            Check(Objective(scene, 138, 0), "未完成击杀时进入下一区域不推进阶段");
+            // 原区域20（二楼大厅）的进入事件激活法阵采集波次，此时阶段仍是138。
+            Move(a, 44.57f, 72.06f, 212.91f);
+            Check(Snapshot(scene).Flow.ActiveWaveIds.Contains(41) && Objective(scene, 138, 0), "二楼大厅激活法阵波次但不推进138");
+            // 队友在138阶段先到真法阵：一次性采集不能被提前消耗，否则全队永久卡住。
+            Move(b, 44.57f, 72.06f, 212.91f);
+            Move(b, 80.68f, 72.06f, 244.38f);
+            Move(b, 80.76f, 72.06f, 289.66f);
+            Interact(b, 0, 41);
+            Check(!b.Replies.Last().Success && b.Replies.Last().Reason == "该机关尚未到开启时机" &&
+                !Snapshot(scene).Flow.CompletedWaveIds.Contains(41) && Objective(scene, 138, 0), "队友在138阶段提前采集被拒绝且法阵保持可用");
+            // 击杀原15波中的4名邪骸士兵，达到原表总数后自动进入区域阶段。
+            KillAlive(a, 15, 4);
+            Check(Objective(scene, 139), "击杀4名邪骸士兵完成138并进入139");
+            Move(a, 116.1f, 63.89f, 179.02f);
+            Check(Objective(scene, 140), "原区域19完成139并进入140");
             // 保留原18波巡逻与当前位置命中结算。
             for (int frame = 0; frame < 100; frame++) TeamManager.Instance.UpdateMonsters(50);
             // 同一实例同时存在待机首领和场景 NPC，按第 18 波自己的出生号查巡逻者。
@@ -459,26 +530,83 @@ public static class MoshentaEventFlowSmoke
             b.Role.mainRoleInfo.BaseInfo.Pos = "35.69_72.06_212.74";
             Interact(b, 0);
             Check(b.Replies.Last().Success && b.Role.mainRoleInfo.BaseInfo.Pos != "35.69_72.06_212.74", "门0脱战玩家使用原配置目标传送");
+            // 复现玩家截图现场：第18波5515从塔外约96米处一直锁定同一玩家，玩家用正式Move留在本层1号门原地。
+            Move(a, 56.70f, 65.82f, 194.39f);
+            // 第18波唯一实体的出生号，高32位为原波次号。
+            ulong farSpawn = (18UL << 32) | 1;
+            // 该实体当前权威动作，坐标用于核对它与玩家的真实水平距离。
+            MonsterActionData far = Snapshot(scene).MonsterActions.Single(row => row.SpawnId == farSpawn);
+            // 只用服务端真实广播坐标核对距离，不把任意一次拒绝当成指定怪物仍在追击。
+            float gap = (float)Math.Sqrt((far.X - 56.70f) * (far.X - 56.70f) + (far.Z - 194.39f) * (far.Z - 194.39f));
+            // 此刻所有以该玩家为真实目标的怪物，用于确认唯一追击者就是第18波5515。
+            MonsterActionData[] farChasers = Snapshot(scene).MonsterActions.Where(row => row.TargetRoleId == a.Role.GetID()).ToArray();
+            Check(farChasers.Length == 1 && farChasers[0].SpawnId == farSpawn && gap > 30f, "截图现场唯一追击者是30米拉脱范围外的第18波5515");
+            Interact(a, 1);
+            Check(!a.Replies.Last().Success && a.Replies.Last().Reason == "战斗中无法传送，请先脱离战斗" &&
+                Snapshot(scene).MonsterActions.Any(row => row.SpawnId == farSpawn && row.TargetRoleId == a.Role.GetID()), "5515仍真实锁定该玩家时门1拒绝");
+            // 不换层、不击杀：只等原30米拉脱规则让它回位，同层同一门1就应放行。
+            // 每5秒探一次真实按钮结果，成功后玩家会被传走，因此立即结束等待。
+            bool released = false;
+            for (int frame = 0; frame < 1200 && !released; frame++)
+            {
+                if (frame % 100 != 0) { TeamManager.Instance.UpdateMonsters(50); continue; }
+                // 当前仍在追击的怪物与位置，修前修后可用同一脚本对读。
+                MonsterActionData chaser = Snapshot(scene).MonsterActions.FirstOrDefault(row => row.TargetRoleId == a.Role.GetID());
+                string spawn = "none";
+                if (chaser != null) spawn = (chaser.SpawnId >> 32) + "/" + chaser.Phase + "@" + chaser.X.ToString("F1") + "/" + chaser.Z.ToString("F1");
+                Interact(a, 1);
+                released = a.Replies.Last().Success;
+                Console.WriteLine("DOOR1_FLOOR ms=" + (frame * 50) + " chaser=" + spawn + " door=" + released +
+                    " reason=" + a.Replies.Last().Reason + " hp=" + a.Role.mainRoleInfo.BaseInfo.CurrHp +
+                    " pos=" + a.Role.mainRoleInfo.BaseInfo.Pos);
+                if (!released) TeamManager.Instance.UpdateMonsters(50);
+            }
+            Check(released && a.Role.mainRoleInfo.BaseInfo.Pos == "75.3_65.9_106", "同层甩脱远处追击者后同一门1按原配置放行");
+            Check(!Snapshot(scene).MonsterActions.Any(row => row.SpawnId == farSpawn && row.TargetRoleId == a.Role.GetID()), "第18波5515按30米拉脱范围停止追击同一玩家");
+            // 门1同层守卫：主动索敌会让同一层多名5511一起追击，必须继续拒绝。
+            // 取一个仍存活的同层守卫作为本次攻击目标，尸体仍留在动作快照里但不再参与追击。
+            MonsterActionData guard = Snapshot(scene).MonsterActions.First(row => (int)(row.SpawnId >> 32) == 27 && row.Y > 65f && row.Phase != MonsterActionPhase.Dead);
+            a.Role.mainRoleInfo.BaseInfo.Pos = string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}", guard.X, guard.Y, guard.Z - 1.7f);
+            TeamManager.Instance.OnMonsterHit(a.Role, new Vector2(0, 1), 3000, new HashSet<ulong>());
+            for (int frame = 0; frame < 40; frame++) TeamManager.Instance.UpdateMonsters(50);
+            // 主动索敌会让同一层的多名守卫一起追击，供后续核对不能提前放行。
+            int chasing = Snapshot(scene).MonsterActions.Count(row => (int)(row.SpawnId >> 32) == 27 && row.TargetRoleId == a.Role.GetID());
+            Check(chasing >= 2, "同一玩家被门1同层多名守卫真实追击");
             a.Role.mainRoleInfo.BaseInfo.Pos = "55.3_65.71_195.14";
             Interact(a, 1);
-            Check(!a.Replies.Last().Success, "门1处于兽人战斗时拒绝传送");
-            b.Role.mainRoleInfo.BaseInfo.Pos = "55.3_65.71_195.14";
-            Interact(b, 1);
-            Check(b.Replies.Last().Success && b.Role.mainRoleInfo.BaseInfo.Pos == "75.3_65.9_106", "门1脱战请求采用原配置目标");
+            Check(!a.Replies.Last().Success && a.Replies.Last().Reason == "战斗中无法传送，请先脱离战斗", "同一玩家被门1同层守卫追击时拒绝传送");
+            // 只清除一部分追击者仍不能放行；本层守卫属于真实短程交战，必须把仍在追的逐个击倒。
+            // 留在本层处理：击杀会按原联盟规则拉来附近守军，循环到没有真实目标为止。
+            for (int round = 0; round < 40; round++)
+            {
+                // 当前仍真实指向该玩家的第一个追击者，死亡或脱战后会自动跳过。
+                MonsterActionData pursuer = Snapshot(scene).MonsterActions.FirstOrDefault(row => row.TargetRoleId == a.Role.GetID());
+                if (pursuer == null) break;
+                KillSpawn(a, pursuer.SpawnId);
+            }
+            Check(!Snapshot(scene).MonsterActions.Any(row => row.TargetRoleId == a.Role.GetID()), "门1同层追击者被逐只击倒后不再锁定该玩家");
+            a.Role.mainRoleInfo.BaseInfo.Pos = "55.3_65.71_195.14";
+            Interact(a, 1);
+            Check(a.Replies.Last().Success && a.Role.mainRoleInfo.BaseInfo.Pos == "75.3_65.9_106", "击杀最后一名同层追击者后同一门1放行");
             Move(a, 44.57f, 72.06f, 212.91f);
             Check(Snapshot(scene).Flow.ActiveWaveIds.Contains(41), "二层区域解锁法阵采集波次");
-            Check(Objective(scene, 140), "原区域20完成139并进入140且不补提前事件");
+            Check(Objective(scene, 140, 0), "到达二楼大厅不提前完成侧厅目标");
             Interact(a, 0, 41);
             Check(!a.Replies.Last().Success, "远距离法阵采集被拒绝");
             Move(a, 80.68f, 72.06f, 244.38f);
             Check(Objective(scene, 141), "原区域8完成140并进入141");
+            Check(Snapshot(scene).Flow.Objectives[0].Description == "摧毁献祭法阵", "141文案点破献祭法阵");
             Move(a, 80.76f, 72.06f, 289.66f);
             Interact(a, 0, 41);
-            Check(a.Replies.Last().Success && Snapshot(scene).Flow.ActiveWaveIds.Contains(42), "真实采集请求完成41并召唤42");
-            Check(Objective(scene, 141), "采集41仅召唤42且不完成原目标141");
-            Kill(a, 42);
+            Check(a.Replies.Last().Success && Snapshot(scene).Flow.ActiveWaveIds.Contains(42), "进入141后同一法阵正常采集并召唤42");
+            Check(Objective(scene, 142), "真实采集破坏法阵完成141并进入142");
+            Check(Snapshot(scene).Flow.Objectives[0].Description == "击败法阵召唤的魔法师", "142直接指引击败法阵召唤物");
+            // 队友沿用同一实例进度：a 已消耗的法阵对 b 同样关闭。
+            Interact(b, 0, 41);
+            Check(!b.Replies.Last().Success && Snapshot(scene).Flow.CompletedWaveIds.Contains(41), "队友共享同一法阵进度且不能重复采集");
+            KillAlive(a, 42, 1);
             Check(Snapshot(scene).Flow.CompletedWaveIds.Contains(62) && Snapshot(scene).Flow.ActiveObjectIds.Contains(5), "42真实死亡自动执行62并创建上塔门户5");
-            Check(Objective(scene, 142), "42真实全灭完成141并进入142且不补提前事件");
+            Check(Objective(scene, 143), "击杀42波召唤物完成142并进入首领目标");
             Move(a, 108.99f, 72.06f, 274.9f);
             Interact(a, 5);
             Check(a.Replies.Last().Success && a.Role.mainRoleInfo.BaseInfo.Pos == "107.01_62_612.23", "上塔传送采用XML目标且服务端位置已更新");
@@ -487,10 +615,11 @@ public static class MoshentaEventFlowSmoke
             Check(Snapshot(scene).Flow.CompletedWaveIds.Contains(42), "原区域25不会把已清波次误重置");
             Move(a, 77.5f, 80.31f, 591.49f);
             Check(!Snapshot(scene).Flow.ActiveWallIds.Contains(23), "走进首领区域不升墙");
+            Check(Objective(scene, 143, 0), "走进首领区域不额外推进首领目标");
             a.Role.mainRoleInfo.BaseInfo.Pos = "77.36_80.32_620.49";
             TeamManager.Instance.OnMonsterHit(a.Role, new Vector2(0, 1), 5000, new HashSet<ulong>());
             Check(Snapshot(scene).Flow.ActiveWallIds.Contains(23), "首领实际失血创建权威空气墙23");
-            Check(Objective(scene, 143), "原区域21完成142并进入143且不补提前事件");
+            Check(Objective(scene, 143, 0), "开战不推进首领目标计数");
             a.Receive(); b.Receive();
             Check(a.Notices.Last().Flow.Equals(b.Notices.Last().Flow), "空气墙及Boss目标同步所有同实例队员");
             File.WriteAllBytes(Path.Combine(folder, "wire-boss.bin"), a.Notices.Last().ToByteArray());

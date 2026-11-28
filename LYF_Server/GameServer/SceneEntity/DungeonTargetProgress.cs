@@ -135,6 +135,36 @@ public sealed class DungeonTargetProgress
     /// <param name="entityId">死亡实体的原EntityTable配置号。</param>
     public bool MonsterDied(int entityId) { return Consume(2, entityId); }
 
+    /// <summary>
+    /// 一次性采集物件若被本副本某个阶段引用，只能在对应阶段消耗；
+    /// 提前到场点击会被拒绝而不是永久占掉后续目标。
+    /// </summary>
+    /// <param name="collectionId">原采集表配置号。</param>
+    public bool AcceptsCollect(int collectionId)
+    {
+        // 没有目标流程的副本不限制原采集行为。
+        if (currentSection == 0) return true;
+        // 当前阶段仍有未完成的同号采集目标时才允许交互。
+        for (int index = 0; index < counts.Length; index++)
+        {
+            // 当前阶段每个目标行的类型与采集号。
+            DungeonTargetTable row = LubanMgr.Instance.GetDungeonTargetTableById(sections[currentSection][index]);
+            if ((int)row.Target[0] == 3 && (int)row.Target[1] == collectionId && counts[index] < Total(row)) return true;
+        }
+        // 当前阶段不需要时，只要任一阶段引用同一采集就拒绝提前消耗。
+        // 阶段值集合只取一次快照，按索引遍历，符合项目禁用foreach的约定。
+        int[][] allSections = sections.Values.ToArray();
+        for (int stage = 0; stage < allSections.Length; stage++)
+            for (int index = 0; index < allSections[stage].Length; index++)
+            {
+                // 遍历其他阶段的目标定义，确认该采集是否属于正式流程。
+                DungeonTargetTable row = LubanMgr.Instance.GetDungeonTargetTableById(allSections[stage][index]);
+                if ((int)row.Target[0] == 3 && (int)row.Target[1] == collectionId) return false;
+            }
+        // 不属于任何目标的采集保持原有一次性行为。
+        return true;
+    }
+
     /// <summary>消费正式采集成功事件，次数按成功采集数增加。</summary>
     /// <param name="collectionId">原采集表配置号。</param>
     public bool Collected(int collectionId) { return Consume(3, collectionId); }

@@ -143,6 +143,20 @@ internal sealed class MoshentaActor
     private readonly bool includeDeadHatred;
     /// <summary>原死亡仇恨暂存，用于同实例复活时以1点重新建立。</summary>
     private readonly List<OnlineRole> deadThreats = new List<OnlineRole>();
+    /// <summary>原EntityTable.HatredAway首项脱离战斗类型：0从不、1按交战时长、2按怪物离位距离。</summary>
+    private readonly int awayType;
+    /// <summary>原HatredAway次项脱离参数，按类型分别为秒或米。</summary>
+    private readonly float awayArgs;
+    /// <summary>原HatredAwayStateDuration，脱战后延迟重新索敌的毫秒数。</summary>
+    private readonly int awayDelay;
+    /// <summary>本次交战开始时怪物所在的世界坐标，脱战后返回该点，单位米。</summary>
+    private Vector3 fightStart;
+    /// <summary>本次交战开始的实例逻辑毫秒，供按时间脱战使用。</summary>
+    private long fightStarted;
+    /// <summary>当前是否已有目标，用于只在首次交战时记录开战位置。</summary>
+    private bool fighting;
+    /// <summary>脱战后允许重新建立视野仇恨的实例逻辑毫秒。</summary>
+    private long aggroAllowedAt;
     /// <summary>实际节点运行器，黑板只属于本实体。</summary>
     internal MoshentaBehaviorTree Tree { get; private set; }
     /// <summary>当前副本登记为本实体选择的原时间轴；未登记的普通怪物为空。</summary>
@@ -181,6 +195,10 @@ internal sealed class MoshentaActor
         buildSightHatred = MoshentaSkillCatalog.I(row, "HatredBuildType") == 1;
         includeDeadHatred = MoshentaSkillCatalog.I(row, "HatredDeleteType") == 1;
         sight = MoshentaSkillCatalog.F(row, "Sight");
+        // 原HatredAway按竖线写成"类型|参数"；缺失时按0从不脱战，与运行表默认一致。
+        awayType = (int)MoshentaSkillCatalog.Indexed(row, "HatredAway", 0);
+        awayArgs = MoshentaSkillCatalog.Indexed(row, "HatredAway", 1);
+        awayDelay = Math.Max(0, MoshentaSkillCatalog.I(row, "HatredAwayStateDuration"));
         idleInterval = Math.Max(200, (int)(MoshentaSkillCatalog.F(row, "AIHeartInterval") * 1000));
         combatInterval = Math.Max(200, (int)(MoshentaSkillCatalog.F(row, "AIHeartIntervalCombat") * 1000));
         nextThink = Now + (int)(MoshentaSkillCatalog.F(row, "AIStartTime") * 1000);
@@ -306,7 +324,54 @@ internal sealed class MoshentaActor
             if (Owner.FindRole(role.GetID()) != role) { deadThreats.RemoveAt(index); continue; }
             if (Valid(role)) { deadThreats.RemoveAt(index); AddHatred(role, 1, false); }
         }
-        if (!Passive) AddNearbyHatred();
+        // 原脱战后在HatredAwayStateDuration内不重新按视野拉仇恨。
+        if (Passive) return;
+        if (Now < aggroAllowedAt) return;
+        AddNearbyHatred();
+    }
+    /// <summary>
+    /// 按原仇恨组件的脱离规则结束本次交战：HatredAway 的距离或时长到期，
+    /// 以及目标离开本怪物所在视野层（此处等价为超过索敌半径且导航不可达）时清空仇恨并返回开战位置。
+    /// </summary>
+    private void TrackFight()
+    {
+        if (Target == null)
+        {
+            // 目标已经由死亡或失效清理，下一次交战重新记录开战位置。
+            fighting = false;
+            return;
+        }
+        if (!fighting)
+        {
+            // 原OnEnterFight把开战当刻的怪物位置记为回位目标。
+            fighting = true;
+            fightStart = Position;
+            fightStarted = Now;
+            return;
+        }
+        if (awayType == 2 && DistanceTo(fightStart) > awayArgs) { LeaveFight(); return; }
+        if (awayType == 1 && Now - fightStarted > (long)(awayArgs * 1000f)) { LeaveFight(); return; }
+        // 原AI只在同一视野层查找仇恨目标；跨层或不可达时视为目标已离开视野。
+        float reach = DistanceTo(Target.mainRoleInfo.BaseInfo.Pos.ToVector3());
+        if (reach <= sight) return;
+        if (navigation.Reachable(Target.mainRoleInfo.BaseInfo.Pos.ToVector3())) return;
+        LeaveFight();
+    }
+    /// <summary>原OnLeaveFight：清空仇恨与暂存死亡仇恨，停止当前技能并走回开战位置。</summary>
+    private void LeaveFight()
+    {
+        fighting = false;
+        Target = null;
+        threats.Clear();
+        threatValues.Clear();
+        deadThreats.Clear();
+        // 读条中的技能按原取消处理，避免结束回位后又把已脱战目标当作施法目标。
+        Skills.Cancel();
+        SetIdle();
+        // 原HatredAwayStateDuration内不重新拉取视野仇恨，给玩家真正脱战的时间。
+        aggroAllowedAt = Now + awayDelay;
+        if (DistanceTo(fightStart) <= 0.5f) return;
+        Move(fightStart);
     }
     /// <summary>推进到指定实例时刻，技能结果和路径转角先于同刻AI心跳。</summary><param name="now">实例逻辑毫秒。</param>
     internal void Update(long now)
@@ -332,6 +397,8 @@ internal sealed class MoshentaActor
         }
         if (now < nextThink) return;
         thinkRequested = false;
+        // 脱战判定先于选目标：已脱离的战斗不再让旧目标继续阻挡场景交互。
+        TrackFight();
         SelectTarget();
         if (Tree != null) Tree.Tick();
         nextThink = now + idleInterval;

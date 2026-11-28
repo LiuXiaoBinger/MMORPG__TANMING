@@ -384,6 +384,12 @@ public sealed class MoshentaSceneFlow
             // 本波采集点世界坐标，交互范围为四米。
             Vector3 target = Position(collection.Descendants("MScenePositionData").First().Element("position"));
             if (Vector3.DistanceSquared(target, position) > 16f) return reply;
+            // 一次性采集物只在所属目标阶段内消耗，提前点击不改变权威状态，也不能永久占掉后续目标。
+            if (!targets.AcceptsCollect((int)collection.Element("collection_id")))
+            {
+                reply.Reason = "该机关尚未到开启时机";
+                return reply;
+            }
             if (targets.Collected((int)collection.Element("collection_id"))) Dirty = true;
             Complete(request.WaveId);
             Event((string)collection.Element("collect_end_ai_event"));
