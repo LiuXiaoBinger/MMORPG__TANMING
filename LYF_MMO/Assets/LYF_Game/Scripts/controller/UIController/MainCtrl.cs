@@ -65,6 +65,8 @@ public class MainCtrl : CtrlBase
 
     /// <summary>当前对话关联的 NPC，仅由控制器保存领域对象。</summary>
     private NpcEntity _currentTalkNpc;
+    /// <summary>等待玩家在传送确认窗中选择的本地门，同一时间只有一扇；取消或离开门圈即清空。</summary>
+    private PublicCityPortal _pendingPortalDoor;
     /// <summary>附近交谈扫描复用的场景实体引用，角色切图后随下一次扫描覆盖。</summary>
     private readonly List<MEntity> _nearbyTalkEntities = new List<MEntity>();
     /// <summary>本轮进入交谈距离的所有可见 NPC，同一列表重复用于每次距离检查。</summary>
@@ -87,6 +89,11 @@ public class MainCtrl : CtrlBase
         }
 
         _mainView.InitView();
+        // 传送确认窗挂在主城提示层，确认结果回到本控制器发送门号。
+        if (_mainView.PortalConfirm != null)
+        {
+            _mainView.PortalConfirm.Confirmed += OnPortalConfirmed;
+        }
         if (_mainView.MinMapWindow != null)
         {
             _mainView.MinMapWindow.LineSelected += SelectSceneLine;
@@ -272,6 +279,13 @@ public class MainCtrl : CtrlBase
         {
             _mainView.NpcTalkPrompt.TalkRequested -= OnNearbyTalkRequested;
             _mainView.NpcTalkPrompt.SetSpeakers(null);
+        }
+        // 窗口实例随主视图常驻，控制器销毁时必须解绑确认事件并收起未完成的提示。
+        if (_mainView.PortalConfirm != null)
+        {
+            _mainView.PortalConfirm.Confirmed -= OnPortalConfirmed;
+            _mainView.PortalConfirm.CloseWindow();
+            _pendingPortalDoor = null;
         }
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.State, OnSceneLineState);
         SocketDispatcher.Instance.RemoveEventHandler(StallCode.Result, OnStallResult);
@@ -1114,6 +1128,41 @@ public class MainCtrl : CtrlBase
         PlayerEntity role = Global.Instance.SceneWorld.LocalRole;
         if (role == null) return;
         role.DispatchEvent(MEventType.MEvent_Navigation, MNavigationEventArgs.Create(point));
+    }
+
+    /// <summary>走进传送阵后打开确认窗，记住待确认的门并按对端门写入目的地。</summary>
+    /// <param name="door">角色当前踩中的本地门，确认后按它的门号发送。</param>
+    /// <param name="destinationName">对端门所在地图的展示名。</param>
+    public void ShowPortalConfirm(PublicCityPortal door, string destinationName)
+    {
+        // 窗口由 MainView 创建并登记，未配置预制体时不提示。
+        PortalConfirmWindow window = _mainView.PortalConfirm;
+        if (window == null) return;
+        _pendingPortalDoor = door;
+        window.SetDestination(destinationName);
+        // 已经显示时只更新目的地，不再走一次显隐，避免把提示关掉。
+        if (window.gameObject.activeSelf) return;
+        ShowMainWindow(WindowType.PortalConfirmWindow);
+    }
+
+    /// <summary>收起传送确认窗并丢弃待确认的门；角色走出门圈或切换地图时调用。</summary>
+    public void ClosePortalConfirm()
+    {
+        _pendingPortalDoor = null;
+        PortalConfirmWindow window = _mainView.PortalConfirm;
+        if (window == null) return;
+        if (!window.gameObject.activeSelf) return;
+        window.CloseWindow();
+    }
+
+    /// <summary>玩家点击传送：按记住的本地门发送一次原门号，切场仍由服务器回执驱动。</summary>
+    private void OnPortalConfirmed()
+    {
+        PublicCityPortal door = _pendingPortalDoor;
+        _pendingPortalDoor = null;
+        if (door == null) return;
+        MNetClient.Instance.Send(SceneLineCode.Portal,
+            new ScenePortalRequest { DoorId = door.DoorId }.ToByteString());
     }
 
     /// <summary>收到游戏服正式接管的城市后，用现有场景加载器携带本地角色进城。</summary>

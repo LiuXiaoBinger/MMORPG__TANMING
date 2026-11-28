@@ -19,7 +19,7 @@ public class MainCityMgr : MonoBehaviour
 
    /// <summary>当前场景的可用入口，包括城门和建筑门口。</summary>
    private IReadOnlyList<PublicCityPortal> _cityPortals;
-   /// <summary>上一帧主角踏入的门，离开门圈后允许再次进入。</summary>
+   /// <summary>上一帧主角踏入的门，站在原地不重复提示，离开门圈后清空并允许再次提示。</summary>
    private PublicCityPortal _insideCityPortal;
 
    /// <summary>主城管理器单例。</summary>
@@ -113,7 +113,7 @@ public class MainCityMgr : MonoBehaviour
       }
    }
 
-   /// <summary>本地角色实际走进门圈后发起传送，切场由服务器回执驱动。</summary>
+   /// <summary>本地角色实际走进门圈后先确认目的地，玩家确认才发门号，切场仍由服务器回执驱动。</summary>
    private void CheckCityPortal()
    {
       if (_cityPortals == null || _cityPortals.Count == 0) return;
@@ -121,18 +121,62 @@ public class MainCityMgr : MonoBehaviour
       PlayerEntity role = Global.Instance?.SceneWorld?.LocalRole;
       if (role == null || !role.Model.IsLoaded || role.UID != _localRoleCreateRequestedUid) return;
       Vector3 position = role.Position;
-      // 用实际角色位置命中当前地图的入口，每次走入只发一次门号。
+      // 用实际角色位置命中当前地图的入口；服务门由 NPC 或台座触发，不参与踩圈。
+      PublicCityPortal insideDoor = null;
       for (int index = 0; index < _cityPortals.Count; index++)
       {
          PublicCityPortal door = _cityPortals[index];
          if (door.UseService) continue;
          if (!door.Contains(position.x, position.y, position.z, 2.5f)) continue;
-         if (_insideCityPortal != door)
-            MNetClient.Instance.Send(SceneLineCode.Portal, new ScenePortalRequest { DoorId = door.DoorId }.ToByteString());
-         _insideCityPortal = door;
+         insideDoor = door;
+         break;
+      }
+      if (insideDoor == null)
+      {
+         // 走出门圈：收起未完成的确认，再次进入时才会重新提示。
+         if (_insideCityPortal != null) ClosePortalConfirm();
+         _insideCityPortal = null;
          return;
       }
-      _insideCityPortal = null;
+      // 站在原地不重复弹窗：同一扇门只提示一次，确认或取消后都要离开再踩。
+      if (_insideCityPortal == insideDoor) return;
+      // 主界面控制器尚未创建时先不占用本帧的门状态，下一帧再判断。
+      MainCtrl mainCtrl = UIRoot.Instance?.MainCtrl;
+      if (mainCtrl == null) return;
+      _insideCityPortal = insideDoor;
+      // 目的地按对端门显示，同一条走廊通往不同地图时不能写死。
+      mainCtrl.ShowPortalConfirm(insideDoor, ResolvePortalDestinationName(insideDoor));
+   }
+
+   /// <summary>收起传送确认窗；主界面控制器尚未创建时无需处理。</summary>
+   private static void ClosePortalConfirm()
+   {
+      MainCtrl mainCtrl = UIRoot.Instance?.MainCtrl;
+      if (mainCtrl == null) return;
+      mainCtrl.ClosePortalConfirm();
+   }
+
+   /// <summary>取门对端所在地图的展示名；配置未单列的地图退回场景地址末段。</summary>
+   /// <param name="door">当前踩中的本地门，对端门决定实际目的地。</param>
+   /// <returns>可直接显示的目标地图名；没有对端配置时返回 null。</returns>
+   private static string ResolvePortalDestinationName(PublicCityPortal door)
+   {
+      if (door == null) return null;
+      PublicCityPortal destination = door.Destination;
+      if (destination == null) return null;
+      switch (destination.MapId)
+      {
+         case 0: return "主城";
+         case 1: return "天空中之城";
+         case 41: return "晨钟教堂";
+         case 60: return "金穗餐馆";
+      }
+      // 新增公共地图时至少能显示场景资源末段，不必改这里。
+      string location = PublicCityPortal.SceneLocation(destination.MapId);
+      if (string.IsNullOrEmpty(location)) return null;
+      int separator = location.LastIndexOf('/');
+      if (separator < 0) return location;
+      return location.Substring(separator + 1);
    }
 
    /// <summary>在天空中之城和副本中检查本地主角的下落高度，越界后复用场景出生定位。</summary>
@@ -171,9 +215,11 @@ public class MainCityMgr : MonoBehaviour
       PlaceExistingLocalRole(localRole);
    }
 
-   /// <summary>注销主城网络消息并释放单例引用。</summary>
+   /// <summary>注销主城网络消息并释放单例引用；场景卸载同时收起未完成的传送确认。</summary>
    private void OnDestroy()
    {
+      // 确认窗挂在跨场景的 UI 根上，切图时必须由本场景主动收起，避免带到下一张地图。
+      ClosePortalConfirm();
       SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_SyncMoveCode, _syncMoveHandler);
       _syncMoveHandler = null;
       SocketDispatcher.Instance.RemoveEventHandler(

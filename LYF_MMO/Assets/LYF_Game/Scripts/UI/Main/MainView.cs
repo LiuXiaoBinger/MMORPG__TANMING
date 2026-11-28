@@ -285,6 +285,13 @@ public class MainView : UIBase
    /// <summary>供交互控制器显示 NPC 文本并绑定商店按钮。</summary>
    public TalkWindow TalkWindow => _talkWindow;
 
+   /// <summary>地面传送阵的目的地确认窗预制体，引用保存在 UIRoot 预制体。</summary>
+   [SerializeField, Header("传送确认窗口")] private PortalConfirmWindow _portalConfirmPrefab;
+   /// <summary>随主视图创建一次的传送确认窗实例，归提示层管理并常驻隐藏。</summary>
+   private PortalConfirmWindow _portalConfirm;
+   /// <summary>供主控制器写入目的地并开关传送确认窗。</summary>
+   public PortalConfirmWindow PortalConfirm => _portalConfirm;
+
    /// <summary>主 HUD 中列出附近所有可交谈者的小窗，默认隐藏。</summary>
    [SerializeField] private NpcTalkPromptWindow _npcTalkPrompt;
    /// <summary>下一次检查附近说话者的本地秒数，主视图隐藏期间无需扫描。</summary>
@@ -337,6 +344,12 @@ public class MainView : UIBase
       base.InitView();
       if (_areaMap == null && _areaMapPrefab != null)
          _areaMap = Instantiate(_areaMapPrefab, _functionLayer, false);
+      // 传送确认窗挂在提示层，主视图重复初始化时复用同一实例，按钮监听只绑定一次。
+      if (_portalConfirm == null && _portalConfirmPrefab != null)
+      {
+         _portalConfirm = Instantiate(_portalConfirmPrefab, _tipsLayer, false);
+         _portalConfirm.InitWindow();
+      }
       SetLayerPanelParentData(_functionLayer);
       SetLayerPanelParentData(_tipsLayer);
       if (_areaMap != null)
@@ -407,6 +420,12 @@ public class MainView : UIBase
       {
          windowDic[WindowType.NpcTalkPromptWindow] = _npcTalkPrompt;
          _npcTalkPrompt.SetSpeakers(null);
+      }
+      // 传送确认窗只在走进传送阵时打开，登记后先隐藏。
+      if (_portalConfirm != null)
+      {
+         windowDic[WindowType.PortalConfirmWindow] = _portalConfirm;
+         _portalConfirm.Show(false);
       }
       windowDic[WindowType.ShopWindow] = _shopWindow;
       windowDic[WindowType.TradeMarketWindow] = _tradeMarketWindow;

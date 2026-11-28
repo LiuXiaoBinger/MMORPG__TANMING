@@ -44074,6 +44074,7 @@ MonoBehaviour:
   _knapsackWindow: {fileID: 4313087813888627190}
   _talkWindow: {fileID: 3582902473264623606}
   _npcTalkPrompt: {fileID: 7961126190000045}
+  _portalConfirmPrefab: {fileID: 100004, guid: 3d7b41c9e5a24f2d9b8c06e17a4d5b23, type: 3}
   _shopWindow: {fileID: 633865109998995583}
   _roleAttriibuteWindow: {fileID: 4995931267619018836}
   _chatWindow: {fileID: 1744585806447309799}
