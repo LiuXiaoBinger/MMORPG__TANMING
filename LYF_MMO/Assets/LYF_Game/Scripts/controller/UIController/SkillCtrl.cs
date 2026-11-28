@@ -492,8 +492,8 @@ public sealed class SkillCtrl : CtrlBase
         {
             return null;
         }
-        // 第一级：逐月用自身主表的立体追击距离，其余技能保留原有选敌半径，单位米。
-        float targetRange = MSkillTargetMgr.MaxChooseDistance;
+        // 第一级：普通技能使用当前锁定的保留距离，逐月用自身主表的立体追击距离，单位米。
+        float targetRange = MSkillTargetMgr.singleton.GetHeldEnemyRange(GetLocalRole());
         if (skillCore.SkillId == MoonChaseSkillId) targetRange = skillInfo.AtkDistance;
         // 第一级：范围内仍有效的已选敌人优先，避免换招时丢失玩家锁定。
         if (MSkillTargetMgr.singleton.CanAttack(target, targetRange))

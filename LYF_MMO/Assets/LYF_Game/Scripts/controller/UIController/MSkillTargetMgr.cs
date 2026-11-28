@@ -30,6 +30,15 @@ public sealed class MSkillTargetMgr
         return Mathf.Max(MaxChooseDistance, LubanMgr.Instance.GetSkillInfoById(SkillCtrl.MoonChaseSkillId).AtkDistance);
     }
 
+    /// <summary>当前敌人选择可保留的立体半径，用于施法和追近期间核对同一个目标。</summary>
+    /// <param name="player">本地主角，已装配的逐月决定手动锁定距离。</param>
+    /// <returns>手动锁定或自动目标各自的保留距离，单位米。</returns>
+    internal float GetHeldEnemyRange(PlayerEntity player)
+    {
+        if (HasManualTarget) return GetEnemySelectionRange(player);
+        return MaxChooseDistance;
+    }
+
     /// <summary>沿 RO 瞄准按钮流程，过滤怪物等级后在最近四个有效敌人中循环。</summary>
     /// <param name="monsterType">怪物等级位掩码，负一表示所有已接入怪物等级。</param>
     public void FindEnemyByAimBtn(int monsterType = -1)
@@ -150,7 +159,7 @@ public sealed class MSkillTargetMgr
         }
         // 手选敌人可保持至逐月的追击边界，普通自动目标及友方仍用基础半径。
         float range = MaxChooseDistance;
-        if (HasManualTarget && MSkillTargetDefine.IsEnemy(player.Target)) range = GetEnemySelectionRange(player);
+        if (MSkillTargetDefine.IsEnemy(player.Target)) range = GetHeldEnemyRange(player);
         if ((player.Target.Position - player.Position).sqrMagnitude > range * range)
         {
             ResetTarget(null);
