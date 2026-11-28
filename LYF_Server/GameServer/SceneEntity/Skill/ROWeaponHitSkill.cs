@@ -68,7 +68,11 @@ internal sealed class ROWeaponHitSkill : ROSkill
             distance = DefaultAimDistance;
         }
         // 有最大射程的武功使用固定落点，普通近战由当前角色位置推进。
-        float aimDistance = Math.Min(distance, hitEffect_.MaxRangeCm / 100f);
+        // 落点武功（如无限剑决）的无目标空放不能把落点推到默认十米外：
+        // 该落点盒半径仅由 RadiusCm 决定，推远后贴身敌人会完全落在盒外，表现为大剑特效落下却零伤害。
+        // 无有效瞄准点时落点收回施法者自身，空放也能斩到身前敌人；有瞄准点时仍用权威距离裁切。
+        float aimDistance = 0f;
+        if (hasAim) aimDistance = Math.Min(distance, hitEffect_.MaxRangeCm / 100f);
         aimCenter_ = origin + new Vector3(forward_.X, 0f, forward_.Y) * aimDistance;
     }
 
