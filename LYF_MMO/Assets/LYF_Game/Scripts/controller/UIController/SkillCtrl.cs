@@ -468,10 +468,10 @@ public sealed class SkillCtrl : CtrlBase
         return true;
     }
 
-    /// <summary>攻击优先保持有效当前目标，常规攻击允许自动找敌，刀刃风暴只用已选目标确定起手朝向。</summary>
+    /// <summary>主动攻击统一按已选目标、自动索敌、空放的三级顺序取敌，供施法点朝向使用。</summary>
     /// <param name="skillCore">本次已学技能；主表 Type 一为普攻，Type 二为其他主动攻击。</param>
     /// <param name="target">玩家当前选中实体，可为空或友方。</param>
-    /// <returns>有效当前敌人或允许自动选择时的新敌人，空值表示保持角色当前朝向。</returns>
+    /// <returns>范围内已选敌人或自动索敌的敌人，均无目标时为空表示沿角色当前朝向空放。</returns>
     public MEntity GetTargetFilterSkill(MSkillCore skillCore, MEntity target)
     {
         // 苍蓝屏障护持自己，施法无需传入敌人。
@@ -490,24 +490,21 @@ public sealed class SkillCtrl : CtrlBase
         {
             return null;
         }
-        // 逐月用自身主表的立体追击距离，其余技能保留原有选敌半径，单位米。
+        // 第一级：逐月用自身主表的立体追击距离，其余技能保留原有选敌半径，单位米。
         float targetRange = MSkillTargetMgr.MaxChooseDistance;
         if (skillCore.SkillId == MoonChaseSkillId) targetRange = skillInfo.AtkDistance;
-        // 优先保留本招范围内已经选中的敌人。
+        // 第一级：范围内仍有效的已选敌人优先，避免换招时丢失玩家锁定。
         if (MSkillTargetMgr.singleton.CanAttack(target, targetRange))
         {
             return target;
         }
-        // 逐月优先追当前锁定，无锁定时从同一立体范围内选最近的敌人，身后及空中均可。
+        // 逐月无锁定时从同一立体范围内选最近的敌人，身后及空中均可。
         if (skillCore.SkillId == MoonChaseSkillId)
         {
             return MSkillTargetDefine.FindOneTarget(true, targetRange);
         }
-        // 无锁定时刀刃风暴沿角色当前方向起手，不自动抢占敌人。
-        if (skillCore.SkillId == MWaitingDataMgr.BladeStormSkillId)
-        {
-            return null;
-        }
+        // 第二级：没有有效选中目标时按前方优先自动索敌；第三级：无候选返回空，沿当前朝向空放。
+        // 刀刃风暴虽以施法者为中心结算伤害，起手朝向仍与其余主动攻击统一取敌，不再只认已选目标。
         return MSkillTargetMgr.singleton.FindEnemyBySkillBtn(true, MSkillTargetDefine.IsInAttackFacing);
     }
 
