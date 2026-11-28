@@ -461,7 +461,7 @@ public class KnapsackWindow : WindowBase
     // ============================================================
 
     #region 货币显示
-    /// <summary>把四格货币余额写入顶部文本，只改文字不做任何换算。</summary>
+    /// <summary>把四格货币余额紧凑写入顶部文本，只改显示文字，不动余额与兑换数值。</summary>
     /// <param name="copper">铜币数量，对应虚拟物品 101。</param>
     /// <param name="silver">银子数量，对应虚拟物品 102。</param>
     /// <param name="ticket">银票数量，对应虚拟物品 106。</param>
@@ -476,19 +476,72 @@ public class KnapsackWindow : WindowBase
 
     /// <summary>按格号写单个货币文本，预制体缺项或多余下标时静默跳过。</summary>
     /// <param name="index">格号 0~3，依次为铜币、银子、银票、元宝。</param>
-    /// <param name="value">该币种的真实数量。</param>
+    /// <param name="value">该币种的真实数量，单位为最小计数单位，范围非负 long。</param>
     private void SetMoneyText(int index, long value)
     {
         if (_moneyValues == null || index >= _moneyValues.Length)
         {
             return;
         }
+        // 目标文本：当前钱包格的 TMP 组件，字号与宽度由预制体提供。
         TMP_Text text = _moneyValues[index];
         if (text == null)
         {
             return;
         }
-        text.text = value.ToString();
+        // 显示文本：紧凑余额；单行排版与自动缩字号由预制体上的 TMP 配置决定，这里只写文字。
+        string display = FormatBalance(value);
+        text.text = display;
+    }
+
+    /// <summary>
+    /// 把 long 余额压进钱包格的数值宽度：不足 1 万原样显示，1 万起按万/亿（万亿）缩写。
+    /// 小数至多一位且截断（不四舍五入），避免虚高；整数部分不带 ".0"。
+    /// 万亿档整数部分达到 100000 时省去小数，只显示整数加万亿，且不向上进位。
+    /// </summary>
+    /// <param name="value">钱包格真实余额，单位为币种最小计数；非负 long，可覆盖到 long.MaxValue。</param>
+    private static string FormatBalance(long value)
+    {
+        if (value < 10000L)
+        {
+            return value.ToString();
+        }
+
+        // 缩放单位：按余额所在档位选取整数除数，万/亿/万亿，保证 long 除法不溢出。
+        long unit;
+        // 单位后缀：与缩放单位一一对应，直接追加在数值后显示。
+        string suffix;
+        if (value >= 1000000000000L)
+        {
+            unit = 1000000000000L;
+            suffix = "万亿";
+        }
+        else if (value >= 100000000L)
+        {
+            unit = 100000000L;
+            suffix = "亿";
+        }
+        else
+        {
+            unit = 10000L;
+            suffix = "万";
+        }
+
+        // 整数部分：缩放后向下取整得到的主数值，不含小数时直接返回。
+        long whole = value / unit;
+        // 省小数的标记：仅万亿档且整数部分达到 100000（即余额达到 100000000000000000）时置位。
+        bool dropFraction = unit == 1000000000000L && whole >= 100000L;
+        if (dropFraction)
+        {
+            return whole.ToString() + suffix;
+        }
+        // 小数部分：仅保留一位并直接截断，不四舍五入，显示值不会高于真实余额。
+        long tenth = (value % unit) * 10L / unit;
+        if (tenth == 0L)
+        {
+            return whole.ToString() + suffix;
+        }
+        return whole.ToString() + "." + tenth.ToString() + suffix;
     }
     #endregion
 
