@@ -1250,3 +1250,7 @@ The final client replay used the death window embedded in the actual UIRoot pref
 ## [VERIFY][GM][RO-GM-ROLE-20261128] Database-backed GM grant and realm-1 deployment
 
 - GameServer, CenterServer and Network compiled on the feature branch. The real role row was read by CenterServer.StartGame, then serialized and parsed. Over an isolated GM TCP loopback help succeeded for the marked character. An unmarked character of the same account and an unbound session were denied. The running CenterServer and both realm-1 game nodes loaded the DB-flag version and reconnected. A manual player login was not performed. Evidence in _temp/gm-role-20261128/db-role-rpc.log and db-activation.json.
+
+## [VERIFY][UI][传送][RO-PORTAL-SKIN-20261128] Portal artwork and interaction in Unity Play
+
+- WorkBuddy ran 32 prefab checks and 60 wiring checks. Codex inspected the Unity Play screenshot and matched the SHA-256 of the production prefab to the isolated Play copy. All 11 Play checks passed, including the destination name, cancel and re-entry, closing on exit, and a single request on two confirm clicks. Preview in `_temp/ro-portal-skin-20261128/preview/unity_actual.png`. A physical phone and live-account map transfer were untested. See `项目修改日志/地面传送确认窗美术返修-2026-11-28.md`.

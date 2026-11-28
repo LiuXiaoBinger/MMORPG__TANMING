@@ -1249,3 +1249,7 @@ LYF_Game 的 Editor 和 Windows Player 目标编译通过。正式 HUD 子预制
 ## [VERIFY][GM][RO-GM-ROLE-20261128] 数据库角色 GM 授权与区服 1 部署验收
 
 - 功能分支的 GameServer、CenterServer 和 Network 均已编译通过。通过 `CenterServer.StartGame` 读取真实角色行，随后验证了角色资料的序列化和解析。隔离的 GM TCP 回环中，已标记角色成功执行 `help`，同账号下未标记的角色以及未绑定角色的会话均被拒绝。运行中的 CenterServer 和区服 1 的两个游戏节点已加载支持数据库标记的版本，并重新建立连接。尚未进行玩家手动登录验证。证据见 `_temp/gm-role-20261128/db-role-rpc.log` 和同目录的 `db-activation.json`。
+
+## [VERIFY][UI][传送][RO-PORTAL-SKIN-20261128] 地面传送确认窗的 Unity Play 美术与交互验证
+
+- WorkBuddy 执行了 32 项预制体检查和 60 项引用连接检查。Codex 核看了 Unity Play 截图，并核对正式预制体与隔离 Play 副本的 SHA-256，两者一致。11 项 Play 检查全部通过，覆盖目的地名称、取消后重新进入、离开触发区时关闭弹窗，以及连续两次点击确认只发出一次请求。截图见 `_temp/ro-portal-skin-20261128/preview/unity_actual.png`。尚未在实体手机上验证，也未使用真实账号实测跨图传送。详见 `项目修改日志/地面传送确认窗美术返修-2026-11-28.md`。

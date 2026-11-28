@@ -1194,3 +1194,7 @@ Windows 区服启动脚本将构建产物输出到 `_temp/realm-build`。各服�
 ## [CODE][FILES][HANDOFF][GM][RO-GM-ROLE-20261128] 按角色保存 GM 授权
 
 - MySQL 的 `role.IsGM` 默认为 0。CenterServer 在 `LoginModle.StartGame` 读取角色行，通过 `MainRoleInfo.is_gm`（字段 8）把标记传给 GameServer。GM 处理器检查当前已认证在线角色的标记，显式账号授权继续生效。本地区服 1 的一名角色已在 MySQL 中获准使用 GM，原来按区服维护的临时名单已停用。详见《项目修改日志/2026-11-26-RO游戏内GM移植.md》的 2026-11-28 小节。
+
+## [CODE][FILES][HANDOFF][UI][传送][RO-PORTAL-SKIN-20261128] 地面传送确认窗美术返修
+
+- `codex/feature-development` 分支的提交 `30e1fff` 仅修改了 `LYF_MMO/Assets/LYF_Game/Prefabs/UIPrefabs/TipsDiialog/PortalConfirm.prefab`。480 × 264 的弹窗复用了 Common1、Common、Map 和 NpcIcon01 中的七个 RO 精灵切片，配有地图飘带、传送插画、金色确认按钮和蓝色取消按钮。WorkBuddy 使用 DeepSeek V4.1 Flash 完成修改，Codex 验收并推送。仍只有点击确认才会发起传送请求。详见 `项目修改日志/地面传送确认窗美术返修-2026-11-28.md`。

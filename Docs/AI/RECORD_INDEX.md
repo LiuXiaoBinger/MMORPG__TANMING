@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `440f93a3a3929fa4b04b7f17a3c2df160d822ba61de4896bc69198eb5e069362`
+Source normalized SHA256: `2c713fce0c116b5e969b089adc80a48887ed29601e45bf6a6ba233a9369c53cb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -184,11 +184,12 @@ Source normalized SHA256: `440f93a3a3929fa4b04b7f17a3c2df160d822ba61de4896bc6919
 | [CODE][FILES][副本][UI][DUNGEON-JOURNAL-UI-20261127] Dungeon journal, individual boss marks and Friday Final chests | 1176-1181 |
 | [CODE][FILES][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 / omnidirectional and aerial pursuit | 1182-1191 |
 | [CODE][FILES][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Start the Moshenta arena on damage and reset only the encounter on a wipe | 1192-1198 |
-| [CODE][FILES][HANDOFF][GM][RO-GM-ROLE-20261128] Per-character GM flag | 1199-1201 |
+| [CODE][FILES][HANDOFF][GM][RO-GM-ROLE-20261128] Per-character GM flag | 1199-1202 |
+| [CODE][FILES][HANDOFF][UI][传送][RO-PORTAL-SKIN-20261128] Ground portal confirmation artwork | 1203-1205 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `b1d509de1c1c464c6dc410e25a48f08e2ee58263ce53694258909e34e3587f67`
+Source normalized SHA256: `b74dd8c188fb72f996cf09ebd1381b71deb960b88ff8c6333ae1ef6a41d5e7c2`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -367,7 +368,8 @@ Source normalized SHA256: `b1d509de1c1c464c6dc410e25a48f08e2ee58263ce53694258909
 | [VERIFY][副本][UI][DUNGEON-JOURNAL-UI-20261127] Journal rendering, personal progress and weekly claim | 1227-1231 |
 | [VERIFY][技能][MJS-MOON-CHASE-20261127] Moon Chase dash, double crescent and realm 1 / omnidirectional and aerial pursuit | 1232-1241 |
 | [VERIFY][副本][首领][MOSHENTA-BOSS-ARENA-20261127] Replay first damage, a party wipe, re-entry and victory | 1242-1249 |
-| [VERIFY][GM][RO-GM-ROLE-20261128] Database-backed GM grant and realm-1 deployment | 1250-1252 |
+| [VERIFY][GM][RO-GM-ROLE-20261128] Database-backed GM grant and realm-1 deployment | 1250-1253 |
+| [VERIFY][UI][传送][RO-PORTAL-SKIN-20261128] Portal artwork and interaction in Unity Play | 1254-1256 |
 
 ## Docs/AI/DECISIONS.en.md
 

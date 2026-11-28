@@ -1199,3 +1199,7 @@ Dungeon checkpoints persist per member and instance through a party wipe. Tower 
 ## [CODE][FILES][HANDOFF][GM][RO-GM-ROLE-20261128] Per-character GM flag
 
 - MySQL role.IsGM defaults to 0. CenterServer reads the role row in LoginModle.StartGame and sends MainRoleInfo.is_gm (field 8) to GameServer. The GM handler checks the flag on the authenticated online role. Explicit account grants continue to work. One local realm-1 role was granted in MySQL. The temporary per-realm list was retired. See § 2026-11-28 in 项目修改日志/2026-11-26-RO游戏内GM移植.md.
+
+## [CODE][FILES][HANDOFF][UI][传送][RO-PORTAL-SKIN-20261128] Ground portal confirmation artwork
+
+- Commit `30e1fff` on `codex/feature-development` updates only `LYF_MMO/Assets/LYF_Game/Prefabs/UIPrefabs/TipsDiialog/PortalConfirm.prefab`. The 480 × 264 dialog uses seven existing RO sprite slices from Common1, Common, Map and NpcIcon01. It pairs a map ribbon and portal illustration with gold confirm and blue cancel buttons. WorkBuddy used DeepSeek V4.1 Flash. Codex accepted and pushed the change. The confirm-only interaction is preserved. See `项目修改日志/地面传送确认窗美术返修-2026-11-28.md`.
